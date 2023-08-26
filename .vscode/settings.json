@@ -4,6 +4,9 @@
         "source.fixAll.eslint": true,
         "source.organizeImports": true
     },
+	"[svelte]": {
+		"editor.defaultFormatter": "svelte.svelte-vscode"
+	},
 	"prettier.documentSelectors": [
 		"**/*.svelte"
 	],

@@ -7,7 +7,7 @@ interface User {
 // and what to do when importing types
 declare namespace App {
 	interface Locals {
-		user: User;
+		user?: User;
 	}
 	// interface PageData {}
 	// interface Error {}

@@ -2,24 +2,34 @@
 	import Icon from '@iconify/svelte';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
 
+	export const locals = '123';
+
 	const signIn = async () => {
 		const res = await fetch(`http://localhost:3000/auth/sign-in`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
 			body: JSON.stringify({
 				email: 'rastercar.tests.002@gmail.com',
 				password: 'testuser'
 			})
 		});
+
 		const loginResponse = await res.json();
-		// TODO: now i need to set the cookie to the sveltekit server
-		// i should probably do this by calling a server function, i should
-		// not use form actions as that would trigger a page reload that i dont
-		// want
+
+		console.log(loginResponse);
 	};
+
+	// TODO:
+	// useQuery
+	// form validation
+	// EMAIL_IN_USE error code
+	// redirect to client application
+	// get session expiration from cookie on server side ?
+	// proper auth guard to routes
+	// store user / auth data on client side (localstorage sync)
 </script>
 
-<!-- TODO: finish this page -->
 <div class="flex min-h-screen">
 	<div
 		class="bg-surface-50-900-token relative hidden w-0 flex-1 items-center justify-center lg:flex lg:w-3/5"

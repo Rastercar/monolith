@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import type { PageData } from './$types';
 
-	export const locals = '123';
+	export let data: PageData;
 
 	const signIn = async () => {
 		const res = await fetch(`http://localhost:3000/auth/sign-in`, {
@@ -17,7 +19,9 @@
 
 		const loginResponse = await res.json();
 
-		console.log(loginResponse);
+		// TODO: ???? goto no firing root hook
+		// TODO: navigate according to type
+		goto(data.onSuccessRedirectTo ?? '/admin');
 	};
 
 	// TODO:

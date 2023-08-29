@@ -1,7 +1,8 @@
+import { NO_PAGE_METADATA } from '$lib/constants/error_codes';
 import type { PageLoad } from './$types';
 
 const errorCodeToMessage: Record<string, string> = {
-	no_meta: 'the page you tried to access is not finished'
+	[NO_PAGE_METADATA]: 'the page you tried to access is not finished'
 };
 
 export const load: PageLoad = ({ url }) => {

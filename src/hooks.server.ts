@@ -25,7 +25,6 @@ const handleSignOut: Handle = ({ event }) => {
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname as route;
-	console.log('hooks.server.ts', path);
 
 	if (path === '/auth/sign-out') return handleSignOut({ event, resolve });
 
@@ -38,11 +37,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	event.locals.sessionId = sessionId;
 
-	// TODO: here we could set the user by getting it from the rastercar API, eg
-	// event.locals.user = apiGetUser()
-
 	if (routeMeta.requiredAuth === 'logged-in' && !isLoggedIn) {
-		throw redirect(303, `/auth/sign-in?to=${path}`);
+		throw redirect(303, `/auth/sign-in?redirect=${path}`);
 	}
 
 	if (routeMeta.requiredAuth === 'logged-off' && isLoggedIn && path !== '/') {

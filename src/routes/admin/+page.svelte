@@ -1,7 +1,3 @@
-<script lang="ts">
-	console.log('admin/page.svelte');
-</script>
-
 <div class="container p-10 space-y-4">
 	<h1>Admin Page</h1>
 	<hr />

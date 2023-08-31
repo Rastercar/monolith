@@ -1,37 +1,63 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { apiSignIn } from '$lib/api/auth';
+	import { isApiErrorResponse } from '$lib/api/error';
+	import InputErrorMessage from '$lib/components/input/InputErrorMessage.svelte';
+	import { isEmail, isRequired } from '$lib/validators';
 	import Icon from '@iconify/svelte';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import { createMutation } from '@tanstack/svelte-query';
+	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
-	const signIn = async () => {
-		const res = await fetch(`http://localhost:3000/auth/sign-in`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			credentials: 'include',
-			body: JSON.stringify({
-				email: 'rastercar.tests.002@gmail.com',
-				password: 'testuser'
-			})
-		});
+	const { form, errors, validate, restore } = superForm(data.form, {
+		validators: {
+			email: (email) => (isEmail(email) ? null : 'invalid email address'),
+			password: (password) => (isRequired(password) ? null : 'password is required')
+		}
+	});
 
-		const loginResponse = await res.json();
+	const mutation = createMutation({
+		mutationFn: (credentials: { email: string; password: string }) => apiSignIn(credentials),
+		onSuccess: ({ responseData }) => {
+			// TODO: store user / auth data on client side (local storage sync)
+			console.log(responseData);
 
-		// TODO: ???? goto no firing root hook
-		// TODO: navigate according to type
-		goto(data.onSuccessRedirectTo ?? '/admin');
+			// TODO: navigate according to type
+			goto(data.onSuccessRedirectTo ?? '/admin');
+		},
+		onError: (e) => {
+			if (isApiErrorResponse(e)) {
+				// TODO: handle 404 (email not found) and 401 (invalid password)
+				console.log(e.apiError);
+				return;
+			}
+
+			// TODO: display some error toast ?
+		}
+	});
+
+	const handleSignIn = async () => {
+		const validated = await validate();
+
+		if (!validated.valid) {
+			restore({ ...validated, tainted: undefined });
+			return;
+		}
+
+		$mutation.mutate(validated.data);
+
+		// TODO: rm this comment
+		// email: 'rastercar.tests.002@gmail.com',
+		// password: 'testuser'
 	};
 
 	// TODO:
-	// useQuery
-	// form validation
-	// EMAIL_IN_USE error code
-	// redirect to client application
 	// get session expiration from cookie on server side ?
-	// proper auth guard to routes
-	// store user / auth data on client side (localstorage sync)
+	// google oauth
+	// form loading state (disabled and loading spinner on button)
 </script>
 
 <div class="flex min-h-screen">
@@ -80,15 +106,31 @@
 					<hr class="flex-auto border-t-2" />
 				</div>
 
-				<label class="label">
+				<label class="label mb-1">
 					<span class="text-sm">Email</span>
-					<input class="input" type="email" placeholder="email address" />
+					<input
+						class="input"
+						type="email"
+						name="email"
+						placeholder="email address"
+						aria-invalid={$errors.email ? 'true' : undefined}
+						bind:value={$form.email}
+					/>
 				</label>
+				<InputErrorMessage errors={$errors.email} />
 
-				<label class="label mt-4">
+				<label class="label mt-4 mb-1">
 					<span class="text-sm">Password</span>
-					<input class="input" type="email" placeholder="password" />
+					<input
+						class="input mb-1"
+						type="password"
+						name="password"
+						placeholder="password"
+						aria-invalid={$errors.password ? 'true' : undefined}
+						bind:value={$form.password}
+					/>
 				</label>
+				<InputErrorMessage errors={$errors.password} />
 
 				<div class="mt-4 flex justify-end">
 					<a
@@ -99,7 +141,7 @@
 					</a>
 				</div>
 
-				<button class="btn variant-filled-primary mt-4 w-full" on:click={signIn}>
+				<button class="btn variant-filled-primary mt-4 w-full" on:click={handleSignIn}>
 					<div>sign in</div>
 				</button>
 

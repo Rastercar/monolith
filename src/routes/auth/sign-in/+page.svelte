@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { apiSignIn } from '$lib/api/auth';
-	import { isApiErrorResponse } from '$lib/api/error';
 	import InputErrorMessage from '$lib/components/input/InputErrorMessage.svelte';
 	import { isEmail, isRequired } from '$lib/validators';
 	import Icon from '@iconify/svelte';
-	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import { LightSwitch, ProgressRadial } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -14,27 +13,42 @@
 
 	const { form, errors, validate, restore } = superForm(data.form, {
 		validators: {
-			email: (email) => (isEmail(email) ? null : 'invalid email address'),
-			password: (password) => (isRequired(password) ? null : 'password is required')
+			email: (v) => (isEmail(v) ? null : 'invalid email address'),
+			password: (v: string) => (isRequired(v) ? null : 'password is required')
 		}
 	});
 
+	// TODO: rm this comment
+	// email: 'rastercar.tests.002@gmail.com',
+	// password: 'testuser'
+
+	const handleErrorResponse = (errorCode: string) => {
+		if (errorCode === 'invalid_password') {
+			validate('password', { value: '', errors: 'wrong password', update: 'errors' });
+			return;
+		}
+
+		if (errorCode === 'not_found') {
+			validate('email', { value: '', errors: 'account with email not found', update: 'errors' });
+			return;
+		}
+	};
+
 	const mutation = createMutation({
 		mutationFn: (credentials: { email: string; password: string }) => apiSignIn(credentials),
-		onSuccess: ({ responseData }) => {
+		onSuccess: (res) => {
+			if (typeof res === 'string') {
+				handleErrorResponse(res);
+				return;
+			}
+
 			// TODO: store user / auth data on client side (local storage sync)
-			console.log(responseData);
+			console.log(res.user);
 
 			// TODO: navigate according to type
 			goto(data.onSuccessRedirectTo ?? '/admin');
 		},
 		onError: (e) => {
-			if (isApiErrorResponse(e)) {
-				// TODO: handle 404 (email not found) and 401 (invalid password)
-				console.log(e.apiError);
-				return;
-			}
-
 			// TODO: display some error toast ?
 		}
 	});
@@ -48,16 +62,11 @@
 		}
 
 		$mutation.mutate(validated.data);
-
-		// TODO: rm this comment
-		// email: 'rastercar.tests.002@gmail.com',
-		// password: 'testuser'
 	};
 
 	// TODO:
 	// get session expiration from cookie on server side ?
 	// google oauth
-	// form loading state (disabled and loading spinner on button)
 </script>
 
 <div class="flex min-h-screen">
@@ -114,6 +123,7 @@
 						name="email"
 						placeholder="email address"
 						aria-invalid={$errors.email ? 'true' : undefined}
+						disabled={$mutation.isLoading}
 						bind:value={$form.email}
 					/>
 				</label>
@@ -127,6 +137,7 @@
 						name="password"
 						placeholder="password"
 						aria-invalid={$errors.password ? 'true' : undefined}
+						disabled={$mutation.isLoading}
 						bind:value={$form.password}
 					/>
 				</label>
@@ -141,8 +152,16 @@
 					</a>
 				</div>
 
-				<button class="btn variant-filled-primary mt-4 w-full" on:click={handleSignIn}>
-					<div>sign in</div>
+				<button
+					class="btn variant-filled-primary mt-4 w-full"
+					on:click={handleSignIn}
+					disabled={$mutation.isLoading}
+				>
+					{#if $mutation.isLoading}
+						<ProgressRadial value={undefined} width="w-6" />
+					{:else if errors}
+						<div>sign in</div>
+					{/if}
 				</button>
 
 				<div class="mt-4 flex justify-between">

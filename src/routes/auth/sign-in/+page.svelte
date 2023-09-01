@@ -2,14 +2,17 @@
 	import { goto } from '$app/navigation';
 	import { apiSignIn } from '$lib/api/auth';
 	import InputErrorMessage from '$lib/components/input/InputErrorMessage.svelte';
+	import { authStore } from '$lib/store/auth';
 	import { isEmail, isRequired } from '$lib/validators';
 	import Icon from '@iconify/svelte';
-	import { LightSwitch, ProgressRadial } from '@skeletonlabs/skeleton';
+	import { LightSwitch, ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	const toastStore = getToastStore();
 
 	const { form, errors, validate, restore } = superForm(data.form, {
 		validators: {
@@ -51,11 +54,15 @@
 			// this is confusing...
 			console.log(res.user);
 
-			// TODO: navigate according to type
-			goto(data.onSuccessRedirectTo ?? '/admin');
+			authStore.update((v) => ({ ...v, user: res.user }));
+
+			goto(data.onSuccessRedirectTo ?? '/client');
 		},
-		onError: (e) => {
-			// TODO: display some error toast ?
+		onError: () => {
+			toastStore.trigger({
+				message: 'a unknown error happened',
+				background: 'variant-filled-error'
+			});
 		}
 	});
 
@@ -69,10 +76,6 @@
 
 		$mutation.mutate(validated.data);
 	};
-
-	// TODO:
-	// get session expiration from cookie on server side ?
-	// google oauth
 </script>
 
 <div class="flex min-h-screen">

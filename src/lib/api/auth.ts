@@ -16,6 +16,8 @@ const userSchema = z.object({
 
 const signInResponseSchema = z.object({ user: userSchema });
 
+export type User = z.infer<typeof userSchema>;
+
 type SignInResponse = z.infer<typeof signInResponseSchema>;
 
 interface Credentials {

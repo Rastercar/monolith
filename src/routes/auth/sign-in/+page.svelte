@@ -42,7 +42,13 @@
 				return;
 			}
 
-			// TODO: store user / auth data on client side (local storage sync)
+			// TODO: store user / auth data on client side ?
+			//
+			// we can set the user on a client side store that syncs with local storage
+			// this means that we do not need to fetch the user and set it on pageData
+			// and simply fetch it from the store, however this also mean we have 2 sources
+			// of truth to authData, the pageData that is returned from ssr, and the localstorage
+			// this is confusing...
 			console.log(res.user);
 
 			// TODO: navigate according to type

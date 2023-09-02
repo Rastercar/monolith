@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isApiErrorObject, rastercarApi } from './common';
+import { isApiErrorObject, rastercarApi, redirectToSignInPageOnSessionError } from './common';
 
 const userSchema = z.object({
 	id: z.number(),
@@ -47,3 +47,16 @@ export const apiSignIn = async (credentials: Credentials): Promise<SignRequestRe
 
 	return response;
 };
+
+// TODO: rm me!
+// idea: we can have a default catcher for invalid session that shows a toast and/or redirect the client
+export const xd = async () =>
+	rastercarApi
+		.options({ credentials: 'include' })
+		.post({}, '/auth/sign-out')
+		.unauthorized(async (err) => {
+			console.log('notFound');
+			throw err;
+		})
+		.text()
+		.catch(redirectToSignInPageOnSessionError);

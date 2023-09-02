@@ -5,10 +5,9 @@
 	const closeDrawer = () => drawerStore.close();
 </script>
 
-<nav class="list-nav p-4">
+<nav class="list-nav p-4" data-sveltekit-preload-data="off">
 	<ul>
 		<li><a href="/" on:click={closeDrawer}>Home</a></li>
-		<li><a href="/admin" on:click={closeDrawer}>Admin</a></li>
 		<li><a href="/client" on:click={closeDrawer}>Client</a></li>
 		<li><a href="/auth/sign-in" on:click={closeDrawer}>Sign In</a></li>
 		<li><a href="/auth/sign-out" on:click={closeDrawer}>Sign Out</a></li>

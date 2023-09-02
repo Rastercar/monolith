@@ -1,7 +1,8 @@
+import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
 import { NO_PAGE_METADATA } from '$lib/constants/error_codes';
 import { redirect, type Handle } from '@sveltejs/kit';
 
-type route = '/' | '/auth/sign-in' | '/auth/sign-out' | '/error/internal' | '/admin' | '/client';
+type route = '/' | '/auth/sign-in' | '/auth/sign-out' | '/error/internal' | '/client';
 
 interface RouteMeta {
 	requiredAuth?: 'logged-in' | 'logged-off';
@@ -12,21 +13,11 @@ const routesMeta: Record<route, RouteMeta> = {
 	'/auth/sign-in': { requiredAuth: 'logged-off' },
 	'/auth/sign-out': { requiredAuth: 'logged-in' },
 	'/error/internal': {},
-	'/admin': { requiredAuth: 'logged-in' },
 	'/client': { requiredAuth: 'logged-in' }
-};
-
-const SESSION_ID_COOKIE_KEY = 'sid';
-
-const handleSignOut: Handle = ({ event }) => {
-	event.cookies.delete(SESSION_ID_COOKIE_KEY, { path: '/' });
-	throw redirect(303, '/auth/sign-in');
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname as route;
-
-	if (path === '/auth/sign-out') return handleSignOut({ event, resolve });
 
 	const routeMeta = routesMeta[path];
 

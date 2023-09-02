@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { apiSignIn } from '$lib/api/auth';
-	import InputErrorMessage from '$lib/components/input/InputErrorMessage.svelte';
+	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
 	import { isEmail, isRequired } from '$lib/validators';
 	import Icon from '@iconify/svelte';
@@ -14,28 +14,32 @@
 
 	const toastStore = getToastStore();
 
-	const { form, errors, validate, restore } = superForm(data.form, {
+	const loginForm = superForm(data.form, {
 		validators: {
 			email: (v) => (isEmail(v) ? null : 'invalid email address'),
 			password: (v: string) => (isRequired(v) ? null : 'password is required')
 		}
 	});
 
-	// TODO: rm this comment
-	// email: 'rastercar.tests.002@gmail.com',
-	// password: 'testuser'
-
 	const handleErrorResponse = (errorCode: string) => {
 		if (errorCode === 'invalid_password') {
-			validate('password', { value: '', errors: 'wrong password', update: 'errors' });
+			loginForm.validate('password', { value: '', errors: 'wrong password', update: 'errors' });
 			return;
 		}
 
 		if (errorCode === 'not_found') {
-			validate('email', { value: '', errors: 'account with email not found', update: 'errors' });
+			loginForm.validate('email', {
+				value: '',
+				errors: 'account with email not found',
+				update: 'errors'
+			});
 			return;
 		}
 	};
+
+	let redirecting = false;
+
+	$: isLoading = redirecting || $mutation.isLoading;
 
 	const mutation = createMutation({
 		mutationFn: (credentials: { email: string; password: string }) => apiSignIn(credentials),
@@ -45,18 +49,16 @@
 				return;
 			}
 
-			// TODO: store user / auth data on client side ?
-			//
-			// we can set the user on a client side store that syncs with local storage
-			// this means that we do not need to fetch the user and set it on pageData
-			// and simply fetch it from the store, however this also mean we have 2 sources
-			// of truth to authData, the pageData that is returned from ssr, and the localstorage
-			// this is confusing...
-			console.log(res.user);
+			redirecting = true;
 
 			authStore.update((v) => ({ ...v, user: res.user }));
 
-			goto(data.onSuccessRedirectTo ?? '/client');
+			// redirect a few frames after svelte updated the auth store
+			setTimeout(() => {
+				goto(data.onSuccessRedirectTo ?? '/client').finally(() => {
+					redirecting = false;
+				});
+			}, 100);
 		},
 		onError: () => {
 			toastStore.trigger({
@@ -67,10 +69,10 @@
 	});
 
 	const handleSignIn = async () => {
-		const validated = await validate();
+		const validated = await loginForm.validate();
 
 		if (!validated.valid) {
-			restore({ ...validated, tainted: undefined });
+			loginForm.restore({ ...validated, tainted: undefined });
 			return;
 		}
 
@@ -92,12 +94,7 @@
 	>
 		<div class="relative mx-auto w-full max-w-sm">
 			<div class="flex w-full items-center justify-between">
-				<a
-					href="/"
-					type="button"
-					class="btn hover:text-primary-600-300-token px-0"
-					data-sveltekit-preload-data="hover"
-				>
+				<a href="/" type="button" class="btn hover:text-primary-600-300-token px-0">
 					<Icon icon="mdi:keyboard-backspace" />
 					<span>Back to Home</span>
 				</a>
@@ -124,33 +121,22 @@
 					<hr class="flex-auto border-t-2" />
 				</div>
 
-				<label class="label mb-1">
-					<span class="text-sm">Email</span>
-					<input
-						class="input"
-						type="email"
-						name="email"
-						placeholder="email address"
-						aria-invalid={$errors.email ? 'true' : undefined}
-						disabled={$mutation.isLoading}
-						bind:value={$form.email}
-					/>
-				</label>
-				<InputErrorMessage errors={$errors.email} />
+				<TextInput
+					form={loginForm}
+					field="email"
+					label="Email"
+					placeholder="email address"
+					disabled={isLoading}
+				/>
 
-				<label class="label mt-4 mb-1">
-					<span class="text-sm">Password</span>
-					<input
-						class="input mb-1"
-						type="password"
-						name="password"
-						placeholder="password"
-						aria-invalid={$errors.password ? 'true' : undefined}
-						disabled={$mutation.isLoading}
-						bind:value={$form.password}
-					/>
-				</label>
-				<InputErrorMessage errors={$errors.password} />
+				<TextInput
+					form={loginForm}
+					field="password"
+					label="Password"
+					type="password"
+					placeholder="password"
+					disabled={isLoading}
+				/>
 
 				<div class="mt-4 flex justify-end">
 					<a
@@ -164,11 +150,11 @@
 				<button
 					class="btn variant-filled-primary mt-4 w-full"
 					on:click={handleSignIn}
-					disabled={$mutation.isLoading}
+					disabled={isLoading}
 				>
-					{#if $mutation.isLoading}
+					{#if isLoading}
 						<ProgressRadial value={undefined} width="w-6" />
-					{:else if errors}
+					{:else if loginForm.errors}
 						<div>sign in</div>
 					{/if}
 				</button>

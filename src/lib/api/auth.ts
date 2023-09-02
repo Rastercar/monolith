@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isApiErrorObject, rastercarApi, redirectToSignInPageOnSessionError } from './common';
+import { isApiErrorObject, rastercarApi } from './common';
 
 const userSchema = z.object({
 	id: z.number(),
@@ -29,7 +29,6 @@ type SignRequestResponse = SignInResponse | 'not_found' | 'invalid_password';
 
 export const apiSignIn = async (credentials: Credentials): Promise<SignRequestResponse> => {
 	const response = await rastercarApi
-		.options({ credentials: 'include' })
 		.post(credentials, '/auth/sign-in')
 		.notFound((err) => {
 			if (isApiErrorObject(err.json)) return 'not_found';
@@ -48,15 +47,6 @@ export const apiSignIn = async (credentials: Credentials): Promise<SignRequestRe
 	return response;
 };
 
-// TODO: rm me!
-// idea: we can have a default catcher for invalid session that shows a toast and/or redirect the client
-export const xd = async () =>
-	rastercarApi
-		.options({ credentials: 'include' })
-		.post({}, '/auth/sign-out')
-		.unauthorized(async (err) => {
-			console.log('notFound');
-			throw err;
-		})
-		.text()
-		.catch(redirectToSignInPageOnSessionError);
+export const apiSignOut = async (): Promise<void> => {
+	await rastercarApi.post({}, '/auth/sign-out').text();
+};

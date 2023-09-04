@@ -1,8 +1,8 @@
-import { join } from 'path';
-import type { Config } from 'tailwindcss';
+import { skeleton } from '@skeletonlabs/tw-plugin';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import { skeleton } from '@skeletonlabs/tw-plugin';
+import { join } from 'path';
+import type { Config } from 'tailwindcss';
 import { rastercarTheme } from './src/themes/rastercar';
 
 export default {
@@ -18,10 +18,7 @@ export default {
 		forms,
 		typography,
 		skeleton({
-			themes: {
-				custom: [rastercarTheme],
-				preset: [{ name: 'rocket', enhancements: true }]
-			}
+			themes: { custom: [rastercarTheme] }
 		})
 	]
 } satisfies Config;

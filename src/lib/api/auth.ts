@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isApiErrorObject, rastercarApi } from './common';
+import { isApiErrorObject, rastercarApi, redirectOnSessionError } from './common';
 
 const userSchema = z.object({
 	id: z.number(),
@@ -47,6 +47,15 @@ export const apiSignIn = async (credentials: Credentials): Promise<SignRequestRe
 	return response;
 };
 
+export const apiGetCurrentUser = async (): Promise<User> =>
+	rastercarApi.get('/auth/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);
+
+/**
+ * signs out the current rastercar user session, this endpoint makes the user respond
+ * with a expired session id cookie so the current session cookie is replaced by the expired one.
+ *
+ * on the next request to the api the browser deletes the cookie as its expired.
+ */
 export const apiSignOut = async (): Promise<void> => {
 	await rastercarApi.post({}, '/auth/sign-out').text();
 };

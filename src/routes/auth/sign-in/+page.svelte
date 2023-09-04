@@ -3,7 +3,7 @@
 	import { apiSignIn } from '$lib/api/auth';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
-	import { isEmail, isRequired } from '$lib/validators';
+	import { isEmail, isRequired } from '$lib/utils/validators';
 	import Icon from '@iconify/svelte';
 	import { LightSwitch, ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -37,9 +37,21 @@
 		}
 	};
 
+	/**
+	 * if the login has succeeded and the user is being redirected
+	 */
 	let redirecting = false;
 
 	$: isLoading = redirecting || $mutation.isLoading;
+
+	const redirectAfterLogin = () => {
+		const routeToRedirect =
+			data.onSuccessRedirectTo === '/auth/sign-out' || data.onSuccessRedirectTo === null
+				? '/client'
+				: data.onSuccessRedirectTo;
+
+		goto(routeToRedirect).finally(() => (redirecting = false));
+	};
 
 	const mutation = createMutation({
 		mutationFn: (credentials: { email: string; password: string }) => apiSignIn(credentials),
@@ -54,11 +66,7 @@
 			authStore.update((v) => ({ ...v, user: res.user }));
 
 			// redirect a few frames after svelte updated the auth store
-			setTimeout(() => {
-				goto(data.onSuccessRedirectTo ?? '/client').finally(() => {
-					redirecting = false;
-				});
-			}, 100);
+			setTimeout(redirectAfterLogin, 100);
 		},
 		onError: () => {
 			toastStore.trigger({
@@ -104,22 +112,9 @@
 
 			<div>
 				<h2 class="font-heading text-3xl font-medium mt-6">Welcome back.</h2>
-				<p class="font-alt text-sm font-normal mb-6">Login with social media or your credentials</p>
+				<p class="font-alt text-sm font-normal mb-6">Sign in to the best car tracking app!</p>
 
-				<div class="flex flex-wrap justify-between gap-4">
-					<button class="btn variant-ringed grow py-4">
-						<Icon icon="mdi:google" width="32" height="32" />
-						<div>Login with Google</div>
-					</button>
-				</div>
-
-				<div class="mt-6 mb-4 flex items-center">
-					<hr class="flex-auto border-t-2" />
-
-					<span class="px-4 font-sans font-light"> OR </span>
-
-					<hr class="flex-auto border-t-2" />
-				</div>
+				<hr class="border-t-2 my-6" />
 
 				<TextInput
 					form={loginForm}

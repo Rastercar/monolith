@@ -8,7 +8,7 @@
 
 {#if user}
 	<button
-		class="btn hover:variant-soft-primary"
+		class="btn hover:variant-filled-primary"
 		use:popup={{
 			event: 'click',
 			target: 'theme',
@@ -20,7 +20,7 @@
 		<Icon icon="mdi:user" width="32" height="32" />
 	</button>
 
-	<div class="card p-4 w-48 shadow-xl" data-popup="theme">
+	<div class="card p-4 w-60 shadow-xl" data-popup="theme">
 		<div class="truncate text-ellipsis text-lg">
 			{user.username}
 		</div>

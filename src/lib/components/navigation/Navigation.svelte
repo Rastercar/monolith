@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 
 	let clazz: string = '';
@@ -6,12 +7,28 @@
 
 	const drawerStore = getDrawerStore();
 	const closeDrawer = () => drawerStore.close();
+
+	const routes = [
+		{ href: '/', label: 'Home' },
+		{ href: '/client', label: 'Client' },
+		{ href: '/auth/sign-in', label: 'Auth' }
+	];
+
+	$page.url.pathname;
 </script>
 
 <nav class={`list-nav ${clazz || ''}`} data-sveltekit-preload-data="off">
 	<ul>
-		<li><a href="/" on:click={closeDrawer}>Home</a></li>
-		<li><a href="/client" on:click={closeDrawer}>Client</a></li>
-		<li><a href="/auth/sign-in" on:click={closeDrawer}>Sign In</a></li>
+		{#each routes as { href, label }}
+			<li>
+				<a
+					{href}
+					class:bg-surface-200-700-token={$page.url.pathname === href}
+					on:click={closeDrawer}
+				>
+					{label}
+				</a>
+			</li>
+		{/each}
 	</ul>
 </nav>

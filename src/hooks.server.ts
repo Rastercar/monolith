@@ -1,5 +1,5 @@
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
-import { NO_PAGE_METADATA } from '$lib/constants/error_codes';
+import { NO_PAGE_METADATA } from '$lib/constants/error-codes';
 import { redirect, type Handle } from '@sveltejs/kit';
 
 type route = '/' | '/auth/sign-in' | '/auth/sign-out' | '/error/internal' | '/client';

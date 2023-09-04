@@ -1,4 +1,4 @@
-import { NO_PAGE_METADATA } from '$lib/constants/error_codes';
+import { NO_PAGE_METADATA } from '$lib/constants/error-codes';
 import type { PageLoad } from './$types';
 
 const errorCodeToMessage: Record<string, string> = {

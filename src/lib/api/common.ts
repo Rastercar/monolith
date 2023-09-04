@@ -1,7 +1,7 @@
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
-import { INVALID_SESSION, NO_SID_COOKIE } from '$lib/constants/error_codes';
+import { INVALID_SESSION, NO_SID_COOKIE } from '$lib/constants/error-codes';
 import wretch from 'wretch';
 import { WretchError } from 'wretch/resolver';
 

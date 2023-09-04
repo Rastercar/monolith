@@ -2,7 +2,13 @@ import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
 import { NO_PAGE_METADATA } from '$lib/constants/error-codes';
 import { redirect, type Handle } from '@sveltejs/kit';
 
-type route = '/' | '/auth/sign-in' | '/auth/sign-out' | '/error/internal' | '/client';
+type route =
+	| '/'
+	| '/auth/sign-in'
+	| '/auth/sign-up'
+	| '/auth/sign-out'
+	| '/error/internal'
+	| '/client';
 
 interface RouteMeta {
 	requiredAuth?: 'logged-in' | 'logged-off';
@@ -11,6 +17,7 @@ interface RouteMeta {
 const routesMeta: Record<route, RouteMeta> = {
 	'/': {},
 	'/auth/sign-in': { requiredAuth: 'logged-off' },
+	'/auth/sign-up': { requiredAuth: 'logged-off' },
 	'/auth/sign-out': { requiredAuth: 'logged-in' },
 	'/error/internal': {},
 	'/client': { requiredAuth: 'logged-in' }

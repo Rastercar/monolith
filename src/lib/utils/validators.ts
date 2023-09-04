@@ -1,6 +1,13 @@
 type validationResult = string | string[] | null | undefined;
 
 type validatorFn = (v: string) => validationResult;
+type simpleValidatorFn = (v: string) => boolean;
+
+export const withMessage = (validator: simpleValidatorFn, message: string): validatorFn => {
+	const validatorWithMessage = (v: string) => (validator(v) ? null : message);
+
+	return validatorWithMessage;
+};
 
 /**
  * Aggregates multiple validators into a single validator function,
@@ -42,3 +49,18 @@ export const isEmail = (v: string): boolean => {
 };
 
 export const isRequired = (v: string): boolean => !!v;
+
+export const isMinLen =
+	(min: number) =>
+	(v: string): boolean =>
+		v.length >= min;
+
+export const isMaxLen =
+	(max: number) =>
+	(v: string): boolean =>
+		v.length <= max;
+
+export const isMatchingRegex =
+	(regex: RegExp) =>
+	(v: string): boolean =>
+		regex.test(v);

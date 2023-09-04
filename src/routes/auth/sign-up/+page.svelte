@@ -3,7 +3,15 @@
 	import { apiSignIn } from '$lib/api/auth';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
-	import { isEmail, isRequired, withMessage } from '$lib/utils/validators';
+	import {
+		isEmail,
+		isMatchingRegex,
+		isMaxLen,
+		isMinLen,
+		isRequired,
+		validatorChain,
+		withMessage
+	} from '$lib/utils/validators';
 	import Icon from '@iconify/svelte';
 	import { LightSwitch, ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -14,10 +22,31 @@
 
 	const toastStore = getToastStore();
 
+	const usernameValidators = validatorChain([
+		withMessage(isRequired, 'username is required'),
+		withMessage(isMinLen(5), 'must contain at least 5 characters'),
+		withMessage(isMaxLen(60), 'must contain less than 60 characters'),
+		withMessage(isMatchingRegex(/^[A-Za-z]+$/), 'must contain only letters (a-z)')
+	]);
+
+	const passwordValidators = validatorChain([
+		withMessage(isRequired, 'password is required'),
+		withMessage(isMinLen(5), 'must contain at least 5 characters'),
+		withMessage(isMaxLen(120), 'must contain less than 120 characters'),
+		withMessage(isMatchingRegex(/[A-Z]/), 'must contain a uppercase character'),
+		withMessage(isMatchingRegex(/[a-z]/), 'must contain a lowercase character'),
+		withMessage(isMatchingRegex(/[0-9]/), 'must contain a number'),
+		withMessage(
+			isMatchingRegex(/[#?!@$%^&*-]/),
+			'must contain a especial character (eg: #?!@$%^&*-)'
+		)
+	]);
+
 	const loginForm = superForm(data.form, {
 		validators: {
 			email: withMessage(isEmail, 'invalid email address'),
-			password: withMessage(isRequired, 'password is required')
+			password: passwordValidators,
+			username: usernameValidators
 		}
 	});
 
@@ -124,6 +153,18 @@
 					disabled={isLoading}
 				/>
 
+				<!-- TODO: turn me into a password input and use me on the sign in page -->
+				<label class="label mt-4 mb-1">
+					<span class="text-sm">Password</span>
+					<div class="input-group grid-cols-[1fr_auto]">
+						<input placeholder="Password" />
+						<button type="button" class="btn p-0">
+							<Icon icon="mdi:eye" width="24" height="24" />
+						</button>
+					</div>
+				</label>
+
+				<!-- 
 				<TextInput
 					form={loginForm}
 					field="password"
@@ -131,7 +172,7 @@
 					type="password"
 					placeholder="password"
 					disabled={isLoading}
-				/>
+				/> -->
 
 				<div class="mt-4 flex justify-end">
 					<a

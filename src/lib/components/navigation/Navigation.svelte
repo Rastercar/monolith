@@ -11,7 +11,7 @@
 	const routes = [
 		{ href: '/', label: 'Home' },
 		{ href: '/client', label: 'Client' },
-		{ href: '/auth/sign-in', label: 'Auth' }
+		{ href: '/auth/sign-in', label: 'Sign in' }
 	];
 
 	$page.url.pathname;

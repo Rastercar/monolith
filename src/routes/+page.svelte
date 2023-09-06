@@ -17,7 +17,6 @@
 		<div class="border-t-2 border-surface-300-600-token" />
 
 		<div class="flex justify-center p-4">
-			<!-- TODO: rm me! -->
 			<button class="btn variant-filled" on:click={() => apiGetCurrentUser().then(console.log)}>
 				apiGetCurrentUser
 			</button>

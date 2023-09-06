@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { apiSignIn } from '$lib/api/auth';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
+	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
 	import {
@@ -12,41 +14,43 @@
 		validatorChain,
 		withMessage
 	} from '$lib/utils/validators';
-	import Icon from '@iconify/svelte';
-	import { LightSwitch, ProgressRadial, getToastStore } from '@skeletonlabs/skeleton';
+	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
+	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
+	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	const toastStore = getToastStore();
 
-	const usernameValidators = validatorChain([
-		withMessage(isRequired, 'username is required'),
-		withMessage(isMinLen(5), 'must contain at least 5 characters'),
-		withMessage(isMaxLen(60), 'must contain less than 60 characters'),
-		withMessage(isMatchingRegex(/^[A-Za-z]+$/), 'must contain only letters (a-z)')
-	]);
-
-	const passwordValidators = validatorChain([
-		withMessage(isRequired, 'password is required'),
-		withMessage(isMinLen(5), 'must contain at least 5 characters'),
-		withMessage(isMaxLen(120), 'must contain less than 120 characters'),
-		withMessage(isMatchingRegex(/[A-Z]/), 'must contain a uppercase character'),
-		withMessage(isMatchingRegex(/[a-z]/), 'must contain a lowercase character'),
-		withMessage(isMatchingRegex(/[0-9]/), 'must contain a number'),
-		withMessage(
-			isMatchingRegex(/[#?!@$%^&*-]/),
-			'must contain a especial character (eg: #?!@$%^&*-)'
-		)
-	]);
-
 	const loginForm = superForm(data.form, {
 		validators: {
 			email: withMessage(isEmail, 'invalid email address'),
-			password: passwordValidators,
-			username: usernameValidators
+			// TODO: see: https://github.com/ciscoheat/sveltekit-superforms/issues/125
+			passwordConfirmation: () => null,
+			password: validatorChain([
+				withMessage(isRequired, 'password is required'),
+				withMessage(isMinLen(5), 'must contain at least 5 characters'),
+				withMessage(isMaxLen(128), 'must contain less than 128 characters'),
+				withMessage(isMatchingRegex(/[A-Z]/), 'must contain a uppercase character'),
+				withMessage(isMatchingRegex(/[a-z]/), 'must contain a lowercase character'),
+				withMessage(isMatchingRegex(/[0-9]/), 'must contain a number'),
+				withMessage(
+					isMatchingRegex(/[#?!@$%^&*-]/),
+					'must contain a especial character (eg: #?!@$%^&*-)'
+				)
+			]),
+			username: validatorChain([
+				withMessage(isRequired, 'username is required'),
+				withMessage(isMinLen(5), 'must contain at least 5 characters'),
+				withMessage(isMaxLen(32), 'must contain less than 32 characters'),
+				withMessage(
+					isMatchingRegex(/^[a-z0-9_]+$/),
+					'must contain only lowercase letters, numbers and underscores'
+				)
+			])
 		}
 	});
 
@@ -108,6 +112,12 @@
 	const handleSignIn = async () => {
 		const validated = await loginForm.validate();
 
+		loginForm.validate('passwordConfirmation', {
+			value: '',
+			errors: 'passwords do not match',
+			update: 'errors'
+		});
+
 		if (!validated.valid) {
 			loginForm.restore({ ...validated, tainted: undefined });
 			return;
@@ -117,95 +127,38 @@
 	};
 </script>
 
-<div class="flex min-h-screen">
-	<div
-		class="bg-surface-50-900-token relative hidden w-0 flex-1 items-center justify-center lg:flex lg:w-3/5"
-	>
-		<div class="mx-auto w-full h-full flex items-center justify-center max-w-4xl">
-			<img src="/img/login-page-bg.svg" alt="login-page-background" class="max-w-xl mx-auto" />
-		</div>
-	</div>
+<AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">
+	<TextInput
+		form={loginForm}
+		field="email"
+		label="Email"
+		placeholder="email address"
+		disabled={isLoading}
+	/>
 
-	<div
-		class="bg-surface-100-800-token relative flex flex-1 flex-col justify-center px-6 py-12 lg:w-2/5 lg:flex-none"
-	>
-		<div class="relative mx-auto w-full max-w-sm">
-			<div class="flex w-full items-center justify-between">
-				<a href="/" type="button" class="btn hover:text-primary-600-300-token px-0">
-					<Icon icon="mdi:keyboard-backspace" />
-					<span>Back to Home</span>
-				</a>
+	<TextInput
+		form={loginForm}
+		field="username"
+		label="Username"
+		placeholder="username"
+		disabled={isLoading}
+	/>
 
-				<LightSwitch />
-			</div>
+	<PasswordInput form={loginForm} field="password" disabled={isLoading} />
 
-			<div>
-				<h2 class="font-heading text-3xl font-medium mt-6">Welcome back.</h2>
-				<p class="font-alt text-sm font-normal mb-6">Sign in to the best car tracking app!</p>
+	<PasswordInput
+		form={loginForm}
+		label="Confirm Password"
+		placeholder="Confirm Password"
+		field="passwordConfirmation"
+		disabled={isLoading}
+	/>
 
-				<hr class="border-t-2 my-6" />
+	<LoadableButton
+		class="btn variant-filled-primary mt-4 w-full"
+		{isLoading}
+		on:click={handleSignIn}
+	/>
 
-				<TextInput
-					form={loginForm}
-					field="email"
-					label="Email"
-					placeholder="email address"
-					disabled={isLoading}
-				/>
-
-				<!-- TODO: turn me into a password input and use me on the sign in page -->
-				<label class="label mt-4 mb-1">
-					<span class="text-sm">Password</span>
-					<div class="input-group grid-cols-[1fr_auto]">
-						<input placeholder="Password" />
-						<button type="button" class="btn p-0">
-							<Icon icon="mdi:eye" width="24" height="24" />
-						</button>
-					</div>
-				</label>
-
-				<!-- 
-				<TextInput
-					form={loginForm}
-					field="password"
-					label="Password"
-					type="password"
-					placeholder="password"
-					disabled={isLoading}
-				/> -->
-
-				<div class="mt-4 flex justify-end">
-					<a
-						href="/auth/recover"
-						class="text-primary-700-200-token text-sm underline-offset-4 hover:underline"
-					>
-						Forgot your password?
-					</a>
-				</div>
-
-				<button
-					class="btn variant-filled-primary mt-4 w-full"
-					on:click={handleSignIn}
-					disabled={isLoading}
-				>
-					{#if isLoading}
-						<ProgressRadial value={undefined} width="w-6" />
-					{:else if loginForm.errors}
-						<div>sign in</div>
-					{/if}
-				</button>
-
-				<div class="mt-4 flex justify-between">
-					<span class="text-sm">Don't have an account?</span>
-
-					<a
-						href="/auth/sign-up"
-						class="text-primary-700-200-token text-sm underline-offset-4 hover:underline"
-					>
-						sign-up
-					</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+	<AuthRedirectLink linkLabel="sign-in" href="/auth/sign-in" question="Already have an account?" />
+</AuthPagesLayout>

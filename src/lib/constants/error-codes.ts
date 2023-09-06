@@ -15,3 +15,13 @@ export const NO_SID_COOKIE = 'NO_SID_COOKIE';
  * is expired or does not exist
  */
 export const INVALID_SESSION = 'INVALID_SESSION';
+
+/**
+ * a user could not be created because the username is in use
+ */
+export const USERNAME_IN_USE = 'USERNAME_IN_USE';
+
+/**
+ * a email could not be used to create a entity because the email is in use
+ */
+export const EMAIL_IN_USE = 'EMAIL_IN_USE';

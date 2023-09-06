@@ -10,7 +10,7 @@ const userSchema = z.object({
 	emailVerified: z.boolean(),
 	profilePicture: z.string().nullable(),
 	description: z.string(),
-	organizationId: z.number(),
+	organizationId: z.number().nullable(),
 	accessLevelId: z.number()
 });
 

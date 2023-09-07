@@ -19,7 +19,7 @@
 
 	const loginForm = superForm(data.form, {
 		validators: {
-			email: withMessage(isEmail, 'invalid email address'),
+			email: withMessage(isEmail, 'invalid email'),
 			password: withMessage(isRequired, 'password is required')
 		}
 	});

@@ -4,6 +4,7 @@ import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
 import { INVALID_SESSION, NO_SID_COOKIE } from '$lib/constants/error-codes';
 import wretch from 'wretch';
 import { WretchError } from 'wretch/resolver';
+import type { AnyZodObject } from 'zod';
 
 export const rastercarApi = wretch(PUBLIC_RASTERCAR_API_BASE_URL).options({
 	credentials: 'include'
@@ -47,4 +48,11 @@ export const redirectOnSessionError = (err: unknown) => {
 	}
 
 	throw err;
+};
+
+export const returnErrorStringOrParsedSchemaObj = <T>(res: T, schema: AnyZodObject): string | T => {
+	if (typeof res === 'string') return res;
+
+	schema.parse(res);
+	return res;
 };

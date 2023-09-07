@@ -1,22 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiSignIn } from '$lib/api/auth';
+	import { apiSignUp, type SignUpDto } from '$lib/api/auth';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
+	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
 	import { authStore } from '$lib/store/auth';
-	import {
-		isEmail,
-		isMatchingRegex,
-		isMaxLen,
-		isMinLen,
-		isRequired,
-		validatorChain,
-		withMessage
-	} from '$lib/utils/validators';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
+	import { z } from 'zod';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
@@ -25,81 +18,53 @@
 
 	const toastStore = getToastStore();
 
-	const loginForm = superForm(data.form, {
-		validators: {
-			email: withMessage(isEmail, 'invalid email address'),
-			// TODO: see: https://github.com/ciscoheat/sveltekit-superforms/issues/125
-			passwordConfirmation: () => null,
-			password: validatorChain([
-				withMessage(isRequired, 'password is required'),
-				withMessage(isMinLen(5), 'must contain at least 5 characters'),
-				withMessage(isMaxLen(128), 'must contain less than 128 characters'),
-				withMessage(isMatchingRegex(/[A-Z]/), 'must contain a uppercase character'),
-				withMessage(isMatchingRegex(/[a-z]/), 'must contain a lowercase character'),
-				withMessage(isMatchingRegex(/[0-9]/), 'must contain a number'),
-				withMessage(
-					isMatchingRegex(/[#?!@$%^&*-]/),
-					'must contain a especial character (eg: #?!@$%^&*-)'
-				)
-			]),
-			username: validatorChain([
-				withMessage(isRequired, 'username is required'),
-				withMessage(isMinLen(5), 'must contain at least 5 characters'),
-				withMessage(isMaxLen(32), 'must contain less than 32 characters'),
-				withMessage(
-					isMatchingRegex(/^[a-z0-9_]+$/),
-					'must contain only lowercase letters, numbers and underscores'
-				)
-			])
-		}
-	});
+	const validators = z
+		.object({
+			email: z.string().email(),
+			username: z
+				.string()
+				.min(5)
+				.max(32)
+				.regex(/^[a-z0-9_]+$/, 'must contain only lowercase letters, numbers and underscores'),
+			password: z
+				.string()
+				.min(5)
+				.max(128)
+				.regex(/[A-Z]/, 'must contain a uppercase character')
+				.regex(/[a-z]/, 'must contain a lowercase character')
+				.regex(/[0-9]/, 'must contain a number')
+				.regex(/[#?!@$%^&*-]/, 'must contain a especial character (eg: #?!@$%^&*-)'),
+			passwordConfirmation: z.string().min(5)
+		})
+		.refine((data) => data.password == data.passwordConfirmation, {
+			message: "Passwords didn't match",
+			path: ['passwordConfirmation']
+		});
 
-	const handleErrorResponse = (errorCode: string) => {
-		if (errorCode === 'invalid_password') {
-			loginForm.validate('password', { value: '', errors: 'wrong password', update: 'errors' });
-			return;
-		}
+	const loginForm = superForm(data.form, { validators });
 
-		if (errorCode === 'not_found') {
-			loginForm.validate('email', {
-				value: '',
-				errors: 'account with email not found',
-				update: 'errors'
-			});
-			return;
-		}
-	};
+	const handleSignUpError = (err: string) => {
+		const setFieldError = (field: 'email' | 'username', msg: string) => {
+			loginForm.validate(field, { value: '', errors: msg, update: 'errors' });
+		};
 
-	/**
-	 * if the login has succeeded and the user is being redirected
-	 */
-	let redirecting = false;
-
-	$: isLoading = redirecting || $mutation.isLoading;
-
-	const redirectAfterLogin = () => {
-		const routeToRedirect =
-			data.onSuccessRedirectTo === '/auth/sign-out' || data.onSuccessRedirectTo === null
-				? '/client'
-				: data.onSuccessRedirectTo;
-
-		goto(routeToRedirect).finally(() => (redirecting = false));
+		if (err === EMAIL_IN_USE) return setFieldError('email', 'email not available');
+		if (err === USERNAME_IN_USE) return setFieldError('username', 'username not available');
 	};
 
 	const mutation = createMutation({
-		mutationFn: (credentials: { email: string; password: string }) => apiSignIn(credentials),
+		mutationFn: (body: SignUpDto) => apiSignUp(body),
 		onSuccess: (res) => {
-			if (typeof res === 'string') {
-				handleErrorResponse(res);
-				return;
-			}
+			if (typeof res === 'string') return handleSignUpError(res);
 
 			redirecting = true;
 
 			authStore.update((v) => ({ ...v, user: res.user }));
 
 			// redirect a few frames after svelte updated the auth store
-			setTimeout(redirectAfterLogin, 100);
+			setTimeout(() => {
+				goto('/client').finally(() => (redirecting = false));
+			}, 100);
 		},
 		onError: () => {
 			toastStore.trigger({
@@ -109,22 +74,24 @@
 		}
 	});
 
-	const handleSignIn = async () => {
+	const handleSignUp = async () => {
 		const validated = await loginForm.validate();
 
-		loginForm.validate('passwordConfirmation', {
-			value: '',
-			errors: 'passwords do not match',
-			update: 'errors'
-		});
-
 		if (!validated.valid) {
-			loginForm.restore({ ...validated, tainted: undefined });
-			return;
+			return loginForm.restore({ ...validated, tainted: undefined });
 		}
 
-		$mutation.mutate(validated.data);
+		const { passwordConfirmation, ...requestBody } = validated.data;
+
+		$mutation.mutate(requestBody);
 	};
+
+	/**
+	 * if the sign up has succeeded and the user is being redirected
+	 */
+	let redirecting = false;
+
+	$: isLoading = redirecting || $mutation.isLoading;
 </script>
 
 <AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">
@@ -157,7 +124,7 @@
 	<LoadableButton
 		class="btn variant-filled-primary mt-4 w-full"
 		{isLoading}
-		on:click={handleSignIn}
+		on:click={handleSignUp}
 	/>
 
 	<AuthRedirectLink linkLabel="sign-in" href="/auth/sign-in" question="Already have an account?" />

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiSignIn } from '$lib/api/auth';
+	import { apiSignIn, type SignInDto } from '$lib/api/auth';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
@@ -25,27 +25,18 @@
 	});
 
 	const handleErrorResponse = (errorCode: string) => {
-		if (errorCode === 'invalid_password') {
-			loginForm.validate('password', { value: '', errors: 'wrong password', update: 'errors' });
-			return;
-		}
+		const setFieldError = (field: 'email' | 'password', msg: string) => {
+			loginForm.validate(field, { value: '', errors: msg, update: 'errors' });
+		};
 
 		if (errorCode === 'not_found') {
-			loginForm.validate('email', {
-				value: '',
-				errors: 'account with email not found',
-				update: 'errors'
-			});
-			return;
+			return setFieldError('email', 'account with email not found');
+		}
+
+		if (errorCode === 'invalid_password') {
+			return setFieldError('password', 'wrong password');
 		}
 	};
-
-	/**
-	 * if the login has succeeded and the user is being redirected
-	 */
-	let redirecting = false;
-
-	$: isLoading = redirecting || $mutation.isLoading;
 
 	const redirectAfterLogin = () => {
 		const routeToRedirect =
@@ -57,7 +48,7 @@
 	};
 
 	const mutation = createMutation({
-		mutationFn: (credentials: { email: string; password: string }) => apiSignIn(credentials),
+		mutationFn: (credentials: SignInDto) => apiSignIn(credentials),
 		onSuccess: (res) => {
 			if (typeof res === 'string') {
 				handleErrorResponse(res);
@@ -89,6 +80,13 @@
 
 		$mutation.mutate(validated.data);
 	};
+
+	/**
+	 * if the login has succeeded and the user is being redirected
+	 */
+	let redirecting = false;
+
+	$: isLoading = redirecting || $mutation.isLoading;
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">
@@ -104,7 +102,7 @@
 
 	<div class="mt-4 flex justify-end">
 		<a
-			href="/auth/recover"
+			href="/auth/recover-password"
 			class="text-primary-700-200-token text-sm underline-offset-4 hover:underline"
 		>
 			Forgot your password?

@@ -14,6 +14,6 @@
 	<span class={classes}>
 		{#if errors}{errors}{:else}{''}{/if}
 	</span>
-{:else if errors}
-	<span class={classes}>{errors}</span>
+{:else if errors && errors.length > 0}
+	<span class={classes}>{errors[0]}</span>
 {/if}

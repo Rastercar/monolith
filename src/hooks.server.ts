@@ -1,5 +1,4 @@
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
-import { NO_PAGE_METADATA } from '$lib/constants/error-codes';
 import { redirect, type Handle } from '@sveltejs/kit';
 
 type route =
@@ -7,7 +6,7 @@ type route =
 	| '/auth/sign-in'
 	| '/auth/sign-up'
 	| '/auth/sign-out'
-	| '/error/internal'
+	| '/auth/recover-password'
 	| '/client';
 
 interface RouteMeta {
@@ -19,16 +18,16 @@ const routesMeta: Record<route, RouteMeta> = {
 	'/auth/sign-in': { requiredAuth: 'logged-off' },
 	'/auth/sign-up': { requiredAuth: 'logged-off' },
 	'/auth/sign-out': { requiredAuth: 'logged-in' },
-	'/error/internal': {},
+	'/auth/recover-password': { requiredAuth: 'logged-off' },
 	'/client': { requiredAuth: 'logged-in' }
 };
+
+const defaultRouteMeta = {};
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname as route;
 
-	const routeMeta = routesMeta[path];
-
-	if (!routeMeta) throw redirect(303, `/error/internal?error_code=${NO_PAGE_METADATA}`);
+	const routeMeta = routesMeta[path] ?? defaultRouteMeta;
 
 	const sessionId = event.cookies.get(SESSION_ID_COOKIE_KEY);
 	const isLoggedIn = !!sessionId;

@@ -11,6 +11,6 @@
 	{#if isLoading}
 		<ProgressRadial value={undefined} width="w-6" />
 	{:else}
-		sign in
+		<slot />
 	{/if}
 </button>

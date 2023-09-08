@@ -125,7 +125,9 @@
 		class="btn variant-filled-primary mt-4 w-full"
 		{isLoading}
 		on:click={handleSignUp}
-	/>
+	>
+		sign up
+	</LoadableButton>
 
 	<AuthRedirectLink linkLabel="sign-in" href="/auth/sign-in" question="Already have an account?" />
 </AuthPagesLayout>

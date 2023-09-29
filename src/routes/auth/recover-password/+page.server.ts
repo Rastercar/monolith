@@ -21,8 +21,7 @@ export const actions = {
 
 		const { email } = form.data;
 
-		// TODO:
-		console.log(email);
+		// TODO: call the rastercar api to fire the email
 
 		return { form, success: true };
 	}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ErrorMessage from '$lib/components/input/ErrorMessage.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
@@ -9,13 +10,13 @@
 
 	const recoverForm = superForm(data.form);
 
-	const title = form?.success ? 'Success !' : 'Recover Password';
+	const success = form?.error === null;
 
-	const subtitle = form?.success
+	const title = success ? 'Success !' : 'Recover Password';
+
+	const subtitle = success
 		? 'Follow the instructions sent to your email address'
 		: 'Inform your account email address to receive password recovery instructions';
-
-	// TODO: server side validation, responses etc, check email exists (send and deal with EMAIL_NOT_FOUND response)
 </script>
 
 <div class="h-full flex justify-center">
@@ -25,7 +26,7 @@
 			{subtitle}
 		</p>
 
-		{#if form?.success}
+		{#if success}
 			<a href="/" class="btn variant-filled mt-4 w-full">back to home</a>
 		{:else}
 			<form method="post">
@@ -35,6 +36,9 @@
 					label="Your account email"
 					placeholder="email address"
 				/>
+				{#if form?.error === 'not_found'}
+					<ErrorMessage errors={['user not found with this email']} />
+				{/if}
 
 				<button class="btn variant-filled-primary mt-4 w-full"> recover password </button>
 			</form>

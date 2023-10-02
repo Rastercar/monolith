@@ -4,6 +4,7 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
+	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
 	import { isEmail, isRequired, withMessage } from '$lib/utils/validators';
 	import { getToastStore } from '@skeletonlabs/skeleton';
@@ -62,12 +63,7 @@
 			// redirect a few frames after svelte updated the auth store
 			setTimeout(redirectAfterLogin, 100);
 		},
-		onError: () => {
-			toastStore.trigger({
-				message: 'a unknown error happened',
-				background: 'variant-filled-error'
-			});
-		}
+		onError: () => toastStore.trigger(genericError)
 	});
 
 	const handleSignIn = async () => {

@@ -7,6 +7,7 @@ type route =
 	| '/auth/sign-up'
 	| '/auth/sign-out'
 	| '/auth/recover-password'
+	| '/auth/change-password'
 	| '/client';
 
 interface RouteMeta {
@@ -19,6 +20,7 @@ const routesMeta: Record<route, RouteMeta> = {
 	'/auth/sign-up': { requiredAuth: 'logged-off' },
 	'/auth/sign-out': { requiredAuth: 'logged-in' },
 	'/auth/recover-password': { requiredAuth: 'logged-off' },
+	'/auth/change-password': {},
 	'/client': { requiredAuth: 'logged-in' }
 };
 

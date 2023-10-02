@@ -52,7 +52,7 @@
 			/>
 		{/if}
 		<button type="button" class="btn p-0" on:click={toggleInputType}>
-			<Icon icon="mdi:eye" width="24" height="24" />
+			<Icon icon={inputType === 'password' ? 'mdi:eye' : 'mdi:eye-off'} width="24" height="24" />
 		</button>
 	</div>
 </label>

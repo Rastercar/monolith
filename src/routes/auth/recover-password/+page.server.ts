@@ -1,9 +1,10 @@
+import { apiRequestRecoverPasswordEmail } from '$lib/api/auth';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 
-// TODO: remove default test user before going to prod
+// [PROD-TODO] remove default test user before going to prod
 const schema = z.object({
 	email: z.string().email().default('rastercar.tests.002@gmail.com')
 });
@@ -19,10 +20,10 @@ export const actions = {
 
 		if (!form.valid) return fail(400, { form });
 
-		const { email } = form.data;
+		const res = await apiRequestRecoverPasswordEmail(form.data.email);
 
-		// TODO: call the rastercar api to fire the email
+		const error: null | 'not_found' = res === 'not_found' ? 'not_found' : null;
 
-		return { form, success: true };
+		return { form, error };
 	}
 };

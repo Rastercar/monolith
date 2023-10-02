@@ -92,3 +92,26 @@ export const apiSignOut = async (): Promise<void> => {
  */
 export const apiGetCurrentUser = async (): Promise<User> =>
 	rastercarApi.get('/auth/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);
+
+/**
+ * requests a password recovery email to be sent to the email address if a user exists with said email
+ */
+export const apiRequestRecoverPasswordEmail = async (email: string): Promise<string> =>
+	rastercarApi
+		.post({ email }, '/auth/recover-password')
+		.notFound((err) => {
+			if (isApiErrorObject(err.json)) return 'not_found';
+			throw err;
+		})
+		.json<string>();
+
+interface RecoverPasswordByTokenDto {
+	newPassword: string;
+	passwordResetToken: string;
+}
+
+/**
+ * changes the password of the user that owns / is contained in the recover password token
+ */
+export const apiRecoverPasswordByToken = async (body: RecoverPasswordByTokenDto): Promise<string> =>
+	rastercarApi.post(body, '/auth/change-password-by-recovery-token').json<string>();

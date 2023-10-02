@@ -5,7 +5,9 @@
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
+	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
+	import { passwordValidator } from '$lib/utils/zod-validators';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -26,26 +28,19 @@
 				.min(5)
 				.max(32)
 				.regex(/^[a-z0-9_]+$/, 'must contain only lowercase letters, numbers and underscores'),
-			password: z
-				.string()
-				.min(5)
-				.max(128)
-				.regex(/[A-Z]/, 'must contain a uppercase character')
-				.regex(/[a-z]/, 'must contain a lowercase character')
-				.regex(/[0-9]/, 'must contain a number')
-				.regex(/[#?!@$%^&*-]/, 'must contain a especial character (eg: #?!@$%^&*-)'),
+			password: passwordValidator,
 			passwordConfirmation: z.string().min(5)
 		})
-		.refine((data) => data.password == data.passwordConfirmation, {
+		.refine((data) => data.password === data.passwordConfirmation, {
 			message: "Passwords didn't match",
 			path: ['passwordConfirmation']
 		});
 
-	const loginForm = superForm(data.form, { validators });
+	const form = superForm(data.form, { validators });
 
 	const handleSignUpError = (err: string) => {
 		const setFieldError = (field: 'email' | 'username', msg: string) => {
-			loginForm.validate(field, { value: '', errors: msg, update: 'errors' });
+			form.validate(field, { value: '', errors: msg, update: 'errors' });
 		};
 
 		if (err === EMAIL_IN_USE) return setFieldError('email', 'email not available');
@@ -66,19 +61,14 @@
 				goto('/client').finally(() => (redirecting = false));
 			}, 100);
 		},
-		onError: () => {
-			toastStore.trigger({
-				message: 'a unknown error happened',
-				background: 'variant-filled-error'
-			});
-		}
+		onError: () => toastStore.trigger(genericError)
 	});
 
 	const handleSignUp = async () => {
-		const validated = await loginForm.validate();
+		const validated = await form.validate();
 
 		if (!validated.valid) {
-			return loginForm.restore({ ...validated, tainted: undefined });
+			return form.restore({ ...validated, tainted: undefined });
 		}
 
 		const { passwordConfirmation, ...requestBody } = validated.data;
@@ -95,26 +85,14 @@
 </script>
 
 <AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">
-	<TextInput
-		form={loginForm}
-		field="email"
-		label="Email"
-		placeholder="email address"
-		disabled={isLoading}
-	/>
+	<TextInput {form} field="email" label="Email" placeholder="email address" disabled={isLoading} />
 
-	<TextInput
-		form={loginForm}
-		field="username"
-		label="Username"
-		placeholder="username"
-		disabled={isLoading}
-	/>
+	<TextInput {form} field="username" label="Username" placeholder="username" disabled={isLoading} />
 
-	<PasswordInput form={loginForm} field="password" disabled={isLoading} />
+	<PasswordInput {form} field="password" disabled={isLoading} />
 
 	<PasswordInput
-		form={loginForm}
+		{form}
 		label="Confirm Password"
 		placeholder="Confirm Password"
 		field="passwordConfirmation"

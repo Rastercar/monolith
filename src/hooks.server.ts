@@ -1,46 +1,38 @@
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
 import { redirect, type Handle } from '@sveltejs/kit';
 
-type route =
-	| '/'
-	| '/auth/sign-in'
-	| '/auth/sign-up'
-	| '/auth/sign-out'
-	| '/auth/recover-password'
-	| '/auth/change-password'
-	| '/client';
-
 interface RouteMeta {
 	requiredAuth?: 'logged-in' | 'logged-off';
 }
 
-const routesMeta: Record<route, RouteMeta> = {
-	'/': {},
+const routesMeta: Record<string, RouteMeta> = {
 	'/auth/sign-in': { requiredAuth: 'logged-off' },
 	'/auth/sign-up': { requiredAuth: 'logged-off' },
 	'/auth/sign-out': { requiredAuth: 'logged-in' },
-	'/auth/recover-password': { requiredAuth: 'logged-off' },
-	'/auth/change-password': {},
-	'/client': { requiredAuth: 'logged-in' }
+	'/auth/recover-password': { requiredAuth: 'logged-off' }
 };
 
-const defaultRouteMeta = {};
-
 export const handle: Handle = async ({ event, resolve }) => {
-	const path = event.url.pathname as route;
+	const path = event.url.pathname;
 
-	const routeMeta = routesMeta[path] ?? defaultRouteMeta;
+	const routeMeta = routesMeta[path] ?? {};
 
 	const sessionId = event.cookies.get(SESSION_ID_COOKIE_KEY);
 	const isLoggedIn = !!sessionId;
 
 	event.locals.sessionId = sessionId;
 
-	if (routeMeta.requiredAuth === 'logged-in' && !isLoggedIn) {
+	let requiredAuth = routeMeta.requiredAuth;
+
+	if (path.startsWith('/client') && !requiredAuth) {
+		requiredAuth = 'logged-in';
+	}
+
+	if (requiredAuth === 'logged-in' && !isLoggedIn) {
 		throw redirect(303, `/auth/sign-in?redirect=${path}`);
 	}
 
-	if (routeMeta.requiredAuth === 'logged-off' && isLoggedIn && path !== '/') {
+	if (requiredAuth === 'logged-off' && isLoggedIn && path !== '/') {
 		throw redirect(303, '/');
 	}
 

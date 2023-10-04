@@ -1,10 +1,31 @@
 import { z } from 'zod';
 import {
-	isApiErrorObject,
+	fallthroughApiErrorMessage,
 	rastercarApi,
 	redirectOnSessionError,
+	returnErrorCodeOnApiError,
 	returnErrorStringOrParsedSchemaObj
 } from './common';
+
+export const accessLevelSchema = z.object({
+	id: z.number(),
+	createdAt: z.string(),
+	updatedAt: z.null(),
+	name: z.string(),
+	description: z.string(),
+	isFixed: z.boolean(),
+	permissions: z.array(z.string())
+});
+
+export const organizationSchema = z.object({
+	id: z.number(),
+	createdAt: z.string(),
+	updatedAt: z.string().nullable(),
+	name: z.string(),
+	billingEmail: z.string(),
+	blocked: z.boolean(),
+	billingEmailVerified: z.boolean()
+});
 
 const userSchema = z.object({
 	id: z.number(),
@@ -15,8 +36,8 @@ const userSchema = z.object({
 	emailVerified: z.boolean(),
 	profilePicture: z.string().nullable(),
 	description: z.string().nullable(),
-	organizationId: z.number().nullable(),
-	accessLevelId: z.number()
+	accessLevel: accessLevelSchema,
+	organization: organizationSchema
 });
 
 const signInUpResponseSchema = z.object({ user: userSchema });
@@ -39,14 +60,8 @@ type SignRequestResponse = SignInUpResponse | 'not_found' | 'invalid_password';
 export const apiSignIn = async (credentials: SignInDto): Promise<SignRequestResponse> => {
 	const response = await rastercarApi
 		.post(credentials, '/auth/sign-in')
-		.notFound((err) => {
-			if (isApiErrorObject(err.json)) return 'not_found';
-			throw err;
-		})
-		.unauthorized((err) => {
-			if (isApiErrorObject(err.json)) return 'invalid_password';
-			throw err;
-		})
+		.notFound(returnErrorCodeOnApiError('not_found'))
+		.unauthorized(returnErrorCodeOnApiError('invalid_password'))
 		.json<SignRequestResponse>();
 
 	if (typeof response === 'string') return response;
@@ -66,16 +81,14 @@ export interface SignUpDto {
  * for the new org, on success a session cookie will be set and the user will be
  * authenticated for subsequent requests
  */
-export const apiSignUp = async (body: SignUpDto): Promise<SignInUpResponse | string> => {
-	return rastercarApi
+export const apiSignUp = async (body: SignUpDto): Promise<SignInUpResponse | string> =>
+	rastercarApi
 		.post(body, '/auth/sign-up')
-		.badRequest((err) => {
-			if (isApiErrorObject(err.json)) return err.json.error;
-			throw err;
-		})
-		.json<SignInUpResponse>()
+		.badRequest(fallthroughApiErrorMessage)
+		// since we caught a possible badRequestError and returned its error message above
+		// the response type might be SignInUpResponse | string
+		.json<SignInUpResponse | string>()
 		.then((res) => returnErrorStringOrParsedSchemaObj(res, signInUpResponseSchema));
-};
 
 /**
  * signs out the current rastercar user session, this endpoint makes the user respond
@@ -99,10 +112,7 @@ export const apiGetCurrentUser = async (): Promise<User> =>
 export const apiRequestRecoverPasswordEmail = async (email: string): Promise<string> =>
 	rastercarApi
 		.post({ email }, '/auth/recover-password')
-		.notFound((err) => {
-			if (isApiErrorObject(err.json)) return 'not_found';
-			throw err;
-		})
+		.notFound(returnErrorCodeOnApiError('not_found'))
 		.json<string>();
 
 interface RecoverPasswordByTokenDto {

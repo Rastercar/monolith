@@ -1,5 +1,5 @@
 <script>
-	// [PROD-TODO]
+	// [PROD-TODO] remove this page
 	import { apiGetCurrentUser } from '$lib/api/auth';
 	import Navigation from '$lib/components/navigation/Navigation.svelte';
 	import { LightSwitch } from '@skeletonlabs/skeleton';

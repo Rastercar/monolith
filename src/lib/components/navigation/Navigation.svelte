@@ -11,6 +11,7 @@
 	const routes = [
 		{ href: '/', label: 'Home' },
 		{ href: '/client', label: 'Client' },
+		{ href: '/client/my-profile', label: 'My Profile' },
 		{ href: '/auth/sign-in', label: 'Sign in' },
 		{ href: '/auth/sign-up', label: 'Sign up' },
 		{ href: '/auth/sign-out', label: 'Sign out' },

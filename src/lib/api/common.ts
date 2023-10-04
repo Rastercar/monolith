@@ -56,3 +56,17 @@ export const returnErrorStringOrParsedSchemaObj = <T>(res: T, schema: AnyZodObje
 	schema.parse(res);
 	return res;
 };
+
+/**
+ * return a error code if the error response is a standard api error
+ */
+export const returnErrorCodeOnApiError = (errorCode: string) => (err: WretchError) => {
+	if (isApiErrorObject(err.json)) return errorCode;
+};
+
+/**
+ * return the error message string if the error is a standard api error
+ */
+export const fallthroughApiErrorMessage = (err: WretchError) => {
+	if (isApiErrorObject(err.json)) return err.json.error;
+};

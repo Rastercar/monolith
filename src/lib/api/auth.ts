@@ -44,6 +44,10 @@ const signInUpResponseSchema = z.object({ user: userSchema });
 
 export type User = z.infer<typeof userSchema>;
 
+export type Organization = z.infer<typeof organizationSchema>;
+
+export type AccessLevel = z.infer<typeof accessLevelSchema>;
+
 type SignInUpResponse = z.infer<typeof signInUpResponseSchema>;
 
 export interface SignInDto {
@@ -114,6 +118,12 @@ export const apiRequestRecoverPasswordEmail = async (email: string): Promise<str
 		.post({ email }, '/auth/recover-password')
 		.notFound(returnErrorCodeOnApiError('not_found'))
 		.json<string>();
+
+/**
+ * requests a email address confirmation email to be sent to the email address if a user exists with said email
+ */
+export const apiRequestEmailAddressConfirmationEmail = async (email: string): Promise<string> =>
+	rastercarApi.post({ email }, '/auth/request-email-address-confirmation').json<string>();
 
 interface RecoverPasswordByTokenDto {
 	newPassword: string;

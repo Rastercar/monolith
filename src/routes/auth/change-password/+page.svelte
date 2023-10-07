@@ -32,13 +32,14 @@
 
 	let errorStatusCode: null | number = null;
 
+	const redirectToHomePage = () => {
+		redirecting = true;
+		goto('/client').finally(() => (redirecting = false));
+	};
+
 	const mutation = createMutation({
 		mutationFn: (newPassword: string) =>
 			apiRecoverPasswordByToken({ newPassword, passwordResetToken: data.passwordRecoveryToken }),
-		onSuccess: () => {
-			redirecting = true;
-			goto('/client').finally(() => (redirecting = false));
-		},
 		onError: (err) => {
 			if (err instanceof WretchError) {
 				errorStatusCode = err.response.status;
@@ -65,54 +66,63 @@
 
 <div class="h-full flex justify-center">
 	<div class="w-96">
-		<h1 class="mb-1 text-center text-3xl mt-12">Change Password</h1>
-
-		<PasswordInput
-			{form}
-			placeholder="New Password"
-			field="newPassword"
-			disabled={isLoading || errorStatusCode !== null}
-		/>
-
-		<PasswordInput
-			{form}
-			label="Confirm new password"
-			placeholder="Confirm new password"
-			field="passwordConfirmation"
-			disabled={isLoading || errorStatusCode !== null}
-		/>
-
-		{#if errorStatusCode === null}
-			<LoadableButton
-				{isLoading}
-				class="btn variant-filled-primary mt-4 w-full"
-				on:click={changePassword}
-			>
-				change password
-			</LoadableButton>
-
-			<AuthRedirectLink linkLabel="go back" href="/client" question="False alert?" />
+		{#if $mutation.isSuccess}
+			<div class="flex flex-col">
+				<h1 class="mb-1 text-3xl mt-12 flex text-center">password changed successfully !</h1>
+				<button class="btn variant-filled-primary mt-4 mx-auto" on:click={redirectToHomePage}>
+					go to home page
+				</button>
+			</div>
 		{:else}
-			<aside class="alert variant-filled-error mt-4 mb-2">
-				<Icon icon="mdi:alert" width="32" height="32" />
+			<h1 class="mb-1 text-center text-3xl mt-12">Change Password</h1>
 
-				<p class="alert-message">
-					{errorStatusCode === 401 || errorStatusCode === 404
-						? 'Your password reset token is invalid'
-						: 'A unknown error happened'}
-				</p>
-			</aside>
+			<PasswordInput
+				{form}
+				placeholder="New Password"
+				field="newPassword"
+				disabled={isLoading || errorStatusCode !== null}
+			/>
 
-			<span class="text-sm">
-				Please click
-				<a
-					href="/auth/recover-password"
-					class="text-primary-700-200-token underline-offset-4 hover:underline"
+			<PasswordInput
+				{form}
+				label="Confirm new password"
+				placeholder="Confirm new password"
+				field="passwordConfirmation"
+				disabled={isLoading || errorStatusCode !== null}
+			/>
+
+			{#if errorStatusCode === null}
+				<LoadableButton
+					{isLoading}
+					class="btn variant-filled-primary mt-4 w-full"
+					on:click={changePassword}
 				>
-					follow this link
-				</a>
-				to recover your password
-			</span>
+					change password
+				</LoadableButton>
+
+				<AuthRedirectLink linkLabel="go back" href="/client" question="False alert?" />
+			{:else}
+				<aside class="alert variant-filled-error mt-4 mb-2">
+					<Icon icon="mdi:alert" width="32" height="32" />
+
+					<p class="alert-message">
+						{errorStatusCode === 401 || errorStatusCode === 404
+							? 'Your password reset token is invalid'
+							: 'A unknown error happened'}
+					</p>
+				</aside>
+
+				<span class="text-sm">
+					Please click
+					<a
+						href="/auth/recover-password"
+						class="text-primary-700-200-token underline-offset-4 hover:underline"
+					>
+						follow this link
+					</a>
+					to recover your password
+				</span>
+			{/if}
 		{/if}
 	</div>
 </div>

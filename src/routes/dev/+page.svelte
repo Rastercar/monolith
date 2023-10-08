@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
 	// [PROD-TODO] remove this page
 	import { apiGetCurrentUser } from '$lib/api/auth';
-	import Navigation from '$lib/components/navigation/Navigation.svelte';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import Navigation from './components/Navigation.svelte';
 </script>
 
 <div class="h-full flex items-center justify-center">

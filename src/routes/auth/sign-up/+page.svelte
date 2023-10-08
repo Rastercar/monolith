@@ -54,7 +54,7 @@
 
 			redirecting = true;
 
-			authStore.update((v) => ({ ...v, user: res.user }));
+			authStore.setUser(res.user);
 
 			// redirect a few frames after svelte updated the auth store
 			setTimeout(() => {

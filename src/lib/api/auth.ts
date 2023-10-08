@@ -115,7 +115,7 @@ export const apiGetCurrentUser = async (): Promise<User> =>
  */
 export const apiRequestRecoverPasswordEmail = async (email: string): Promise<string> =>
 	rastercarApi
-		.post({ email }, '/auth/recover-password')
+		.post({ email }, '/auth/request-recover-password-email')
 		.notFound(returnErrorCodeOnApiError('not_found'))
 		.json<string>();
 
@@ -135,3 +135,9 @@ interface RecoverPasswordByTokenDto {
  */
 export const apiRecoverPasswordByToken = async (body: RecoverPasswordByTokenDto): Promise<string> =>
 	rastercarApi.post(body, '/auth/change-password-by-recovery-token').json<string>();
+
+/**
+ * confirms the email address of a user that owns the token (which was previously sent on a confirm address email)
+ */
+export const apiConfirmEmailAddressByToken = async (token: string): Promise<string> =>
+	rastercarApi.post({ token }, '/auth/confirm-email-address-by-token').json<string>();

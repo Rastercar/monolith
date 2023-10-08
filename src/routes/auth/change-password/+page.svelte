@@ -64,7 +64,7 @@
 	$: isLoading = redirecting || $mutation.isLoading;
 </script>
 
-<div class="h-full flex justify-center">
+<div class="h-full flex justify-center px-6">
 	<div class="w-96">
 		{#if $mutation.isSuccess}
 			<div class="flex flex-col">

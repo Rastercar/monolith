@@ -9,6 +9,7 @@
 	import { isEmail, isRequired, withMessage } from '$lib/utils/validators';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
+	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
@@ -58,7 +59,7 @@
 
 			redirecting = true;
 
-			authStore.update((v) => ({ ...v, user: res.user }));
+			authStore.setUser(res.user);
 
 			// redirect a few frames after svelte updated the auth store
 			setTimeout(redirectAfterLogin, 100);
@@ -76,6 +77,10 @@
 
 		$mutation.mutate(validated.data);
 	};
+
+	// clear the user whenever loading this page, since if this page could only be loaded
+	// if there is no current user session so any user on the auth store is outdated
+	onMount(authStore.clearUser);
 
 	/**
 	 * if the login has succeeded and the user is being redirected

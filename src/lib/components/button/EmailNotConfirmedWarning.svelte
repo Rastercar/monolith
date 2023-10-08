@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { apiRequestEmailAddressConfirmationEmail } from '$lib/api/auth';
+	import { awaitPromiseWithMinimumDelay } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -7,7 +8,8 @@
 	export let emailAddress: string;
 
 	const mutation = createMutation({
-		mutationFn: () => apiRequestEmailAddressConfirmationEmail(emailAddress)
+		mutationFn: () =>
+			awaitPromiseWithMinimumDelay(apiRequestEmailAddressConfirmationEmail(emailAddress), 1_500)
 	});
 
 	let dismissed = false;
@@ -15,8 +17,10 @@
 
 <div class="max-w-xs flex items-center space-x-2 text-sm" class:hidden={dismissed}>
 	{#if $mutation.isLoading}
-		<div class="text-secondary-500-400-token">sending confirmation email...</div>
-		<ProgressBar class="w-14" />
+		<div class="text-secondary-500-400-token">
+			sending confirmation email
+			<ProgressBar class="mt-1" />
+		</div>
 	{:else if $mutation.isSuccess}
 		<span class="text-success-500-400-token flex items-center">
 			confirmation email sent to your inbox

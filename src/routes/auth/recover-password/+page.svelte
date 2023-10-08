@@ -19,7 +19,7 @@
 		: 'Inform your account email address to receive password recovery instructions';
 </script>
 
-<div class="h-full flex justify-center">
+<div class="h-full flex justify-center px-6">
 	<div class="w-96">
 		<h1 class="mb-1 text-center text-3xl mt-12">{title}</h1>
 		<p class="text-sm text-center text-surface-600-300-token mb-4">

@@ -5,4 +5,17 @@ interface AuthState {
 	user: User | null;
 }
 
-export const authStore = localStorageStore<AuthState>('auth', { user: null });
+const { subscribe, set, update } = localStorageStore<AuthState>('auth', { user: null });
+
+export const authStore = {
+	set,
+	update,
+	subscribe,
+	setUser: (user: User) => set({ user }),
+	clearUser: () => set({ user: null }),
+	setUserEmailAsVerified: () =>
+		update((v) => {
+			if (v.user) v.user.emailVerified = true;
+			return { user: v.user };
+		})
+};

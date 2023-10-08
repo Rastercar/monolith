@@ -17,7 +17,7 @@
 
 	onMount(() => {
 		// reset the global auth state
-		authStore.set({ user: null });
+		authStore.clearUser();
 
 		let deleteOnRastercarApiFailed = false;
 

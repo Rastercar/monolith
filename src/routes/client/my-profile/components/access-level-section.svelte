@@ -20,7 +20,7 @@
 		{accessLevel.description}
 	</h4>
 
-	<!-- TODO: decide on permissions enum so we can have a value -> description map -->
+	<!-- [PROD-TODO] decide on permissions enum so we can have a value -> description map -->
 	<div class="opacity-80">permissions:</div>
 	{#each accessLevel.permissions as permission}
 		<h4 class="opacity-90 text-sm line-clamp-4 mt-1">

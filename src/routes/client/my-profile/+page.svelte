@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { authStore } from '$lib/store/auth';
 	import AccessLevelSection from './components/access-level-section.svelte';
 	import OrgSection from './components/org-section.svelte';

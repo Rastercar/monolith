@@ -20,6 +20,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const sessionId = event.cookies.get(SESSION_ID_COOKIE_KEY);
 	const isLoggedIn = !!sessionId;
 
+	const startingPointPage = isLoggedIn ? '/client' : '/auth/sign-in';
+
 	event.locals.sessionId = sessionId;
 
 	let requiredAuth = routeMeta.requiredAuth;
@@ -28,12 +30,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 		requiredAuth = 'logged-in';
 	}
 
+	if (path === '/') {
+		throw redirect(303, startingPointPage);
+	}
+
 	if (requiredAuth === 'logged-in' && !isLoggedIn) {
 		throw redirect(303, `/auth/sign-in?redirect=${path}`);
 	}
 
 	if (requiredAuth === 'logged-off' && isLoggedIn && path !== '/') {
-		throw redirect(303, '/');
+		throw redirect(303, startingPointPage);
 	}
 
 	return resolve(event);

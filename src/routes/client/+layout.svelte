@@ -1,20 +1,13 @@
 <script lang="ts">
 	import DrawerHamburgerButton from '$lib/components/button/DrawerHamburgerButton.svelte';
 	import AppBarUserMenu from '$lib/components/menu/AppBarUserMenu.svelte';
-	import Navigation from '$lib/components/navigation/Navigation.svelte';
-	import { AppBar, AppShell, Drawer, LightSwitch } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
-
-	onMount(() => {
-		document.body.setAttribute('data-theme', 'rastercar');
-	});
+	import { AppBar, AppShell, LightSwitch } from '@skeletonlabs/skeleton';
+	import MobileNavigationDrawer from './layout/MobileNavigationDrawer.svelte';
+	import SidebarNavigation from './layout/SidebarNavigation.svelte';
 </script>
 
-<Drawer>
-	<h2 class="p-4">Navigation</h2>
-	<hr />
-	<Navigation class="mt-4" />
-</Drawer>
+<!-- Mobile drawer -->
+<MobileNavigationDrawer />
 
 <AppShell slotSidebarLeft="bg-surface-100-800-token w-0 lg:w-64">
 	<svelte:fragment slot="header">
@@ -35,7 +28,7 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="sidebarLeft">
-		<Navigation class="mt-4" />
+		<SidebarNavigation class="mt-4" />
 	</svelte:fragment>
 
 	<slot />

@@ -12,6 +12,8 @@ const routesMeta: Record<string, RouteMeta> = {
 	'/auth/recover-password': { requiredAuth: 'logged-off' }
 };
 
+const protectedRoutes = ['/client'];
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
 
@@ -26,7 +28,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	let requiredAuth = routeMeta.requiredAuth;
 
-	if (path.startsWith('/client') && !requiredAuth) {
+	if (protectedRoutes.some((route) => path.startsWith(route)) && !requiredAuth) {
 		requiredAuth = 'logged-in';
 	}
 

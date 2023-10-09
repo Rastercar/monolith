@@ -1,7 +1,7 @@
 <script lang="ts">
-	import DrawerHamburgerButton from '$lib/components/button/DrawerHamburgerButton.svelte';
-	import AppBarUserMenu from '$lib/components/menu/AppBarUserMenu.svelte';
 	import { AppBar, AppShell, LightSwitch } from '@skeletonlabs/skeleton';
+	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
+	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
 	import MobileNavigationDrawer from './layout/MobileNavigationDrawer.svelte';
 	import SidebarNavigation from './layout/SidebarNavigation.svelte';
 </script>
@@ -28,7 +28,7 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="sidebarLeft">
-		<SidebarNavigation class="mt-4" />
+		<SidebarNavigation />
 	</svelte:fragment>
 
 	<slot />

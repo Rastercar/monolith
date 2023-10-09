@@ -24,8 +24,8 @@
 	{/if}
 
 	<div class="mt-4 flex flex-wrap items-center justify-between">
-		<div>
-			<span class="opacity-80">email:</span>
+		<div class="flex items-center">
+			<Icon icon="mdi:email" class="mr-2 opacity-80" />
 			{user.email}
 		</div>
 

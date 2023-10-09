@@ -9,12 +9,12 @@
 <Drawer>
 	<h2 class="p-4 flex justify-between items-center">
 		Rastercar
-		<button class="btn btn-icon btn-icon-sm">
-			<Icon icon="mdi:close" height="24" on:click={() => drawerStore.close()} />
+		<button class="btn btn-icon btn-icon-sm" on:click={() => drawerStore.close()}>
+			<Icon icon="mdi:close" height="24" />
 		</button>
 	</h2>
 
 	<hr />
 
-	<SidebarNavigation class="mt-4" />
+	<SidebarNavigation />
 </Drawer>

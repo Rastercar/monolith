@@ -2,7 +2,7 @@
 	import type { User } from '$lib/api/auth';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import Icon from '@iconify/svelte';
-	import CreatedAtText from './created-at-text.svelte';
+	import CreatedAtText from './CreatedAtText.svelte';
 
 	export let user: User;
 </script>

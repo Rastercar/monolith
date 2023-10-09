@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Organization } from '$lib/api/auth';
 	import Icon from '@iconify/svelte';
-	import CreatedAtText from './created-at-text.svelte';
+	import CreatedAtText from './CreatedAtText.svelte';
 
 	export let organization: Organization;
 </script>

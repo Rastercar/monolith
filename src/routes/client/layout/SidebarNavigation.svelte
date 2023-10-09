@@ -18,8 +18,8 @@
 	];
 
 	const settingsRoutes: Route[] = [
-		{ href: '/client/profile', label: 'profile', icon: 'mdi:account-edit' },
-		{ href: '/client/sessions', label: 'sessions', icon: 'mdi:access-point' }
+		{ href: '/client/settings/profile', label: 'profile', icon: 'mdi:account-edit' },
+		{ href: '/client/settings/sessions', label: 'sessions', icon: 'mdi:access-point' }
 	];
 
 	$: isInSettingsRoute = $page.url.pathname.includes('/settings');

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { authStore } from '$lib/store/auth';
-	import AccessLevelSection from './components/access-level-section.svelte';
-	import OrgSection from './components/org-section.svelte';
-	import UserSection from './components/user-section.svelte';
+	import AccessLevelSection from './components/AccessLevelSection.svelte';
+	import OrgSection from './components/OrgSection.svelte';
+	import UserSection from './components/UserSection.svelte';
 </script>
 
 {#if $authStore.user}

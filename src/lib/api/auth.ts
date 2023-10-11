@@ -141,3 +141,26 @@ export const apiRecoverPasswordByToken = async (body: RecoverPasswordByTokenDto)
  */
 export const apiConfirmEmailAddressByToken = async (token: string): Promise<string> =>
 	rastercarApi.post({ token }, '/auth/confirm-email-address-by-token').json<string>();
+
+const userSessionSchema = z.object({
+	ip: z.string(),
+	publicId: z.number().positive(),
+	createdAt: z.string().datetime(),
+	expiresAt: z.string().datetime(),
+	userAgent: z.string(),
+	sameAsFromRequest: z.boolean()
+});
+
+export type UserSession = z.infer<typeof userSessionSchema>;
+
+/**
+ * list all sessions that belong to the currently logged in user
+ */
+export const apiGetUserSessions = async (): Promise<UserSession[]> =>
+	rastercarApi.get('/auth/sessions').json<UserSession[]>().then(z.array(userSessionSchema).parse);
+
+/**
+ * Deletes (signs out) of a user session by its public id
+ */
+export const apiDeleteSession = async (sessionPublicId: number): Promise<string> =>
+	rastercarApi.delete(`/auth/sign-out/${sessionPublicId}`).text();

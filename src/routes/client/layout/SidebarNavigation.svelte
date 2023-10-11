@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
-	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import NavList from './NavList.svelte';
-
-	const drawerStore = getDrawerStore();
 
 	interface Route {
 		href: string;
@@ -38,7 +35,7 @@
 			</a>
 		</div>
 
-		<NavList routes={settingsRoutes} />
+		<NavList routes={settingsRoutes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
 	{:else}
 		<NavList {routes} />
 

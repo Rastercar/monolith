@@ -20,6 +20,7 @@
     "@tailwindcss/forms": "0.5.5",
     "@tailwindcss/typography": "0.5.9",
     "@types/node": "20.5.6",
+    "@types/ua-parser-js": "^0.7.37",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "autoprefixer": "10.4.15",
@@ -43,6 +44,7 @@
   "dependencies": {
     "@floating-ui/dom": "^1.5.1",
     "@tanstack/svelte-query": "^4.33.0",
+    "ua-parser-js": "^1.0.36",
     "wretch": "^2.6.0"
   }
 }

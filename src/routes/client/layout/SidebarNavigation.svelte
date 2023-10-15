@@ -41,6 +41,8 @@
 
 		<hr class="my-4" />
 
-		<NavList routes={[{ href: '/client/settings', icon: 'mdi:settings', label: 'settings' }]} />
+		<NavList
+			routes={[{ href: '/client/settings/profile', icon: 'mdi:settings', label: 'settings' }]}
+		/>
 	{/if}
 </div>

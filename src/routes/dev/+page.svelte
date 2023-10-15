@@ -1,6 +1,6 @@
 <script lang="ts">
 	// [PROD-TODO] remove this page
-	import { apiGetCurrentUser } from '$lib/api/auth';
+	import { apiGetCurrentUser } from '$lib/api/user';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
 	import Navigation from './components/Navigation.svelte';
 </script>

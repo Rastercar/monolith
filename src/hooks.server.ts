@@ -14,6 +14,8 @@ const routesMeta: Record<string, RouteMeta> = {
 
 const protectedRoutes = ['/client'];
 
+const redirectRoutes: Record<string, string> = { '/client/settings': '/client/settings/profile' };
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
 
@@ -32,8 +34,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 		requiredAuth = 'logged-in';
 	}
 
+	const routeToRedirect = redirectRoutes[path];
+
 	if (path === '/') {
 		throw redirect(303, startingPointPage);
+	}
+
+	if (routeToRedirect) {
+		throw redirect(303, routeToRedirect);
 	}
 
 	if (requiredAuth === 'logged-in' && !isLoggedIn) {

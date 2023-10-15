@@ -2,7 +2,6 @@ import { z } from 'zod';
 import {
 	fallthroughApiErrorMessage,
 	rastercarApi,
-	redirectOnSessionError,
 	returnErrorCodeOnApiError,
 	returnErrorStringOrParsedSchemaObj
 } from './common';
@@ -27,7 +26,7 @@ export const organizationSchema = z.object({
 	billingEmailVerified: z.boolean()
 });
 
-const userSchema = z.object({
+export const userSchema = z.object({
 	id: z.number(),
 	createdAt: z.string().datetime(),
 	updatedAt: z.string().datetime().nullable(),
@@ -103,12 +102,6 @@ export const apiSignUp = async (body: SignUpDto): Promise<SignInUpResponse | str
 export const apiSignOut = async (): Promise<void> => {
 	await rastercarApi.post({}, '/auth/sign-out').text();
 };
-
-/**
- * gets the current user within the session id on the session ID cookie
- */
-export const apiGetCurrentUser = async (): Promise<User> =>
-	rastercarApi.get('/auth/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);
 
 /**
  * requests a password recovery email to be sent to the email address if a user exists with said email

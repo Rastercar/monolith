@@ -10,13 +10,10 @@
 
 <div class="sm:card sm:p-4 sm:rounded-lg">
 	<div class="flex space-x-4">
-		{#if !user.profilePicture}
+		{#if user.profilePicture}
 			<div class="h-32">
-				<Avatar
-					src="https://images.unsplash.com/photo-1617296538902-887900d9b592?ixid=M3w0Njc5ODF8MHwxfGFsbHx8fHx8fHx8fDE2ODc5NzExMDB8&ixlib=rb-4.0.3&w=128&h=128&auto=format&fit=crop"
-					width="w-32"
-					rounded="rounded-full"
-				/>
+				<!-- TODO: create secure S3 url for the profile picture -->
+				<Avatar src={user.profilePicture} width="w-32" rounded="rounded-full" />
 			</div>
 		{/if}
 

@@ -1,5 +1,7 @@
 <script lang="ts">
+	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
 	import { authStore } from '$lib/store/auth';
+	import { cloudFrontUrl } from '$lib/utils/url';
 
 	$: ({ user } = $authStore);
 </script>
@@ -9,6 +11,10 @@
 		<h1 class="text-2xl">My profile</h1>
 
 		<hr class="!mt-3" />
+
+		<FileDropzone
+			defaultSrc={user.profilePicture ? cloudFrontUrl(user.profilePicture) : undefined}
+		/>
 
 		<label class="label">
 			<span>Username</span>
@@ -22,7 +28,7 @@
 
 		<label class="label">
 			<span>description</span>
-			<textarea class="textarea" rows="4" value={user.description} />
+			<textarea class="textarea" rows="8" value={user.description} />
 		</label>
 	</div>
 {/if}

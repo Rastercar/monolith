@@ -1,28 +1,36 @@
 <script lang="ts">
 	import type { User } from '$lib/api/auth';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
+	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton';
-	import CreatedAtText from './CreatedAtText.svelte';
 
 	export let user: User;
 </script>
 
 <div class="sm:card sm:p-4 sm:rounded-lg">
 	<div class="flex space-x-4">
-		{#if user.profilePicture}
-			<div class="h-32">
-				<!-- TODO: create secure S3 url for the profile picture -->
-				<Avatar src={user.profilePicture} width="w-32" rounded="rounded-full" />
-			</div>
-		{/if}
+		<div class="h-32">
+			<Avatar
+				src={user.profilePicture
+					? cloudFrontUrl(user.profilePicture)
+					: '/img/no-pic-placeholder.png'}
+				width="w-32"
+				rounded="rounded-full"
+			/>
+		</div>
 
 		<div class="flex w-full">
 			<div>
 				<div class="flex justify-between">
 					<h1 class="text-2xl mb-2">{user.username}</h1>
 
-					<CreatedAtText date={user.createdAt} />
+					<a href="/client/settings/profile">
+						<button type="button" class="btn btn-sm variant-filled-primary">
+							<Icon icon="mdi:pencil" class="mr-2" />
+							Edit
+						</button>
+					</a>
 				</div>
 
 				{#if user.description}

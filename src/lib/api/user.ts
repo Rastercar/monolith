@@ -6,3 +6,9 @@ import { rastercarApi, redirectOnSessionError } from './common';
  */
 export const apiGetCurrentUser = async (): Promise<User> =>
 	rastercarApi.get('/user/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);
+
+/**
+ * TODO:
+ */
+export const updateUserProfilePicture = async (): Promise<User> =>
+	rastercarApi.get('/user/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);

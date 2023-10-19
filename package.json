@@ -44,6 +44,7 @@
   "dependencies": {
     "@floating-ui/dom": "^1.5.1",
     "@tanstack/svelte-query": "^4.33.0",
+    "svelte-easy-crop": "^2.0.1",
     "ua-parser-js": "^1.0.36",
     "wretch": "^2.6.0"
   }

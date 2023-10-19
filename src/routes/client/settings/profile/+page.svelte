@@ -12,7 +12,13 @@
 
 		<hr class="!mt-3" />
 
+		<!-- TODO: -->
 		<FileDropzone
+			deleteConfirmPrompt="Are you sure you want to delete your profile picture"
+			deleteMutationFn={async () => ''}
+			onDeleteSuccess={() => authStore.updateUser({ profilePicture: null })}
+			uploadMutationFn={async () => ''}
+			onUploadSuccess={(profilePicture) => authStore.updateUser({ profilePicture })}
 			defaultSrc={user.profilePicture ? cloudFrontUrl(user.profilePicture) : undefined}
 		/>
 

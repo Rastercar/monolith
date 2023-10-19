@@ -11,6 +11,9 @@ dependencies:
   '@tanstack/svelte-query':
     specifier: ^4.33.0
     version: 4.33.0(svelte@4.2.0)
+  svelte-easy-crop:
+    specifier: ^2.0.1
+    version: 2.0.1
   ua-parser-js:
     specifier: ^1.0.36
     version: 1.0.36
@@ -2131,6 +2134,10 @@ packages:
       - stylus
       - sugarss
     dev: true
+
+  /svelte-easy-crop@2.0.1:
+    resolution: {integrity: sha512-5cB5wif3DuP92u0etdxk3u0fbGwyNq5G4Dd454g3LeMdVn15oim2rlWPNcbgH5Jr1AJZI5k4Bsp70zbQ0lpNtg==}
+    dev: false
 
   /svelte-eslint-parser@0.33.0(svelte@4.2.0):
     resolution: {integrity: sha512-5awZ6Bs+Tb/zQwa41PSdcLynAVQTwW0HGyCBjtbAQ59taLZqDgQSMzRlDmapjZdDtzERm0oXDZNE0E+PKJ6ryg==}

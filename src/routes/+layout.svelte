@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
-	import { Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
+	import { Modal, Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import '../app.postcss';
 
@@ -17,6 +17,8 @@
 
 <QueryClientProvider client={queryClient}>
 	<Toast />
+
+	<Modal />
 
 	<slot />
 </QueryClientProvider>

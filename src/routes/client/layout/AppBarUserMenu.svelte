@@ -20,7 +20,7 @@
 		<Icon icon="mdi:user" width="32" height="32" />
 	</button>
 
-	<div class="card p-4 w-60 shadow-xl" data-popup="theme">
+	<div class="card p-4 w-60 shadow-xl !z-50" data-popup="theme">
 		<div class="truncate text-ellipsis text-lg">
 			{user.username}
 		</div>

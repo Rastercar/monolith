@@ -1,10 +1,13 @@
 <script lang="ts">
-	import CropperModal from './CropperModal.svelte';
-
-	import { fileIsImage } from '$lib/utils/file';
 	import Icon from '@iconify/svelte';
-	import { Avatar, getToastStore } from '@skeletonlabs/skeleton';
+	import {
+		Avatar,
+		getModalStore,
+		getToastStore,
+		type ModalComponent
+	} from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
+	import FileDropzoneCropper from './FileDropzoneCropper.svelte';
 
 	type UploadReturn = $$Generic;
 
@@ -23,6 +26,10 @@
 	export let deleteConfirmPrompt: string;
 
 	const toastStore = getToastStore();
+	const modalStore = getModalStore();
+
+	const uploadMutation = createMutation({ mutationFn: uploadMutationFn });
+	const deleteMutation = createMutation({ mutationFn: deleteMutationFn });
 
 	let newPhoto: null | { preview: string; file: File } = null;
 
@@ -32,6 +39,27 @@
 
 	const showErrorToast = (message: string) => {
 		toastStore.trigger({ message, background: 'variant-filled-error' });
+	};
+
+	const loadPreview = (file?: File) => {
+		if (!file) return showErrorToast('file is not a valid image');
+
+		const component: ModalComponent = {
+			ref: FileDropzoneCropper,
+			props: { image: URL.createObjectURL(file) }
+		};
+
+		modalStore.trigger({ component, type: 'component', response: onModalEvent });
+	};
+
+	const previewFile = (file: File) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+
+		reader.onloadend = () => {
+			if (typeof reader.result !== 'string') return;
+			newPhoto = { preview: reader.result, file };
+		};
 	};
 
 	const onDrop = (e: DragEvent) => {
@@ -44,19 +72,14 @@
 		loadPreview(target.files?.[0]);
 	};
 
-	const loadPreview = (file?: File) => {
-		file && fileIsImage(file) ? previewFile(file) : showErrorToast('file is not a valid image');
-	};
+	const onModalEvent = (response?: 'close' | { image: Blob }) => {
+		if (!response) return;
 
-	const previewFile = (file: File) => {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
+		modalStore.close();
 
-		reader.onloadend = () => {
-			if (typeof reader.result === 'string') {
-				newPhoto = { preview: reader.result, file };
-			}
-		};
+		if (typeof response === 'string') return;
+
+		previewFile(new File([response.image], 'picture.jpeg'));
 	};
 
 	const clearPreview = () => {
@@ -64,12 +87,10 @@
 		filePicker.value = '';
 	};
 
-	const mutation = createMutation({ mutationFn: uploadMutationFn });
-
 	const uploadFile = () => {
 		if (!newPhoto?.file) return;
 
-		$mutation
+		$uploadMutation
 			.mutateAsync(newPhoto.file)
 			.then((uploadResult) => onUploadSuccess(uploadResult))
 			.catch(() => showErrorToast('failed to upload picture'))
@@ -77,8 +98,6 @@
 				newPhoto = null;
 			});
 	};
-
-	const deleteMutation = createMutation({ mutationFn: deleteMutationFn });
 
 	const deleteFile = () => {
 		if (!confirm(deleteConfirmPrompt)) return;
@@ -92,7 +111,7 @@
 			});
 	};
 
-	$: overlayClass = isDraggingFile ? 'z-10 opacity-80' : '-z-10 opacity-0';
+	$: overlayClass = isDraggingFile ? 'opacity-80' : '-z-10 opacity-0';
 
 	$: containerClass = isDraggingFile
 		? 'border-slate-500 opacity-40'
@@ -102,7 +121,7 @@
 </script>
 
 <div
-	class={`flex bg-surface-300-600-token relative h-54 py-4 border-dashed border-2 rounded-lg z-20 ${containerClass}`}
+	class={`flex bg-surface-300-600-token relative h-54 py-4 border-dashed border-2 rounded-lg ${containerClass}`}
 	role="button"
 	tabindex="-1"
 	aria-label="dropzone"
@@ -135,22 +154,22 @@
 	<div class="w-sm absolute top-3 right-3 rounded-lg">
 		<div class:hidden={newPhoto === null}>
 			<button
-				disabled={$mutation.isLoading}
-				class="btn-icon btn-icon-sm bg-green-500 dark:bg-green-700 mr-2"
-				on:click={uploadFile}
-			>
-				<Icon
-					icon={$mutation.isLoading ? 'mdi:loading' : 'mdi:check'}
-					class={$mutation.isLoading ? 'animate-spin' : ''}
-				/>
-			</button>
-
-			<button
-				class="btn-icon btn-icon-sm bg-red-500 dark:bg-red-700"
-				disabled={$mutation.isLoading}
+				class="btn-icon btn-icon-sm bg-red-500 dark:bg-red-700 mr-2"
+				disabled={$uploadMutation.isLoading}
 				on:click={clearPreview}
 			>
 				<Icon icon="mdi:close" />
+			</button>
+
+			<button
+				disabled={$uploadMutation.isLoading}
+				class="btn-icon btn-icon-sm bg-green-500 dark:bg-green-700"
+				on:click={uploadFile}
+			>
+				<Icon
+					icon={$uploadMutation.isLoading ? 'mdi:loading' : 'mdi:check'}
+					class={$uploadMutation.isLoading ? 'animate-spin' : ''}
+				/>
 			</button>
 		</div>
 
@@ -161,7 +180,7 @@
 		>
 			<button
 				class="btn btn-sm variant-filled"
-				disabled={$mutation.isLoading}
+				disabled={$uploadMutation.isLoading}
 				on:click={() => filePicker.click()}
 			>
 				{hasPictureToShow ? 'edit' : 'add picture'}
@@ -171,7 +190,7 @@
 			{#if hasPictureToShow}
 				<button
 					class="btn btn-sm variant-filled-warning"
-					disabled={$mutation.isLoading}
+					disabled={$uploadMutation.isLoading}
 					on:click={() => deleteFile()}
 				>
 					remove
@@ -188,10 +207,4 @@
 			/>
 		</div>
 	</div>
-
-	<!-- 
-		TODO: finish me, when a file is dropped or selected, the cropper modal should open, and when the cropper modal finishes the resulting file should
-		be uploaded and set as the preview
-	 -->
-	<CropperModal />
 </div>

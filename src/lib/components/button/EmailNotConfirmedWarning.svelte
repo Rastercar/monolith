@@ -25,7 +25,7 @@
 		<span class="text-success-500-400-token flex items-center">
 			confirmation email sent to your inbox
 
-			<button class="btn-icon btn-icon-sm" on:click={() => (dismissed = true)}>
+			<button type="button" class="btn-icon btn-icon-sm" on:click={() => (dismissed = true)}>
 				<Icon icon="mdi:close" />
 			</button>
 		</span>
@@ -34,12 +34,16 @@
 			<Icon icon="mdi:error" class="mr-2" />
 			error verifying your email address
 
-			<button class="btn-icon btn-icon-sm" on:click={() => (dismissed = true)}>
+			<button type="button" class="btn-icon btn-icon-sm" on:click={() => (dismissed = true)}>
 				<Icon icon="mdi:close" />
 			</button>
 		</span>
 	{:else}
-		<button class="btn btn-sm variant-filled-warning py-1" on:click={() => $mutation.mutate()}>
+		<button
+			type="button"
+			class="btn btn-sm variant-filled-warning py-1"
+			on:click={() => $mutation.mutate()}
+		>
 			verify email
 		</button>
 	{/if}

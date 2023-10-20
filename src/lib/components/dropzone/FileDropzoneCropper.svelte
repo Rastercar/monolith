@@ -1,14 +1,18 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
+	import { getModalStore } from '@skeletonlabs/skeleton';
 	import Cropper from 'svelte-easy-crop';
 	import type { CropArea, DispatchEvents, Point } from 'svelte-easy-crop/types';
 
+	export let image: string | null = null;
+
 	let crop: Point = { x: 0, y: 0 };
 
-	let fileinput: HTMLInputElement;
 	let pixelCrop: CropArea | null = null;
 
-	let image: string | null = null;
-	let croppedImage: string | null = null;
+	let isCropping = false;
+
+	const modalStore = getModalStore();
 
 	const createImage = (url: string): Promise<HTMLImageElement> => {
 		return new Promise((resolve, reject) => {
@@ -19,8 +23,8 @@
 		});
 	};
 
-	const getCroppedImg = async () => {
-		if (!image || !pixelCrop) return;
+	const getCroppedImg = async (): Promise<Blob | null> => {
+		if (!image || !pixelCrop) return null;
 
 		const imgElement = await createImage(image);
 		const canvas = document.createElement('canvas');
@@ -35,7 +39,6 @@
 		ctx.drawImage(imgElement, 0, 0);
 
 		// croppedAreaPixels values are bounding box relative
-		// extract the cropped image using these values
 		const data = ctx.getImageData(pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height);
 
 		// set canvas width to final desired crop size - this will clear existing context
@@ -45,54 +48,51 @@
 		// paste generated image at the top left corner
 		ctx.putImageData(data, 0, 0);
 
-		canvas.toBlob((file) => {
-			croppedImage = file ? URL.createObjectURL(file) : null;
-		}, 'image/jpeg');
-	};
-
-	const loadImage = (file: File) => {
-		let reader = new FileReader();
-
-		reader.onload = () => {
-			if (typeof reader.result === 'string') image = reader.result;
-		};
-
-		reader.readAsDataURL(file);
-	};
-
-	const onFileSelected = (e: Event) => {
-		let target = e.target as HTMLInputElement;
-		const file = target?.files?.[0];
-
-		if (file) loadImage(file);
+		return new Promise((resolve) => {
+			canvas.toBlob((file) => {
+				resolve(file);
+			}, 'image/jpeg');
+		});
 	};
 
 	const previewCrop = (e: CustomEvent<DispatchEvents['cropcomplete']>) => {
 		pixelCrop = e.detail.pixels;
 	};
 
-	const clearImages = () => {
+	const close = () => {
 		image = null;
-		croppedImage = null;
+		$modalStore[0].response?.('close');
+	};
+
+	const onCropClick = async () => {
+		isCropping = true;
+
+		const croppedImg = await getCroppedImg().finally(() => {
+			isCropping = false;
+		});
+
+		if (croppedImg) {
+			$modalStore[0].response?.({ image: croppedImg });
+		}
 	};
 </script>
 
-{#if !image}
-	<input
-		type="file"
-		accept=".jpg, .jpeg, .png, .webp"
-		on:change={onFileSelected}
-		bind:this={fileinput}
-	/>
-{:else}
-	<div class="w-full h-[300px] relative" class:hidden={croppedImage}>
-		<Cropper {image} {crop} zoom={1} on:cropcomplete={previewCrop} aspect={1} cropShape="round" />
+<div class="bg-surface-500 p-2">
+	<div class="w-96 h-[500px] relative">
+		{#if image}
+			<Cropper {image} {crop} zoom={1} on:cropcomplete={previewCrop} aspect={1} cropShape="round" />
+		{/if}
 	</div>
 
-	{#if croppedImage}
-		<img src={croppedImage} alt="Cropped profile" />
-		<button type="button" on:click={clearImages}>Start over?</button>
-	{:else}
-		<button type="button" on:click={getCroppedImg}> Crop! </button>
-	{/if}
-{/if}
+	<div class="flex justify-end space-x-2">
+		<button type="button" class="btn btn-sm mt-2 variant-filled-warning" on:click={() => close()}>
+			<Icon icon="mdi:cancel" class="mr-2" />
+			cancel
+		</button>
+
+		<button type="button" class="btn btn-sm mt-2 variant-filled-primary" on:click={onCropClick}>
+			<Icon icon="mdi:camera" class="mr-2" />
+			looks good !
+		</button>
+	</div>
+</div>

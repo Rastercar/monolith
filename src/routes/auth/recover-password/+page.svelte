@@ -1,6 +1,8 @@
 <script lang="ts">
 	import ErrorMessage from '$lib/components/input/ErrorMessage.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
+	import { authStore } from '$lib/store/auth';
+	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { ActionData, PageData } from './$types';
@@ -17,6 +19,14 @@
 	const subtitle = success
 		? 'Follow the instructions sent to your email address'
 		: 'Inform your account email address to receive password recovery instructions';
+
+	onMount(() => {
+		// If the user is logged in, the email the account he wants to
+		// recover is most certainly the one he is currently logged as
+		if (user) recoverForm.form.set({ email: user.email });
+	});
+
+	$: ({ user } = $authStore);
 </script>
 
 <div class="h-full flex justify-center px-6">
@@ -43,7 +53,11 @@
 				<button class="btn variant-filled-primary mt-4 w-full"> recover password </button>
 			</form>
 
-			<AuthRedirectLink linkLabel="sign-in" href="/auth/sign-in" question="False alert?" />
+			{#if user}
+				<AuthRedirectLink linkLabel="go to home page" href="/client" question="False alert?" />
+			{:else}
+				<AuthRedirectLink linkLabel="sign-in" href="/auth/sign-in" question="False alert?" />
+			{/if}
 		{/if}
 	</div>
 </div>

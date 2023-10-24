@@ -1,3 +1,4 @@
+import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 import {
 	fallthroughApiErrorMessage,
@@ -49,10 +50,13 @@ export type AccessLevel = z.infer<typeof accessLevelSchema>;
 
 type SignInUpResponse = z.infer<typeof signInUpResponseSchema>;
 
-export interface SignInDto {
-	email: string;
-	password: string;
-}
+// [PROD-TODO] remove default test user
+export const signInSchema = z.object({
+	email: z.string().nonempty().email().default('rastercar.tests.002@gmail.com'),
+	password: z.string().nonempty().default('testuser')
+});
+
+export type SignInDto = z.infer<typeof signInSchema>;
 
 type SignRequestResponse = SignInUpResponse | 'not_found' | 'invalid_password';
 
@@ -73,11 +77,19 @@ export const apiSignIn = async (credentials: SignInDto): Promise<SignRequestResp
 	return response;
 };
 
-export interface SignUpDto {
-	email: string;
-	username: string;
-	password: string;
-}
+export const signUpSchema = z
+	.object({
+		email: z.string().email(),
+		username: usernameValidator,
+		password: passwordValidator,
+		passwordConfirmation: z.string().min(5)
+	})
+	.refine((data) => data.password === data.passwordConfirmation, {
+		message: "Passwords didn't match",
+		path: ['passwordConfirmation']
+	});
+
+export type SignUpDto = Omit<z.infer<typeof signUpSchema>, 'passwordConfirmation'>;
 
 /**
  * Signs up to rastercar, creating a new organization, user and root access level
@@ -118,10 +130,20 @@ export const apiRequestRecoverPasswordEmail = async (email: string): Promise<str
 export const apiRequestEmailAddressConfirmationEmail = async (email: string): Promise<string> =>
 	rastercarApi.post({ email }, '/auth/request-email-address-confirmation').json<string>();
 
-interface RecoverPasswordByTokenDto {
-	newPassword: string;
-	passwordResetToken: string;
-}
+export const recoverPasswordByTokenSchema = z
+	.object({
+		newPassword: passwordValidator,
+		passwordConfirmation: z.string().min(5)
+	})
+	.refine((data) => data.newPassword === data.passwordConfirmation, {
+		message: "Passwords didn't match",
+		path: ['passwordConfirmation']
+	});
+
+type RecoverPasswordByTokenDto = Omit<
+	z.infer<typeof recoverPasswordByTokenSchema>,
+	'passwordConfirmation'
+> & { passwordResetToken: string };
 
 /**
  * changes the password of the user that owns / is contained in the recover password token

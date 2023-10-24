@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiSignIn, type SignInDto } from '$lib/api/auth';
+	import { apiSignIn, signInSchema, type SignInDto } from '$lib/api/auth';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
-	import { isEmail, isRequired, withMessage } from '$lib/utils/validators';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
@@ -19,12 +18,7 @@
 
 	const toastStore = getToastStore();
 
-	const loginForm = superForm(data.form, {
-		validators: {
-			email: withMessage(isEmail, 'invalid email'),
-			password: withMessage(isRequired, 'password is required')
-		}
-	});
+	const loginForm = superForm(data.form, { validators: signInSchema });
 
 	const handleErrorResponse = (errorCode: string) => {
 		const setFieldError = (field: 'email' | 'password', msg: string) => {

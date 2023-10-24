@@ -142,7 +142,9 @@
 			rounded="rounded-full"
 		/>
 	{:else}
-		<div class="w-full items-center justify-center flex flex-col h-48">no picture</div>
+		<div class="w-full items-center justify-center flex flex-col h-48 pointer-events-none">
+			no picture
+		</div>
 	{/if}
 
 	<div
@@ -152,15 +154,7 @@
 	</div>
 
 	<div class="w-sm absolute top-3 right-3 rounded-lg">
-		<div class:hidden={newPhoto === null}>
-			<button
-				class="btn-icon btn-icon-sm bg-red-500 dark:bg-red-700 mr-2"
-				disabled={$uploadMutation.isLoading}
-				on:click={clearPreview}
-			>
-				<Icon icon="mdi:close" />
-			</button>
-
+		<div class:hidden={newPhoto === null} class="flex flex-col space-y-4">
 			<button
 				disabled={$uploadMutation.isLoading}
 				class="btn-icon btn-icon-sm bg-green-500 dark:bg-green-700"
@@ -171,6 +165,14 @@
 					class={$uploadMutation.isLoading ? 'animate-spin' : ''}
 				/>
 			</button>
+
+			<button
+				class="btn-icon btn-icon-sm bg-red-500 dark:bg-red-700"
+				disabled={$uploadMutation.isLoading}
+				on:click={clearPreview}
+			>
+				<Icon icon="mdi:close" />
+			</button>
 		</div>
 
 		<div
@@ -179,22 +181,20 @@
 			class:pointer-events-none={isDraggingFile}
 		>
 			<button
-				class="btn btn-sm variant-filled"
+				class="btn-icon btn-icon-sm variant-filled"
 				disabled={$uploadMutation.isLoading}
 				on:click={() => filePicker.click()}
 			>
-				{hasPictureToShow ? 'edit' : 'add picture'}
-				<Icon icon="mdi:pencil" class={hasPictureToShow ? 'ml-auto' : 'ml-2'} />
+				<Icon icon={hasPictureToShow ? 'mdi:pencil' : 'mdi:plus'} />
 			</button>
 
 			{#if hasPictureToShow}
 				<button
-					class="btn btn-sm variant-filled-warning"
+					class="btn-icon btn-icon-sm variant-filled-warning"
 					disabled={$uploadMutation.isLoading}
 					on:click={() => deleteFile()}
 				>
-					remove
-					<Icon icon="mdi:trash" class="ml-2" />
+					<Icon icon="mdi:trash" />
 				</button>
 			{/if}
 

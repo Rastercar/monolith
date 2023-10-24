@@ -55,5 +55,5 @@
 			<Icon icon={inputType === 'password' ? 'mdi:eye' : 'mdi:eye-off'} width="24" height="24" />
 		</button>
 	</div>
+	<ErrorMessage errors={$errors} />
 </label>
-<ErrorMessage errors={$errors} />

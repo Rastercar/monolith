@@ -10,18 +10,24 @@
 	export let field: FormPathLeaves<z.infer<T>>;
 	export let label: string;
 
+	let clazz = 'label mt-4 mb-1';
+	export { clazz as class };
+
+	export let inputClass = 'textarea mb-1';
+	export let labelClass = 'text-sm';
+
 	const { value, errors, constraints } = formFieldProxy(form, field);
 </script>
 
-<label class="label mt-4 mb-1">
-	<span class="text-sm">{label}</span>
+<label class={clazz}>
+	<span class={labelClass}>{label}</span>
 	<textarea
-		class="textarea mb-1"
+		class={inputClass}
 		name={field}
 		aria-invalid={$errors ? 'true' : undefined}
 		bind:value={$value}
 		{...$constraints}
 		{...$$restProps}
 	/>
+	<ErrorMessage errors={$errors} />
 </label>
-<ErrorMessage errors={$errors} />

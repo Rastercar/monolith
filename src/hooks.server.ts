@@ -8,8 +8,7 @@ interface RouteMeta {
 const routesMeta: Record<string, RouteMeta> = {
 	'/auth/sign-in': { requiredAuth: 'logged-off' },
 	'/auth/sign-up': { requiredAuth: 'logged-off' },
-	'/auth/sign-out': { requiredAuth: 'logged-in' },
-	'/auth/recover-password': { requiredAuth: 'logged-off' }
+	'/auth/sign-out': { requiredAuth: 'logged-in' }
 };
 
 const protectedRoutes = ['/client'];

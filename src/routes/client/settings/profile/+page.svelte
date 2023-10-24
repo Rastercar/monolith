@@ -1,31 +1,49 @@
 <script lang="ts">
-	import { removeUserProfilePicture, updateUserProfilePicture } from '$lib/api/user';
+	import { apiUpdateUser, updateUserBodySchema, type UpdateUserBody } from '$lib/api/user';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
-	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextArea from '$lib/components/input/TextArea.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
+	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
-	import { cloudFrontUrl } from '$lib/utils/url';
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
+	import ProfilePictureDropzone from './components/ProfilePictureDropzone.svelte';
 
 	export let data: PageData;
 
-	const form = superForm(data.form);
-
 	const toastStore = getToastStore();
 
-	const onUploadSuccess = (profilePicture: string) => {
-		toastStore.trigger({
-			message: 'profile picture changed successfully',
-			background: 'variant-filled-success'
-		});
-		authStore.updateUser({ profilePicture });
-	};
+	const form = superForm(data.form, { validators: updateUserBodySchema });
 
-	const onDeleteSuccess = () => authStore.updateUser({ profilePicture: null });
+	const mutation = createMutation({
+		mutationFn: (body: UpdateUserBody) => apiUpdateUser(body),
+
+		onSuccess: (updatedUser) => {
+			const { description, username, email } = updatedUser;
+			authStore.updateUser({ description, username, email });
+			toastStore.trigger({
+				message: 'profiled updated successfully',
+				background: 'variant-filled-success'
+			});
+		},
+
+		onError: () => toastStore.trigger(genericError)
+	});
+
+	const updateProfile = async () => {
+		const validated = await form.validate();
+
+		if (!validated.valid) {
+			form.restore({ ...validated, tainted: undefined });
+			return;
+		}
+
+		$mutation.mutate(validated.data);
+	};
 
 	onMount(() => {
 		if (!user) return;
@@ -42,36 +60,36 @@
 	<div class="p-6 max-w-4xl mx-auto">
 		<h1 class="text-2xl mb-3">My Profile</h1>
 
-		<FileDropzone
-			deleteConfirmPrompt="Are you sure you want to delete your profile picture"
-			{onDeleteSuccess}
-			{onUploadSuccess}
-			deleteMutationFn={removeUserProfilePicture}
-			uploadMutationFn={updateUserProfilePicture}
-			defaultSrc={user.profilePicture ? cloudFrontUrl(user.profilePicture) : undefined}
-		/>
+		<ProfilePictureDropzone />
 
-		<form class="space-y-4" method="post">
-			<div class="block sm:flex space-x-0 sm:space-x-4">
-				<TextInput {form} labelClass="label mt-4 mb-1 grow-0 sm:grow" field="email" label="Email" />
+		<div class="grid grid-cols-2 gap-4 my-4">
+			<TextInput {form} class="label sm:col-span-1 col-span-2" field="email" label="Email" />
 
-				<TextInput
-					{form}
-					labelClass="label mt-4 mb-1 grow-0 sm:grow"
-					field="username"
-					label="Username"
-				/>
-			</div>
+			<TextInput
+				{form}
+				class="label sm:col-span-1 col-span-2"
+				maxlength="32"
+				field="username"
+				label="Username"
+			/>
 
 			{#if !user.emailVerified}
-				<EmailNotConfirmedWarning emailAddress={user.email} />
+				<div class="mt-2 col-span-2">
+					<EmailNotConfirmedWarning emailAddress={user.email} />
+				</div>
 			{/if}
 
-			<TextArea {form} field="description" label="Description" rows="6" />
+			<TextArea class="label col-span-2" {form} field="description" label="Description" rows="6" />
+		</div>
 
-			<div class="flex justify-end">
-				<button type="submit" class="btn variant-filled-primary">update</button>
-			</div>
-		</form>
+		<div class="flex justify-end">
+			<LoadableButton
+				class="btn variant-filled-primary"
+				isLoading={$mutation.isLoading}
+				on:click={updateProfile}
+			>
+				update
+			</LoadableButton>
+		</div>
 	</div>
 {/if}

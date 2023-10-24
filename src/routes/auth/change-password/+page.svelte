@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiRecoverPasswordByToken } from '$lib/api/auth';
+	import { apiRecoverPasswordByToken, recoverPasswordByTokenSchema } from '$lib/api/auth';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import { genericError } from '$lib/constants/toasts';
-	import { passwordValidator } from '$lib/utils/zod-validators';
 	import Icon from '@iconify/svelte';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { WretchError } from 'wretch/resolver';
-	import { z } from 'zod';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
 
@@ -18,17 +16,7 @@
 
 	const toastStore = getToastStore();
 
-	const validators = z
-		.object({
-			newPassword: passwordValidator,
-			passwordConfirmation: z.string().min(5)
-		})
-		.refine((data) => data.newPassword === data.passwordConfirmation, {
-			message: "Passwords didn't match",
-			path: ['passwordConfirmation']
-		});
-
-	const form = superForm(data.form, { validators });
+	const form = superForm(data.form, { validators: recoverPasswordByTokenSchema });
 
 	let errorStatusCode: null | number = null;
 

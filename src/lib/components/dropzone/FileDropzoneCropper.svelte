@@ -78,7 +78,7 @@
 </script>
 
 <div class="bg-surface-500 p-2">
-	<div class="w-96 h-[500px] relative">
+	<div class="w-80 h-[500px] relative">
 		{#if image}
 			<Cropper {image} {crop} zoom={1} on:cropcomplete={previewCrop} aspect={1} cropShape="round" />
 		{/if}

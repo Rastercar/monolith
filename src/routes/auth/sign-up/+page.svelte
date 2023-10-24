@@ -1,17 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiSignUp, type SignUpDto } from '$lib/api/auth';
+	import { apiSignUp, signUpSchema, type SignUpDto } from '$lib/api/auth';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
 	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
-	import { passwordValidator } from '$lib/utils/zod-validators';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
-	import { z } from 'zod';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
@@ -20,23 +18,7 @@
 
 	const toastStore = getToastStore();
 
-	const validators = z
-		.object({
-			email: z.string().email(),
-			username: z
-				.string()
-				.min(5)
-				.max(32)
-				.regex(/^[a-z0-9_]+$/, 'must contain only lowercase letters, numbers and underscores'),
-			password: passwordValidator,
-			passwordConfirmation: z.string().min(5)
-		})
-		.refine((data) => data.password === data.passwordConfirmation, {
-			message: "Passwords didn't match",
-			path: ['passwordConfirmation']
-		});
-
-	const form = superForm(data.form, { validators });
+	const form = superForm(data.form, { validators: signUpSchema });
 
 	const handleSignUpError = (err: string) => {
 		const setFieldError = (field: 'email' | 'username', msg: string) => {

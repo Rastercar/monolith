@@ -10,14 +10,17 @@
 	export let field: FormPathLeaves<z.infer<T>>;
 	export let label: string;
 
-	export let labelClass = 'label mt-4 mb-1';
+	let clazz = 'label mt-4 mb-1';
+	export { clazz as class };
+
 	export let inputClass = 'input mb-1';
+	export let labelClass = 'text-sm';
 
 	const { value, errors, constraints } = formFieldProxy(form, field);
 </script>
 
-<label class={labelClass}>
-	<span class="text-sm">{label}</span>
+<label class={clazz}>
+	<span class={labelClass}>{label}</span>
 	<input
 		class={inputClass}
 		name={field}
@@ -27,5 +30,5 @@
 		{...$constraints}
 		{...$$restProps}
 	/>
+	<ErrorMessage errors={$errors} />
 </label>
-<ErrorMessage errors={$errors} />

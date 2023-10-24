@@ -21,7 +21,7 @@
 		</div>
 
 		<div class="flex w-full">
-			<div>
+			<div class="w-full">
 				<div class="flex justify-between">
 					<h1 class="text-2xl mb-2">{user.username}</h1>
 
@@ -37,6 +37,8 @@
 					<span class="text-sm text-surface-700-200-token">About me:</span>
 					<p class="text-sm">{user.description}</p>
 				{/if}
+
+				<p class="text-sm">no description informed</p>
 			</div>
 		</div>
 	</div>

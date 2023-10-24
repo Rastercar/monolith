@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { apiUpdateUser, updateUserBodySchema, type UpdateUserBody } from '$lib/api/user';
+	import { apiUpdateUser, updateUserSchema, type UpdateUserBody } from '$lib/api/user';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextArea from '$lib/components/input/TextArea.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
-	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
-	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -15,9 +14,9 @@
 
 	export let data: PageData;
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 
-	const form = superForm(data.form, { validators: updateUserBodySchema });
+	const form = superForm(data.form, { validators: updateUserSchema });
 
 	const mutation = createMutation({
 		mutationFn: (body: UpdateUserBody) => apiUpdateUser(body),
@@ -25,13 +24,10 @@
 		onSuccess: (updatedUser) => {
 			const { description, username, email } = updatedUser;
 			authStore.updateUser({ description, username, email });
-			toastStore.trigger({
-				message: 'profiled updated successfully',
-				background: 'variant-filled-success'
-			});
+			toaster.success('profiled updated successfully');
 		},
 
-		onError: () => toastStore.trigger(genericError)
+		onError: () => toaster.error()
 	});
 
 	const updateProfile = async () => {

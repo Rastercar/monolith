@@ -1,11 +1,8 @@
 <script lang="ts">
+	import { getToaster } from '$lib/store/toaster';
+
 	import Icon from '@iconify/svelte';
-	import {
-		Avatar,
-		getModalStore,
-		getToastStore,
-		type ModalComponent
-	} from '@skeletonlabs/skeleton';
+	import { Avatar, getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import FileDropzoneCropper from './FileDropzoneCropper.svelte';
 
@@ -25,7 +22,7 @@
 
 	export let deleteConfirmPrompt: string;
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 	const modalStore = getModalStore();
 
 	const uploadMutation = createMutation({ mutationFn: uploadMutationFn });
@@ -37,12 +34,8 @@
 
 	let isDraggingFile = false;
 
-	const showErrorToast = (message: string) => {
-		toastStore.trigger({ message, background: 'variant-filled-error' });
-	};
-
 	const loadPreview = (file?: File) => {
-		if (!file) return showErrorToast('file is not a valid image');
+		if (!file) return toaster.error('file is not a valid image');
 
 		const component: ModalComponent = {
 			ref: FileDropzoneCropper,
@@ -93,7 +86,7 @@
 		$uploadMutation
 			.mutateAsync(newPhoto.file)
 			.then((uploadResult) => onUploadSuccess(uploadResult))
-			.catch(() => showErrorToast('failed to upload picture'))
+			.catch(() => toaster.error('failed to upload picture'))
 			.finally(() => {
 				newPhoto = null;
 			});
@@ -105,7 +98,7 @@
 		$deleteMutation
 			.mutateAsync()
 			.then((deletionResult) => onDeleteSuccess(deletionResult))
-			.catch(() => showErrorToast('failed to remove picture'))
+			.catch(() => toaster.error('failed to remove picture'))
 			.finally(() => {
 				newPhoto = null;
 			});

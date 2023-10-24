@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { isApiErrorObject } from '$lib/api/common';
-	import {
-		apiChangePassword,
-		changePasswordBodySchema,
-		type ChangePasswordBody
-	} from '$lib/api/user';
+	import { apiChangePassword, changePasswordSchema, type ChangePasswordBody } from '$lib/api/user';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
-	import { genericError } from '$lib/constants/toasts';
-	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { WretchError } from 'wretch/resolver';
@@ -16,25 +11,21 @@
 
 	export let data: PageData;
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 
-	const form = superForm(data.form, { validators: changePasswordBodySchema });
+	const form = superForm(data.form, { validators: changePasswordSchema });
 
 	const mutation = createMutation({
 		mutationFn: (body: ChangePasswordBody) => apiChangePassword(body),
 
 		onSuccess: () => {
-			toastStore.trigger({
-				message: 'password changed successfully',
-				background: 'variant-filled-success'
-			});
-
+			toaster.success('password changed successfully');
 			form.reset();
 		},
 
 		onError: (err) => {
 			if (!(err instanceof WretchError) || !isApiErrorObject(err.json)) {
-				return toastStore.trigger(genericError);
+				return toaster.error();
 			}
 
 			if (err.response.status === 401) {

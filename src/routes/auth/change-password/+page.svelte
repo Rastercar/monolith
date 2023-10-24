@@ -3,9 +3,8 @@
 	import { apiRecoverPasswordByToken, recoverPasswordByTokenSchema } from '$lib/api/auth';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
-	import { genericError } from '$lib/constants/toasts';
+	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { WretchError } from 'wretch/resolver';
@@ -14,7 +13,7 @@
 
 	export let data: PageData;
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 
 	const form = superForm(data.form, { validators: recoverPasswordByTokenSchema });
 
@@ -29,11 +28,11 @@
 		mutationFn: (newPassword: string) =>
 			apiRecoverPasswordByToken({ newPassword, passwordResetToken: data.passwordRecoveryToken }),
 		onError: (err) => {
-			if (err instanceof WretchError) {
-				errorStatusCode = err.response.status;
-			} else {
-				toastStore.trigger(genericError);
+			if (!(err instanceof WretchError)) {
+				return toaster.error();
 			}
+
+			errorStatusCode = err.response.status;
 		}
 	});
 

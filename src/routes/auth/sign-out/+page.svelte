@@ -2,10 +2,10 @@
 	import { goto } from '$app/navigation';
 	import { apiSignOut } from '$lib/api/auth';
 	import { authStore } from '$lib/store/auth';
-	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { getToaster } from '$lib/store/toaster';
 	import { onMount } from 'svelte';
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 
 	/**
 	 * calls the sveltekit server to delete the session cookie
@@ -40,10 +40,7 @@
 				// now stuck with a unwanted, or possibly even worse, a invalid session cookie
 				//
 				// as pathetic as this is, ask the user to delete the cookies.
-				toastStore.trigger({
-					message: 'a critical error happened, please clear your browser cookies',
-					background: 'variant-filled-error'
-				});
+				toaster.error('a critical error happened, please clear your browser cookies');
 
 				throw new Error('failed to delete session');
 			})

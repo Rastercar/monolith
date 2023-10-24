@@ -9,13 +9,13 @@ import { rastercarApi, redirectOnSessionError } from './common';
 export const apiGetCurrentUser = async (): Promise<User> =>
 	rastercarApi.get('/user/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);
 
-export const updateUserBodySchema = z.object({
+export const updateUserSchema = z.object({
 	email: z.string().email().optional(),
 	username: usernameValidator.optional(),
 	description: z.string().optional().nullable()
 });
 
-export type UpdateUserBody = z.infer<typeof updateUserBodySchema>;
+export type UpdateUserBody = z.infer<typeof updateUserSchema>;
 
 /**
  * updates and returns the updated current user
@@ -23,7 +23,7 @@ export type UpdateUserBody = z.infer<typeof updateUserBodySchema>;
 export const apiUpdateUser = async (body: UpdateUserBody): Promise<User> =>
 	rastercarApi.patch(body, '/user/me').json<User>().then(userSchema.parse);
 
-export const changePasswordBodySchema = z
+export const changePasswordSchema = z
 	.object({
 		oldPassword: z.string().min(5),
 		newPassword: passwordValidator,
@@ -34,7 +34,7 @@ export const changePasswordBodySchema = z
 		path: ['passwordConfirmation']
 	});
 
-export type ChangePasswordBody = z.infer<typeof changePasswordBodySchema>;
+export type ChangePasswordBody = z.infer<typeof changePasswordSchema>;
 
 /**
  * updates the user password

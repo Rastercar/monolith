@@ -2,16 +2,13 @@
 	import { removeUserProfilePicture, updateUserProfilePicture } from '$lib/api/user';
 	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
 	import { authStore } from '$lib/store/auth';
+	import { getToaster } from '$lib/store/toaster';
 	import { cloudFrontUrl } from '$lib/utils/url';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 
 	const onUploadSuccess = (profilePicture: string) => {
-		toastStore.trigger({
-			message: 'profile picture changed successfully',
-			background: 'variant-filled-success'
-		});
+		toaster.success('profile picture changed successfully');
 		authStore.updateUser({ profilePicture });
 	};
 

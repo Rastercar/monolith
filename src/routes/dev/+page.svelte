@@ -1,8 +1,10 @@
 <script lang="ts">
 	// [PROD-TODO] remove this page
-	import { apiGetCurrentUser } from '$lib/api/user';
+	import { getToaster } from '$lib/store/toaster';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
 	import Navigation from './components/Navigation.svelte';
+
+	const xdStore = getToaster();
 </script>
 
 <div class="h-full flex items-center justify-center">
@@ -17,9 +19,7 @@
 		<div class="border-t-2 border-surface-300-600-token" />
 
 		<div class="flex justify-center p-4">
-			<button class="btn variant-filled" on:click={() => apiGetCurrentUser().then(console.log)}>
-				apiGetCurrentUser
-			</button>
+			<button class="btn variant-filled" on:click={() => xdStore.error()}> toast test </button>
 		</div>
 	</div>
 </div>

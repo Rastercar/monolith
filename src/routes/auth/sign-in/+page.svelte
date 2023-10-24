@@ -4,9 +4,8 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
-	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
-	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -16,7 +15,7 @@
 
 	export let data: PageData;
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 
 	const loginForm = superForm(data.form, { validators: signInSchema });
 
@@ -58,7 +57,7 @@
 			// redirect a few frames after svelte updated the auth store
 			setTimeout(redirectAfterLogin, 100);
 		},
-		onError: () => toastStore.trigger(genericError)
+		onError: toaster.error
 	});
 
 	const handleSignIn = async () => {

@@ -5,9 +5,8 @@
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
-	import { genericError } from '$lib/constants/toasts';
 	import { authStore } from '$lib/store/auth';
-	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
@@ -16,7 +15,7 @@
 
 	export let data: PageData;
 
-	const toastStore = getToastStore();
+	const toaster = getToaster();
 
 	const form = superForm(data.form, { validators: signUpSchema });
 
@@ -43,7 +42,7 @@
 				goto('/client').finally(() => (redirecting = false));
 			}, 100);
 		},
-		onError: () => toastStore.trigger(genericError)
+		onError: toaster.error
 	});
 
 	const handleSignUp = async () => {

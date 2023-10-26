@@ -6,7 +6,7 @@
 		href: string;
 		icon: string;
 		label: string;
-		closeSidebarOnCLick?: boolean;
+		closeSidebarOnClick?: boolean;
 	}
 
 	export let routes: Route[];
@@ -16,14 +16,14 @@
 
 <nav class="list-nav" data-sveltekit-preload-data="off">
 	<ul>
-		{#each routes as { href, icon, label, closeSidebarOnCLick }}
+		{#each routes as { href, icon, label, closeSidebarOnClick }}
 			<li>
 				<NavLink
 					{href}
 					{icon}
 					{label}
 					on:click={() => {
-						if (closeSidebarOnCLick) drawerStore.close();
+						if (closeSidebarOnClick) drawerStore.close();
 					}}
 				/>
 			</li>

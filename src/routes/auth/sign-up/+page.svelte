@@ -42,7 +42,7 @@
 				goto('/client').finally(() => (redirecting = false));
 			}, 100);
 		},
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const handleSignUp = async () => {

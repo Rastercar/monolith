@@ -10,18 +10,34 @@
 	}
 
 	const routes: Route[] = [
-		{ href: '/client', label: 'home', icon: 'mdi:home' },
-		{ href: '/client/my-profile', label: 'my profile', icon: 'mdi:account' }
+		{
+			href: '/client',
+			label: 'home',
+			icon: 'mdi:home'
+		},
+		{
+			href: '/client/my-profile',
+			label: 'my profile',
+			icon: 'mdi:account'
+		}
 	];
 
 	const settingsRoutes: Route[] = [
-		{ href: '/client/settings/profile', label: 'profile', icon: 'mdi:account-edit' },
+		{
+			href: '/client/settings/profile',
+			label: 'profile',
+			icon: 'mdi:account-edit'
+		},
 		{
 			href: '/client/settings/organization',
 			label: 'organization',
 			icon: 'mdi:building'
 		},
-		{ href: '/client/settings/sessions', label: 'sessions', icon: 'mdi:access-point' },
+		{
+			href: '/client/settings/sessions',
+			label: 'sessions',
+			icon: 'mdi:access-point'
+		},
 		{
 			href: '/client/settings/security',
 			label: 'password / security',
@@ -47,7 +63,7 @@
 
 		<NavList routes={settingsRoutes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
 	{:else}
-		<NavList {routes} />
+		<NavList routes={routes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
 
 		<hr class="my-4" />
 

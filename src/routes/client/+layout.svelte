@@ -6,7 +6,6 @@
 	import SidebarNavigation from './layout/SidebarNavigation.svelte';
 </script>
 
-<!-- Mobile drawer -->
 <MobileNavigationDrawer />
 
 <AppShell slotSidebarLeft="bg-surface-100-800-token w-0 lg:w-64">

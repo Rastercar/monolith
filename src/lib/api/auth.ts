@@ -10,7 +10,6 @@ import {
 export const accessLevelSchema = z.object({
 	id: z.number(),
 	createdAt: z.string(),
-	updatedAt: z.null(),
 	name: z.string(),
 	description: z.string(),
 	isFixed: z.boolean(),
@@ -20,7 +19,6 @@ export const accessLevelSchema = z.object({
 export const organizationSchema = z.object({
 	id: z.number(),
 	createdAt: z.string(),
-	updatedAt: z.string().nullable(),
 	name: z.string(),
 	billingEmail: z.string(),
 	blocked: z.boolean(),
@@ -30,7 +28,6 @@ export const organizationSchema = z.object({
 export const userSchema = z.object({
 	id: z.number(),
 	createdAt: z.string().datetime(),
-	updatedAt: z.string().datetime().nullable(),
 	username: z.string(),
 	email: z.string().email(),
 	emailVerified: z.boolean(),

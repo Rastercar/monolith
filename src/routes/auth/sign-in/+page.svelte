@@ -57,7 +57,7 @@
 			// redirect a few frames after svelte updated the auth store
 			setTimeout(redirectAfterLogin, 100);
 		},
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const handleSignIn = async () => {

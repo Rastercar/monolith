@@ -25,7 +25,7 @@
 				<div class="flex justify-between">
 					<h1 class="text-2xl mb-2">{user.username}</h1>
 
-					<a href="/client/settings/profile">
+					<a href="/client/settings/profile" class="hidden sm:block">
 						<button type="button" class="btn btn-sm variant-filled-primary">
 							<Icon icon="mdi:pencil" class="mr-2" />
 							Edit

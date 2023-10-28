@@ -39,10 +39,10 @@
 
 <div class="flex items-center sm:p-4">
 	<Icon {icon} height="32" />
-	<div class="flex flex-col mx-4 text-sm">
+	<div class="flex flex-col ml-4">
 		<span>{uap.getOS().name ?? ''} {uap.getBrowser().name ?? ''} {session.ip}</span>
-		<span class="text-surface-700-200-token">created: {toDateStr(session.createdAt)}</span>
-		<span class="text-surface-700-200-token">expires: {toDateStr(session.expiresAt)}</span>
+		<span class="text-surface-700-200-token text-sm">created: {toDateStr(session.createdAt)}</span>
+		<span class="text-surface-700-200-token text-sm">expires: {toDateStr(session.expiresAt)}</span>
 	</div>
 
 	{#if session.sameAsFromRequest}

@@ -1,4 +1,4 @@
-import type { User } from '$lib/api/auth';
+import type { Organization, User } from '$lib/api/auth';
 import { localStorageStore } from '@skeletonlabs/skeleton';
 
 interface AuthState {
@@ -17,6 +17,13 @@ export const authStore = {
 	updateUser: (newUserData: Partial<User>) => {
 		update((state) => {
 			if (state.user) state.user = { ...state.user, ...newUserData };
+			return state;
+		});
+	},
+
+	updateUserOrg: (newOrgData: Partial<Organization>) => {
+		update((state) => {
+			if (state.user) state.user.organization = { ...state.user.organization, ...newOrgData };
 			return state;
 		});
 	},

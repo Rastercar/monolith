@@ -53,39 +53,37 @@
 </script>
 
 {#if user}
-	<div class="p-6 max-w-4xl mx-auto">
-		<h1 class="text-2xl mb-3">My Profile</h1>
+	<h1 class="text-2xl mb-3">My Profile</h1>
 
-		<ProfilePictureDropzone />
+	<ProfilePictureDropzone />
 
-		<div class="grid grid-cols-2 gap-4 my-4">
-			<TextInput {form} class="label sm:col-span-1 col-span-2" field="email" label="Email" />
+	<div class="grid grid-cols-2 gap-4 my-4">
+		<TextInput {form} class="label sm:col-span-1 col-span-2" field="email" label="Email" />
 
-			<TextInput
-				{form}
-				class="label sm:col-span-1 col-span-2"
-				maxlength="32"
-				field="username"
-				label="Username"
-			/>
+		<TextInput
+			{form}
+			class="label sm:col-span-1 col-span-2"
+			maxlength="32"
+			field="username"
+			label="Username"
+		/>
 
-			{#if !user.emailVerified}
-				<div class="mt-2 col-span-2">
-					<EmailNotConfirmedWarning emailAddress={user.email} />
-				</div>
-			{/if}
+		{#if !user.emailVerified}
+			<div class="mt-2 col-span-2">
+				<EmailNotConfirmedWarning emailAddress={user.email} />
+			</div>
+		{/if}
 
-			<TextArea class="label col-span-2" {form} field="description" label="Description" rows="6" />
-		</div>
+		<TextArea class="label col-span-2" {form} field="description" label="Description" rows="6" />
+	</div>
 
-		<div class="flex justify-end">
-			<LoadableButton
-				class="btn variant-filled-primary"
-				isLoading={$mutation.isLoading}
-				on:click={updateProfile}
-			>
-				update
-			</LoadableButton>
-		</div>
+	<div class="flex justify-end">
+		<LoadableButton
+			class="btn variant-filled-primary"
+			isLoading={$mutation.isLoading}
+			on:click={updateProfile}
+		>
+			update
+		</LoadableButton>
 	</div>
 {/if}

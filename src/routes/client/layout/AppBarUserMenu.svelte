@@ -2,6 +2,7 @@
 	import { authStore } from '$lib/store/auth';
 	import Icon from '@iconify/svelte';
 	import { popup } from '@skeletonlabs/skeleton';
+	import UserDisplay from './UserDisplay.svelte';
 
 	$: ({ user } = $authStore);
 </script>
@@ -21,13 +22,7 @@
 	</button>
 
 	<div class="card p-4 w-60 shadow-xl !z-50" data-popup="theme">
-		<div class="truncate text-ellipsis text-lg">
-			{user.username}
-		</div>
-
-		<div class="truncate text-ellipsis">
-			{user.email}
-		</div>
+		<UserDisplay />
 
 		<hr class="mt-3 mb-4" />
 

@@ -1,9 +1,13 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { AppBar, AppShell, LightSwitch } from '@skeletonlabs/skeleton';
 	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
 	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
 	import MobileNavigationDrawer from './layout/MobileNavigationDrawer.svelte';
 	import SidebarNavigation from './layout/SidebarNavigation.svelte';
+	import UserDisplay from './layout/UserDisplay.svelte';
+
+	$: isInSettingsRoute = $page.url.pathname.includes('/settings');
 </script>
 
 <MobileNavigationDrawer />
@@ -27,6 +31,10 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="sidebarLeft">
+		<div class:hidden={isInSettingsRoute}>
+			<UserDisplay class="px-4 pt-4" />
+		</div>
+
 		<SidebarNavigation />
 	</svelte:fragment>
 

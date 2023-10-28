@@ -46,34 +46,27 @@
 	};
 </script>
 
-<div class="p-6 max-w-xl mx-auto">
-	<h1 class="text-2xl mb-3">Change Password</h1>
+<h1 class="text-2xl mb-3">Change Password</h1>
 
-	<PasswordInput {form} field="oldPassword" label="Old Password" placeholder="" />
+<PasswordInput {form} field="oldPassword" label="Old Password" placeholder="" />
 
-	<PasswordInput {form} field="newPassword" label="New Password" placeholder="" />
+<PasswordInput {form} field="newPassword" label="New Password" placeholder="" />
 
-	<PasswordInput
-		{form}
-		field="newPasswordConfirmation"
-		label="Confirm new Password"
-		placeholder=""
-	/>
+<PasswordInput {form} field="newPasswordConfirmation" label="Confirm new Password" placeholder="" />
 
-	<div class="flex justify-between items-center mt-8">
-		<LoadableButton
-			class="btn variant-filled-primary"
-			isLoading={$mutation.isLoading}
-			on:click={changePassword}
-		>
-			change password
-		</LoadableButton>
+<div class="flex justify-between items-center mt-8">
+	<LoadableButton
+		class="btn variant-filled-primary"
+		isLoading={$mutation.isLoading}
+		on:click={changePassword}
+	>
+		change password
+	</LoadableButton>
 
-		<a
-			href="/auth/recover-password"
-			class="text-sm text-primary-700-200-token underline-offset-4 hover:underline"
-		>
-			forgot your password?
-		</a>
-	</div>
+	<a
+		href="/auth/recover-password"
+		class="text-sm text-primary-700-200-token underline-offset-4 hover:underline"
+	>
+		forgot your password?
+	</a>
 </div>

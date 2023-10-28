@@ -50,6 +50,8 @@
 		form.form.set({ name, billingEmail });
 	});
 
+	console.log('lmao xd ?');
+
 	$: ({ user } = $authStore);
 </script>
 

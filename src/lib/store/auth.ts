@@ -5,31 +5,31 @@ interface AuthState {
 	user: User | null;
 }
 
-const { subscribe, set, update } = localStorageStore<AuthState>('auth', { user: null });
+const store = localStorageStore<AuthState>('auth', { user: null });
 
 export const authStore = {
-	subscribe,
+	subscribe: store.subscribe,
 
-	setUser: (user: User) => set({ user }),
+	setUser: (user: User) => store.set({ user }),
 
-	clearUser: () => set({ user: null }),
+	clearUser: () => store.set({ user: null }),
 
 	updateUser: (newUserData: Partial<User>) => {
-		update((state) => {
+		store.update((state) => {
 			if (state.user) state.user = { ...state.user, ...newUserData };
 			return state;
 		});
 	},
 
 	updateUserOrg: (newOrgData: Partial<Organization>) => {
-		update((state) => {
+		store.update((state) => {
 			if (state.user) state.user.organization = { ...state.user.organization, ...newOrgData };
 			return state;
 		});
 	},
 
 	setUserEmailAsVerified: () =>
-		update((v) => {
+		store.update((v) => {
 			if (v.user) v.user.emailVerified = true;
 			return { user: v.user };
 		})

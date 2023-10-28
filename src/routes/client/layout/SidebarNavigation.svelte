@@ -1,13 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
-	import NavList from './NavList.svelte';
-
-	interface Route {
-		href: string;
-		icon: string;
-		label: string;
-	}
+	import NavList, { type Route } from './NavList.svelte';
 
 	const routes: Route[] = [
 		{
@@ -29,9 +23,13 @@
 			icon: 'mdi:account-edit'
 		},
 		{
+			// TODO:
+			// what i want here is to have a single place to define the required permissions for a given href (eg: /foo/bar, /foo/bar/4/*)
+			// to avoid mistakes between route navigation protection and UI link protection.
 			href: '/client/settings/organization',
 			label: 'organization',
-			icon: 'mdi:building'
+			icon: 'mdi:building',
+			requiredPermissions: ['UPDATE_ORGANIZATION']
 		},
 		{
 			href: '/client/settings/sessions',

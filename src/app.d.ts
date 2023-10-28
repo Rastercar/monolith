@@ -2,12 +2,7 @@
 // for information about these interfaces
 // and what to do when importing types
 declare namespace App {
-	interface Locals {
-		/**
-		 * string representation of a u128 of the user session ID on the rastercar API
-		 */
-		sessionId?: string;
-	}
+	// interface Locals {}
 	// interface PageData {}
 	// interface Error {}
 	// interface Platform {}

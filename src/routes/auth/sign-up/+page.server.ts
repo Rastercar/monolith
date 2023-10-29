@@ -1,4 +1,4 @@
-import { signUpSchema } from '$lib/api/auth';
+import { signUpSchema } from '$lib/api/auth.schema';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { PageServerLoad } from '../components/$types';
 

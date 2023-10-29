@@ -18,32 +18,19 @@
 
 	const drawerStore = getDrawerStore();
 
-	const canShowRoute = (route: Route) => {
-		if (!route.requiredPermissions) return true;
-
-		// if the route requires permissions but we do not have a user, bail
-		if (!user) return false;
-
-		let userPerms = user.accessLevel.permissions;
-
-		return route.requiredPermissions.every((p) => userPerms.includes(p));
-	};
-
 	$: ({ user } = $authStore);
 </script>
 
 <nav class="list-nav" data-sveltekit-preload-data="off">
 	<ul>
-		{#each routes as route}
-			{#if canShowRoute(route)}
+		{#each routes as r}
+			{#if (r.requiredPermissions ?? []).every((p) => user && user.accessLevel.permissions.includes(p))}
 				<li>
 					<NavLink
-						href={route.href}
-						icon={route.icon}
-						label={route.label}
-						on:click={() => {
-							if (route.closeSidebarOnClick) drawerStore.close();
-						}}
+						href={r.href}
+						icon={r.icon}
+						label={r.label}
+						on:click={() => r.closeSidebarOnClick && drawerStore.close()}
 					/>
 				</li>
 			{/if}

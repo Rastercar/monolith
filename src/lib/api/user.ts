@@ -1,7 +1,5 @@
-import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
-import { z } from 'zod';
-import { userSchema, type User } from './auth';
-import { rastercarApi, redirectOnSessionError } from './common';
+import { userSchema, type ChangePasswordBody, type UpdateUserBody, type User } from './user.schema';
+import { rastercarApi, redirectOnSessionError } from './utils';
 
 /**
  * gets the current user within the session id on the session ID cookie
@@ -9,13 +7,11 @@ import { rastercarApi, redirectOnSessionError } from './common';
 export const apiGetCurrentUser = async (): Promise<User> =>
 	rastercarApi.get('/user/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);
 
-export const updateUserSchema = z.object({
-	email: z.string().email().optional(),
-	username: usernameValidator.optional(),
-	description: z.string().optional().nullable()
-});
-
-export type UpdateUserBody = z.infer<typeof updateUserSchema>;
+/**
+ * requests a email address confirmation email to be sent to the logged in user email address
+ */
+export const apiRequestEmailAddressConfirmationEmail = async (): Promise<string> =>
+	rastercarApi.post({}, '/user/me/request-email-address-confirmation').json<string>();
 
 /**
  * updates and returns the updated current user
@@ -23,27 +19,13 @@ export type UpdateUserBody = z.infer<typeof updateUserSchema>;
 export const apiUpdateUser = async (body: UpdateUserBody): Promise<User> =>
 	rastercarApi.patch(body, '/user/me').json<User>().then(userSchema.parse);
 
-export const changePasswordSchema = z
-	.object({
-		oldPassword: z.string().min(5),
-		newPassword: passwordValidator,
-		newPasswordConfirmation: z.string()
-	})
-	.refine((data) => data.newPassword === data.newPasswordConfirmation, {
-		message: "Passwords didn't match",
-		path: ['passwordConfirmation']
-	});
-
-export type ChangePasswordBody = z.infer<typeof changePasswordSchema>;
-
 /**
  * updates the user password
  */
-export const apiChangePassword = async ({
-	newPassword,
-	oldPassword
-}: ChangePasswordBody): Promise<string> =>
-	rastercarApi.put({ newPassword, oldPassword }, '/user/me/password').json<string>();
+export const apiChangePassword = async (body: ChangePasswordBody): Promise<string> =>
+	rastercarApi
+		.put({ newPassword: body.newPassword, oldPassword: body.oldPassword }, '/user/me/password')
+		.json<string>();
 
 /**
  * changes the current user profile picture

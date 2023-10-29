@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiSignIn, signInSchema, type SignInDto } from '$lib/api/auth';
+	import { apiSignIn } from '$lib/api/auth';
+	import { signInSchema, type SignInDto } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';

@@ -1,4 +1,4 @@
-import { changePasswordSchema } from '$lib/api/user';
+import { changePasswordSchema } from '$lib/api/user.schema';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { PageServerLoad } from './$types';
 

@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { apiUpdateOrganization } from '$lib/api/organization';
 	import {
-		apiUpdateOrganization,
 		updateOrganizationSchema,
 		type UpdateOrganizationBody
-	} from '$lib/api/organization';
+	} from '$lib/api/organization.schema';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
@@ -50,45 +50,41 @@
 		form.form.set({ name, billingEmail });
 	});
 
-	console.log('lmao xd ?');
-
 	$: ({ user } = $authStore);
 </script>
 
-{#if user}
-	<h1 class="text-2xl mb-3">My Organization</h1>
+<h1 class="text-2xl mb-3">My Organization</h1>
 
-	<div class="grid grid-cols-2 gap-4 my-4">
-		<TextInput
-			{form}
-			class="label sm:col-span-1 col-span-2"
-			field="billingEmail"
-			label="Billing Email"
-		/>
+<div class="grid grid-cols-2 gap-4 my-4">
+	<TextInput
+		{form}
+		class="label sm:col-span-1 col-span-2"
+		field="billingEmail"
+		label="Billing Email"
+	/>
 
-		<TextInput
-			{form}
-			class="label sm:col-span-1 col-span-2"
-			maxlength="32"
-			field="name"
-			label="Name"
-		/>
+	<TextInput
+		{form}
+		class="label sm:col-span-1 col-span-2"
+		maxlength="32"
+		field="name"
+		label="Name"
+	/>
 
-		{#if !user.organization.billingEmailVerified}
-			<div class="mt-2 col-span-2">
-				<!-- TODO: isso aqui esta falho pois o componente tenta enviar confirmação de endereço de email da org -->
-				<EmailNotConfirmedWarning emailAddress={user.organization.billingEmail} />
-			</div>
-		{/if}
-	</div>
+	{#if user && !user.organization.billingEmailVerified}
+		<div class="mt-2 col-span-2">
+			<!-- TODO: isso aqui esta falho pois o componente tenta enviar confirmação de endereço de email da org -->
+			<EmailNotConfirmedWarning />
+		</div>
+	{/if}
+</div>
 
-	<div class="flex justify-end">
-		<LoadableButton
-			class="btn variant-filled-primary"
-			isLoading={$mutation.isLoading}
-			on:click={updateOrg}
-		>
-			update
-		</LoadableButton>
-	</div>
-{/if}
+<div class="flex justify-end">
+	<LoadableButton
+		class="btn variant-filled-primary"
+		isLoading={$mutation.isLoading}
+		on:click={updateOrg}
+	>
+		update
+	</LoadableButton>
+</div>

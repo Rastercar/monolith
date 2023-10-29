@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiRecoverPasswordByToken, recoverPasswordByTokenSchema } from '$lib/api/auth';
+	import { apiRecoverPasswordByToken } from '$lib/api/auth';
+	import { recoverPasswordByTokenSchema } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import { getToaster } from '$lib/store/toaster';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { apiConfirmEmailAddressByToken } from '$lib/api/auth';
-	import { isApiErrorObject } from '$lib/api/common';
+	import { isApiErrorObject } from '$lib/api/utils';
 	import { authStore } from '$lib/store/auth';
 	import { awaitPromiseWithMinimumDelay } from '$lib/utils/promises';
 	import { ProgressBar } from '@skeletonlabs/skeleton';

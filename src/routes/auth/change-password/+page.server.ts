@@ -1,4 +1,4 @@
-import { recoverPasswordByTokenSchema } from '$lib/api/auth';
+import { recoverPasswordByTokenSchema } from '$lib/api/auth.schema';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { PageServerLoad } from '../components/$types';

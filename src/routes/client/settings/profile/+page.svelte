@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { apiUpdateUser, updateUserSchema, type UpdateUserBody } from '$lib/api/user';
+	import { apiUpdateUser } from '$lib/api/user';
+	import { updateUserSchema, type UpdateUserBody } from '$lib/api/user.schema';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextArea from '$lib/components/input/TextArea.svelte';
@@ -70,7 +71,7 @@
 
 		{#if !user.emailVerified}
 			<div class="mt-2 col-span-2">
-				<EmailNotConfirmedWarning emailAddress={user.email} />
+				<EmailNotConfirmedWarning />
 			</div>
 		{/if}
 

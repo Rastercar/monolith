@@ -23,9 +23,6 @@
 			icon: 'mdi:account-edit'
 		},
 		{
-			// TODO:
-			// what i want here is to have a single place to define the required permissions for a given href (eg: /foo/bar, /foo/bar/4/*)
-			// to avoid mistakes between route navigation protection and UI link protection.
 			href: '/client/settings/organization',
 			label: 'organization',
 			icon: 'mdi:building',

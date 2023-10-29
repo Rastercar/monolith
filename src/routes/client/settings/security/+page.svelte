@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { isApiErrorObject } from '$lib/api/common';
-	import { apiChangePassword, changePasswordSchema, type ChangePasswordBody } from '$lib/api/user';
+	import { apiChangePassword } from '$lib/api/user';
+	import { changePasswordSchema, type ChangePasswordBody } from '$lib/api/user.schema';
+	import { isApiErrorObject } from '$lib/api/utils';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
 	import { getToaster } from '$lib/store/toaster';

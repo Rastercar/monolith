@@ -23,15 +23,9 @@ export const isApiErrorObject = (v: unknown): v is ApiErrorObject => {
 };
 
 export const redirectOnSessionError = (err: unknown) => {
-	if (!(err instanceof WretchError) || !isApiErrorObject(err.json)) {
-		throw err;
-	}
+	if (!browser || !(err instanceof WretchError) || !isApiErrorObject(err.json)) throw err;
 
 	const errorCode = err.json.error;
-
-	if (!browser) {
-		throw err;
-	}
 
 	// if the request failed because the session id cookie is not present,
 	// the user must have cleaned his cookies, and needs to sign in again
@@ -40,13 +34,10 @@ export const redirectOnSessionError = (err: unknown) => {
 		throw err;
 	}
 
-	// if the session is invalid or expired, the user needs to sign in,
-	// but first we need to clear the invalid session cookie by redirecting
-	// the user to the sign out page that does delete the cookie on the server
-	// side
-	if (errorCode === INVALID_SESSION) {
-		goto('/auth/sign-out');
-	}
+	// if the session is invalid or expired, the user needs to sign in, but first
+	// we need to clear the invalid session cookie by redirecting the user to the
+	// sign out page that does delete the cookie on the server side
+	if (errorCode === INVALID_SESSION) goto('/auth/sign-out');
 
 	throw err;
 };

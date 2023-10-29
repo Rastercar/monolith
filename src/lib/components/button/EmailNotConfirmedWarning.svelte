@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { apiRequestEmailAddressConfirmationEmail } from '$lib/api/auth';
+	import { apiRequestEmailAddressConfirmationEmail } from '$lib/api/user';
 	import { awaitPromiseWithMinimumDelay } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 
-	export let emailAddress: string;
-
 	const mutation = createMutation({
-		mutationFn: () =>
-			awaitPromiseWithMinimumDelay(apiRequestEmailAddressConfirmationEmail(emailAddress), 1_500)
+		mutationFn: () => awaitPromiseWithMinimumDelay(apiRequestEmailAddressConfirmationEmail(), 1_500)
 	});
+
+	// TODO: change this component name
 
 	let dismissed = false;
 </script>

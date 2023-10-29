@@ -1,4 +1,4 @@
-import { updateOrganizationSchema } from '$lib/api/organization';
+import { updateOrganizationSchema } from '$lib/api/organization.schema';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { PageServerLoad } from './$types';
 

@@ -1,13 +1,9 @@
-import { z } from 'zod';
-import { organizationSchema, type Organization } from './auth';
-import { rastercarApi } from './common';
-
-export const updateOrganizationSchema = z.object({
-	name: z.string().min(5).max(32).optional(),
-	billingEmail: z.string().email().optional()
-});
-
-export type UpdateOrganizationBody = z.infer<typeof updateOrganizationSchema>;
+import {
+	organizationSchema,
+	type Organization,
+	type UpdateOrganizationBody
+} from './organization.schema';
+import { rastercarApi } from './utils';
 
 /**
  * updates the user organization, returning the updated values

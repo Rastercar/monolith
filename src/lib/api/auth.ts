@@ -1,59 +1,18 @@
-import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
+import {
+	signInUpResponseSchema,
+	type RecoverPasswordByTokenDto,
+	type SignInDto,
+	type SignInUpResponse,
+	type SignUpDto
+} from './auth.schema';
+import { userSessionSchema, type UserSession } from './user.schema';
 import {
 	fallthroughApiErrorMessage,
 	rastercarApi,
 	returnErrorCodeOnApiError,
 	returnErrorStringOrParsedSchemaObj
-} from './common';
-
-export const accessLevelSchema = z.object({
-	id: z.number(),
-	createdAt: z.string(),
-	name: z.string(),
-	description: z.string(),
-	isFixed: z.boolean(),
-	permissions: z.array(z.string())
-});
-
-export const organizationSchema = z.object({
-	id: z.number(),
-	createdAt: z.string(),
-	name: z.string(),
-	billingEmail: z.string(),
-	blocked: z.boolean(),
-	billingEmailVerified: z.boolean()
-});
-
-export const userSchema = z.object({
-	id: z.number(),
-	createdAt: z.string().datetime(),
-	username: z.string(),
-	email: z.string().email(),
-	emailVerified: z.boolean(),
-	profilePicture: z.string().nullable(),
-	description: z.string().nullable(),
-	accessLevel: accessLevelSchema,
-	organization: organizationSchema
-});
-
-const signInUpResponseSchema = z.object({ user: userSchema });
-
-export type User = z.infer<typeof userSchema>;
-
-export type Organization = z.infer<typeof organizationSchema>;
-
-export type AccessLevel = z.infer<typeof accessLevelSchema>;
-
-type SignInUpResponse = z.infer<typeof signInUpResponseSchema>;
-
-// [PROD-TODO] remove default test user
-export const signInSchema = z.object({
-	email: z.string().nonempty().email().default('rastercar.tests.002@gmail.com'),
-	password: z.string().nonempty().default('testuser')
-});
-
-export type SignInDto = z.infer<typeof signInSchema>;
+} from './utils';
 
 type SignRequestResponse = SignInUpResponse | 'not_found' | 'invalid_password';
 
@@ -73,20 +32,6 @@ export const apiSignIn = async (credentials: SignInDto): Promise<SignRequestResp
 	signInUpResponseSchema.parse(response);
 	return response;
 };
-
-export const signUpSchema = z
-	.object({
-		email: z.string().email(),
-		username: usernameValidator,
-		password: passwordValidator,
-		passwordConfirmation: z.string().min(5)
-	})
-	.refine((data) => data.password === data.passwordConfirmation, {
-		message: "Passwords didn't match",
-		path: ['passwordConfirmation']
-	});
-
-export type SignUpDto = Omit<z.infer<typeof signUpSchema>, 'passwordConfirmation'>;
 
 /**
  * Signs up to rastercar, creating a new organization, user and root access level
@@ -122,48 +67,10 @@ export const apiRequestRecoverPasswordEmail = async (email: string): Promise<str
 		.json<string>();
 
 /**
- * requests a email address confirmation email to be sent to the email address if a user exists with said email
- */
-export const apiRequestEmailAddressConfirmationEmail = async (email: string): Promise<string> =>
-	rastercarApi.post({ email }, '/auth/request-email-address-confirmation').json<string>();
-
-export const recoverPasswordByTokenSchema = z
-	.object({
-		newPassword: passwordValidator,
-		passwordConfirmation: z.string().min(5)
-	})
-	.refine((data) => data.newPassword === data.passwordConfirmation, {
-		message: "Passwords didn't match",
-		path: ['passwordConfirmation']
-	});
-
-type RecoverPasswordByTokenDto = Omit<
-	z.infer<typeof recoverPasswordByTokenSchema>,
-	'passwordConfirmation'
-> & { passwordResetToken: string };
-
-/**
  * changes the password of the user that owns / is contained in the recover password token
  */
 export const apiRecoverPasswordByToken = async (body: RecoverPasswordByTokenDto): Promise<string> =>
 	rastercarApi.post(body, '/auth/change-password-by-recovery-token').json<string>();
-
-/**
- * confirms the email address of a user that owns the token (which was previously sent on a confirm address email)
- */
-export const apiConfirmEmailAddressByToken = async (token: string): Promise<string> =>
-	rastercarApi.post({ token }, '/auth/confirm-email-address-by-token').json<string>();
-
-const userSessionSchema = z.object({
-	ip: z.string(),
-	publicId: z.number().positive(),
-	createdAt: z.string().datetime(),
-	expiresAt: z.string().datetime(),
-	userAgent: z.string(),
-	sameAsFromRequest: z.boolean()
-});
-
-export type UserSession = z.infer<typeof userSessionSchema>;
 
 /**
  * list all sessions that belong to the currently logged in user
@@ -176,3 +83,12 @@ export const apiGetUserSessions = async (): Promise<UserSession[]> =>
  */
 export const apiDeleteSession = async (sessionPublicId: number): Promise<string> =>
 	rastercarApi.delete(`/auth/sign-out/${sessionPublicId}`).text();
+
+/**
+ * confirms the email address of a user that owns the email address confirmation token
+ *
+ * this token is obtained on the a link sent to the user email address, meaning it can
+ * only be retrieved by someone with access to said email address
+ */
+export const apiConfirmEmailAddressByToken = async (token: string): Promise<string> =>
+	rastercarApi.post({ token }, '/auth/confirm-email-address-by-token').json<string>();

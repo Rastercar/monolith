@@ -90,5 +90,5 @@ export const apiDeleteSession = async (sessionPublicId: number): Promise<string>
  * this token is obtained on the a link sent to the user email address, meaning it can
  * only be retrieved by someone with access to said email address
  */
-export const apiConfirmEmailAddressByToken = async (token: string): Promise<string> =>
+export const apiConfirmUserEmailAddressByToken = async (token: string): Promise<string> =>
 	rastercarApi.post({ token }, '/auth/confirm-email-address-by-token').json<string>();

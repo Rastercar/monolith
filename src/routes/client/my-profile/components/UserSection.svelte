@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from '$lib/api/auth';
+	import type { User } from '$lib/api/user.schema';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
@@ -50,7 +50,7 @@
 		</div>
 
 		{#if !user.emailVerified}
-			<EmailNotConfirmedWarning emailAddress={user.email} />
+			<EmailNotConfirmedWarning sendConfirmationEmailTo="user" />
 		{/if}
 	</div>
 </div>

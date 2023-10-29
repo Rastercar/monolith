@@ -9,7 +9,7 @@ export const createPromiseThatResolvesIn = (ms: number) =>
 /**
  * Waits for a minium time (milliseconds) before returning the result of a certain promise
  */
-export const awaitPromiseWithMinimumDelay = async <T>(
+export const awaitPromiseWithMinimumTimeOf = async <T>(
 	originalPromise: Promise<T>,
 	delay = 1000
 ): Promise<T> => {

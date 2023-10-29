@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { apiConfirmEmailAddressByToken } from '$lib/api/auth';
+	import { apiConfirmUserEmailAddressByToken } from '$lib/api/auth';
+	import { apiConfirmOrgEmailAddressByToken } from '$lib/api/organization';
 	import { isApiErrorObject } from '$lib/api/utils';
 	import { authStore } from '$lib/store/auth';
-	import { awaitPromiseWithMinimumDelay } from '$lib/utils/promises';
+	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
@@ -14,8 +15,13 @@
 	let errorCause = 'error verifying your email address';
 
 	const mutation = createMutation({
-		mutationFn: () =>
-			awaitPromiseWithMinimumDelay(apiConfirmEmailAddressByToken(data.confirmEmailToken), 1_500),
+		mutationFn: () => {
+			const requestPromise = data.confirmingForOrg
+				? apiConfirmOrgEmailAddressByToken(data.confirmEmailToken)
+				: apiConfirmUserEmailAddressByToken(data.confirmEmailToken);
+
+			return awaitPromiseWithMinimumTimeOf(requestPromise, 1_500);
+		},
 
 		onError: (e) => {
 			if (!(e instanceof WretchError) || !isApiErrorObject(e.json)) return;
@@ -38,7 +44,11 @@
 			</h1>
 			<ProgressBar class="mt-4" />
 		{:else if $mutation.isSuccess}
-			<h1 class="mb-1 text-center text-xl text-success-500-400-token">email address confirmed</h1>
+			<h1 class="mb-1 text-center text-xl text-success-500-400-token">
+				{data.confirmingForOrg
+					? 'organization billing email address confirmed'
+					: 'email address confirmed'}
+			</h1>
 
 			<a href="/client" class="text-primary-700-200-token underline-offset-4 hover:underline">
 				go to home page

@@ -71,7 +71,7 @@
 
 		{#if !user.emailVerified}
 			<div class="mt-2 col-span-2">
-				<EmailNotConfirmedWarning />
+				<EmailNotConfirmedWarning sendConfirmationEmailTo="user" />
 			</div>
 		{/if}
 

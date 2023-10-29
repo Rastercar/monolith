@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { apiDeleteSession, type UserSession } from '$lib/api/auth';
-	import { awaitPromiseWithMinimumDelay } from '$lib/utils/promises';
+	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
@@ -32,7 +32,7 @@
 	const dispatch = createEventDispatcher();
 
 	const mutation = createMutation({
-		mutationFn: () => awaitPromiseWithMinimumDelay(apiDeleteSession(session.publicId), 1_000),
+		mutationFn: () => awaitPromiseWithMinimumTimeOf(apiDeleteSession(session.publicId), 1_000),
 		onSuccess: () => dispatch('deleted')
 	});
 </script>

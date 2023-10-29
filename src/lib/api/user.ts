@@ -10,7 +10,7 @@ export const apiGetCurrentUser = async (): Promise<User> =>
 /**
  * requests a email address confirmation email to be sent to the logged in user email address
  */
-export const apiRequestEmailAddressConfirmationEmail = async (): Promise<string> =>
+export const apiRequestUserEmailAddressConfirmationEmail = async (): Promise<string> =>
 	rastercarApi.post({}, '/user/me/request-email-address-confirmation').json<string>();
 
 /**

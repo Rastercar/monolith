@@ -73,8 +73,7 @@
 
 	{#if user && !user.organization.billingEmailVerified}
 		<div class="mt-2 col-span-2">
-			<!-- TODO: isso aqui esta falho pois o componente tenta enviar confirmação de endereço de email da org -->
-			<EmailNotConfirmedWarning />
+			<EmailNotConfirmedWarning sendConfirmationEmailTo="organization" />
 		</div>
 	{/if}
 </div>

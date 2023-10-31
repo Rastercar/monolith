@@ -13,6 +13,11 @@
 			href: '/client/my-profile',
 			label: 'my profile',
 			icon: 'mdi:account'
+		},
+		{
+			href: '/client/tracking/vehicles',
+			label: 'vehicles',
+			icon: 'mdi:car'
 		}
 	];
 

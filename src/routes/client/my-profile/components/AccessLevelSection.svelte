@@ -1,8 +1,17 @@
 <script lang="ts">
-	import type { AccessLevel } from '$lib/api/auth';
+	import type { AccessLevel } from '$lib/api/auth.schema';
+	import {
+		permissionDetails,
+		type PermissionDetails,
+		type apiPermission
+	} from '$lib/constants/permissions';
 	import Icon from '@iconify/svelte';
 
 	export let accessLevel: AccessLevel;
+
+	const getPermissionDetails = (permission: string): PermissionDetails | null => {
+		return permissionDetails[permission as apiPermission] ?? null;
+	};
 </script>
 
 <div class="sm:card sm:p-4 sm:rounded-lg">
@@ -20,11 +29,17 @@
 		{accessLevel.description}
 	</h4>
 
-	<!-- [PROD-TODO] decide on permissions enum so we can have a value -> description map -->
-	<div class="opacity-80">permissions:</div>
-	{#each accessLevel.permissions as permission}
-		<h4 class="opacity-90 text-sm line-clamp-4 mt-1">
-			{permission}
-		</h4>
-	{/each}
+	<div class="opacity-80 mt-4">permissions:</div>
+	<ul>
+		{#each accessLevel.permissions as permission}
+			{@const details = getPermissionDetails(permission)}
+
+			{#if details}
+				<li class="mt-1">
+					<span class="text-sm font-semibold">{details.title}</span>
+					<p class="text-sm text-surface-800-100-token">{details.description}</p>
+				</li>
+			{/if}
+		{/each}
+	</ul>
 </div>

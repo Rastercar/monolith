@@ -1,5 +1,5 @@
 <script lang="ts">
-	// [PROD-TODO] remove this page
+	// [PROD-TODO] remove all pages under the dev folder
 	import { getToaster } from '$lib/store/toaster';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
 	import Navigation from './components/Navigation.svelte';

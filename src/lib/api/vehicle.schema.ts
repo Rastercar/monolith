@@ -15,11 +15,10 @@ export const createVehicleSchema = z.object({
 		.refine((v) => {
 			if (!v) return false;
 
-			const mercosulFormat = /^[a-z]{3}[0-9][a-z][0-9]{2}$/;
-			const brOldFormat = /^[a-z]{3}[0-9]{4}$/;
+			const mercosulOrBrFormat = /^[a-z]{3}[0-9][a-z0-9][0-9]{2}$/;
 
 			// AAA9999 or AAA9A99
-			return brOldFormat.test(v) || mercosulFormat.test(v);
+			return mercosulOrBrFormat.test(v);
 		}, 'invalid vehicle plate'),
 
 	brand: z.string().min(1),

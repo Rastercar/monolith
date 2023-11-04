@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getToaster } from '$lib/store/toaster';
-
 	import Icon from '@iconify/svelte';
 	import { Avatar, getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';

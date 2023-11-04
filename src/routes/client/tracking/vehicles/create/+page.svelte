@@ -1,110 +1,93 @@
 <script lang="ts">
-	import { createVehicleSchema } from '$lib/api/vehicle.schema';
-	import TextArea from '$lib/components/input/TextArea.svelte';
-	import TextInput from '$lib/components/input/TextInput.svelte';
-	import { imask } from '@imask/svelte';
-	import { Step, Stepper } from '@skeletonlabs/skeleton';
-	import { InputMask, type FactoryArg } from 'imask';
-	import { superForm } from 'sveltekit-superforms/client';
+	import Step from '$lib/components/stepper/Step.svelte';
+	import Stepper from '$lib/components/stepper/Stepper.svelte';
+	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
+	import StepperNavigation from '$lib/components/stepper/StepperNavigation.svelte';
 	import type { PageData } from './$types';
+	import VehicleFormStep from './components/VehicleFormStep.svelte';
 
 	export let data: PageData;
 
-	const form = superForm(data.form, {
-		validators: createVehicleSchema,
-		validationMethod: 'oninput'
-	});
-
-	// TODO: check if i need imask dependency and check if https://github.com/PaulMaly/svelte-imask/blob/master/src/action.js is enough
-
-	// TODO: properly type me !
-	// AAA9A99 or AAA9999
-	const options: FactoryArg = {
-		mask: 'aaa0#000',
-		lazy: false,
-		definitions: {
-			'#': /[0-9A-Za-z]/
-		}
-	};
-
-	let value = '';
-
-	function accept(xd: CustomEvent<InputMask<typeof options>>) {
-		const { detail } = xd;
-		console.log('!', xd.detail instanceof InputMask);
-
-		console.log('accept', detail.value);
-		value = detail.value;
-	}
-
-	function complete({ detail }: CustomEvent<InputMask<typeof options>>) {
-		console.log('complete', detail.unmaskedValue);
-	}
+	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
 </script>
 
-<!-- TODO: -->
 <div class="p-6 max-w-3xl mx-auto">
 	<Stepper>
-		<!-- TODO: form is valid -->
-		<Step locked={true}>
-			<svelte:fragment slot="header">Vehicle Information</svelte:fragment>
+		<StepperHeader />
 
-			<span class="text-sm">Fields marked as * are required</span>
+		<VehicleFormStep formSchema={data.createVehicleForm} />
 
-			{value}
+		<Step locked>
+			<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
 
-			<!-- TODO: fix me and probably component me ! -->
-			<input
-				class="input uppercase"
-				{value}
-				use:imask={options}
-				on:accept={accept}
-				on:complete={complete}
-			/>
+			<span class="text-sm">How will you track your vehicle ?</span>
 
-			<div class="grid grid-cols-2 gap-4">
-				<TextInput {form} class="label sm:col-span-1 col-span-2" field="plate" label="Plate *" />
+			<div class="flex justify-center space-x-4 pb-4">
+				<button
+					class="btn variant-filled-primary w-full"
+					disabled={selectedTrackerForm === 'new-tracker'}
+					on:click={() => (selectedTrackerForm = 'new-tracker')}
+				>
+					create a new tracker
+				</button>
 
-				<TextInput {form} class="label sm:col-span-1 col-span-2" field="brand" label="Brand *" />
-
-				<TextInput {form} class="label sm:col-span-1 col-span-2" field="model" label="Model *" />
-
-				<TextInput
-					{form}
-					class="label sm:col-span-1 col-span-2"
-					field="chassisNumber"
-					label="Chassis Number"
-				/>
-
-				<TextInput
-					{form}
-					class="label sm:col-span-1 col-span-2"
-					maxlength="32"
-					field="modelYear"
-					label="Model Year"
-				/>
-
-				<TextInput
-					{form}
-					class="label sm:col-span-1 col-span-2"
-					field="fabricationYear"
-					label="Fabrication Year"
-				/>
-
-				<TextInput {form} class="label sm:col-span-1 col-span-2" field="color" label="Color" />
-
-				<TextArea
-					{form}
-					class="label col-span-2"
-					field="additionalInfo"
-					label="Additional Info"
-					rows="6"
-				/>
+				<button
+					class="btn variant-filled-secondary w-full"
+					disabled={selectedTrackerForm === 'existing-tracker'}
+					on:click={() => (selectedTrackerForm = 'existing-tracker')}
+				>
+					use a existing tracker
+				</button>
 			</div>
+
+			{#if selectedTrackerForm === 'existing-tracker'}
+				<div class="my-4">select tracker input</div>
+			{:else}
+				<div class="my-4">create tracker form</div>
+			{/if}
+
+			<!-- TODO: decide if we will have this skip functionality -->
+			<button class="btn variant-filled-warning w-full"> skip this for now </button>
 		</Step>
+
 		<Step>
-			<svelte:fragment slot="header">(header)</svelte:fragment>
-			(content)
+			<svelte:fragment slot="header">Set the tracker sim card</svelte:fragment>
+
+			<span class="text-sm">Choose a sim card for the vehicle tracker</span>
+
+			<div class="flex justify-center space-x-4 pb-4">
+				<button
+					class="btn variant-filled-primary w-full"
+					disabled={selectedTrackerForm === 'new-tracker'}
+					on:click={() => (selectedTrackerForm = 'new-tracker')}
+				>
+					create a new sim card
+				</button>
+
+				<!-- TODO: start at this step if we have a sim-card on the tracker -->
+				<button
+					class="btn variant-filled-secondary w-full"
+					disabled={selectedTrackerForm === 'existing-tracker'}
+					on:click={() => (selectedTrackerForm = 'existing-tracker')}
+				>
+					use a existing sim card
+				</button>
+			</div>
+
+			{#if selectedTrackerForm === 'existing-tracker'}
+				<div class="my-4">select sim card input with probable existing sim card value</div>
+			{:else}
+				<!-- TODO: if tracker has sim card show warning that the current sim card will be released from the tracker -->
+				<div class="my-4">create sim card form</div>
+			{/if}
+
+			<p>
+				show form to create, change or use a sim card, the only edgecase is to show the existing sim
+				card if using a existing tracker
+			</p>
 		</Step>
+
+		<!-- TODO: -->
+		<StepperNavigation />
 	</Stepper>
 </div>

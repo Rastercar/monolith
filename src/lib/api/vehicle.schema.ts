@@ -1,25 +1,49 @@
 import { z } from 'zod';
 
+const tenYearsFromNow = new Date().getFullYear() + 10;
+
+const isOptionalDateBetween = (min: number, max: number) => (v?: string | null) => {
+	if (!v) return true;
+	const n = parseInt(v);
+	return !Number.isNaN(n) && n >= min && n <= max;
+};
+
 export const createVehicleSchema = z.object({
-	// TODO: plate regex validator, uniqueness validator, etc
 	plate: z
 		.string()
 		.min(1)
 		.refine((v) => {
 			if (!v) return false;
 
-			// AAA9A99 or AAA9999
 			const mercosulFormat = /^[a-z]{3}[0-9][a-z][0-9]{2}$/;
 			const brOldFormat = /^[a-z]{3}[0-9]{4}$/;
 
+			// AAA9999 or AAA9A99
 			return brOldFormat.test(v) || mercosulFormat.test(v);
 		}, 'invalid vehicle plate'),
 
-	modelYear: z.number().optional(),
-	fabricationYear: z.number().optional(),
-	chassisNumber: z.string().optional(),
-	brand: z.string(),
-	model: z.string(),
+	brand: z.string().min(1),
+	model: z.string().min(1),
 	color: z.string().optional(),
+
+	// idk how many X years into the future a car can be branded as but ive never
+	// seen more than 10 years above the current date, so lets use that lol.
+	modelYear: z
+		.string()
+		.optional()
+		.refine(
+			isOptionalDateBetween(1900, tenYearsFromNow),
+			`model year must be between 1900 and ${tenYearsFromNow}`
+		),
+	fabricationYear: z
+		.string()
+		.optional()
+		.refine(
+			isOptionalDateBetween(1900, tenYearsFromNow),
+			`fabrication year must be between 1900 and ${tenYearsFromNow}`
+		),
+	chassisNumber: z.string().optional(),
 	additionalInfo: z.string().optional()
 });
+
+export type CreateVehicleBody = z.infer<typeof createVehicleSchema>;

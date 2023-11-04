@@ -3,6 +3,6 @@ import { superValidate } from 'sveltekit-superforms/server';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const form = await superValidate(createVehicleSchema);
-	return { form };
+	const createVehicleForm = await superValidate(createVehicleSchema);
+	return { createVehicleForm };
 };

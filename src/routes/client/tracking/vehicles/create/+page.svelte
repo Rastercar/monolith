@@ -2,7 +2,6 @@
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
-	import StepperNavigation from '$lib/components/stepper/StepperNavigation.svelte';
 	import type { PageData } from './$types';
 	import VehicleFormStep from './components/VehicleFormStep.svelte';
 
@@ -88,6 +87,6 @@
 		</Step>
 
 		<!-- TODO: -->
-		<StepperNavigation />
+		<!-- <StepperNavigation /> -->
 	</Stepper>
 </div>

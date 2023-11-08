@@ -1,16 +1,19 @@
-<script lang="ts">
+<script lang="ts" context="module">
+	import type { AnyZodObject } from 'zod';
+	type T = AnyZodObject;
+</script>
+
+<script lang="ts" generics="T extends AnyZodObject">
 	import ErrorMessage from '$lib/components/input/ErrorMessage.svelte';
 	import { IMask, imask } from '@imask/svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import type { FormPathLeaves, ZodValidation } from 'sveltekit-superforms';
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms/client';
-	import type { AnyZodObject, z } from 'zod';
+	import type { z } from 'zod';
 
 	type MaskOptions = Parameters<typeof IMask>[1];
 
 	export let maskOptions: MaskOptions;
-
-	type T = $$Generic<AnyZodObject>;
 
 	export let form: SuperForm<ZodValidation<T>, unknown>;
 	export let field: FormPathLeaves<z.infer<T>>;

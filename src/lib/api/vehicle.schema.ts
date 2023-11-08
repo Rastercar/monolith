@@ -1,9 +1,14 @@
 import { z } from 'zod';
 
-const tenYearsFromNow = new Date().getFullYear() + 10;
+const TEN_YEARS_FROM_NOW = new Date().getFullYear() + 10;
+
+const FIVE_MB = 1024 * 1024 * 5;
+
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 const isOptionalDateBetween = (min: number, max: number) => (v?: string | null) => {
 	if (!v) return true;
+
 	const n = parseInt(v);
 	return !Number.isNaN(n) && n >= min && n <= max;
 };
@@ -21,6 +26,18 @@ export const createVehicleSchema = z.object({
 			return mercosulOrBrFormat.test(v);
 		}, 'invalid vehicle plate'),
 
+	photoName: z.string(),
+	photo: z
+		.any()
+		.optional()
+		.refine((f?: File) => {
+			return !f || f.size <= FIVE_MB;
+		}, `Max file size is 5MB.`)
+		.refine(
+			(f?: File) => !f || ACCEPTED_IMAGE_TYPES.includes(f.type),
+			'jpg, jpeg, png and webp files are accepted.'
+		),
+
 	brand: z.string().min(1),
 	model: z.string().min(1),
 	color: z.string().optional(),
@@ -31,16 +48,18 @@ export const createVehicleSchema = z.object({
 		.string()
 		.optional()
 		.refine(
-			isOptionalDateBetween(1900, tenYearsFromNow),
-			`model year must be between 1900 and ${tenYearsFromNow}`
+			isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW),
+			`model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`
 		),
+
 	fabricationYear: z
 		.string()
 		.optional()
 		.refine(
-			isOptionalDateBetween(1900, tenYearsFromNow),
-			`fabrication year must be between 1900 and ${tenYearsFromNow}`
+			isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW),
+			`fabrication year must be between 1900 and ${TEN_YEARS_FROM_NOW}`
 		),
+
 	chassisNumber: z.string().optional(),
 	additionalInfo: z.string().optional()
 });

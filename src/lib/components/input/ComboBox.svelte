@@ -1,4 +1,9 @@
-<script lang="ts">
+<script lang="ts" context="module">
+	import type { AnyZodObject } from 'zod';
+	type T = AnyZodObject;
+</script>
+
+<script lang="ts" generics="T extends AnyZodObject">
 	import type { FormPathType } from 'sveltekit-superforms/dist/stringPath';
 
 	import ErrorMessage from '$lib/components/input/ErrorMessage.svelte';
@@ -10,9 +15,7 @@
 	} from '@skeletonlabs/skeleton';
 	import type { FormPathLeaves, UnwrapEffects, ZodValidation } from 'sveltekit-superforms';
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms/client';
-	import type { AnyZodObject, z } from 'zod';
-
-	type T = $$Generic<AnyZodObject>;
+	import type { z } from 'zod';
 
 	export let form: SuperForm<ZodValidation<T>, unknown>;
 

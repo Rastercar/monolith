@@ -1,10 +1,13 @@
-<script lang="ts">
+<script lang="ts" context="module">
+	import type { AnyZodObject } from 'zod';
+	type T = AnyZodObject;
+</script>
+
+<script lang="ts" generics="T extends AnyZodObject">
 	import type { FormPathLeaves, ZodValidation } from 'sveltekit-superforms';
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms/client';
-	import type { AnyZodObject, z } from 'zod';
+	import type { z } from 'zod';
 	import ErrorMessage from './ErrorMessage.svelte';
-
-	type T = $$Generic<AnyZodObject>;
 
 	export let form: SuperForm<ZodValidation<T>, unknown>;
 	export let field: FormPathLeaves<z.infer<T>>;

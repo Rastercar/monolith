@@ -10,9 +10,5 @@ import type { CreateVehicleBody } from './vehicle.schema';
  */
 // TODO: return created vehicle
 // .then(vehicleSchema.parse);
-export const apiCreateVehicle = async (body: CreateVehicleBody, photo?: File): Promise<string> => {
-	return rastercarApi
-		.formData({ ...body, photo })
-		.post(undefined, '/vehicle')
-		.json<string>();
-};
+export const apiCreateVehicle = async (body: CreateVehicleBody): Promise<string> =>
+	rastercarApi.formData(body).post(undefined, '/vehicle').json<string>();

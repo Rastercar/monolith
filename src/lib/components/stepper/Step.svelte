@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { getContext, onDestroy } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import type { Transition } from './transition';
 	import type { StepperState } from './types.js';
-
-	type TransitionIn = $$Generic<Transition>;
-	type TransitionOut = $$Generic<Transition>;
 
 	/** Provide arbitrary classes to the step header region. */
 	export let regionHeader: string = '';
@@ -23,7 +19,6 @@
 	const cBase = 'space-y-4';
 	const cHeader = 'text-2xl font-bold';
 	const cContent = 'space-y-4';
-	const cNavigation = 'flex';
 
 	// Unregister step on destroy
 	onDestroy(() => {

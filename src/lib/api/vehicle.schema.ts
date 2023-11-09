@@ -64,4 +64,21 @@ export const createVehicleSchema = z.object({
 	additionalInfo: z.string().optional()
 });
 
+export const vehicleSchema = z.object({
+	id: z.number(),
+	organizationId: z.number(),
+	createdAt: z.string().datetime(),
+	plate: z.string(),
+	photo: z.string().nullable(),
+	brand: z.string().nullable(),
+	model: z.string().nullable(),
+	color: z.string().nullable(),
+	modelYear: z.number().nullable(),
+	fabricationYear: z.number().nullable(),
+	chassisNumber: z.string().nullable(),
+	additionalInfo: z.string().nullable()
+});
+
 export type CreateVehicleBody = z.infer<typeof createVehicleSchema>;
+
+export type Vehicle = z.infer<typeof vehicleSchema>;

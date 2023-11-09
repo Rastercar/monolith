@@ -19,3 +19,8 @@ export const USERNAME_IN_USE = 'USERNAME_IN_USE';
  * a email could not be used to create a entity because the email is in use
  */
 export const EMAIL_IN_USE = 'EMAIL_IN_USE';
+
+/**
+ * a vehicle could not be created / updated because the plate is in use
+ */
+export const PLATE_IN_USE = 'PLATE_IN_USE';

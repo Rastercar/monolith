@@ -3,7 +3,8 @@
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
 	import type { PageData } from './$types';
-	import VehicleFormStep from './components/VehicleFormStep.svelte';
+	import SelectOrCreateTrackerStep from './components/SelectOrCreateTrackerStep.svelte';
+	import VehicleForm from './components/VehicleForm.svelte';
 
 	export let data: PageData;
 
@@ -11,42 +12,18 @@
 </script>
 
 <div class="p-6 max-w-3xl mx-auto">
-	<Stepper>
-		<StepperHeader />
+	<!-- TODO: start = 0 -->
+	<Stepper start={1}>
+		<StepperHeader additionalClasses="mb-4" />
 
-		<VehicleFormStep formSchema={data.createVehicleForm} />
+		<Step>
+			<svelte:fragment slot="header">Vehicle Information</svelte:fragment>
+			<VehicleForm formSchema={data.createVehicleForm} />
+		</Step>
 
-		<Step locked>
+		<Step>
 			<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
-
-			<span class="text-sm">How will you track your vehicle ?</span>
-
-			<div class="flex justify-center space-x-4 pb-4">
-				<button
-					class="btn variant-filled-primary w-full"
-					disabled={selectedTrackerForm === 'new-tracker'}
-					on:click={() => (selectedTrackerForm = 'new-tracker')}
-				>
-					create a new tracker
-				</button>
-
-				<button
-					class="btn variant-filled-secondary w-full"
-					disabled={selectedTrackerForm === 'existing-tracker'}
-					on:click={() => (selectedTrackerForm = 'existing-tracker')}
-				>
-					use a existing tracker
-				</button>
-			</div>
-
-			{#if selectedTrackerForm === 'existing-tracker'}
-				<div class="my-4">select tracker input</div>
-			{:else}
-				<div class="my-4">create tracker form</div>
-			{/if}
-
-			<!-- TODO: decide if we will have this skip functionality -->
-			<button class="btn variant-filled-warning w-full"> skip this for now </button>
+			<SelectOrCreateTrackerStep formSchema={data.createTrackerForm} />
 		</Step>
 
 		<Step>
@@ -85,8 +62,5 @@
 				card if using a existing tracker
 			</p>
 		</Step>
-
-		<!-- TODO: -->
-		<!-- <StepperNavigation /> -->
 	</Stepper>
 </div>

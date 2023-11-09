@@ -31,8 +31,8 @@
 	/** Provide classes to style the stepper header border. */
 	export let border: string = 'border-surface-400-500-token';
 
-	/** Provide arbitrary classes to the stepper header region. */
-	export let regionHeader: string = '';
+	/** Provide additional classes. */
+	export let additionalClasses: string = '';
 
 	/** Provide the transition to used on entry. */
 	let transitionIn: TransitionIn = getContext('transitionIn');
@@ -51,7 +51,7 @@
 	$: isActive = (step: number) => step === $state.current;
 	$: classesBadge = (step: number) => (isActive(step) ? active : badge);
 
-	$: classesHeader = `${cHeader} ${border} ${gap} ${regionHeader}`;
+	$: classesHeader = `${cHeader} ${border} ${gap} ${additionalClasses}`;
 </script>
 
 {#if $state.total}

@@ -56,7 +56,7 @@
 		class={inputClass}
 		name={field}
 		type="file"
-		aria-invalid={$filenameErrors || $fileErrors ? 'true' : undefined}
+		aria-invalid={[...($filenameErrors || []), ...($fileErrors || [])] ? 'true' : undefined}
 		bind:value={$filenameValue}
 		on:change={({ currentTarget }) => {
 			const file = currentTarget.files?.[0];
@@ -68,5 +68,5 @@
 		{...$filenameConstraints}
 		{...$$restProps}
 	/>
-	<ErrorMessage errors={$fileErrors || $filenameErrors} />
+	<ErrorMessage errors={[...($filenameErrors || []), ...($fileErrors || [])]} />
 </label>

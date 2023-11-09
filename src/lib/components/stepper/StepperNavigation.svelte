@@ -28,7 +28,7 @@
 	export let buttonComplete = 'variant-filled-primary';
 	export let buttonCompleteLabel = 'Complete';
 
-	let dispatchParent = getContext<StepperEventDispatcher>('dispatchParent');
+	let stepperDispatch = getContext<StepperEventDispatcher>('stepperDispatch');
 
 	/** The transition to be used on exit. */
 	let transitionOut: TransitionOut = getContext('transitionOut');
@@ -54,21 +54,21 @@
 		const stepIndex = $state.current;
 		$state.current++;
 
-		dispatchParent('next', { step: stepIndex, state: $state });
-		dispatchParent('step', { step: stepIndex, state: $state });
+		stepperDispatch('next', { step: stepIndex, state: $state });
+		stepperDispatch('step', { step: stepIndex, state: $state });
 	}
 
 	function onBack() {
 		const stepIndex = $state.current;
 		$state.current--;
 
-		dispatchParent('back', { step: stepIndex, state: $state });
-		dispatchParent('step', { step: stepIndex, state: $state });
+		stepperDispatch('back', { step: stepIndex, state: $state });
+		stepperDispatch('step', { step: stepIndex, state: $state });
 	}
 
 	function onComplete() {
 		const stepIndex = $state.current;
-		dispatchParent('complete', { step: stepIndex, state: $state });
+		stepperDispatch('complete', { step: stepIndex, state: $state });
 	}
 
 	$: classesNavigation = `${cNavigation} ${justify} ${gap} ${regionNavigation}`;

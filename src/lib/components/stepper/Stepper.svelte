@@ -36,18 +36,12 @@
 	let state: Writable<StepperState> = writable({ current: start, total: 0 });
 
 	setContext('state', state);
-	setContext('dispatchParent', dispatch);
+	setContext('stepperDispatch', dispatch);
 
 	setContext('transitionIn', transitionIn);
 	setContext('transitionOut', transitionOut);
 	setContext('transitionInParams', transitionInParams);
 	setContext('transitionOutParams', transitionOutParams);
-
-	// Classes
-	const cBase = 'space-y-4';
-
-	// Reactive
-	$: classesBase = `${cBase} ${$$props.class ?? ''}`;
 </script>
 
 <!--
@@ -59,6 +53,4 @@ a lot of patterns and features cannot be done.
 
 so we copy paste the component and add functionality as needed
 -->
-<div class={classesBase}>
-	<slot />
-</div>
+<slot />

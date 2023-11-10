@@ -63,7 +63,7 @@
 		});
 	};
 
-	$: ({ tainted, allErrors, validate } = form);
+	$: ({ tainted, allErrors } = form);
 
 	$: canSubmit = $tainted === undefined || $allErrors.length > 0;
 </script>
@@ -146,7 +146,7 @@
 		fileField="photo"
 		accept="image/png, image/gif, image/jpeg, image/webp"
 		on:file-selected={({ detail: file }) => {
-			validate('photo', { value: file, update: 'errors', taint: true });
+			form.validate('photo', { value: file, update: 'errors', taint: true });
 		}}
 	/>
 

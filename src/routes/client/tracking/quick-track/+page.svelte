@@ -11,6 +11,13 @@
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
 </script>
 
+<!--
+	TODO:
+	this page can only be show if the user can:
+	create vehicle
+	create tracker
+	create sim card
+-->
 <div class="p-6 max-w-3xl mx-auto">
 	<!-- TODO: start = 0 -->
 	<Stepper start={1}>

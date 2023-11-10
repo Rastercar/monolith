@@ -50,22 +50,16 @@
 		});
 	};
 
-	$: ({ tainted, allErrors, validate } = form);
+	$: ({ tainted, allErrors } = form);
 
 	$: canSubmit = $tainted === undefined || $allErrors.length > 0;
 </script>
 
-<div class="grid grid-cols-2 gap-4 mb-4">
-	<TextInput
-		{form}
-		class="label sm:col-span-1 col-span-2"
-		field="imei"
-		label="IMEI *"
-		maxlength="50"
-	/>
+<div class="mb-4">
+	<TextInput {form} field="imei" label="IMEI *" maxlength="50" />
 
 	<!-- TODO: select input -->
-	<TextInput {form} class="label sm:col-span-1 col-span-2" field="model" label="Model" />
+	<TextInput {form} field="model" label="Model *" />
 </div>
 
 <div class="flex justify-end">

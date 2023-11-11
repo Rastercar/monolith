@@ -1,7 +1,11 @@
 <script lang="ts">
-	import { isApiErrorObject } from '$lib/api/utils';
+	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
 	import { apiCreateVehicle } from '$lib/api/vehicle';
-	import { createVehicleSchema, type CreateVehicleBody } from '$lib/api/vehicle.schema';
+	import {
+		createVehicleSchema,
+		type CreateVehicleBody,
+		type Vehicle
+	} from '$lib/api/vehicle.schema';
 	import ComboBox from '$lib/components/input/ComboBox.svelte';
 	import FileInput from '$lib/components/input/FileInput.svelte';
 	import MaskedTextInput from '$lib/components/input/MaskedTextInput.svelte';
@@ -11,13 +15,12 @@
 	import { carBrands } from '$lib/constants/data/car-brands';
 	import { PLATE_IN_USE } from '$lib/constants/error-codes';
 	import { getToaster } from '$lib/store/toaster';
-	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
-	import { WretchError } from 'wretch/resolver';
+	import StepperNav from './StepperNav.svelte';
 
 	export let formSchema: SuperValidated<typeof createVehicleSchema>;
 
@@ -35,13 +38,13 @@
 	const mutation = createMutation({
 		mutationFn: (b: CreateVehicleBody) => apiCreateVehicle(b),
 		onError: (e) => {
-			if (e instanceof WretchError && isApiErrorObject(e.json) && e.json.error === PLATE_IN_USE) {
-				form.validate('plate', { value: '', errors: 'plate in use', update: 'errors' });
-			} else {
-				toaster.error();
-			}
+			isErrorResponseWithErrorCode(e, PLATE_IN_USE)
+				? form.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
+				: toaster.error();
 		}
 	});
+
+	const dispatch = createEventDispatcher<{ 'vehicle-created': Vehicle }>();
 
 	const createVehicle = async () => {
 		const validated = await form.validate();
@@ -58,7 +61,7 @@
 		// its sent as with the value set to 'undefined' string, what we really want is to exclude
 		// fields where the value is undefined or a empty string
 		$mutation.mutateAsync(body as CreateVehicleBody).then((createdVehicle) => {
-			// TODO: set created vehicle ?
+			dispatch('vehicle-created', createdVehicle);
 			$stepperState.current++;
 		});
 	};
@@ -160,18 +163,4 @@
 	/>
 </div>
 
-<div class="flex justify-end">
-	<button
-		class="btn variant-filled"
-		disabled={canSubmit || $mutation.isLoading}
-		on:click={createVehicle}
-	>
-		{#if canSubmit}
-			<Icon icon="mdi:lock" class="mr-2" />
-		{:else if $mutation.isLoading}
-			<Icon icon="mdi:loading" class="mr-2 animate-spin" />
-		{/if}
-
-		Next <Icon icon="mdi:arrow-right" class="ml-2" />
-	</button>
-</div>
+<StepperNav {canSubmit} isLoading={$mutation.isLoading} on:click={createVehicle} />

@@ -47,7 +47,7 @@
 		$fileValue = v as any;
 	};
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{ 'file-selected': File }>();
 </script>
 
 <label class={clazz}>

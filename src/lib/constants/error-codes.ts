@@ -24,3 +24,8 @@ export const EMAIL_IN_USE = 'EMAIL_IN_USE';
  * a vehicle could not be created / updated because the plate is in use
  */
 export const PLATE_IN_USE = 'PLATE_IN_USE';
+
+/**
+ * a tracker could not be created / updated because the imei is in use
+ */
+export const IMEI_IN_USE = 'IMEI_IN_USE';

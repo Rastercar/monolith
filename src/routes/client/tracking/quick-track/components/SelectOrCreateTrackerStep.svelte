@@ -6,7 +6,10 @@
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
 
-	// TODO: get vehicle id
+	/**
+	 * ID of the vehicle to be associated with the tracker to be created or selected
+	 */
+	export let vehicleId: number;
 
 	export let formSchema: SuperValidated<typeof createTrackerSchema>;
 </script>
@@ -33,5 +36,5 @@
 {#if selectedTrackerForm === 'existing-tracker'}
 	<div>select tracker input</div>
 {:else}
-	<TrackerForm {formSchema} />
+	<TrackerForm {formSchema} vehicleIdToAssociate={vehicleId} on:tracker-created />
 {/if}

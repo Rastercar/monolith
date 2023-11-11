@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { Tracker } from '$lib/api/tracker.schema';
+	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
@@ -7,6 +9,9 @@
 	import VehicleForm from './components/VehicleForm.svelte';
 
 	export let data: PageData;
+
+	let createdVehicle: Vehicle | null = null;
+	let createdOrSelectedTracker: Tracker | null = null;
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
 </script>
@@ -19,18 +24,30 @@
 	create sim card
 -->
 <div class="p-6 max-w-3xl mx-auto">
-	<!-- TODO: start = 0 -->
-	<Stepper start={1}>
+	<Stepper start={0}>
 		<StepperHeader additionalClasses="mb-4" />
 
 		<Step>
 			<svelte:fragment slot="header">Vehicle Information</svelte:fragment>
-			<VehicleForm formSchema={data.createVehicleForm} />
+			<VehicleForm
+				formSchema={data.createVehicleForm}
+				on:vehicle-created={({ detail: vehicle }) => {
+					createdVehicle = vehicle;
+				}}
+			/>
 		</Step>
 
 		<Step>
 			<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
-			<SelectOrCreateTrackerStep formSchema={data.createTrackerForm} />
+			{#if createdVehicle?.id}
+				<SelectOrCreateTrackerStep
+					vehicleId={createdVehicle?.id}
+					formSchema={data.createTrackerForm}
+					on:tracker-created={({ detail: tracker }) => {
+						createdOrSelectedTracker = tracker;
+					}}
+				/>
+			{/if}
 		</Step>
 
 		<Step>

@@ -1,51 +1,57 @@
 <script lang="ts">
-	import { createTrackerSchema } from '$lib/api/tracker.schema';
-	import { apiCreateVehicle } from '$lib/api/vehicle';
-	import type { CreateVehicleBody } from '$lib/api/vehicle.schema';
+	import { apiCreateTracker } from '$lib/api/tracker';
+	import {
+		createTrackerSchema,
+		type CreateTrackerBody,
+		type Tracker
+	} from '$lib/api/tracker.schema';
+	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
+	import SelectInput from '$lib/components/input/SelectInput.svelte';
 	import TextInput from '$lib/components/input/TextInput.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
-	import { carBrands } from '$lib/constants/data/car-brands';
+	import { IMEI_IN_USE } from '$lib/constants/error-codes';
 	import { getToaster } from '$lib/store/toaster';
-	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
+	import StepperNav from './StepperNav.svelte';
 
 	export let formSchema: SuperValidated<typeof createTrackerSchema>;
 
+	/**
+	 * The ID of the vehicle to associate the tracker to create to
+	 */
+	export let vehicleIdToAssociate: number | null;
+
+	const form = superForm(formSchema, { validators: createTrackerSchema });
+
 	const toaster = getToaster();
-
-	const form = superForm(formSchema, {
-		validators: createTrackerSchema,
-		validationMethod: 'oninput'
-	});
-
-	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
 
 	let stepperState: Writable<StepperState> = getContext('state');
 
 	const mutation = createMutation({
-		mutationFn: (b: CreateVehicleBody) => apiCreateVehicle(b)
+		mutationFn: (b: CreateTrackerBody) => apiCreateTracker(b),
+
+		onError: (e) => {
+			isErrorResponseWithErrorCode(e, IMEI_IN_USE)
+				? form.validate('imei', { value: '', errors: 'imei in use', update: 'errors' })
+				: toaster.error();
+		}
 	});
 
-	const createVehicle = async () => {
+	const dispatch = createEventDispatcher<{ 'tracker-created': Tracker }>();
+
+	const createTracker = async () => {
 		const validated = await form.validate();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		const body: Partial<CreateVehicleBody> = {};
+		if (vehicleIdToAssociate) validated.data.vehicleId = vehicleIdToAssociate;
 
-		Object.entries(validated.data).forEach(([k, v]) => {
-			if (v) body[k as keyof CreateVehicleBody] = v;
-		});
-
-		// shitty hack, when sending formData with objects with undefined values (eg: {a: undefined})
-		// its sent as with the value set to 'undefined' string, what we really want is to exclude
-		// fields where the value is undefined or a empty string
-		$mutation.mutateAsync(body as CreateVehicleBody).then((createdVehicle) => {
-			// TODO: set created vehicle ?
+		$mutation.mutateAsync(validated.data).then((createdTracker) => {
+			dispatch('tracker-created', createdTracker);
 			$stepperState.current++;
 		});
 	};
@@ -58,22 +64,7 @@
 <div class="mb-4">
 	<TextInput {form} field="imei" label="IMEI *" maxlength="50" />
 
-	<!-- TODO: select input -->
-	<TextInput {form} field="model" label="Model *" />
+	<SelectInput {form} options={[{ label: 'H02', value: 'H02' }]} field="model" label="Model *" />
 </div>
 
-<div class="flex justify-end">
-	<button
-		class="btn variant-filled"
-		disabled={canSubmit || $mutation.isLoading}
-		on:click={createVehicle}
-	>
-		{#if canSubmit}
-			<Icon icon="mdi:lock" class="mr-2" />
-		{:else if $mutation.isLoading}
-			<Icon icon="mdi:loading" class="mr-2 animate-spin" />
-		{/if}
-
-		Next <Icon icon="mdi:arrow-right" class="ml-2" />
-	</button>
-</div>
+<StepperNav {canSubmit} isLoading={$mutation.isLoading} on:click={createTracker} />

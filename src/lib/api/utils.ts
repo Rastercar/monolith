@@ -22,6 +22,10 @@ export const isApiErrorObject = (v: unknown): v is ApiErrorObject => {
 	return typeof v === 'object' && v !== null && typeof (v as ApiErrorObject).error === 'string';
 };
 
+export const isErrorResponseWithErrorCode = (e: unknown, errorCode: string): boolean => {
+	return e instanceof WretchError && isApiErrorObject(e.json) && e.json.error === errorCode;
+};
+
 export const redirectOnSessionError = (err: unknown) => {
 	if (!browser || !(err instanceof WretchError) || !isApiErrorObject(err.json)) throw err;
 

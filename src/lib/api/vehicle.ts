@@ -8,5 +8,5 @@ import { vehicleSchema, type CreateVehicleBody, type Vehicle } from './vehicle.s
  *
  * - `CREATE_VEHICLE`
  */
-export const apiCreateVehicle = async (body: CreateVehicleBody): Promise<unknown> =>
+export const apiCreateVehicle = async (body: CreateVehicleBody): Promise<Vehicle> =>
 	rastercarApi.formData(body).post(undefined, '/vehicle').json<Vehicle>().then(vehicleSchema.parse);

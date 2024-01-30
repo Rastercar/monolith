@@ -14,6 +14,9 @@ dependencies:
   '@tanstack/svelte-query':
     specifier: ^4.33.0
     version: 4.33.0(svelte@4.2.0)
+  '@tanstack/svelte-table':
+    specifier: ^8.11.7
+    version: 8.11.7(svelte@4.2.0)
   svelte-easy-crop:
     specifier: ^2.0.1
     version: 2.0.1
@@ -576,6 +579,21 @@ packages:
     dependencies:
       '@tanstack/query-core': 4.33.0
       svelte: 4.2.0
+    dev: false
+
+  /@tanstack/svelte-table@8.11.7(svelte@4.2.0):
+    resolution: {integrity: sha512-UfgPiSJa+Y3V2l5g0dg/YzIUr1eyEKY9wHoN7zZDnsXs6XpHVY+bNY/0dWSZkl4ej1P8o6yoquI7yd8dlZUfGw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      svelte: ^4.0.0 || ^3.49.0
+    dependencies:
+      '@tanstack/table-core': 8.11.7
+      svelte: 4.2.0
+    dev: false
+
+  /@tanstack/table-core@8.11.7:
+    resolution: {integrity: sha512-N3ksnkbPbsF3PjubuZCB/etTqvctpXWRHIXTmYfJFnhynQKjeZu8BCuHvdlLPpumKbA+bjY4Ay9AELYLOXPWBg==}
+    engines: {node: '>=12'}
     dev: false
 
   /@types/cookie@0.5.1:

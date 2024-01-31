@@ -4,12 +4,14 @@ import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
 import { INVALID_SESSION, NO_SID_COOKIE } from '$lib/constants/error-codes';
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
+import QueryStringAddon from 'wretch/addons/queryString';
 import { WretchError } from 'wretch/resolver';
 import type { AnyZodObject } from 'zod';
 
-export const rastercarApi = wretch(PUBLIC_RASTERCAR_API_BASE_URL).addon(FormDataAddon).options({
-	credentials: 'include'
-});
+export const rastercarApi = wretch(PUBLIC_RASTERCAR_API_BASE_URL)
+	.addon(FormDataAddon)
+	.addon(QueryStringAddon)
+	.options({ credentials: 'include' });
 
 /**
  * simple error interface returned by the rastercar api in most error cases
@@ -65,4 +67,20 @@ export const returnErrorCodeOnApiError = (errorCode: string) => (err: WretchErro
  */
 export const fallthroughApiErrorMessage = (err: WretchError) => {
 	if (isApiErrorObject(err.json)) return err.json.error;
+};
+
+/**
+ * Strips keys with undefined values from an object,
+ *
+ * this is usefull to avoid parsing an object with undefined values
+ * to a query string, eg: avoiding `{a: undefined, b: 1}` to be parsed as `?a=&b=1`
+ */
+export const stripUndefined = (o: unknown): Record<string, unknown> => {
+	if (typeof o !== 'object' || o === null) return {};
+
+	type key = keyof typeof o;
+
+	Object.keys(o).forEach((k) => o[k as key] === undefined && delete o[k as key]);
+
+	return o as Record<string, unknown>;
 };

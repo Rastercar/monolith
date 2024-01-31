@@ -1,171 +1,91 @@
 <script lang="ts">
+	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
+	import type { Tracker } from '$lib/api/tracker.schema';
+	import { Paginator, ProgressBar } from '@skeletonlabs/skeleton';
+	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		flexRender,
 		getCoreRowModel,
-		getPaginationRowModel,
 		type ColumnDef,
-		type PaginationState,
-		type TableOptions,
-		type Updater
+		type TableOptions
 	} from '@tanstack/svelte-table';
-	import { writable } from 'svelte/store';
+	import { derived, writable } from 'svelte/store';
 
-	type Person = {
-		firstName: string;
-		lastName: string;
-		age: number;
-	};
+	const pagination = writable({ page: 1, pageSize: 5 });
+	const filters = writable<GetTrackersFilters>({});
 
-	const defaultData: Person[] = [
-		{
-			firstName: 'tanner',
-			lastName: 'linsley',
-			age: 24
-		},
-		{
-			firstName: 'tandy',
-			lastName: 'miller',
-			age: 40
-		},
-		{
-			firstName: 'joe',
-			lastName: 'dirte',
-			age: 45
-		},
-		{
-			firstName: 'tanner',
-			lastName: 'linsley',
-			age: 24
-		},
-		{
-			firstName: 'tandy',
-			lastName: 'miller',
-			age: 40
-		},
-		{
-			firstName: 'joe',
-			lastName: 'dirte',
-			age: 45
-		},
-		{
-			firstName: 'tanner',
-			lastName: 'linsley',
-			age: 24
-		},
-		{
-			firstName: 'tandy',
-			lastName: 'miller',
-			age: 40
-		},
-		{
-			firstName: 'joe',
-			lastName: 'dirte',
-			age: 45
-		},
-		{
-			firstName: 'tanner',
-			lastName: 'linsley',
-			age: 24
-		},
-		{
-			firstName: 'tandy',
-			lastName: 'miller',
-			age: 40
-		},
-		{
-			firstName: 'joe',
-			lastName: 'dirte',
-			age: 45
-		},
-		{
-			firstName: 'tanner',
-			lastName: 'linsley',
-			age: 24
-		}
-	];
+	const query = createQuery(
+		derived([pagination, filters], ([$pagination, $filters]) => ({
+			queryKey: ['trackers', $pagination, $filters],
+			placeholderData: keepPreviousData,
+			queryFn: async () => {
+				const result = await apiGetTrackers({ pagination: $pagination, filters: $filters });
 
-	const defaultColumns: ColumnDef<Person>[] = [
-		{
-			accessorKey: 'firstName',
-			cell: (info) => info.getValue(),
-			footer: (info) => info.column.id
-		},
-		{
-			accessorFn: (row) => row.lastName,
-			id: 'lastName',
-			cell: (info) => info.getValue(),
-			header: () => 'Last Name',
-			footer: (info) => info.column.id
-		},
-		{
-			accessorKey: 'age',
-			header: () => 'Age',
-			footer: (info) => info.column.id
-		}
-	];
+				$options.data = result.records;
 
-	let pagination = { pageIndex: 1, pageSize: 2 };
-
-	const nextPage = () => {
-		options.update((old) => {
-			const pageIndex = (old.state?.pagination?.pageIndex || 0) + 1;
-
-			return {
-				...old,
-				state: {
-					pagination: { pageSize: 2, pageIndex }
-				}
-			};
-		});
-	};
-
-	const setPagination = (updater: Updater<PaginationState>) => {
-		if (updater instanceof Function) {
-			pagination = updater(pagination);
-		} else {
-			pagination = updater;
-		}
-
-		options.update((old) => ({
-			...old,
-			state: {
-				...old.state,
-				pagination
+				return result;
 			}
-		}));
+		}))
+	);
+
+	const onPageChange = (e: CustomEvent) => {
+		$pagination.page = e.detail + 1;
 	};
 
-	// Aqui temos paginacao client side, com (manualPagination = false) e (getPaginationRowModel = true)
-	//
-	// para paginacao server side seria (manualPagination = true) e (getPaginationRowModel = false)
-	//
-	// onde autualizariamos o pagination state na mao atraves da sync com o estado de paginação, provavelmente teriamos nosso proprio
-	// componente ou precisamos fazer um sync do estado dele e do paginator do skeleton ui
-	const options = writable<TableOptions<Person>>({
-		data: defaultData,
-		columns: defaultColumns,
-		// manualPagination: true,
-		state: { pagination },
-		onPaginationChange: setPagination,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel()
+	const onAmountChange = (e: CustomEvent) => {
+		$pagination.pageSize = e.detail;
+	};
+
+	const columns: ColumnDef<Tracker>[] = [
+		{ accessorKey: 'id', header: () => 'ID' },
+		{ accessorKey: 'imei', header: () => 'IMEI' },
+		{ accessorKey: 'model', header: () => 'Model' },
+		{ accessorKey: 'vehicleId', header: () => 'Vehicle ID' }
+	];
+
+	let debounceTimer: ReturnType<typeof setTimeout>;
+
+	const debounce = (v: string, delay: number) => {
+		clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => {
+			$filters.imei = v;
+		}, delay);
+	};
+
+	const options = writable<TableOptions<Tracker>>({
+		data: $query.data?.records ?? [],
+		columns: columns,
+		manualPagination: true,
+		state: {
+			pagination: {
+				pageIndex: $pagination.page,
+				pageSize: $pagination.pageSize
+			}
+		},
+		getCoreRowModel: getCoreRowModel()
 	});
-
-	// TODO: rm me ?!
-	const rerender = () => {
-		options.update((options) => ({
-			...options,
-			data: defaultData
-		}));
-	};
 
 	const table = createSvelteTable(options);
 </script>
 
-<div class="h-full flex items-center justify-center space-x-4">
+<!-- TODO: better css -->
+<!-- TODO: single row selection -->
+<!-- TODO: integrate with quick track form -->
+<div class="overflow-y-scroll flex items-center justify-center space-x-4">
 	<div>
-		<table class="bg-slate-700">
+		<label class="label my-4">
+			<span>Filtrar por IMEI {$filters.imei}</span>
+			<input
+				class="input"
+				title="Buscar por IMEI"
+				type="text"
+				on:keyup={(e) => debounce(e.currentTarget.value, 250)}
+			/>
+		</label>
+
+		<!-- TODO: componentize data table elements ? -->
+		<table class="bg-slate-700 w-full mb-4">
 			<thead>
 				{#each $table.getHeaderGroups() as headerGroup}
 					<tr>
@@ -179,14 +99,26 @@
 							</th>
 						{/each}
 					</tr>
+					<!-- TODO: isso fica dando 1 efeito de "pulo", toda vez q true, arrumar -->
+					{#if $query.isLoading || $query.isFetching}
+						<tr>
+							<th colspan={columns.length} class="border-x-2">
+								<ProgressBar value={undefined} rounded="rounded-none" />
+							</th>
+						</tr>
+					{/if}
 				{/each}
 			</thead>
 
 			<tbody class="border-2">
+				<!-- TODO: handler para no data available -->
 				{#each $table.getRowModel().rows as row}
 					<tr>
 						{#each row.getVisibleCells() as cell}
-							<td class="p-4 border-t-2">
+							<td
+								class="p-4 border-t-2"
+								class:text-blue-500={$query.isLoading || $query.isFetching}
+							>
 								<svelte:component
 									this={flexRender(cell.column.columnDef.cell, cell.getContext())}
 								/>
@@ -195,63 +127,40 @@
 					</tr>
 				{/each}
 			</tbody>
-
-			<tfoot>
-				<!-- {#each $table.getFooterGroups() as footerGroup}
-				<tr>
-					{#each footerGroup.headers as header}
-						<th>
-							{#if !header.isPlaceholder}
-								<svelte:component
-									this={flexRender(header.column.columnDef.footer, header.getContext())}
-								/>
-							{/if}
-						</th>
-					{/each}
-				</tr>
-			{/each} -->
-			</tfoot>
 		</table>
 
-		<div class="mt-4 flex space-x-4">
-			<button
-				class="p-2 bg-slate-500"
-				on:click={() => {
-					console.log('previous');
-					$table.previousPage();
-				}}
-			>
-				previous
-			</button>
+		<Paginator
+			settings={{
+				page: $pagination.page - 1,
+				limit: $pagination.pageSize,
+				size: $query.data?.itemCount ?? 0,
+				amounts: [1, 5, 10, 15]
+			}}
+			showNumerals
+			showFirstLastButtons
+			maxNumerals={3}
+			on:page={onPageChange}
+			on:amount={onAmountChange}
+		/>
 
-			<button
-				class="p-2 bg-slate-500"
-				on:click={() => {
-					console.log('next');
-					nextPage();
-				}}
-			>
-				next
-			</button>
+		<div class="flex mt-4 space-x-4">
+			<div>
+				<pre class="p-4 border-2 border-purple-400 mb-4">
+					{JSON.stringify($filters, null, 2)}
+				</pre>
 
-			<button
-				class="p-2 bg-slate-500"
-				on:click={() => {
-					console.log('setting page size');
-					$table.setPageSize(1);
-				}}
-			>
-				page size
-			</button>
+				<pre class="p-4 border-2 border-red-400 mb-4">
+					{JSON.stringify($pagination, null, 2)}
+				</pre>
 
-			<!-- <Paginator
-				settings={{ page: 0, limit: 5, size: 10, amounts: [1, 2, 5, 10] }}
-				showNumerals
-				maxNumerals={4}
-				on:page={(e) => {
-					setPage(e.detail);
-				}}
-			/> -->
+				<pre class="p-4 border-2 border-blue-400">
+					{JSON.stringify($options.state, null, 2)}
+				</pre>
+			</div>
+
+			<pre class="p-4 border-2 border-green-400">
+				{JSON.stringify($query.data, null, 2)}
+			</pre>
 		</div>
 	</div>
 </div>

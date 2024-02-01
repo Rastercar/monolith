@@ -4,16 +4,18 @@
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
+	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { PageData } from './$types';
 	import SelectOrCreateTrackerStep from './components/SelectOrCreateTrackerStep.svelte';
 	import VehicleForm from './components/VehicleForm.svelte';
 
 	export let data: PageData;
 
-	let createdVehicle: Vehicle | null = null;
+	// TODO: change to null
+	let createdVehicle: Vehicle | null = { id: 2 } as any;
 	let createdOrSelectedTracker: Tracker | null = null;
 
-	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
+	let selectedSimCardForm: 'new-sim-card' | 'existing-sim-card' = 'new-sim-card';
 </script>
 
 <!--
@@ -22,9 +24,13 @@
 	create vehicle
 	create tracker
 	create sim card
+
+	TODO:
+	make it possible to go back steps and see what has been done (created vehicle, etc)
 -->
 <div class="p-6 max-w-3xl mx-auto">
-	<Stepper start={0}>
+	<!-- TODO: change to 0 -->
+	<Stepper start={2}>
 		<StepperHeader additionalClasses="mb-4" />
 
 		<Step>
@@ -55,26 +61,24 @@
 
 			<span class="text-sm">Choose a sim card for the vehicle tracker</span>
 
-			<div class="flex justify-center space-x-4 pb-4">
-				<button
-					class="btn variant-filled-primary w-full"
-					disabled={selectedTrackerForm === 'new-tracker'}
-					on:click={() => (selectedTrackerForm = 'new-tracker')}
-				>
-					create a new sim card
-				</button>
+			<OptionToggler
+				bind:selectedOption={selectedSimCardForm}
+				additionalClasses="my-4"
+				options={[
+					{
+						value: 'new-sim-card',
+						label: 'create a new sim card',
+						classes: 'btn btn-sm w-full variant-filled-primary'
+					},
+					{
+						value: 'existing-sim-card',
+						label: 'use a existing sim card',
+						classes: 'btn btn-sm w-full variant-filled-secondary'
+					}
+				]}
+			/>
 
-				<!-- TODO: start at this step if we have a sim-card on the tracker -->
-				<button
-					class="btn variant-filled-secondary w-full"
-					disabled={selectedTrackerForm === 'existing-tracker'}
-					on:click={() => (selectedTrackerForm = 'existing-tracker')}
-				>
-					use a existing sim card
-				</button>
-			</div>
-
-			{#if selectedTrackerForm === 'existing-tracker'}
+			{#if selectedSimCardForm === 'existing-sim-card'}
 				<div class="my-4">select sim card input with probable existing sim card value</div>
 			{:else}
 				<!-- TODO: if tracker has sim card show warning that the current sim card will be released from the tracker -->

@@ -6,7 +6,7 @@
 	} from '$lib/api/organization.schema';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import TextInput from '$lib/components/input/TextInput.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -81,7 +81,7 @@
 <div class="flex justify-end">
 	<LoadableButton
 		class="btn variant-filled-primary"
-		isLoading={$mutation.isLoading}
+		isLoading={$mutation.isPending}
 		on:click={updateOrg}
 	>
 		update

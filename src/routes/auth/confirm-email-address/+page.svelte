@@ -38,7 +38,7 @@
 
 <div class="h-full flex justify-center pt-12">
 	<div>
-		{#if $mutation.isLoading}
+		{#if $mutation.isPending}
 			<h1 class="mb-1 text-center text-xl text-secondary-500-400-token">
 				confirming your email address
 			</h1>

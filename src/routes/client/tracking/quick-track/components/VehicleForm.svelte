@@ -6,11 +6,11 @@
 		type CreateVehicleBody,
 		type Vehicle
 	} from '$lib/api/vehicle.schema';
-	import ComboBox from '$lib/components/input/ComboBox.svelte';
-	import FileInput from '$lib/components/input/FileInput.svelte';
-	import MaskedTextInput from '$lib/components/input/MaskedTextInput.svelte';
-	import TextArea from '$lib/components/input/TextArea.svelte';
-	import TextInput from '$lib/components/input/TextInput.svelte';
+	import ComboBox from '$lib/components/form/ComboBox.svelte';
+	import FileInput from '$lib/components/form/FileInput.svelte';
+	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
+	import TextArea from '$lib/components/form/TextArea.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { carBrands } from '$lib/constants/data/car-brands';
 	import { PLATE_IN_USE } from '$lib/constants/error-codes';
@@ -163,4 +163,4 @@
 	/>
 </div>
 
-<StepperNav {canSubmit} isLoading={$mutation.isLoading} on:click={createVehicle} />
+<StepperNav {canSubmit} isLoading={$mutation.isPending} on:click={createVehicle} />

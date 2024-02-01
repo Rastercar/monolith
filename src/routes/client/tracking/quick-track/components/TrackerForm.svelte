@@ -6,8 +6,8 @@
 		type Tracker
 	} from '$lib/api/tracker.schema';
 	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
-	import SelectInput from '$lib/components/input/SelectInput.svelte';
-	import TextInput from '$lib/components/input/TextInput.svelte';
+	import SelectInput from '$lib/components/form/SelectInput.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { IMEI_IN_USE } from '$lib/constants/error-codes';
 	import { getToaster } from '$lib/store/toaster';
@@ -58,7 +58,7 @@
 
 	$: ({ tainted, allErrors } = form);
 
-	$: canSubmit = $tainted === undefined || $allErrors.length > 0;
+	$: canSubmit = $tainted !== undefined && $allErrors.length === 0;
 </script>
 
 <div class="mb-4">
@@ -67,4 +67,4 @@
 	<SelectInput {form} options={[{ label: 'H02', value: 'H02' }]} field="model" label="Model *" />
 </div>
 
-<StepperNav {canSubmit} isLoading={$mutation.isLoading} on:click={createTracker} />
+<StepperNav {canSubmit} isLoading={$mutation.isPending} on:click={createTracker} />

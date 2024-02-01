@@ -148,19 +148,19 @@
 	<div class="w-sm absolute top-3 right-3 rounded-lg">
 		<div class:hidden={newPhoto === null} class="flex flex-col space-y-4">
 			<button
-				disabled={$uploadMutation.isLoading}
+				disabled={$uploadMutation.isPending}
 				class="btn-icon btn-icon-sm bg-green-500 dark:bg-green-700"
 				on:click={uploadFile}
 			>
 				<Icon
-					icon={$uploadMutation.isLoading ? 'mdi:loading' : 'mdi:check'}
-					class={$uploadMutation.isLoading ? 'animate-spin' : ''}
+					icon={$uploadMutation.isPending ? 'mdi:loading' : 'mdi:check'}
+					class={$uploadMutation.isPending ? 'animate-spin' : ''}
 				/>
 			</button>
 
 			<button
 				class="btn-icon btn-icon-sm bg-red-500 dark:bg-red-700"
-				disabled={$uploadMutation.isLoading}
+				disabled={$uploadMutation.isPending}
 				on:click={clearPreview}
 			>
 				<Icon icon="mdi:close" />
@@ -174,7 +174,7 @@
 		>
 			<button
 				class="btn-icon btn-icon-sm variant-filled"
-				disabled={$uploadMutation.isLoading}
+				disabled={$uploadMutation.isPending}
 				on:click={() => filePicker.click()}
 			>
 				<Icon icon={hasPictureToShow ? 'mdi:pencil' : 'mdi:plus'} />
@@ -183,7 +183,7 @@
 			{#if hasPictureToShow}
 				<button
 					class="btn-icon btn-icon-sm variant-filled-warning"
-					disabled={$uploadMutation.isLoading}
+					disabled={$uploadMutation.isPending}
 					on:click={() => deleteFile()}
 				>
 					<Icon icon="mdi:trash" />

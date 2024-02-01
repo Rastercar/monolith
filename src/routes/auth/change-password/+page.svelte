@@ -3,7 +3,7 @@
 	import { apiRecoverPasswordByToken } from '$lib/api/auth';
 	import { recoverPasswordByTokenSchema } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
+	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -49,7 +49,7 @@
 
 	let redirecting = false;
 
-	$: isLoading = redirecting || $mutation.isLoading;
+	$: isLoading = redirecting || $mutation.isPending;
 </script>
 
 <div class="h-full flex justify-center px-6">

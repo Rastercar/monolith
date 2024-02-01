@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ErrorMessage from '$lib/components/input/ErrorMessage.svelte';
-	import TextInput from '$lib/components/input/TextInput.svelte';
+	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';

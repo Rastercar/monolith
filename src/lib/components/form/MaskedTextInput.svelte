@@ -4,7 +4,7 @@
 </script>
 
 <script lang="ts" generics="T extends AnyZodObject">
-	import ErrorMessage from '$lib/components/input/ErrorMessage.svelte';
+	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	import { IMask, imask } from '@imask/svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import type { FormPathLeaves, ZodValidation } from 'sveltekit-superforms';

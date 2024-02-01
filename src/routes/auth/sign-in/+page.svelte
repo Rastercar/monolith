@@ -3,8 +3,8 @@
 	import { apiSignIn } from '$lib/api/auth';
 	import { signInSchema, type SignInDto } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
-	import TextInput from '$lib/components/input/TextInput.svelte';
+	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -81,7 +81,7 @@
 	 */
 	let redirecting = false;
 
-	$: isLoading = redirecting || $mutation.isLoading;
+	$: isLoading = redirecting || $mutation.isPending;
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">

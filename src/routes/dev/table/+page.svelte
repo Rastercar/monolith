@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { Paginated } from '$lib/api/common';
 	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import { Paginator, ProgressBar } from '@skeletonlabs/skeleton';
+	import { LightSwitch, Paginator, ProgressBar } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -19,7 +20,9 @@
 		derived([pagination, filters], ([$pagination, $filters]) => ({
 			queryKey: ['trackers', $pagination, $filters],
 			placeholderData: keepPreviousData,
-			queryFn: async () => {
+			queryFn: async (): Promise<Paginated<Tracker>> => {
+				await new Promise((r) => setTimeout(r, 2_000));
+
 				const result = await apiGetTrackers({ pagination: $pagination, filters: $filters });
 
 				$options.data = result.records;
@@ -28,14 +31,6 @@
 			}
 		}))
 	);
-
-	const onPageChange = (e: CustomEvent) => {
-		$pagination.page = e.detail + 1;
-	};
-
-	const onAmountChange = (e: CustomEvent) => {
-		$pagination.pageSize = e.detail;
-	};
 
 	const columns: ColumnDef<Tracker>[] = [
 		{ accessorKey: 'id', header: () => 'ID' },
@@ -73,7 +68,11 @@
 <!-- TODO: single row selection -->
 <!-- TODO: integrate with quick track form -->
 <div class="overflow-y-scroll flex items-center justify-center space-x-4">
-	<div>
+	<div class="mt-4">
+		<LightSwitch />
+
+		<div class="p-4 border-2 border-surface-400-500-token my-4">abc</div>
+
 		<label class="label my-4">
 			<span>Filtrar por IMEI {$filters.imei}</span>
 			<input
@@ -85,12 +84,12 @@
 		</label>
 
 		<!-- TODO: componentize data table elements ? -->
-		<table class="bg-slate-700 w-full mb-4">
+		<table class="bg-surface-50-900-token w-full mb-4">
 			<thead>
 				{#each $table.getHeaderGroups() as headerGroup}
-					<tr>
+					<tr class="border-t-2 border-surface-400-500-token">
 						{#each headerGroup.headers as header}
-							<th class="p-4 border-x-2 border-t-2">
+							<th class="p-4 border-x-2 border-surface-400-500-token">
 								{#if !header.isPlaceholder}
 									<svelte:component
 										this={flexRender(header.column.columnDef.header, header.getContext())}
@@ -99,31 +98,35 @@
 							</th>
 						{/each}
 					</tr>
-					<!-- TODO: isso fica dando 1 efeito de "pulo", toda vez q true, arrumar -->
-					{#if $query.isLoading || $query.isFetching}
-						<tr>
-							<th colspan={columns.length} class="border-x-2">
-								<ProgressBar value={undefined} rounded="rounded-none" />
-							</th>
-						</tr>
-					{/if}
+
+					<tr class="border-t-2 border-x-2 border-surface-400-500-token">
+						<th colspan={columns.length}>
+							<ProgressBar
+								value={!$query.isLoading && !$query.isFetching ? 0 : undefined}
+								rounded="rounded-none"
+								height="h-1"
+							/>
+						</th>
+					</tr>
 				{/each}
 			</thead>
 
-			<tbody class="border-2">
-				<!-- TODO: handler para no data available -->
+			<tbody class="border-x-2 border-b-2 border-surface-400-500-token">
 				{#each $table.getRowModel().rows as row}
-					<tr>
+					<tr class="border-b-2 border-surface-400-500-token">
 						{#each row.getVisibleCells() as cell}
-							<td
-								class="p-4 border-t-2"
-								class:text-blue-500={$query.isLoading || $query.isFetching}
-							>
+							<td class="p-4">
 								<svelte:component
 									this={flexRender(cell.column.columnDef.cell, cell.getContext())}
 								/>
 							</td>
 						{/each}
+					</tr>
+				{:else}
+					<tr>
+						<th class="p-4" colspan={columns.length}>
+							{$query.isLoading || $query.isFetching ? 'loading' : 'no items found'}
+						</th>
 					</tr>
 				{/each}
 			</tbody>
@@ -139,11 +142,15 @@
 			showNumerals
 			showFirstLastButtons
 			maxNumerals={3}
-			on:page={onPageChange}
-			on:amount={onAmountChange}
+			on:page={({ detail: zeroIndexedPage }) => {
+				$pagination.page = zeroIndexedPage + 1;
+			}}
+			on:amount={({ detail: pageSize }) => {
+				$pagination.pageSize = pageSize;
+			}}
 		/>
 
-		<div class="flex mt-4 space-x-4">
+		<!-- <div class="flex mt-4 space-x-4">
 			<div>
 				<pre class="p-4 border-2 border-purple-400 mb-4">
 					{JSON.stringify($filters, null, 2)}
@@ -161,6 +168,6 @@
 			<pre class="p-4 border-2 border-green-400">
 				{JSON.stringify($query.data, null, 2)}
 			</pre>
-		</div>
+		</div> -->
 	</div>
 </div>

@@ -3,7 +3,7 @@
 	import { changePasswordSchema, type ChangePasswordBody } from '$lib/api/user.schema';
 	import { isApiErrorObject } from '$lib/api/utils';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
+	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -58,7 +58,7 @@
 <div class="flex justify-between items-center mt-8">
 	<LoadableButton
 		class="btn variant-filled-primary"
-		isLoading={$mutation.isLoading}
+		isLoading={$mutation.isPending}
 		on:click={changePassword}
 	>
 		change password

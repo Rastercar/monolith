@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { apiDeleteSession, type UserSession } from '$lib/api/auth';
+	import { apiDeleteSession } from '$lib/api/auth';
+	import type { UserSession } from '$lib/api/user.schema';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -51,13 +52,13 @@
 		<span class="chip variant-filled-error ml-auto">failed to delete session</span>
 	{:else}
 		<button
-			disabled={$mutation.isLoading}
+			disabled={$mutation.isPending}
 			type="button"
 			class="btn btn-sm variant-filled-warning ml-auto"
 			on:click={() => $mutation.mutate()}
 		>
 			<Icon icon="mdi:trash" />
-			<span>{$mutation.isLoading ? 'removing session' : 'revoke session'}</span>
+			<span>{$mutation.isPending ? 'removing session' : 'revoke session'}</span>
 		</button>
 	{/if}
 </div>

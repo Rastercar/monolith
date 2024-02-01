@@ -3,8 +3,8 @@
 	import { apiSignUp } from '$lib/api/auth';
 	import { signUpSchema, type SignUpDto } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/input/PasswordInput.svelte';
-	import TextInput from '$lib/components/input/TextInput.svelte';
+	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
 	import { authStore } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
@@ -63,7 +63,7 @@
 	 */
 	let redirecting = false;
 
-	$: isLoading = redirecting || $mutation.isLoading;
+	$: isLoading = redirecting || $mutation.isPending;
 </script>
 
 <AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">

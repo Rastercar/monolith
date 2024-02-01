@@ -6,7 +6,7 @@
 <script lang="ts" generics="T extends AnyZodObject">
 	import type { FormPathType } from 'sveltekit-superforms/dist/stringPath';
 
-	import ErrorMessage from '$lib/components/input/ErrorMessage.svelte';
+	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	import {
 		Autocomplete,
 		popup,

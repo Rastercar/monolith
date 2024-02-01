@@ -2,6 +2,7 @@
 	import type { createTrackerSchema } from '$lib/api/tracker.schema';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
+	import SelectTrackerDataTable from './SelectTrackerDataTable.svelte';
 	import TrackerForm from './TrackerForm.svelte';
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
@@ -22,12 +23,12 @@
 	options={[
 		{
 			value: 'new-tracker',
-			label: 'create a new tracker',
+			label: 'create tracker',
 			classes: 'btn btn-sm w-full variant-filled-primary'
 		},
 		{
 			value: 'existing-tracker',
-			label: 'use a existing tracker',
+			label: 'use existing tracker',
 			classes: 'btn btn-sm w-full variant-filled-secondary'
 		}
 	]}
@@ -35,7 +36,7 @@
 
 {#if selectedTrackerForm === 'existing-tracker'}
 	<!-- TODO: finish me !   -->
-	<div>select tracker input</div>
+	<SelectTrackerDataTable />
 {:else}
 	<TrackerForm {formSchema} vehicleIdToAssociate={vehicleId} on:tracker-created />
 {/if}

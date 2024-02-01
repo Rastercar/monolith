@@ -35,7 +35,7 @@
 	requiredPermissions={sendConfirmationEmailTo === 'organization' ? ['UPDATE_ORGANIZATION'] : []}
 >
 	<div class="max-w-xs flex items-center space-x-2 text-sm" class:hidden={dismissed}>
-		{#if $mutation.isLoading}
+		{#if $mutation.isPending}
 			<div class="text-secondary-500-400-token">
 				sending confirmation email
 				<ProgressBar class="mt-1" />

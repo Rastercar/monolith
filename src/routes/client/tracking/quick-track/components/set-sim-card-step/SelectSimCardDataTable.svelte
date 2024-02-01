@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetTrackers, apiSetTrackerVehicle, type GetTrackersFilters } from '$lib/api/tracker';
-	import type { Tracker } from '$lib/api/tracker.schema';
+	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
+	import type { SimCard } from '$lib/api/sim-card.schema';
+	import { apiSetTrackerVehicle } from '$lib/api/tracker';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
@@ -29,7 +30,7 @@
 	export let showSimSubstitutionAlert: boolean;
 
 	const pagination = writable({ page: 1, pageSize: 5 });
-	const filters = writable<GetTrackersFilters>({ withAssociatedVehicle: false });
+	const filters = writable<GetSimCardsFilters>({ withAssociatedTracker: false });
 
 	let stepperState: Writable<StepperState> = getContext('state');
 
@@ -37,8 +38,8 @@
 		derived([pagination, filters], ([$pagination, $filters]) => ({
 			queryKey: ['trackers', $pagination, $filters],
 			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<Tracker>> => {
-				const result = await apiGetTrackers({ pagination: $pagination, filters: $filters });
+			queryFn: async (): Promise<Paginated<SimCard>> => {
+				const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
 
 				// since we are doing server side pagination, we need to
 				// clear the row selection since the dataset changes bellow
@@ -51,14 +52,18 @@
 		}))
 	);
 
-	const columns: ColumnDef<Tracker>[] = [
+	const columns: ColumnDef<SimCard>[] = [
 		{
-			accessorKey: 'model',
-			header: () => 'Model'
+			accessorKey: 'phoneNumber',
+			header: () => 'Phone'
 		},
 		{
-			accessorKey: 'imei',
-			header: () => 'IMEI'
+			accessorKey: 'ssn',
+			header: () => 'SSN'
+		},
+		{
+			accessorKey: 'apnAddress',
+			header: () => 'APN'
 		},
 		{
 			accessorKey: 'createdAt',
@@ -79,7 +84,7 @@
 
 	const colspan = columns.length;
 
-	const options = writable<TableOptions<Tracker>>({
+	const options = writable<TableOptions<SimCard>>({
 		data: $query.data?.records ?? [],
 		columns: columns,
 		manualPagination: true,
@@ -99,20 +104,21 @@
 	const table = createSvelteTable(options);
 
 	const mutation = createMutation({
+		// TODO:!
 		mutationFn: (trackerId: number) =>
 			apiSetTrackerVehicle({ vehicleId: trackerIdToAssociate, trackerId }),
 
 		onError: () => toaster.error()
 	});
 
-	const dispatch = createEventDispatcher<{ 'tracker-selected': Tracker }>();
+	const dispatch = createEventDispatcher<{ 'sim-card-selected': SimCard }>();
 
 	const onNextStepClick = () => {
 		const selectedRowId = Object.keys($table.getState().rowSelection)[0];
-		const tracker = $table.getRow(selectedRowId).original;
+		const simCard = $table.getRow(selectedRowId).original;
 
-		$mutation.mutateAsync(tracker.id).then(() => {
-			dispatch('tracker-selected', tracker);
+		$mutation.mutateAsync(simCard.id).then(() => {
+			dispatch('sim-card-selected', simCard);
 			$stepperState.current++;
 		});
 	};
@@ -122,7 +128,7 @@
 	const showSimInfoModal = () => {
 		modalStore.trigger({
 			type: 'alert',
-			title: 'About available trackers',
+			title: 'About available SIM cards',
 			body: 'Only SIM cards that are not associated with a tracker can be selected, if you wish to use a SIM card that is already installed in a tracker, please uninstall the SIM card.',
 			buttonTextCancel: 'ok'
 		});
@@ -139,7 +145,7 @@
 	class="label my-4"
 	label="Filter by phone number"
 	title="Filter by phone number"
-	on:change={(e) => ($filters.imei = e.detail)}
+	on:change={(e) => ($filters.phoneNumber = e.detail)}
 />
 
 <DataTable {table} {colspan} {isLoading} class="mb-2" />

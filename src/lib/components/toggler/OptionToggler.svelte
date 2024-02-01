@@ -5,7 +5,7 @@
 		classes?: string;
 	}
 
-	export let space = 'space-x-4';
+	export let space = 'gap-4';
 
 	export let additionalClasses = '';
 
@@ -13,7 +13,7 @@
 
 	export let selectedOption: string;
 
-	$: classes = `flex justify-center ${space} ${additionalClasses}`;
+	$: classes = `flex sm:flex-row flex-col content-start justify-center ${space} ${additionalClasses}`;
 </script>
 
 {#if options.length}

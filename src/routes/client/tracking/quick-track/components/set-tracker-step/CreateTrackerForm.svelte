@@ -16,14 +16,14 @@
 	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
-	import StepperNav from './StepperNav.svelte';
+	import StepperNav from '../StepperNav.svelte';
 
 	export let formSchema: SuperValidated<typeof createTrackerSchema>;
 
 	/**
-	 * The ID of the vehicle to associate the tracker to create to
+	 * The ID of the vehicle to associate to the tracker
 	 */
-	export let vehicleIdToAssociate: number | null;
+	export let vehicleIdToAssociate: number;
 
 	const form = superForm(formSchema, { validators: createTrackerSchema });
 
@@ -48,7 +48,7 @@
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		if (vehicleIdToAssociate) validated.data.vehicleId = vehicleIdToAssociate;
+		validated.data.vehicleId = vehicleIdToAssociate;
 
 		$mutation.mutateAsync(validated.data).then((createdTracker) => {
 			dispatch('tracker-created', createdTracker);

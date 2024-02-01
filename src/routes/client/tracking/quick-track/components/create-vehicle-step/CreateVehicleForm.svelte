@@ -20,7 +20,7 @@
 	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
-	import StepperNav from './StepperNav.svelte';
+	import StepperNav from '../StepperNav.svelte';
 
 	export let formSchema: SuperValidated<typeof createVehicleSchema>;
 

@@ -1,11 +1,14 @@
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
+	import { apiGetTrackers, apiSetTrackerVehicle, type GetTrackersFilters } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
+	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
+	import type { StepperState } from '$lib/components/stepper/types';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { Paginator } from '@skeletonlabs/skeleton';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+	import { getToaster } from '$lib/store/toaster';
+	import { getModalStore, Paginator } from '@skeletonlabs/skeleton';
+	import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -13,12 +16,19 @@
 		type ColumnDef,
 		type TableOptions
 	} from '@tanstack/svelte-table';
-	import { derived, writable } from 'svelte/store';
-	import StepperNav from './StepperNav.svelte';
-	import TableCheckbox from './TableCheckbox.svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
+	import { derived, writable, type Writable } from 'svelte/store';
+	import StepperNav from '../StepperNav.svelte';
+
+	/**
+	 * The ID of the vehicle to associate the selected tracker to
+	 */
+	export let vehicleIdToAssociate: number;
 
 	const pagination = writable({ page: 1, pageSize: 5 });
 	const filters = writable<GetTrackersFilters>({ withAssociatedVehicle: false });
+
+	let stepperState: Writable<StepperState> = getContext('state');
 
 	const query = createQuery(
 		derived([pagination, filters], ([$pagination, $filters]) => ({
@@ -54,9 +64,8 @@
 		},
 		{
 			id: 'selector',
-			header: '',
 			cell: (cell) =>
-				renderComponent(TableCheckbox, {
+				renderComponent(SimpleCheckbox, {
 					checked: cell.row.getIsSelected(),
 					disabled: !cell.row.getCanSelect(),
 					indeterminate: cell.row.getIsSomeSelected(),
@@ -82,7 +91,39 @@
 		getCoreRowModel: getCoreRowModel()
 	});
 
+	const toaster = getToaster();
+
 	const table = createSvelteTable(options);
+
+	const mutation = createMutation({
+		mutationFn: (trackerId: number) =>
+			apiSetTrackerVehicle({ vehicleId: vehicleIdToAssociate, trackerId }),
+
+		onError: () => toaster.error()
+	});
+
+	const dispatch = createEventDispatcher<{ 'tracker-selected': Tracker }>();
+
+	const onNextStepClick = () => {
+		const selectedRowId = Object.keys($table.getState().rowSelection)[0];
+		const tracker = $table.getRow(selectedRowId).original;
+
+		$mutation.mutateAsync(tracker.id).then(() => {
+			dispatch('tracker-selected', tracker);
+			$stepperState.current++;
+		});
+	};
+
+	const modalStore = getModalStore();
+
+	const showTrackerInfoModal = () => {
+		modalStore.trigger({
+			type: 'alert',
+			title: 'About available trackers',
+			body: 'Only trackers that are not associated with a vehicle can be selected, if you wish to use a tracker that is already installed in a vehicle, please uninstall the tracker.',
+			buttonTextCancel: 'ok'
+		});
+	};
 
 	$: isLoading = $query.isLoading || $query.isFetching;
 </script>
@@ -101,6 +142,7 @@
 <DataTable {table} {colspan} {isLoading} class="mb-2" />
 
 <Paginator
+	select="select min-w-[150px] py-1"
 	settings={{
 		page: $pagination.page - 1,
 		limit: $pagination.pageSize,
@@ -117,15 +159,19 @@
 	}}
 />
 
-<StepperNav
-	class="mt-4"
-	canSubmit={Object.keys($table.getState().rowSelection).length > 0}
-	{isLoading}
-	on:click={() => {
-		// TODO: now we need to call the set tracker vehicle API and proceed to the next step !
-		const selectedRowId = Object.keys($table.getState().rowSelection)[0];
-		const trackerId = $table.getRow(selectedRowId).original;
+<div class="flex justify-between">
+	<button
+		type="button"
+		class="btn !bg-transparent p-0 text-surface-700-200-token"
+		on:click={showTrackerInfoModal}
+	>
+		not finding your tracker ?
+	</button>
 
-		console.log(trackerId);
-	}}
-/>
+	<StepperNav
+		class="mt-4"
+		canSubmit={Object.keys($table.getState().rowSelection).length > 0}
+		{isLoading}
+		on:click={onNextStepClick}
+	/>
+</div>

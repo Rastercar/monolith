@@ -3,6 +3,7 @@
 
 	export let isLoading = false;
 	export let canSubmit = false;
+	export let nextLabel = 'Next';
 
 	let clazz: string = '';
 	export { clazz as class };
@@ -16,6 +17,7 @@
 			<Icon icon="mdi:loading" class="mr-2 animate-spin" />
 		{/if}
 
-		Next <Icon icon="mdi:arrow-right" class="ml-2" />
+		{nextLabel}
+		<Icon icon="mdi:arrow-right" class="ml-2" />
 	</button>
 </div>

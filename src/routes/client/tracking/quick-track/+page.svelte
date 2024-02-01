@@ -4,18 +4,20 @@
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
-	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { PageData } from './$types';
-	import SelectOrCreateTrackerStep from './components/SelectOrCreateTrackerStep.svelte';
-	import VehicleForm from './components/VehicleForm.svelte';
+	import CreateVehicleForm from './components/create-vehicle-step/CreateVehicleForm.svelte';
+	import SetSimCardStep from './components/set-sim-card-step/SetSimCardStep.svelte';
+	import SetTrackerStep from './components/set-tracker-step/SetTrackerStep.svelte';
 
 	export let data: PageData;
 
 	// TODO: change to null
-	let createdVehicle: Vehicle | null = { id: 2 } as any;
-	let createdOrSelectedTracker: Tracker | null = null;
+	let createdVehicle: Vehicle | null = { id: 15 } as any;
+	// TODO: change to null
+	let createdOrSelectedTracker: Tracker | null = { id: 2 } as any;
 
-	let selectedSimCardForm: 'new-sim-card' | 'existing-sim-card' = 'new-sim-card';
+	const setVehicle = (e: CustomEvent<Vehicle>) => (createdVehicle = e.detail);
+	const setTracker = (e: CustomEvent<Tracker>) => (createdOrSelectedTracker = e.detail);
 </script>
 
 <!--
@@ -24,6 +26,7 @@
 	create vehicle
 	create tracker
 	create sim card
+	(use permission guard component)
 
 	TODO:
 	make it possible to go back steps and see what has been done (created vehicle, etc)
@@ -35,60 +38,26 @@
 
 		<Step>
 			<svelte:fragment slot="header">Vehicle Information</svelte:fragment>
-			<VehicleForm
-				formSchema={data.createVehicleForm}
-				on:vehicle-created={({ detail: vehicle }) => {
-					createdVehicle = vehicle;
-				}}
-			/>
+			<CreateVehicleForm formSchema={data.createVehicleForm} on:vehicle-created={setVehicle} />
 		</Step>
 
 		<Step>
 			<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
-			{#if createdVehicle?.id}
-				<SelectOrCreateTrackerStep
-					vehicleId={createdVehicle?.id}
+			{#if createdVehicle}
+				<SetTrackerStep
+					vehicleId={createdVehicle.id}
 					formSchema={data.createTrackerForm}
-					on:tracker-created={({ detail: tracker }) => {
-						createdOrSelectedTracker = tracker;
-					}}
+					on:tracker-created={setTracker}
+					on:tracker-selected={setTracker}
 				/>
 			{/if}
 		</Step>
 
 		<Step>
-			<svelte:fragment slot="header">Set the tracker sim card</svelte:fragment>
-
-			<span class="text-sm">Choose a sim card for the vehicle tracker</span>
-
-			<OptionToggler
-				bind:selectedOption={selectedSimCardForm}
-				additionalClasses="my-4"
-				options={[
-					{
-						value: 'new-sim-card',
-						label: 'create a new sim card',
-						classes: 'btn btn-sm w-full variant-filled-primary'
-					},
-					{
-						value: 'existing-sim-card',
-						label: 'use a existing sim card',
-						classes: 'btn btn-sm w-full variant-filled-secondary'
-					}
-				]}
-			/>
-
-			{#if selectedSimCardForm === 'existing-sim-card'}
-				<div class="my-4">select sim card input with probable existing sim card value</div>
-			{:else}
-				<!-- TODO: if tracker has sim card show warning that the current sim card will be released from the tracker -->
-				<div class="my-4">create sim card form</div>
+			<svelte:fragment slot="header">Set the SIM card</svelte:fragment>
+			{#if createdOrSelectedTracker}
+				<SetSimCardStep tracker={createdOrSelectedTracker} formSchema={data.createSimCardForm} />
 			{/if}
-
-			<p>
-				show form to create, change or use a sim card, the only edgecase is to show the existing sim
-				card if using a existing tracker
-			</p>
 		</Step>
 	</Stepper>
 </div>

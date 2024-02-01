@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type PaginationParameters = {
 	/**
 	 * 1 indexed page number
@@ -51,3 +53,13 @@ export type Paginated<T> = {
 	 */
 	records: T[];
 };
+
+export function createPaginatedResponseSchema<ItemType extends z.ZodTypeAny>(itemSchema: ItemType) {
+	return z.object({
+		page: z.number(),
+		pageSize: z.number(),
+		pageCount: z.number(),
+		itemCount: z.number(),
+		records: z.array(itemSchema)
+	});
+}

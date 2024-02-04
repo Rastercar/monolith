@@ -19,15 +19,11 @@
 	} from '@tanstack/svelte-table';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { derived, writable, type Writable } from 'svelte/store';
-	import StepperNav from '../StepperNav.svelte';
-	import SimSubstitutionAlert from './SimSubstitutionAlert.svelte';
 
 	/**
 	 * The ID of the tracker to associate the selected SIM card to
 	 */
 	export let trackerIdToAssociate: number;
-
-	export let showSimSubstitutionAlert: boolean;
 
 	const pagination = writable({ page: 1, pageSize: 5 });
 	const filters = writable<GetSimCardsFilters>({ withAssociatedTracker: false });
@@ -113,6 +109,7 @@
 
 	const dispatch = createEventDispatcher<{ 'sim-card-selected': SimCard }>();
 
+	// TODO:
 	const onNextStepClick = () => {
 		const selectedRowId = Object.keys($table.getState().rowSelection)[0];
 		const simCard = $table.getRow(selectedRowId).original;
@@ -137,18 +134,24 @@
 	$: isLoading = $query.isLoading || $query.isFetching;
 </script>
 
-{#if showSimSubstitutionAlert}
-	<SimSubstitutionAlert />
-{/if}
-
 <DebouncedTextField
 	class="label my-4"
-	label="Filter by phone number"
 	title="Filter by phone number"
 	on:change={(e) => ($filters.phoneNumber = e.detail)}
-/>
+>
+	<div slot="label" class="flex">
+		<span>Filter by phone number</span>
+		<button
+			type="button"
+			class="btn p-0 text-primary-700-200-token ml-auto"
+			on:click={showSimInfoModal}
+		>
+			not finding your sim card ?
+		</button>
+	</div>
+</DebouncedTextField>
 
-<DataTable {table} {colspan} {isLoading} class="mb-2" />
+<DataTable {table} {colspan} {isLoading} class="mb-4" />
 
 <Paginator
 	select="select min-w-[150px] py-1"
@@ -167,20 +170,3 @@
 		$pagination.pageSize = pageSize;
 	}}
 />
-
-<div class="flex justify-between">
-	<button
-		type="button"
-		class="btn !bg-transparent p-0 text-surface-700-200-token"
-		on:click={showSimInfoModal}
-	>
-		not finding your SIM card ?
-	</button>
-
-	<StepperNav
-		class="mt-4"
-		canSubmit={Object.keys($table.getState().rowSelection).length > 0}
-		{isLoading}
-		on:click={onNextStepClick}
-	/>
-</div>

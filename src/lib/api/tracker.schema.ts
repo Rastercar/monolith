@@ -1,3 +1,4 @@
+import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
 import { z } from 'zod';
 
 export const createTrackerSchema = z.object({
@@ -9,7 +10,9 @@ export const createTrackerSchema = z.object({
 export const trackerSchema = z.object({
 	id: z.number(),
 	imei: z.string(),
-	model: z.string(),
+
+	// use a literal since only one model is supported for now
+	model: z.literal(TRACKER_MODEL_H02),
 	vehicleId: z.number().nullable(),
 	organizationId: z.number(),
 	createdAt: z.string().datetime()

@@ -8,7 +8,7 @@ import { rastercarApi } from './utils';
 /**
  * updates the user organization, returning the updated values
  */
-export const apiUpdateOrganization = async (body: UpdateOrganizationBody): Promise<Organization> =>
+export const apiUpdateOrganization = (body: UpdateOrganizationBody): Promise<Organization> =>
 	rastercarApi.patch(body, '/organization').json<Organization>().then(organizationSchema.parse);
 
 /**
@@ -18,9 +18,8 @@ export const apiUpdateOrganization = async (body: UpdateOrganizationBody): Promi
  *
  * - `UPDATE_ORGANIZATION`
  */
-export const apiRequestOrganizationBillingEmailAddressConfirmationEmail =
-	async (): Promise<string> =>
-		rastercarApi.post({}, '/organization/request-email-address-confirmation').json<string>();
+export const apiRequestOrganizationBillingEmailAddressConfirmationEmail = (): Promise<string> =>
+	rastercarApi.post({}, '/organization/request-email-address-confirmation').json<string>();
 
 /**
  * confirms the email address of a the organization the user belongs to
@@ -32,5 +31,5 @@ export const apiRequestOrganizationBillingEmailAddressConfirmationEmail =
  *
  * - `UPDATE_ORGANIZATION`
  */
-export const apiConfirmOrgEmailAddressByToken = async (token: string): Promise<string> =>
+export const apiConfirmOrgEmailAddressByToken = (token: string): Promise<string> =>
 	rastercarApi.post({ token }, '/organization/confirm-email-address-by-token').json<string>();

@@ -14,7 +14,7 @@
 	{#each $table.getHeaderGroups() as headerGroup}
 		<tr class={`border-t-2 ${borderColor}`}>
 			{#each headerGroup.headers as header}
-				<th class={`p-4 border-x-2 ${borderColor}`}>
+				<th class={`p-3 border-x-2 ${borderColor}`}>
 					{#if !header.isPlaceholder}
 						<svelte:component
 							this={flexRender(header.column.columnDef.header, header.getContext())}

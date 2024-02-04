@@ -20,19 +20,19 @@
 	export let state: Writable<StepperState> = getContext('state');
 
 	/** Provide classes to style the stepper header gap. */
-	export let gap: string = 'gap-4';
+	export let gap = 'gap-4';
 
 	/** Provide classes to style the stepper header badges. */
-	export let badge: string = 'variant-filled-surface';
+	export let badge = 'variant-filled-surface';
 
 	/** Provide classes to style the stepper header active step badge. */
-	export let active: string = 'variant-filled';
+	export let active = 'variant-filled';
 
 	/** Provide classes to style the stepper header border. */
-	export let border: string = 'border-surface-400-500-token';
+	export let border = 'border-surface-400-500-token';
 
 	/** Provide additional classes. */
-	export let additionalClasses: string = '';
+	export let additionalClasses = '';
 
 	/** Provide the transition to used on entry. */
 	let transitionIn: TransitionIn = getContext('transitionIn');

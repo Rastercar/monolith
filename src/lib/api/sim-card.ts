@@ -14,7 +14,7 @@ export interface GetSimCardsFilters {
 /**
  * list paginated sim cards that belong to the same organization as the request user
  */
-export const apiGetSimCards = async (
+export const apiGetSimCards = (
 	query?: PaginationWithFilters<GetSimCardsFilters>
 ): Promise<Paginated<SimCard>> =>
 	rastercarApi
@@ -22,3 +22,20 @@ export const apiGetSimCards = async (
 		.get('/sim-card')
 		.json<Paginated<SimCard>>()
 		.then(createPaginatedResponseSchema(simCardSchema).parse);
+
+/**
+ * permanently deletes a SIM card
+ */
+export const apiDeleteSimCard = (id: number): Promise<string> =>
+	rastercarApi.delete(`/sim-card/${id}`).json<string>();
+
+/**
+ * changes the tracker a SIM card is associated to
+ */
+export const apiSetSimCardTracker = (ids: {
+	simCardId: number;
+	newTrackerId: number | null;
+}): Promise<string> =>
+	rastercarApi
+		.put({ trackerId: ids.newTrackerId }, `/sim-card/${ids.simCardId}/tracker`)
+		.json<string>();

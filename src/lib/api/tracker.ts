@@ -15,7 +15,7 @@ import { rastercarApi, stripUndefined } from './utils';
  *
  * - `CREATE_TRACKER`
  */
-export const apiCreateTracker = async (body: CreateTrackerBody): Promise<Tracker> =>
+export const apiCreateTracker = (body: CreateTrackerBody): Promise<Tracker> =>
 	rastercarApi.post(body, '/tracker').json<Tracker>().then(trackerSchema.parse);
 
 export interface GetTrackersFilters {
@@ -26,7 +26,7 @@ export interface GetTrackersFilters {
 /**
  * list paginated trackers that belong to the same organization as the request user
  */
-export const apiGetTrackers = async (
+export const apiGetTrackers = (
 	query?: PaginationWithFilters<GetTrackersFilters>
 ): Promise<Paginated<Tracker>> =>
 	rastercarApi
@@ -38,7 +38,7 @@ export const apiGetTrackers = async (
 /**
  * changes the vehicle a tracker is associated (aka: suposedly installed)
  */
-export const apiSetTrackerVehicle = async (ids: {
+export const apiSetTrackerVehicle = (ids: {
 	vehicleId: number;
 	trackerId: number;
 }): Promise<string> =>

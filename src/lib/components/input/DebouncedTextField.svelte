@@ -3,7 +3,7 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout>;
 
-	export let label: string;
+	export let label: string = '';
 	export let title: string;
 
 	export let debounceMilliseconds = 250;
@@ -23,6 +23,11 @@
 </script>
 
 <label class={clazz}>
-	<span>{label}</span>
+	{#if label}
+		<span>{label}</span>
+	{:else}
+		<slot name="label" />
+	{/if}
+
 	<input class="input" {title} type="text" on:keyup={(e) => debounce(e.currentTarget.value)} />
 </label>

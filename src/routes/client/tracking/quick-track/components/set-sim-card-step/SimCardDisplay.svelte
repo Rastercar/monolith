@@ -1,24 +1,126 @@
 <script lang="ts">
+	import { apiDeleteSimCard, apiSetSimCardTracker } from '$lib/api/sim-card';
 	import type { SimCard } from '$lib/api/sim-card.schema';
+	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
+	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
+	import { ProgressRadial, popup } from '@skeletonlabs/skeleton';
+	import { createMutation } from '@tanstack/svelte-query';
+	import { createEventDispatcher } from 'svelte';
+	import SimDeletionOrRemovalWarning from './SimDeletionOrRemovalWarning.svelte';
+
+	/**
+	 * The SLOT the SIM card is filling on a vehicle tracker
+	 *
+	 * eg: if a tracker can have up to 4 sim cards this can be 1..4
+	 */
+	export let slot: number;
 
 	export let simCard: SimCard;
+
+	export let additionalClasses = '';
+
+	let warningToShow: 'deletion' | 'removal' | null = null;
+
+	const toaster = getToaster();
+
+	const deleteSimMutation = createMutation({
+		mutationFn: () => apiDeleteSimCard(simCard.id),
+		onSuccess: () => toaster.success('SIM card deleted successfully')
+	});
+
+	const removeSimCardMutation = createMutation({
+		mutationFn: () => apiSetSimCardTracker({ simCardId: simCard.id, newTrackerId: null }),
+		onSuccess: () => toaster.success('SIM card removed from slot successfully')
+	});
+
+	const deleteSimCard = () => {
+		$deleteSimMutation
+			.mutateAsync()
+			.then(() => dispatch('sim-deleted'))
+			.catch(() => toaster.error('failed to delete sim card'));
+	};
+
+	const removeSimCard = () => {
+		$removeSimCardMutation
+			.mutateAsync()
+			.then(() => dispatch('sim-removed'))
+			.catch(() => toaster.error('failed to remove sim card'));
+	};
+
+	const dispatch = createEventDispatcher<{
+		'sim-deleted': void;
+		'sim-removed': void;
+	}>();
 </script>
 
-<div class="card p-4">
-	<div class="flex items-center">
+<div class={`card p-4 ${additionalClasses}`}>
+	<div class="flex items-center mb-2">
+		<Icon icon="mdi:sim" class="mr-4" width={24} /> SLOT {slot}
+
+		<!-- Remove SIM button -->
+		<button
+			class="ml-auto btn-icon btn-icon-sm variant-filled p-0 [&>*]:pointer-events-none"
+			disabled={!!warningToShow || $removeSimCardMutation.isPending}
+			use:popup={{ event: 'hover', target: 'removeSimPopup', placement: 'top' }}
+			on:click={() => (warningToShow = 'removal')}
+		>
+			{#if $removeSimCardMutation.isPending}
+				<ProgressRadial value={undefined} width="w-6" />
+			{:else}
+				<Icon icon="mdi:close" width={18} />
+			{/if}
+		</button>
+
+		<ArrowUpTooltip dataPopup="removeSimPopup">
+			{$removeSimCardMutation.isPending ? 'removing SIM card' : 'remove SIM card'}
+		</ArrowUpTooltip>
+
+		<!-- TODO: isso aqui ta mto parecudi com i botao acima, componentizar ? -->
+		<!-- Delete SIM button -->
+		<button
+			class="ml-4 btn-icon btn-icon-sm variant-filled p-0 [&>*]:pointer-events-none"
+			disabled={!!warningToShow || $deleteSimMutation.isPending}
+			use:popup={{ event: 'hover', target: 'deleteSimPopup', placement: 'top' }}
+			on:click={() => (warningToShow = 'deletion')}
+		>
+			{#if $deleteSimMutation.isPending}
+				<ProgressRadial value={undefined} width="w-6" />
+			{:else}
+				<Icon icon="mdi:trash" width={18} />
+			{/if}
+		</button>
+
+		<ArrowUpTooltip dataPopup="deleteSimPopup">
+			{$deleteSimMutation.isPending ? 'deleting sim card' : 'delete SIM card'}
+		</ArrowUpTooltip>
+	</div>
+
+	{#if warningToShow !== null}
+		<SimDeletionOrRemovalWarning
+			type={warningToShow}
+			on:cancel-click={() => {
+				warningToShow = null;
+			}}
+			on:confirm-click={() => {
+				warningToShow === 'deletion' ? deleteSimCard() : removeSimCard();
+				warningToShow = null;
+			}}
+		/>
+	{/if}
+
+	<hr class="my-4" />
+
+	<div class="flex items-center mb-4">
 		<span class="flex items-center">
-			<Icon icon="mdi:sim" class="mr-4" width={24} /> Phone Number:
-			{simCard.phoneNumber}
+			Phone Number: {simCard.phoneNumber}
 		</span>
 
-		<p class="ml-auto">
+		<p class="ml-auto text-sm">
 			created at:
 			{new Date(simCard.createdAt).toLocaleDateString()}
 		</p>
 	</div>
-
-	<hr class="my-4" />
 
 	<div class="text-sm grid grid-cols-1 md:grid-cols-2 gap-2">
 		<p><b>SSN:</b> {simCard.ssn}</p>

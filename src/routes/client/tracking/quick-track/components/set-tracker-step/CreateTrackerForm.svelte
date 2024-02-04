@@ -10,6 +10,7 @@
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { IMEI_IN_USE } from '$lib/constants/error-codes';
+	import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher, getContext } from 'svelte';
@@ -64,7 +65,12 @@
 <div class="mb-4">
 	<TextInput {form} field="imei" label="IMEI *" maxlength="50" />
 
-	<SelectInput {form} options={[{ label: 'H02', value: 'H02' }]} field="model" label="Model *" />
+	<SelectInput
+		{form}
+		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
+		field="model"
+		label="Model *"
+	/>
 </div>
 
 <StepperNav {canSubmit} isLoading={$mutation.isPending} on:click={createTracker} />

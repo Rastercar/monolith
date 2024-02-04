@@ -14,7 +14,7 @@
 	// TODO: change to null
 	let createdVehicle: Vehicle | null = { id: 15 } as any;
 	// TODO: change to null
-	let createdOrSelectedTracker: Tracker | null = { id: 2 } as any;
+	let createdOrSelectedTracker: Tracker | null = { id: 11, model: 'H02' } as any;
 
 	const setVehicle = (e: CustomEvent<Vehicle>) => (createdVehicle = e.detail);
 	const setTracker = (e: CustomEvent<Tracker>) => (createdOrSelectedTracker = e.detail);

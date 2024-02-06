@@ -1,26 +1,20 @@
 <script lang="ts">
 	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
 	import { apiCreateVehicle } from '$lib/api/vehicle';
-	import {
-		createVehicleSchema,
-		type CreateVehicleBody,
-		type Vehicle
-	} from '$lib/api/vehicle.schema';
+	import { createVehicleSchema, type CreateVehicleBody } from '$lib/api/vehicle.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import ComboBox from '$lib/components/form/ComboBox.svelte';
 	import FileInput from '$lib/components/form/FileInput.svelte';
 	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
-	import type { StepperState } from '$lib/components/stepper/types';
 	import { carBrands } from '$lib/constants/data/car-brands';
 	import { PLATE_IN_USE } from '$lib/constants/error-codes';
 	import { getToaster } from '$lib/store/toaster';
+	import { clearFileInputsUnderFormWithId } from '$lib/utils/file';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
-	import StepperNav from '../StepperNav.svelte';
 
 	export let formSchema: SuperValidated<typeof createVehicleSchema>;
 
@@ -31,9 +25,9 @@
 		validationMethod: 'oninput'
 	});
 
-	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
+	const formId = 'create-vehicle-form';
 
-	let stepperState: Writable<StepperState> = getContext('state');
+	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
 
 	const mutation = createMutation({
 		mutationFn: (b: CreateVehicleBody) => apiCreateVehicle(b),
@@ -43,8 +37,6 @@
 				: toaster.error();
 		}
 	});
-
-	const dispatch = createEventDispatcher<{ 'vehicle-created': Vehicle }>();
 
 	const createVehicle = async () => {
 		const validated = await form.validate();
@@ -60,9 +52,10 @@
 			if (v) body[k as keyof CreateVehicleBody] = v;
 		});
 
-		$mutation.mutateAsync(body as CreateVehicleBody).then((createdVehicle) => {
-			dispatch('vehicle-created', createdVehicle);
-			$stepperState.current++;
+		$mutation.mutateAsync(body as CreateVehicleBody).then(() => {
+			toaster.success('vehicle created successfully');
+			clearFileInputsUnderFormWithId(formId);
+			form.reset();
 		});
 	};
 
@@ -73,10 +66,10 @@
 
 <span class="text-sm">Fields marked as * are required</span>
 
-<div class="grid grid-cols-2 gap-4 my-4">
+<div id={formId} class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-4">
 	<MaskedTextInput
 		{form}
-		class="label sm:col-span-1 col-span-2 "
+		class="label col-span-1"
 		inputClass="input mb-1 uppercase"
 		maskOptions={{
 			mask: 'AAA0#00',
@@ -91,25 +84,13 @@
 		label="Plate *"
 	/>
 
-	<ComboBox
-		{form}
-		class="label sm:col-span-1 col-span-2"
-		options={brandOptions}
-		field="brand"
-		label="Brand *"
-	/>
+	<ComboBox {form} class="label col-span-1" options={brandOptions} field="brand" label="Brand *" />
+
+	<TextInput {form} class="label col-span-1" field="model" label="Model *" maxlength="30" />
 
 	<TextInput
 		{form}
-		class="label sm:col-span-1 col-span-2"
-		field="model"
-		label="Model *"
-		maxlength="30"
-	/>
-
-	<TextInput
-		{form}
-		class="label sm:col-span-1 col-span-2"
+		class="label col-span-1"
 		field="chassisNumber"
 		label="Chassis Number"
 		maxlength="30"
@@ -117,7 +98,7 @@
 
 	<TextInput
 		{form}
-		class="label sm:col-span-1 col-span-2"
+		class="label col-span-1"
 		field="modelYear"
 		label="Model Year"
 		type="text"
@@ -126,24 +107,18 @@
 
 	<TextInput
 		{form}
-		class="label sm:col-span-1 col-span-2"
+		class="label col-span-1"
 		field="fabricationYear"
 		label="Fabrication Year"
 		type="text"
 		maxlength="4"
 	/>
 
-	<TextInput
-		{form}
-		class="label sm:col-span-1 col-span-2"
-		field="color"
-		label="Color"
-		maxlength="12"
-	/>
+	<TextInput {form} class="label col-span-1" field="color" label="Color" maxlength="12" />
 
 	<FileInput
 		{form}
-		class="label sm:col-span-1 col-span-2"
+		class="label col-span-1"
 		label="Photo"
 		field="photoName"
 		fileField="photo"
@@ -155,7 +130,7 @@
 
 	<TextArea
 		{form}
-		class="label col-span-2"
+		class="label col-span-1 sm:col-span-2 md:col-span-3"
 		field="additionalInfo"
 		label="Additional Info"
 		rows="6"
@@ -163,4 +138,10 @@
 	/>
 </div>
 
-<StepperNav {canSubmit} isLoading={$mutation.isPending} on:click={createVehicle} />
+<div class="flex justify-end">
+	<LoadableButton isLoading={$mutation.isPending}>
+		<button class="btn variant-filled-primary" disabled={!canSubmit} on:click={createVehicle}>
+			create
+		</button>
+	</LoadableButton>
+</div>

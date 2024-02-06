@@ -5,6 +5,7 @@
 
 	export let label: string = '';
 	export let title: string;
+	export let placeholder = '';
 
 	export let debounceMilliseconds = 250;
 
@@ -29,5 +30,11 @@
 		<slot name="label" />
 	{/if}
 
-	<input class="input" {title} type="text" on:keyup={(e) => debounce(e.currentTarget.value)} />
+	<input
+		class="input"
+		{title}
+		{placeholder}
+		type="text"
+		on:keyup={(e) => debounce(e.currentTarget.value)}
+	/>
 </label>

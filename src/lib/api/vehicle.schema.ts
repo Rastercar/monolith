@@ -6,6 +6,13 @@ const FIVE_MB = 1024 * 1024 * 5;
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
+const isMercosulOrBrPlate = (v: string): boolean => {
+	const mercosulOrBrFormat = /^[a-z]{3}[0-9][a-z0-9][0-9]{2}$/;
+
+	// AAA9999 or AAA9A99
+	return mercosulOrBrFormat.test(v);
+};
+
 const isOptionalDateBetween = (min: number, max: number) => (v?: string | null) => {
 	if (!v) return true;
 
@@ -19,11 +26,7 @@ export const createVehicleSchema = z.object({
 		.min(1)
 		.refine((v) => {
 			if (!v) return false;
-
-			const mercosulOrBrFormat = /^[a-z]{3}[0-9][a-z0-9][0-9]{2}$/;
-
-			// AAA9999 or AAA9A99
-			return mercosulOrBrFormat.test(v);
+			return isMercosulOrBrPlate(v);
 		}, 'invalid vehicle plate'),
 
 	photoName: z.string(),
@@ -64,6 +67,39 @@ export const createVehicleSchema = z.object({
 	additionalInfo: z.string().optional()
 });
 
+export const updateVehicleSchema = z.object({
+	plate: z
+		.string()
+		.optional()
+		.refine((v) => {
+			if (!v) return true;
+			return isMercosulOrBrPlate(v);
+		}, 'invalid vehicle plate'),
+
+	brand: z.string().min(1).optional(),
+	model: z.string().min(1).optional(),
+	color: z.string().optional(),
+
+	modelYear: z
+		.number()
+		.optional()
+		.refine((v) => {
+			const checkDate = isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW);
+			return checkDate(v ? v.toString() : undefined);
+		}, `model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`),
+
+	fabricationYear: z
+		.number()
+		.optional()
+		.refine((v) => {
+			const checkDate = isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW);
+			return checkDate(v ? v.toString() : undefined);
+		}, `model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`),
+
+	chassisNumber: z.string().optional(),
+	additionalInfo: z.string().optional()
+});
+
 export const vehicleSchema = z.object({
 	id: z.number(),
 	organizationId: z.number(),
@@ -80,5 +116,7 @@ export const vehicleSchema = z.object({
 });
 
 export type CreateVehicleBody = z.infer<typeof createVehicleSchema>;
+
+export type UpdateVehicleBody = z.infer<typeof updateVehicleSchema>;
 
 export type Vehicle = z.infer<typeof vehicleSchema>;

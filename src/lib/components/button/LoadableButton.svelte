@@ -7,10 +7,15 @@
 	export { clazz as class };
 </script>
 
-<button class={clazz} disabled={isLoading} on:click>
-	{#if isLoading}
+<button class={`${clazz} relative`} disabled={isLoading} on:click>
+	<div
+		class:invisible={!isLoading}
+		class="absolute top-0 left-0 w-full h-full flex align-middle justify-center items-center"
+	>
 		<ProgressRadial value={undefined} width="w-6" />
-	{:else}
+	</div>
+
+	<div class:invisible={isLoading}>
 		<slot />
-	{/if}
+	</div>
 </button>

@@ -1,4 +1,5 @@
-import type { Organization, User } from '$lib/api/auth';
+import type { Organization } from '$lib/api/organization.schema';
+import type { User } from '$lib/api/user.schema';
 import { localStorageStore } from '@skeletonlabs/skeleton';
 
 interface AuthState {

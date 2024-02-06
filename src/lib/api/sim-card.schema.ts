@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const phoneRegExp = /^\+?\d{10,14}$/;
+const e164phoneRegExp = /^\+?\d{10,14}$/;
 
 export const simCardSchema = z.object({
 	id: z.number(),
@@ -25,8 +25,8 @@ export const simCardSchema = z.object({
 
 export const createSimCardSchema = z.object({
 	ssn: z.string().min(1),
-	// TODO:!
-	phoneNumber: z.string().min(1).regex(phoneRegExp, 'invalid phone number'),
+
+	phoneNumber: z.string().regex(e164phoneRegExp, 'invalid phone number'),
 
 	apnUser: z.string().min(1),
 	apnAddress: z.string().min(1),

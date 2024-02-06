@@ -9,13 +9,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import SimDeletionOrRemovalWarning from './SimDeletionOrRemovalWarning.svelte';
 
-	/**
-	 * The SLOT the SIM card is filling on a vehicle tracker
-	 *
-	 * eg: if a tracker can have up to 4 sim cards this can be 1..4
-	 */
-	export let slot: number;
-
 	export let simCard: SimCard;
 
 	export let additionalClasses = '';
@@ -56,7 +49,7 @@
 
 <div class={`card p-4 ${additionalClasses}`}>
 	<div class="flex items-center mb-2">
-		<Icon icon="mdi:sim" class="mr-4" width={24} /> SLOT {slot}
+		<span class="text-md">phone number: {simCard.phoneNumber}</span>
 
 		<!-- Remove SIM button -->
 		<button
@@ -76,7 +69,6 @@
 			{$removeSimCardMutation.isPending ? 'removing SIM card' : 'remove SIM card'}
 		</ArrowUpTooltip>
 
-		<!-- TODO: isso aqui ta mto parecudi com i botao acima, componentizar ? -->
 		<!-- Delete SIM button -->
 		<button
 			class="ml-4 btn-icon btn-icon-sm variant-filled p-0 [&>*]:pointer-events-none"
@@ -110,17 +102,6 @@
 	{/if}
 
 	<hr class="my-4" />
-
-	<div class="flex items-center mb-4">
-		<span class="flex items-center">
-			Phone Number: {simCard.phoneNumber}
-		</span>
-
-		<p class="ml-auto text-sm">
-			created at:
-			{new Date(simCard.createdAt).toLocaleDateString()}
-		</p>
-	</div>
 
 	<div class="text-sm grid grid-cols-1 md:grid-cols-2 gap-2">
 		<p><b>SSN:</b> {simCard.ssn}</p>

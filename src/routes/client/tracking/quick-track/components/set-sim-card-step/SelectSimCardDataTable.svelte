@@ -1,11 +1,9 @@
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
+	import { apiGetSimCards, apiSetSimCardTracker, type GetSimCardsFilters } from '$lib/api/sim-card';
 	import type { SimCard } from '$lib/api/sim-card.schema';
-	import { apiSetTrackerVehicle } from '$lib/api/tracker';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
-	import type { StepperState } from '$lib/components/stepper/types';
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import { getModalStore, Paginator } from '@skeletonlabs/skeleton';
@@ -17,18 +15,16 @@
 		type ColumnDef,
 		type TableOptions
 	} from '@tanstack/svelte-table';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import { derived, writable, type Writable } from 'svelte/store';
+	import { createEventDispatcher } from 'svelte';
+	import { derived, writable } from 'svelte/store';
 
 	/**
 	 * The ID of the tracker to associate the selected SIM card to
 	 */
 	export let trackerIdToAssociate: number;
 
-	const pagination = writable({ page: 1, pageSize: 5 });
+	const pagination = writable({ page: 1, pageSize: 3 });
 	const filters = writable<GetSimCardsFilters>({ withAssociatedTracker: false });
-
-	let stepperState: Writable<StepperState> = getContext('state');
 
 	const query = createQuery(
 		derived([pagination, filters], ([$pagination, $filters]) => ({
@@ -100,23 +96,20 @@
 	const table = createSvelteTable(options);
 
 	const mutation = createMutation({
-		// TODO:!
-		mutationFn: (trackerId: number) =>
-			apiSetTrackerVehicle({ vehicleId: trackerIdToAssociate, trackerId }),
+		mutationFn: (simCardId: number) =>
+			apiSetSimCardTracker({ simCardId, newTrackerId: trackerIdToAssociate }),
 
-		onError: () => toaster.error()
+		onError: () => toaster.error('failed to add SIM card to tracker')
 	});
 
 	const dispatch = createEventDispatcher<{ 'sim-card-selected': SimCard }>();
 
-	// TODO:
-	const onNextStepClick = () => {
+	const addSimToTracker = () => {
 		const selectedRowId = Object.keys($table.getState().rowSelection)[0];
 		const simCard = $table.getRow(selectedRowId).original;
 
 		$mutation.mutateAsync(simCard.id).then(() => {
 			dispatch('sim-card-selected', simCard);
-			$stepperState.current++;
 		});
 	};
 
@@ -132,6 +125,8 @@
 	};
 
 	$: isLoading = $query.isLoading || $query.isFetching;
+
+	$: hasSelectedItem = Object.keys($table.getState().rowSelection).length > 0;
 </script>
 
 <DebouncedTextField
@@ -159,10 +154,9 @@
 		page: $pagination.page - 1,
 		limit: $pagination.pageSize,
 		size: $query.data?.itemCount ?? 0,
-		amounts: [1, 5, 10, 15]
+		amounts: [1, 3, 5, 10, 15]
 	}}
 	maxNumerals={1}
-	showFirstLastButtons
 	on:page={({ detail: zeroIndexedPage }) => {
 		$pagination.page = zeroIndexedPage + 1;
 	}}
@@ -170,3 +164,9 @@
 		$pagination.pageSize = pageSize;
 	}}
 />
+
+{#if hasSelectedItem}
+	<div class="flex justify-end mt-4">
+		<button class="btn variant-filled-primary" on:click={addSimToTracker}>Select SIM card</button>
+	</div>
+{/if}

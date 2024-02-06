@@ -16,7 +16,6 @@ export interface trackerDetails {
 
 export const trackerModelsDetails: Record<trackerModel, trackerDetails> = {
 	H02: {
-		// TODO: change back to 1 !
-		supportedSimCards: 2
+		supportedSimCards: 1
 	}
 };

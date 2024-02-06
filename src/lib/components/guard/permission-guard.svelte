@@ -14,6 +14,10 @@
 	 * @default false
 	 */
 	export let showDeniedSlot = false;
+
+	$: hasPermissions = requiredPermissions.every(
+		(permission) => $au.user && $au.user.accessLevel.permissions.includes(permission)
+	);
 </script>
 
 <!--
@@ -29,7 +33,7 @@ Any code of the current component importing the `PermissionGuard` will still run
 code that needs to run only if the user is authenticated either move that code to components
 that are in the guard or check the authorization yourself
 -->
-{#if requiredPermissions.every((p) => $au.user && $au.user.accessLevel.permissions.includes(p))}
+{#if hasPermissions}
 	<slot />
 {:else if showDeniedSlot}
 	<slot name="denied">

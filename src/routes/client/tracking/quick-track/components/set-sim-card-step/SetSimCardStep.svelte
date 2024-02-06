@@ -2,13 +2,16 @@
 	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
 	import { apiGetTrackerSimCards } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
+	import type { StepperState } from '$lib/components/stepper/types';
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
 	import Icon from '@iconify/svelte';
+	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import CreateSimCardForm from './CreateSimCardForm.svelte';
-	import SelectSimCardDataTable from './SelectSimCardDataTable.svelte';
+	import StepperNav from '../StepperNav.svelte';
+	import SimCardChooser from './SimCardChooser.svelte';
 	import SimCardDisplay from './SimCardDisplay.svelte';
 
 	/**
@@ -20,10 +23,6 @@
 
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
-	type action = 'new-sim-card' | 'existing-sim-card';
-
-	let selectedOption: action = 'new-sim-card';
-
 	const query = createQuery({
 		queryKey: ['tracker', tracker.id, 'sim-cards'],
 		queryFn: () => apiGetTrackerSimCards(tracker.id)
@@ -31,8 +30,9 @@
 
 	let deletedOrRemovedSimCardsIds: number[] = [];
 
+	let stepperState: Writable<StepperState> = getContext('state');
+
 	const removeSimCardFromDisplay = (simId: number) => {
-		// do it with a reassignment to ensure reactivity
 		deletedOrRemovedSimCardsIds = [...deletedOrRemovedSimCardsIds, simId];
 	};
 
@@ -45,47 +45,61 @@
 		: 'Choose the SIM card for your vehicle tracker'}
 </span>
 
-<!-- TODO: query is loading ! -->
-{#each Array(supportedSimCards) as _, i}
-	{@const simForSlot = simCards[i]}
+{#if $query.isLoading}
+	{#each Array(supportedSimCards) as _, i}
+		<section class="card w-full my-4">
+			<div class="p-4 space-y-4">
+				<div class="placeholder h-12" />
+				<div class="placeholder h-12" />
+				<div class="placeholder h-12" />
+			</div>
+		</section>
+	{/each}
+{:else}
+	<div class="card mt-4 p-4">
+		<Accordion padding="py-2" spacing="space-y-4">
+			{#each Array(supportedSimCards) as _, i}
+				{@const simForSlot = simCards[i]}
 
-	{#if simForSlot}
-		<SimCardDisplay
-			slot={i + 1}
-			additionalClasses="my-4"
-			simCard={simForSlot}
-			on:sim-deleted={() => removeSimCardFromDisplay(simForSlot.id)}
-			on:sim-removed={() => removeSimCardFromDisplay(simForSlot.id)}
+				<AccordionItem regionControl="bg-surface-200-700-token px-4" spacing="space-y-3">
+					<svelte:fragment slot="lead">
+						<Icon icon="mdi:sim" width={24} />
+					</svelte:fragment>
+
+					<svelte:fragment slot="summary">
+						SLOT {i + 1}
+					</svelte:fragment>
+
+					<svelte:fragment slot="content">
+						<div class="pt-2">
+							{#if simForSlot}
+								<SimCardDisplay
+									simCard={simForSlot}
+									on:sim-deleted={() => removeSimCardFromDisplay(simForSlot.id)}
+									on:sim-removed={() => removeSimCardFromDisplay(simForSlot.id)}
+								/>
+							{:else}
+								<SimCardChooser
+									slot={i + 1}
+									{tracker}
+									{formSchema}
+									on:sim-card-created={() => $query.refetch()}
+									on:sim-card-selected={() => $query.refetch()}
+								/>
+							{/if}
+						</div>
+					</svelte:fragment>
+				</AccordionItem>
+			{/each}
+		</Accordion>
+
+		<StepperNav
+			class="mt-4"
+			canSubmit={!$query.isLoading}
+			isLoading={$query.isLoading}
+			on:click={() => {
+				$stepperState.current++;
+			}}
 		/>
-		<!-- TODO: -->
-	{:else}
-		<div class="card p-4 my-4">
-			<span class="flex items-center mb-2">
-				<Icon icon="mdi:sim" class="mr-4" width={24} /> SLOT {i + 1}
-			</span>
-
-			<OptionToggler
-				bind:selectedOption
-				additionalClasses="my-4"
-				options={[
-					{
-						value: 'new-sim-card',
-						label: 'create a new SIM',
-						classes: 'btn btn-sm w-full variant-filled-primary'
-					},
-					{
-						value: 'existing-sim-card',
-						label: 'use a existing SIM',
-						classes: 'btn btn-sm w-full variant-filled-secondary'
-					}
-				]}
-			/>
-
-			{#if selectedOption === 'existing-sim-card'}
-				<SelectSimCardDataTable trackerIdToAssociate={tracker.id} />
-			{:else}
-				<CreateSimCardForm slot={i + 1} trackerIdToAssociate={tracker.id} {formSchema} />
-			{/if}
-		</div>
-	{/if}
-{/each}
+	</div>
+{/if}

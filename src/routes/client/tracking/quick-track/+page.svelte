@@ -11,53 +11,46 @@
 
 	export let data: PageData;
 
-	// TODO: change to null
-	let createdVehicle: Vehicle | null = { id: 15 } as any;
-	// TODO: change to null
-	let createdOrSelectedTracker: Tracker | null = { id: 11, model: 'H02' } as any;
+	let createdVehicle: Vehicle | null = null;
+	let createdOrSelectedTracker: Tracker | null = null;
 
 	const setVehicle = (e: CustomEvent<Vehicle>) => (createdVehicle = e.detail);
 	const setTracker = (e: CustomEvent<Tracker>) => (createdOrSelectedTracker = e.detail);
 </script>
 
-<!--
-	TODO:
-	this page can only be show if the user can:
-	create vehicle
-	create tracker
-	create sim card
-	(use permission guard component)
+<Stepper start={0}>
+	<StepperHeader additionalClasses="mb-4" />
 
-	TODO:
-	make it possible to go back steps and see what has been done (created vehicle, etc)
--->
-<div class="p-6 max-w-3xl mx-auto">
-	<!-- TODO: change to 0 -->
-	<Stepper start={2}>
-		<StepperHeader additionalClasses="mb-4" />
+	<Step>
+		<svelte:fragment slot="header">Vehicle Information</svelte:fragment>
+		<CreateVehicleForm formSchema={data.createVehicleForm} on:vehicle-created={setVehicle} />
+	</Step>
 
-		<Step>
-			<svelte:fragment slot="header">Vehicle Information</svelte:fragment>
-			<CreateVehicleForm formSchema={data.createVehicleForm} on:vehicle-created={setVehicle} />
-		</Step>
+	<Step>
+		<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
+		{#if createdVehicle}
+			<SetTrackerStep
+				vehicleId={createdVehicle.id}
+				formSchema={data.createTrackerForm}
+				on:tracker-created={setTracker}
+				on:tracker-selected={setTracker}
+			/>
+		{/if}
+	</Step>
 
-		<Step>
-			<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
-			{#if createdVehicle}
-				<SetTrackerStep
-					vehicleId={createdVehicle.id}
-					formSchema={data.createTrackerForm}
-					on:tracker-created={setTracker}
-					on:tracker-selected={setTracker}
-				/>
-			{/if}
-		</Step>
+	<Step>
+		<svelte:fragment slot="header">Set the SIM card</svelte:fragment>
+		{#if createdOrSelectedTracker}
+			<SetSimCardStep tracker={createdOrSelectedTracker} formSchema={data.createSimCardForm} />
+		{/if}
+	</Step>
 
-		<Step>
-			<svelte:fragment slot="header">Set the SIM card</svelte:fragment>
-			{#if createdOrSelectedTracker}
-				<SetSimCardStep tracker={createdOrSelectedTracker} formSchema={data.createSimCardForm} />
-			{/if}
-		</Step>
-	</Stepper>
-</div>
+	<Step>
+		<svelte:fragment slot="header">Review</svelte:fragment>
+		<!-- TODO: -->
+		<!-- show a guide on how to configure the tracker -->
+		<!-- show a skippable option to test the tracker connection -->
+		<!-- show a option to see the vehicle on the map -->
+		<p>!!!</p>
+	</Step>
+</Stepper>

@@ -1,13 +1,19 @@
 <script>
+	import { authStore } from '$lib/store/auth';
 	import Icon from '@iconify/svelte';
+
+	$: ({ user } = $authStore);
 </script>
 
 <div class="p-10 space-y-4">
-	<h1>Client Page</h1>
+	<!--
+		TODO: this should be a dashboard but it would need a lot of features to exist
+		leave it as is for now
+	-->
+	<h1>Wellcome: {user?.username}</h1>
 
 	<hr />
 
-	<!-- TODO: make a quick track widget or something similar -->
 	<div class="card p-4">
 		<a href="/client/tracking/quick-track">
 			<button class="btn btn-sm variant-filled-primary">

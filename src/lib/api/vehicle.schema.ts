@@ -1,3 +1,4 @@
+import { emptyStringToNull } from '$lib/utils/string';
 import { z } from 'zod';
 
 const TEN_YEARS_FROM_NOW = new Date().getFullYear() + 10;
@@ -6,10 +7,12 @@ const FIVE_MB = 1024 * 1024 * 5;
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
+/**
+ * Check if a string follws the AAA9999 or AAA9A99
+ */
 const isMercosulOrBrPlate = (v: string): boolean => {
 	const mercosulOrBrFormat = /^[a-z]{3}[0-9][a-z0-9][0-9]{2}$/;
 
-	// AAA9999 or AAA9A99
 	return mercosulOrBrFormat.test(v);
 };
 
@@ -21,13 +24,7 @@ const isOptionalDateBetween = (min: number, max: number) => (v?: string | null) 
 };
 
 export const createVehicleSchema = z.object({
-	plate: z
-		.string()
-		.min(1)
-		.refine((v) => {
-			if (!v) return false;
-			return isMercosulOrBrPlate(v);
-		}, 'invalid vehicle plate'),
+	plate: z.string().refine(isMercosulOrBrPlate, 'invalid vehicle plate'),
 
 	photoName: z.string(),
 	photo: z
@@ -68,36 +65,37 @@ export const createVehicleSchema = z.object({
 });
 
 export const updateVehicleSchema = z.object({
-	plate: z
-		.string()
-		.optional()
-		.refine((v) => {
-			if (!v) return true;
-			return isMercosulOrBrPlate(v);
-		}, 'invalid vehicle plate'),
+	plate: z.string().refine(isMercosulOrBrPlate, 'invalid vehicle plate'),
 
-	brand: z.string().min(1).optional(),
-	model: z.string().min(1).optional(),
-	color: z.string().optional(),
+	brand: z
+		.string()
+		.transform(emptyStringToNull)
+		.transform((v) => v || null)
+		.nullish(),
+
+	model: z.string().transform(emptyStringToNull).nullish(),
+	color: z.string().transform(emptyStringToNull).nullish(),
 
 	modelYear: z
-		.number()
-		.optional()
-		.refine((v) => {
-			const checkDate = isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW);
-			return checkDate(v ? v.toString() : undefined);
-		}, `model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`),
+		.string()
+		.transform(emptyStringToNull)
+		.nullish()
+		.refine(
+			(v) => isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW)(v),
+			`model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`
+		),
 
 	fabricationYear: z
-		.number()
-		.optional()
-		.refine((v) => {
-			const checkDate = isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW);
-			return checkDate(v ? v.toString() : undefined);
-		}, `model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`),
+		.string()
+		.transform(emptyStringToNull)
+		.nullish()
+		.refine(
+			(v) => isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW)(v),
+			`model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`
+		),
 
-	chassisNumber: z.string().optional(),
-	additionalInfo: z.string().optional()
+	chassisNumber: z.string().transform(emptyStringToNull).nullish(),
+	additionalInfo: z.string().transform(emptyStringToNull).nullish()
 });
 
 export const vehicleSchema = z.object({

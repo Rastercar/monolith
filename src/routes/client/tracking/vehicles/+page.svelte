@@ -37,7 +37,6 @@
 		}))
 	);
 
-	// TODO: think about CSS responsiveness
 	const columns: ColumnDef<Vehicle>[] = [
 		{
 			accessorKey: 'model',
@@ -110,7 +109,7 @@
 		<DebouncedTextField
 			placeholder="search by plate"
 			title="filter by plate"
-			class="label w-full max-w-lg"
+			class="label w-full max-w-lg mr-4"
 			on:change={(e) => ($filters.plate = e.detail)}
 		/>
 

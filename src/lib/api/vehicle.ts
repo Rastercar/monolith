@@ -43,5 +43,5 @@ export const apiGetVehicleById = (id: number): Promise<Vehicle> =>
 /**
  * Updates a vehicle
  */
-export const apiUpdateVehicle = (id: number, body: UpdateVehicleBody): Promise<string> =>
-	rastercarApi.put(body, `/vehicle/${id}`).json<string>();
+export const apiUpdateVehicle = (id: number, body: UpdateVehicleBody): Promise<Vehicle> =>
+	rastercarApi.put(body, `/vehicle/${id}`).json<Vehicle>().then(vehicleSchema.parse);

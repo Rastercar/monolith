@@ -15,8 +15,10 @@
 	export { clazz as class };
 </script>
 
-<table class={`${borderColor} ${width} ${clazz}`}>
-	<TableHeader {isLoading} {table} {colspan} {borderColor} />
+<div class={`${clazz} overflow-x-scroll`}>
+	<table class={`${borderColor} ${width}`}>
+		<TableHeader {isLoading} {table} {colspan} {borderColor} />
 
-	<TableBody {isLoading} {table} {colspan} {borderColor} />
-</table>
+		<TableBody {isLoading} {table} {colspan} {borderColor} />
+	</table>
+</div>

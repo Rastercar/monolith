@@ -18,7 +18,7 @@
 	const setTracker = (e: CustomEvent<Tracker>) => (createdOrSelectedTracker = e.detail);
 </script>
 
-<Stepper start={0}>
+<Stepper>
 	<StepperHeader additionalClasses="mb-4" />
 
 	<Step>
@@ -47,7 +47,7 @@
 
 	<Step>
 		<svelte:fragment slot="header">Review</svelte:fragment>
-		<!-- TODO: -->
+		<!-- TODO: wherener we got the following pages -->
 		<!-- show a guide on how to configure the tracker -->
 		<!-- show a skippable option to test the tracker connection -->
 		<!-- show a option to see the vehicle on the map -->

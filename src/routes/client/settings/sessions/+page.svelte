@@ -21,6 +21,6 @@
 	{:else if $query.isError}
 		<p class="text-error-500">failed to load your sessions</p>
 	{:else}
-		<SessionList sessions={$query.data} />
+		<SessionList sessions={$query.data ?? []} />
 	{/if}
 </div>

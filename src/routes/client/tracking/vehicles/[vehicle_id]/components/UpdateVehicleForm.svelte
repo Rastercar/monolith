@@ -21,15 +21,15 @@
 
 	export let formSchema: SuperValidated<typeof updateVehicleSchema>;
 
-	const getValuesFromVehicle = () => ({
+	const getValuesFromVehicle = (vehicle: Vehicle) => ({
 		plate: vehicle.plate,
 		color: vehicle.color ?? '',
 		model: vehicle.model ?? '',
 		brand: vehicle.brand ?? '',
 		chassisNumber: vehicle.chassisNumber ?? '',
 		additionalInfo: vehicle.additionalInfo ?? '',
-		modelYear: vehicle.modelYear ?? 0,
-		fabricationYear: vehicle.fabricationYear ?? 0
+		modelYear: vehicle.modelYear?.toString(),
+		fabricationYear: vehicle.fabricationYear?.toString()
 	});
 
 	const form = superForm(formSchema, {
@@ -44,7 +44,6 @@
 	const mutation = createMutation({
 		mutationFn: (b: UpdateVehicleBody) => apiUpdateVehicle(vehicle.id, b),
 		onError: (e) => {
-			// TODO: this is not working for some reason
 			isErrorResponseWithErrorCode(e, PLATE_IN_USE)
 				? form.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
 				: toaster.error();
@@ -54,24 +53,16 @@
 	const createVehicle = async () => {
 		const validated = await form.validate();
 
+		// TODO: parse to int on zod schema
+		// the problem when parsing to number is because the input ios of type text so yeah, this sucks
+		delete validated.data.fabricationYear;
+		delete validated.data.modelYear;
+
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		const body: Partial<UpdateVehicleBody> = {};
-
-		// TODO: check if this is needed
-
-		// shitty hack, when sending formData with objects with undefined values (eg: {a: undefined})
-		// its sent as with the value set to 'undefined' string, what we really want is to exclude
-		// fields where the value is undefined or a empty string
-		Object.entries(validated.data).forEach(([k, v]) => {
-			if (v) body[k as keyof UpdateVehicleBody] = v;
-		});
-
-		$mutation.mutateAsync(body as unknown as UpdateVehicleBody).then(() => {
+		$mutation.mutateAsync(validated.data).then((updatedVehicle) => {
 			toaster.success('vehicle updated successfully');
-
-			// TODO:!
-			form.reset();
+			form.reset({ data: getValuesFromVehicle(updatedVehicle) });
 		});
 	};
 
@@ -79,7 +70,7 @@
 
 	onMount(() => {
 		// initialize the form with the vehicle values
-		form.reset({ data: getValuesFromVehicle() });
+		form.reset({ data: getValuesFromVehicle(vehicle) });
 	});
 
 	$: ({ allErrors } = form);
@@ -98,7 +89,7 @@
 	</button>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4 pb-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 px-4 pb-4">
 	<MaskedTextInput
 		{form}
 		class="label col-span-1"
@@ -150,7 +141,7 @@
 
 	<TextArea
 		{form}
-		class="label col-span-1 sm:col-span-2 md:col-span-3"
+		class="label col-span-1 sm:col-span-2 md:col-span-4"
 		field="additionalInfo"
 		label="Additional Info"
 		rows="2"

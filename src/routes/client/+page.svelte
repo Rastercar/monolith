@@ -14,12 +14,32 @@
 
 	<hr />
 
-	<div class="card p-4">
-		<a href="/client/tracking/quick-track">
-			<button class="btn btn-sm variant-filled-primary">
-				<Icon icon="mdi:car" class="mr-2" />
-				Track something new !
-			</button>
-		</a>
+	<div class="flex gap-4">
+		<div class="card p-4">
+			<a href="/client/tracking/vehicles">
+				<button class="btn btn-sm variant-filled-primary">
+					<Icon icon="mdi:car" class="mr-2" />
+					Vehicles
+				</button>
+			</a>
+		</div>
+
+		<div class="card p-4">
+			<a href="/client/my-profile">
+				<button class="btn btn-sm variant-filled-primary">
+					<Icon icon="mdi:user" class="mr-2" />
+					My Profile
+				</button>
+			</a>
+		</div>
+
+		<div class="card p-4">
+			<a href="/client/tracking/quick-track">
+				<button class="btn btn-sm variant-filled-primary">
+					<Icon icon="mdi:car" class="mr-2" />
+					Track something new !
+				</button>
+			</a>
+		</div>
 	</div>
 </div>

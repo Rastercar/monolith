@@ -37,6 +37,9 @@ export const apiGetVehicles = (
 		.json<Paginated<Vehicle>>()
 		.then(createPaginatedResponseSchema(vehicleSchema).parse);
 
+/**
+ * Fetch a vehicle by ID
+ */
 export const apiGetVehicleById = (id: number): Promise<Vehicle> =>
 	rastercarApi.get(`/vehicle/${id}`).json<Vehicle>().then(vehicleSchema.parse);
 
@@ -45,3 +48,15 @@ export const apiGetVehicleById = (id: number): Promise<Vehicle> =>
  */
 export const apiUpdateVehicle = (id: number, body: UpdateVehicleBody): Promise<Vehicle> =>
 	rastercarApi.put(body, `/vehicle/${id}`).json<Vehicle>().then(vehicleSchema.parse);
+
+/**
+ * change a vehicle photo
+ */
+export const updateVehiclePhoto = (id: number, image: File): Promise<string> =>
+	rastercarApi.formData({ image }).put(undefined, `/vehicle/${id}/photo`).json<string>();
+
+/**
+ * delete a vehicle photo
+ */
+export const removeVehiclePhoto = (id: number): Promise<string> =>
+	rastercarApi.delete(`/vehicle/${id}/photo`).json<string>();

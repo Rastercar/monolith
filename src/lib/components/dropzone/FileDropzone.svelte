@@ -9,17 +9,21 @@
 
 	type DeleteReturn = $$Generic;
 
-	export let uploadMutationFn: (file: File) => Promise<UploadReturn>;
-
-	export let onUploadSuccess: (uploadResult: UploadReturn) => void;
-
-	export let deleteMutationFn: () => Promise<DeleteReturn>;
-
-	export let onDeleteSuccess: (deleteResult: DeleteReturn) => void;
-
 	export let defaultSrc: string = '';
 
 	export let deleteConfirmPrompt: string;
+
+	export let showCropperOnFileSelection = true;
+
+	export let border = 'border-dashed border-2';
+
+	export let uploadMutationFn: (file: File) => Promise<UploadReturn>;
+
+	export let deleteMutationFn: () => Promise<DeleteReturn>;
+
+	export let onUploadSuccess: (uploadResult: UploadReturn) => void = () => {};
+
+	export let onDeleteSuccess: (deleteResult: DeleteReturn) => void = () => {};
 
 	const toaster = getToaster();
 	const modalStore = getModalStore();
@@ -29,13 +33,17 @@
 
 	let newPhoto: null | { preview: string; file: File } = null;
 
+	/**
+	 * Ref to the hidden filepicker element
+	 */
 	let filePicker: HTMLInputElement;
 
+	/**
+	 * A file is being dragged onto the dropzone
+	 */
 	let isDraggingFile = false;
 
-	const loadPreview = (file?: File) => {
-		if (!file) return toaster.error('file is not a valid image');
-
+	const openCropperModal = (file: File) => {
 		const component: ModalComponent = {
 			ref: FileDropzoneCropper,
 			props: { image: URL.createObjectURL(file) }
@@ -44,6 +52,24 @@
 		modalStore.trigger({ component, type: 'component', response: onModalEvent });
 	};
 
+	const loadPreview = (file?: File) => {
+		if (!file) return toaster.error('file is not a valid image');
+
+		showCropperOnFileSelection ? openCropperModal(file) : previewFile(file);
+	};
+
+	/**
+	 * clears the new photo and the hidden file input state
+	 */
+	const clearPreview = () => {
+		newPhoto = null;
+		filePicker.value = '';
+		filePicker.files = null;
+	};
+
+	/**
+	 * Displays a image on the main div
+	 */
 	const previewFile = (file: File) => {
 		const reader = new FileReader();
 		reader.readAsDataURL(file);
@@ -54,29 +80,28 @@
 		};
 	};
 
-	const onDrop = (e: DragEvent) => {
-		isDraggingFile = false;
-		loadPreview(e.dataTransfer?.files[0]);
-	};
-
+	/**
+	 * whenever a file is selected by the hidden
+	 * input of type="file"
+	 */
 	const onFileSelected = (e: Event) => {
 		const target = e.target as HTMLInputElement;
 		loadPreview(target.files?.[0]);
 	};
 
-	const onModalEvent = (response?: 'close' | { image: Blob }) => {
-		if (!response) return;
+	const onDrop = (e: DragEvent) => {
+		isDraggingFile = false;
+		loadPreview(e.dataTransfer?.files[0]);
+	};
+
+	const onModalEvent = (modalEvent?: 'close' | { image: Blob }) => {
+		if (!modalEvent) return;
 
 		modalStore.close();
 
-		if (typeof response === 'string') return;
+		if (typeof modalEvent === 'string') return;
 
-		previewFile(new File([response.image], 'picture.jpeg'));
-	};
-
-	const clearPreview = () => {
-		newPhoto = null;
-		filePicker.value = '';
+		previewFile(new File([modalEvent.image], 'picture.jpeg'));
 	};
 
 	const uploadFile = () => {
@@ -113,7 +138,7 @@
 </script>
 
 <div
-	class={`flex bg-surface-300-600-token relative h-54 py-4 border-dashed border-2 rounded-lg ${containerClass}`}
+	class={`flex bg-surface-300-600-token relative h-54 rounded-lg ${border} ${containerClass}`}
 	role="button"
 	tabindex="-1"
 	aria-label="dropzone"
@@ -127,12 +152,14 @@
 	on:dragover|preventDefault={() => {}}
 >
 	{#if hasPictureToShow}
-		<Avatar
-			src={newPhoto?.preview ?? defaultSrc}
-			class="mx-auto pointer-events-none"
-			width="w-48"
-			rounded="rounded-full"
-		/>
+		<slot name="preview" previewSrc={newPhoto?.preview ?? defaultSrc}>
+			<Avatar
+				src={newPhoto?.preview ?? defaultSrc}
+				class="mx-auto pointer-events-none"
+				width="w-48 my-4"
+				rounded="rounded-full"
+			/>
+		</slot>
 	{:else}
 		<div class="w-full items-center justify-center flex flex-col h-48 pointer-events-none">
 			no picture

@@ -6,6 +6,7 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import ComboBox from '$lib/components/form/ComboBox.svelte';
 	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
+	import NumberInput from '$lib/components/form/NumberInput.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';
@@ -21,15 +22,16 @@
 
 	export let formSchema: SuperValidated<typeof updateVehicleSchema>;
 
-	const getValuesFromVehicle = (vehicle: Vehicle) => ({
-		plate: vehicle.plate,
-		color: vehicle.color ?? '',
-		model: vehicle.model ?? '',
-		brand: vehicle.brand ?? '',
-		chassisNumber: vehicle.chassisNumber ?? '',
-		additionalInfo: vehicle.additionalInfo ?? '',
-		modelYear: vehicle.modelYear?.toString(),
-		fabricationYear: vehicle.fabricationYear?.toString()
+	const getValuesFromVehicle = (v: Vehicle) => ({
+		plate: v.plate,
+		color: v.color ?? '',
+		model: v.model ?? '',
+		brand: v.brand ?? '',
+		chassisNumber: v.chassisNumber ?? '',
+		additionalInfo: v.additionalInfo ?? '',
+
+		modelYear: v.modelYear,
+		fabricationYear: v.fabricationYear
 	});
 
 	const form = superForm(formSchema, {
@@ -53,23 +55,21 @@
 	const createVehicle = async () => {
 		const validated = await form.validate();
 
-		// TODO: parse to int on zod schema
-		// the problem when parsing to number is because the input ios of type text so yeah, this sucks
-		delete validated.data.fabricationYear;
-		delete validated.data.modelYear;
-
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
 		$mutation.mutateAsync(validated.data).then((updatedVehicle) => {
 			toaster.success('vehicle updated successfully');
 			form.reset({ data: getValuesFromVehicle(updatedVehicle) });
+			dispatch('vehicle-updated', updatedVehicle);
 		});
 	};
 
-	const dispatch = createEventDispatcher<{ 'edit-canceled': void }>();
+	const dispatch = createEventDispatcher<{
+		'vehicle-updated': Vehicle;
+		'edit-canceled': void;
+	}>();
 
 	onMount(() => {
-		// initialize the form with the vehicle values
 		form.reset({ data: getValuesFromVehicle(vehicle) });
 	});
 
@@ -119,23 +119,9 @@
 		maxlength="30"
 	/>
 
-	<TextInput
-		{form}
-		class="label col-span-1"
-		field="modelYear"
-		label="Model Year"
-		type="text"
-		maxlength="4"
-	/>
+	<NumberInput {form} class="label col-span-1" field="fabricationYear" label="Fabrication Year" />
 
-	<TextInput
-		{form}
-		class="label col-span-1"
-		field="fabricationYear"
-		label="Fabrication Year"
-		type="text"
-		maxlength="4"
-	/>
+	<NumberInput {form} class="label col-span-1" field="modelYear" label="Model Year" />
 
 	<TextInput {form} class="label col-span-1" field="color" label="Color" maxlength="12" />
 

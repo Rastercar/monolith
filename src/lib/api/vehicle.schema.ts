@@ -16,10 +16,10 @@ const isMercosulOrBrPlate = (v: string): boolean => {
 	return mercosulOrBrFormat.test(v);
 };
 
-const isOptionalDateBetween = (min: number, max: number) => (v?: string | null) => {
+const isOptionalDateBetween = (min: number, max: number) => (v?: string | number | null) => {
 	if (!v) return true;
 
-	const n = parseInt(v);
+	const n = typeof v === 'number' ? v : parseInt(v);
 	return !Number.isNaN(n) && n >= min && n <= max;
 };
 
@@ -77,8 +77,7 @@ export const updateVehicleSchema = z.object({
 	color: z.string().transform(emptyStringToNull).nullish(),
 
 	modelYear: z
-		.string()
-		.transform(emptyStringToNull)
+		.number()
 		.nullish()
 		.refine(
 			(v) => isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW)(v),
@@ -86,8 +85,7 @@ export const updateVehicleSchema = z.object({
 		),
 
 	fabricationYear: z
-		.string()
-		.transform(emptyStringToNull)
+		.number()
 		.nullish()
 		.refine(
 			(v) => isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW)(v),

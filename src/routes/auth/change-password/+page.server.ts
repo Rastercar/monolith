@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const passwordRecoveryToken = url.searchParams.get('token');
 
 	if (!passwordRecoveryToken) {
-		throw error(500, { message: 'no password recovery token found' });
+		error(500, { message: 'no password recovery token found' });
 	}
 
 	return { form, passwordRecoveryToken };

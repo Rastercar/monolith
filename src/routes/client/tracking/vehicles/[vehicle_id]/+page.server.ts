@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const vehicleId = parseInt(params.vehicle_id);
 
 	if (Number.isNaN(vehicleId)) {
-		throw error(404, 'invalid vehicle ID');
+		error(404, 'invalid vehicle ID');
 	}
 
 	const updateVehicleForm = await superValidate(updateVehicleSchema);

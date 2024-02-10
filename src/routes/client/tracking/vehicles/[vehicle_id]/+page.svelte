@@ -2,11 +2,11 @@
 	import { apiGetVehicleById } from '$lib/api/vehicle';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import Breadcrumbs from '$lib/components/breadcrumbs/BreadCrumbs.svelte';
-	import Icon from '@iconify/svelte';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
-	import VehicleDisplayCard from './components/VehicleDisplayCard.svelte';
 	import VehiclePhoto from './components/VehiclePhoto.svelte';
+	import VehicleTrackerCard from './components/tracker-card/VehicleTrackerCard.svelte';
+	import VehicleDisplayCard from './components/vehicle-card/VehicleDisplayCard.svelte';
 
 	export let data: PageData;
 
@@ -42,8 +42,6 @@
 	</div>
 </div>
 
-<hr class="my-4" />
-
 {#if vehicle}
 	<VehiclePhoto
 		vehicleId={vehicle.id}
@@ -56,20 +54,11 @@
 		formSchema={data.updateVehicleForm}
 		on:vehicle-updated={onVehicleUpdated}
 	/>
-{/if}
 
-<div class="flex space-x-4">
-	<!-- TODO: tracker display card, with editable sim card slots -->
-	<div class="card p-4 mt-4 h-20 flex-grow">
-		<div class="flex items-center">
-			<span>Installed tracker:</span>
+	<VehicleTrackerCard vehicleId={vehicle.id} createTrackerForm={data.createTrackerForm} />
 
-			<div class="h-2 w-2 bg-green-700 dark:bg-green-300 rounded-full mr-2 ml-auto" />
-			online
-		</div>
-	</div>
-
-	<div class="card p-4 mt-4 w-96">
+	<!-- TODO: ! -->
+	<!-- <div class="card p-4 mt-4">
 		<div class="mb-4 flex items-center">
 			Current location:
 			<button class="btn variant-filled-primary btn-sm ml-auto">
@@ -80,6 +69,7 @@
 
 		<iframe
 			width="100%"
+			height="400px"
 			title="map"
 			frameborder="0"
 			scrolling="no"
@@ -87,5 +77,5 @@
 			marginwidth="0"
 			src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=1%20Grafton%20Street,%20Dublin,%20Ireland+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
 		/>
-	</div>
-</div>
+	</div> -->
+{/if}

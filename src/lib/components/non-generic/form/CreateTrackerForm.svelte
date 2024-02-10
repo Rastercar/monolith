@@ -8,16 +8,13 @@
 	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
 	import SelectInput from '$lib/components/form/SelectInput.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
-	import type { StepperState } from '$lib/components/stepper/types';
 	import { IMEI_IN_USE } from '$lib/constants/error-codes';
 	import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { createEventDispatcher } from 'svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
-	import StepperNav from '../StepperNav.svelte';
 
 	export let formSchema: SuperValidated<typeof createTrackerSchema>;
 
@@ -29,8 +26,6 @@
 	const form = superForm(formSchema, { validators: createTrackerSchema });
 
 	const toaster = getToaster();
-
-	let stepperState: Writable<StepperState> = getContext('state');
 
 	const mutation = createMutation({
 		mutationFn: (b: CreateTrackerBody) => apiCreateTracker(b),
@@ -53,7 +48,6 @@
 
 		$mutation.mutateAsync(validated.data).then((createdTracker) => {
 			dispatch('tracker-created', createdTracker);
-			$stepperState.current++;
 		});
 	};
 
@@ -73,4 +67,4 @@
 	/>
 </div>
 
-<StepperNav {canSubmit} isLoading={$mutation.isPending} on:click={createTracker} />
+<slot isLoading={$mutation.isPending} {canSubmit} {createTracker} />

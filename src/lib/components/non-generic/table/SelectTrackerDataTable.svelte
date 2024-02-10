@@ -1,14 +1,12 @@
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetTrackers, apiSetTrackerVehicle, type GetTrackersFilters } from '$lib/api/tracker';
+	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
-	import type { StepperState } from '$lib/components/stepper/types';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { getToaster } from '$lib/store/toaster';
 	import { getModalStore, Paginator } from '@skeletonlabs/skeleton';
-	import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
+	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -16,19 +14,10 @@
 		type ColumnDef,
 		type TableOptions
 	} from '@tanstack/svelte-table';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import { derived, writable, type Writable } from 'svelte/store';
-	import StepperNav from '../StepperNav.svelte';
-
-	/**
-	 * The ID of the vehicle to associate the selected tracker to
-	 */
-	export let vehicleIdToAssociate: number;
+	import { derived, writable } from 'svelte/store';
 
 	const pagination = writable({ page: 1, pageSize: 5 });
 	const filters = writable<GetTrackersFilters>({ withAssociatedVehicle: false });
-
-	let stepperState: Writable<StepperState> = getContext('state');
 
 	const query = createQuery(
 		derived([pagination, filters], ([$pagination, $filters]) => ({
@@ -64,7 +53,7 @@
 		},
 		{
 			id: 'selector',
-			cell: (cell) =>
+			cell: ({ cell }) =>
 				renderComponent(SimpleCheckbox, {
 					checked: cell.row.getIsSelected(),
 					disabled: !cell.row.getCanSelect(),
@@ -91,28 +80,7 @@
 		getCoreRowModel: getCoreRowModel()
 	});
 
-	const toaster = getToaster();
-
 	const table = createSvelteTable(options);
-
-	const mutation = createMutation({
-		mutationFn: (trackerId: number) =>
-			apiSetTrackerVehicle({ vehicleId: vehicleIdToAssociate, trackerId }),
-
-		onError: () => toaster.error()
-	});
-
-	const dispatch = createEventDispatcher<{ 'tracker-selected': Tracker }>();
-
-	const onNextStepClick = () => {
-		const selectedRowId = Object.keys($table.getState().rowSelection)[0];
-		const tracker = $table.getRow(selectedRowId).original;
-
-		$mutation.mutateAsync(tracker.id).then(() => {
-			dispatch('tracker-selected', tracker);
-			$stepperState.current++;
-		});
-	};
 
 	const modalStore = getModalStore();
 
@@ -125,7 +93,20 @@
 		});
 	};
 
+	let selectedTracker: Tracker | null = null;
+
 	$: isLoading = $query.isLoading || $query.isFetching;
+
+	$: {
+		let selectedRowId = Object.keys($table.getState().rowSelection)?.[0] || null;
+
+		if (selectedRowId) {
+			let row = $table.getRow(selectedRowId);
+			selectedTracker = row?.original || null;
+		} else {
+			selectedTracker = null;
+		}
+	}
 </script>
 
 <p class="text-sm mb-4">Select bellow the tracker to use</p>
@@ -139,7 +120,7 @@
 	on:change={(e) => ($filters.imei = e.detail)}
 />
 
-<DataTable {table} {colspan} {isLoading} class="mb-2" />
+<DataTable {table} {colspan} {isLoading} />
 
 <Paginator
 	select="select min-w-[150px] py-1"
@@ -159,7 +140,7 @@
 	}}
 />
 
-<div class="flex justify-between">
+<div class="flex justify-between items-center">
 	<button
 		type="button"
 		class="btn !bg-transparent p-0 text-surface-700-200-token"
@@ -168,10 +149,5 @@
 		not finding your tracker ?
 	</button>
 
-	<StepperNav
-		class="mt-4"
-		canSubmit={Object.keys($table.getState().rowSelection).length > 0}
-		{isLoading}
-		on:click={onNextStepClick}
-	/>
+	<slot name="bottom-right" {isLoading} {selectedTracker} />
 </div>

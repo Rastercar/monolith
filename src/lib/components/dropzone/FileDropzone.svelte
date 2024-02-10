@@ -200,7 +200,7 @@
 			class:pointer-events-none={isDraggingFile}
 		>
 			<button
-				class="btn-icon btn-icon-sm variant-filled"
+				class="btn-icon btn-icon-sm variant-filled-primary"
 				disabled={$uploadMutation.isPending}
 				on:click={() => filePicker.click()}
 			>
@@ -209,7 +209,7 @@
 
 			{#if hasPictureToShow}
 				<button
-					class="btn-icon btn-icon-sm variant-filled-warning"
+					class="btn-icon btn-icon-sm variant-filled-error"
 					disabled={$uploadMutation.isPending}
 					on:click={() => deleteFile()}
 				>

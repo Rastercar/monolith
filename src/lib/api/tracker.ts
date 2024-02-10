@@ -18,10 +18,25 @@ import { rastercarApi, stripUndefined } from './utils';
 export const apiCreateTracker = (body: CreateTrackerBody): Promise<Tracker> =>
 	rastercarApi.post(body, '/tracker').json<Tracker>().then(trackerSchema.parse);
 
+/**
+ * Fetch a trakcer by ID
+ */
+export const apiGetTrackerById = (id: number): Promise<Tracker> =>
+	rastercarApi.get(`/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
+
 export interface GetTrackersFilters {
 	imei?: string;
 	withAssociatedVehicle?: boolean;
 }
+
+/**
+ * Delete a tracker by id
+ */
+export const apiDeleteTracker = (trackerId: number, opts?: { removeAssociatedSimCards: boolean }) =>
+	rastercarApi
+		.query({ removeAssociatedSimCards: opts?.removeAssociatedSimCards || false })
+		.delete(`/tracker/${trackerId}`)
+		.json<string>();
 
 /**
  * list paginated trackers that belong to the same organization as the request user
@@ -39,7 +54,7 @@ export const apiGetTrackers = (
  * changes the vehicle a tracker is associated (aka: suposedly installed)
  */
 export const apiSetTrackerVehicle = (ids: {
-	vehicleId: number;
+	vehicleId: number | null;
 	trackerId: number;
 }): Promise<string> =>
 	rastercarApi

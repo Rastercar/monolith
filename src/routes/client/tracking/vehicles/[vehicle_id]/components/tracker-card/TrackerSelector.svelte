@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { apiSetTrackerVehicle } from '$lib/api/tracker';
 	import type { Tracker, createTrackerSchema } from '$lib/api/tracker.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import CreateTrackerForm from '$lib/components/non-generic/form/CreateTrackerForm.svelte';
 	import SelectTrackerDataTable from '$lib/components/non-generic/table/SelectTrackerDataTable.svelte';
-	import type { StepperState } from '$lib/components/stepper/types';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { createEventDispatcher } from 'svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import StepperNav from '../StepperNav.svelte';
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
 
@@ -23,31 +21,20 @@
 
 	const toaster = getToaster();
 
-	const mutation = createMutation({
+	const selectTrackerMutation = createMutation({
 		mutationFn: (trackerId: number) => apiSetTrackerVehicle({ vehicleId, trackerId }),
 		onError: toaster.error
 	});
 
-	let stepperState: Writable<StepperState> = getContext('state');
-
 	const associateTrackerToVehicle = (tracker: Tracker | null) => {
 		if (!tracker) return;
 
-		$mutation.mutateAsync(tracker.id).then(() => {
-			$stepperState.current++;
+		$selectTrackerMutation.mutateAsync(tracker.id).then(() => {
 			dispatch('tracker-selected', tracker);
 		});
 	};
 
-	const dispatch = createEventDispatcher<{
-		'tracker-selected': Tracker;
-		'tracker-created': Tracker;
-	}>();
-
-	const onTrackerCreated = (e: CustomEvent<Tracker>) => {
-		dispatch('tracker-created', e.detail);
-		$stepperState.current++;
-	};
+	const dispatch = createEventDispatcher<{ 'tracker-selected': Tracker }>();
 </script>
 
 <OptionToggler
@@ -70,22 +57,27 @@
 {#if selectedTrackerForm === 'existing-tracker'}
 	<SelectTrackerDataTable>
 		<div slot="bottom-right" let:isLoading let:selectedTracker>
-			<StepperNav
-				{isLoading}
-				class="mt-4"
-				canSubmit={!!selectedTracker}
+			<LoadableButton
+				isLoading={$selectTrackerMutation.isPending}
+				class="btn variant-filled-primary"
+				disabled={!selectedTracker || isLoading}
 				on:click={() => associateTrackerToVehicle(selectedTracker)}
-			/>
+			>
+				use selected tracker
+			</LoadableButton>
 		</div>
 	</SelectTrackerDataTable>
 {:else}
-	<CreateTrackerForm
-		{formSchema}
-		vehicleIdToAssociate={vehicleId}
-		on:tracker-created={onTrackerCreated}
-	>
+	<CreateTrackerForm {formSchema} vehicleIdToAssociate={vehicleId} on:tracker-created>
 		<div slot="default" class="flex justify-end" let:isLoading let:canSubmit let:createTracker>
-			<StepperNav {canSubmit} {isLoading} on:click={createTracker} />
+			<LoadableButton
+				{isLoading}
+				disabled={!canSubmit}
+				class="btn variant-filled-primary"
+				on:click={createTracker}
+			>
+				create tracker
+			</LoadableButton>
 		</div>
 	</CreateTrackerForm>
 {/if}

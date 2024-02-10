@@ -53,15 +53,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const startingPointPage = isLoggedIn ? '/client' : '/auth/sign-in';
 
 	if (path === '/') {
-		redirect(303, startingPointPage);
+		return redirect(303, startingPointPage);
 	}
 
 	if (requiredAuth === 'logged-in' && !isLoggedIn) {
-		redirect(303, `/auth/sign-in?redirect=${path}`);
+		return redirect(303, `/auth/sign-in?redirect=${path}`);
 	}
 
 	if (requiredAuth === 'logged-off' && isLoggedIn) {
-		redirect(303, startingPointPage);
+		return redirect(303, startingPointPage);
 	}
 
 	return resolve(event);

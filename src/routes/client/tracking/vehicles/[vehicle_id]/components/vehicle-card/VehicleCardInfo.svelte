@@ -13,7 +13,7 @@
 
 <div class="p-4 flex items-center">
 	<span class="text-lg">
-		{vehicle.brand || 'no brand'} / {vehicle.model || 'no model'} / Plate: {vehicle.plate.toLocaleUpperCase()}
+		{vehicle.model || 'no model'} / Plate: {vehicle.plate.toLocaleUpperCase()}
 	</span>
 
 	<button
@@ -26,11 +26,13 @@
 
 <hr />
 
-<div class="p-4 grid grid-cols-2 md:grid-cols-3">
+<div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+	<VehicleCardField label="Brand">{vehicle.brand || 'n/a'}</VehicleCardField>
 	<VehicleCardField label="Year">{year}</VehicleCardField>
 	<VehicleCardField label="Chassis">{vehicle.chassisNumber ?? 'n/a'}</VehicleCardField>
 	<VehicleCardField label="Color">{vehicle.color ?? 'n/a'}</VehicleCardField>
-	<VehicleCardField label="Additional Information" class="col-span-2 md:col-span-3 mt-6">
+
+	<VehicleCardField label="Additional Information" class="col-span-2 md:col-span-4">
 		{vehicle.additionalInfo ?? 'n/a'}
 	</VehicleCardField>
 </div>

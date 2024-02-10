@@ -4,7 +4,7 @@
 </script>
 
 <script lang="ts" generics="T extends AnyZodObject">
-	import type { FormPathType } from 'sveltekit-superforms/dist/stringPath';
+	import type { FormPathType } from 'sveltekit-superforms';
 
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	import {

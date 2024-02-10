@@ -3,6 +3,7 @@ import {
 	type Paginated,
 	type PaginationWithFilters
 } from './common';
+import { trackerSchema, type Tracker } from './tracker.schema';
 import { rastercarApi, stripUndefined } from './utils';
 import {
 	vehicleSchema,
@@ -60,3 +61,12 @@ export const updateVehiclePhoto = (id: number, image: File): Promise<string> =>
  */
 export const removeVehiclePhoto = (id: number): Promise<string> =>
 	rastercarApi.delete(`/vehicle/${id}/photo`).json<string>();
+
+/**
+ * Fetch a vehicles tracker, might be NULL if the vehicle does not have a installed tracker
+ */
+export const apiGetTrackerByVehicleId = (id: number): Promise<Tracker | null> =>
+	rastercarApi
+		.get(`/vehicle/${id}/tracker`)
+		.json<Tracker | null>()
+		.then((v) => (v ? trackerSchema.parse(v) : v));

@@ -18,7 +18,7 @@
 	const setTracker = (e: CustomEvent<Tracker>) => (createdOrSelectedTracker = e.detail);
 </script>
 
-<Stepper>
+<Stepper start={0}>
 	<StepperHeader additionalClasses="mb-4" />
 
 	<Step>
@@ -29,6 +29,8 @@
 	<Step>
 		<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
 		{#if createdVehicle}
+			<span class="text-sm mb-4 block">How will you track your vehicle ?</span>
+
 			<SetTrackerStep
 				vehicleId={createdVehicle.id}
 				formSchema={data.createTrackerForm}

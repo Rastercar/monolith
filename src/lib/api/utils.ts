@@ -8,9 +8,32 @@ import QueryStringAddon from 'wretch/addons/queryString';
 import { WretchError } from 'wretch/resolver';
 import type { AnyZodObject } from 'zod';
 
+/**
+ * wretch methods that should have a global error handler
+ */
+const globalErrorHandlerSubjectMethods = ['res', 'json', 'text', 'blob', 'formData', 'arrayBuffer'];
+
+const globalErrorHandlerAddon = {
+	resolver: (chain: Record<string, (_: unknown) => Promise<unknown>>) =>
+		globalErrorHandlerSubjectMethods.reduce(
+			(acc, method) => ({
+				...acc,
+				async [method](cb: unknown) {
+					try {
+						return await chain[method](cb);
+					} catch (err) {
+						return redirectOnSessionError(err);
+					}
+				}
+			}),
+			{}
+		)
+};
+
 export const rastercarApi = wretch(PUBLIC_RASTERCAR_API_BASE_URL)
 	.addon(FormDataAddon)
 	.addon(QueryStringAddon)
+	.addon(globalErrorHandlerAddon)
 	.options({ credentials: 'include' });
 
 /**
@@ -28,6 +51,14 @@ export const isErrorResponseWithErrorCode = (e: unknown, errorCode: string): boo
 	return e instanceof WretchError && isApiErrorObject(e.json) && e.json.error === errorCode;
 };
 
+/**
+ * Redirects to the auto sign-out page if the session does not exist
+ * on the API database.
+ *
+ * Redirects to the sign in page if there is not a session ID cookie
+ *
+ * otherwise throws the error
+ */
 export const redirectOnSessionError = (err: unknown) => {
 	if (!browser || !(err instanceof WretchError) || !isApiErrorObject(err.json)) throw err;
 
@@ -44,7 +75,6 @@ export const redirectOnSessionError = (err: unknown) => {
 	// we need to clear the invalid session cookie by redirecting the user to the
 	// sign out page that does delete the cookie on the server side
 	if (errorCode === INVALID_SESSION) goto('/auth/sign-out');
-
 	throw err;
 };
 

@@ -1,4 +1,4 @@
-import { createTrackerSchema } from '$lib/api/tracker.schema';
+import { createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { updateVehicleSchema } from '$lib/api/vehicle.schema';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
@@ -11,8 +11,10 @@ export const load: PageServerLoad = async ({ params }) => {
 		error(404, 'invalid vehicle ID');
 	}
 
-	const createTrackerForm = await superValidate(createTrackerSchema);
-	const updateVehicleForm = await superValidate(updateVehicleSchema);
-
-	return { vehicleId, updateVehicleForm, createTrackerForm };
+	return {
+		vehicleId,
+		updateVehicleForm: await superValidate(updateVehicleSchema),
+		createTrackerForm: await superValidate(createTrackerSchema),
+		updateTrackerForm: await superValidate(updateTrackerSchema)
+	};
 };

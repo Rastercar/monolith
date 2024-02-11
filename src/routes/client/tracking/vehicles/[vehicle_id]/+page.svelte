@@ -55,7 +55,11 @@
 		on:vehicle-updated={onVehicleUpdated}
 	/>
 
-	<VehicleTrackerCard vehicleId={vehicle.id} createTrackerForm={data.createTrackerForm} />
+	<VehicleTrackerCard
+		vehicleId={vehicle.id}
+		createTrackerForm={data.createTrackerForm}
+		updateTrackerForm={data.updateTrackerForm}
+	/>
 
 	<!-- TODO: ! -->
 	<!-- <div class="card p-4 mt-4">

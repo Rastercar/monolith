@@ -5,13 +5,15 @@
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
-	import { popup } from '@skeletonlabs/skeleton';
+	import { getModalStore, popup, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
+	import DeleteTrackerModal from './DeleteTrackerModal.svelte';
 
 	export let tracker: Tracker;
 
 	const toaster = getToaster();
+	const modalStore = getModalStore();
 
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
@@ -21,7 +23,7 @@
 	});
 
 	const deleteTrackerMutation = createMutation({
-		mutationFn: () => apiDeleteTracker(tracker.id, { removeAssociatedSimCards: false }),
+		mutationFn: (r: boolean) => apiDeleteTracker(tracker.id, { deleteAssociatedSimCards: r }),
 		onError: toaster.error
 	});
 
@@ -36,23 +38,28 @@
 		dispatch('tracker-removed-from-vehicle');
 	};
 
-	// TODO: prompt the user if he wants to delete the sim cards aswell
-	const deleteTracker = async () => {
-		const ok = confirm(
-			'Permanently delete the tracker and its SIM cards ?\n\nThe vehicle will not recieve any positions'
-		);
-
-		if (!ok) return;
-
-		console.log('DELETING');
-		await $deleteTrackerMutation.mutateAsync();
+	const deleteTracker = async (deleteSimCards: boolean) => {
+		await $deleteTrackerMutation.mutateAsync(deleteSimCards);
 		dispatch('tracker-deleted');
+	};
+
+	const openDeleteTrackerConfirmModal = () => {
+		const component: ModalComponent = { ref: DeleteTrackerModal };
+
+		modalStore.trigger({
+			component,
+			type: 'component',
+			response: (e: undefined | { deleteSimCards: boolean }) => {
+				if (!e) return;
+				deleteTracker(e.deleteSimCards);
+			}
+		});
 	};
 
 	const onOptionsClick = async (e: CustomEvent<string>) => {
 		if (e.detail === 'edit') return dispatch('edit-mode-on');
 		if (e.detail === 'remove') return removeTracker();
-		if (e.detail === 'delete') return deleteTracker();
+		if (e.detail === 'delete') return openDeleteTrackerConfirmModal();
 	};
 
 	const dispatch = createEventDispatcher<{
@@ -67,13 +74,13 @@
 		<div class="flex items-center">
 			<span>Installed tracker:</span>
 
+			<!-- TODO: dynamic status -->
 			<div class="h-2 w-2 bg-green-700 dark:bg-green-300 rounded-full mr-2 ml-auto" />
-
 			<div>online</div>
 		</div>
 
+		<!-- TODO: NOW !!!! query the DB tracker last position, if the position is > 5min old then change the status to not online -->
 		<div class="flex text-sm opacity-70">
-			<!-- TODO: remove mocked data -->
 			<span>last position at</span>
 			<span class="ml-auto">10/10/2023 - 09:16:54 AM</span>
 		</div>
@@ -102,6 +109,7 @@
 
 <hr class="my-4" />
 
+<!-- COMPONENTIZE ME BY SIM CARD SLOTS -->
 <div class="flex mb-2 justify-between">
 	<span>SIM cards:</span>
 	<!-- TODO: occupied slot count -->

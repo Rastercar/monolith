@@ -50,6 +50,6 @@
     "svelte-easy-crop": "^2.0.1",
     "sveltekit-flash-message": "2.4.1",
     "ua-parser-js": "^1.0.36",
-    "wretch": "^2.6.0"
+    "wretch": "^2.8.0"
   }
 }

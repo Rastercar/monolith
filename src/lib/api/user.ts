@@ -1,11 +1,11 @@
 import { userSchema, type ChangePasswordBody, type UpdateUserBody, type User } from './user.schema';
-import { rastercarApi, redirectOnSessionError } from './utils';
+import { rastercarApi } from './utils';
 
 /**
  * gets the current user within the session id on the session ID cookie
  */
 export const apiGetCurrentUser = (): Promise<User> =>
-	rastercarApi.get('/user/me').json<User>().catch(redirectOnSessionError).then(userSchema.parse);
+	rastercarApi.get('/user/me').json<User>().then(userSchema.parse);
 
 /**
  * requests a email address confirmation email to be sent to the logged in user email address

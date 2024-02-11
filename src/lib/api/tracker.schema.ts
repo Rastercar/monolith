@@ -7,6 +7,12 @@ export const createTrackerSchema = z.object({
 	vehicleId: z.number().optional()
 });
 
+// TODO:
+export const updateTrackerSchema = z.object({
+	imei: z.string(),
+	model: z.string()
+});
+
 export const trackerSchema = z.object({
 	id: z.number(),
 	imei: z.string(),
@@ -21,3 +27,5 @@ export const trackerSchema = z.object({
 export type Tracker = z.infer<typeof trackerSchema>;
 
 export type CreateTrackerBody = z.infer<typeof createTrackerSchema>;
+
+export type UpdateTrackerBody = z.infer<typeof updateTrackerSchema>;

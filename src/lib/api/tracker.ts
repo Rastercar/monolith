@@ -5,7 +5,12 @@ import {
 	type PaginationWithFilters
 } from './common';
 import { simCardSchema } from './sim-card.schema';
-import { trackerSchema, type CreateTrackerBody, type Tracker } from './tracker.schema';
+import {
+	trackerSchema,
+	type CreateTrackerBody,
+	type Tracker,
+	type UpdateTrackerBody
+} from './tracker.schema';
 import { rastercarApi, stripUndefined } from './utils';
 
 /**
@@ -17,26 +22,6 @@ import { rastercarApi, stripUndefined } from './utils';
  */
 export const apiCreateTracker = (body: CreateTrackerBody): Promise<Tracker> =>
 	rastercarApi.post(body, '/tracker').json<Tracker>().then(trackerSchema.parse);
-
-/**
- * Fetch a trakcer by ID
- */
-export const apiGetTrackerById = (id: number): Promise<Tracker> =>
-	rastercarApi.get(`/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
-
-export interface GetTrackersFilters {
-	imei?: string;
-	withAssociatedVehicle?: boolean;
-}
-
-/**
- * Delete a tracker by id
- */
-export const apiDeleteTracker = (trackerId: number, opts?: { removeAssociatedSimCards: boolean }) =>
-	rastercarApi
-		.query({ removeAssociatedSimCards: opts?.removeAssociatedSimCards || false })
-		.delete(`/tracker/${trackerId}`)
-		.json<string>();
 
 /**
  * list paginated trackers that belong to the same organization as the request user
@@ -51,7 +36,45 @@ export const apiGetTrackers = (
 		.then(createPaginatedResponseSchema(trackerSchema).parse);
 
 /**
+ * creates a new tracker
+ *
+ * ### required permissions
+ *
+ * - `UPDATE_TRACKER`
+ */
+export const apiUpdateTracker = (id: number, body: UpdateTrackerBody): Promise<Tracker> =>
+	rastercarApi.put(body, `/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
+
+/**
+ * Fetch a tracker by ID
+ */
+export const apiGetTrackerById = (id: number): Promise<Tracker> =>
+	rastercarApi.get(`/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
+
+export interface GetTrackersFilters {
+	imei?: string;
+	withAssociatedVehicle?: boolean;
+}
+
+/**
+ * Delete a tracker by id
+ *
+ * ### required permissions
+ *
+ * - `DELETE_TRACKER`
+ */
+export const apiDeleteTracker = (trackerId: number, opts?: { deleteAssociatedSimCards: boolean }) =>
+	rastercarApi
+		.query({ deleteAssociatedSimCards: opts?.deleteAssociatedSimCards || false })
+		.delete(`/tracker/${trackerId}`)
+		.json<string>();
+
+/**
  * changes the vehicle a tracker is associated (aka: suposedly installed)
+ *
+ * ### required permissions
+ *
+ * - `UPDATE_TRACKER`
  */
 export const apiSetTrackerVehicle = (ids: {
 	vehicleId: number | null;

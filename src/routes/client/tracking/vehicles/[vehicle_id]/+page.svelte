@@ -59,6 +59,7 @@
 		vehicleId={vehicle.id}
 		createTrackerForm={data.createTrackerForm}
 		updateTrackerForm={data.updateTrackerForm}
+		createSimCardForm={data.createSimCardForm}
 	/>
 
 	<!-- TODO: ! -->

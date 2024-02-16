@@ -41,6 +41,16 @@ export const createSimCardSchema = z.object({
 	trackerId: z.number().nullable()
 });
 
+export const trackerLocationSchema = z.object({
+	time: z.string().datetime(),
+	point: z.object({
+		y: z.number().min(-90).max(90),
+		x: z.number().min(-180).max(180)
+	})
+});
+
 export type SimCard = z.infer<typeof simCardSchema>;
+
+export type TrackerLocation = z.infer<typeof trackerLocationSchema>;
 
 export type CreateSimCardBody = z.infer<typeof createSimCardSchema>;

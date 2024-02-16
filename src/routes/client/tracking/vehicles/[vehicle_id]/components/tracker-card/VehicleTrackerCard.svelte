@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker, createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 	import { apiGetTrackerByVehicleId } from '$lib/api/vehicle';
 	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
@@ -12,6 +13,8 @@
 	export let vehicleId: number;
 
 	export let createTrackerForm: SuperValidated<typeof createTrackerSchema>;
+
+	export let createSimCardForm: SuperValidated<typeof createSimCardSchema>;
 
 	export let updateTrackerForm: SuperValidated<typeof updateTrackerSchema>;
 
@@ -33,7 +36,7 @@
 
 <div class="card mt-4 flex-grow">
 	<div class="align-center items-center justify-center">
-		<Accordion padding="px-4 py-4">
+		<Accordion padding="px-0 py-4" regionPanel="" regionControl="px-4">
 			<AccordionItem open>
 				<svelte:fragment slot="summary">
 					<div class="flex items-center">
@@ -42,17 +45,16 @@
 				</svelte:fragment>
 
 				<svelte:fragment slot="content">
-					<!-- this div is not useless -->
-					<div>
-						{#if tracker}
-							{#if !editMode}
-								<TrackerInfo
-									{tracker}
-									on:edit-mode-on={() => (editMode = true)}
-									on:tracker-deleted={clearTracker}
-									on:tracker-removed-from-vehicle={clearTracker}
-								/>
-							{:else}
+					{#if tracker}
+						{#if !editMode}
+							<TrackerInfo
+								{tracker}
+								on:edit-mode-on={() => (editMode = true)}
+								on:tracker-deleted={clearTracker}
+								on:tracker-removed-from-vehicle={clearTracker}
+							/>
+						{:else}
+							<div class="px-4">
 								<div class="flex justify-between items-center">
 									<span>Updating vehicle tracker</span>
 
@@ -74,8 +76,10 @@
 										setTracker(e);
 									}}
 								/>
-							{/if}
-						{:else}
+							</div>
+						{/if}
+					{:else}
+						<div class="px-4">
 							<div class="flex items-center card p-4 bg-warning-400-500-token mb-4">
 								<Icon icon="mdi:info" class="mr-2" /> no tracker installed on the vehicle
 							</div>
@@ -86,8 +90,8 @@
 								on:tracker-created={setTracker}
 								on:tracker-selected={setTracker}
 							/>
-						{/if}
-					</div>
+						</div>
+					{/if}
 				</svelte:fragment>
 			</AccordionItem>
 		</Accordion>

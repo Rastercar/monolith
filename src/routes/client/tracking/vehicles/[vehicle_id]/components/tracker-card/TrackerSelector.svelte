@@ -59,7 +59,7 @@
 		<div slot="bottom-right" let:isLoading let:selectedTracker>
 			<LoadableButton
 				isLoading={$selectTrackerMutation.isPending}
-				class="btn variant-filled-primary"
+				class="btn variant-filled-primary mt-4"
 				disabled={!selectedTracker || isLoading}
 				on:click={() => associateTrackerToVehicle(selectedTracker)}
 			>

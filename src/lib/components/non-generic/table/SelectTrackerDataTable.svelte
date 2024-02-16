@@ -122,23 +122,25 @@
 
 <DataTable {table} {colspan} {isLoading} />
 
-<Paginator
-	select="select min-w-[150px] py-1"
-	settings={{
-		page: $pagination.page - 1,
-		limit: $pagination.pageSize,
-		size: $query.data?.itemCount ?? 0,
-		amounts: [1, 5, 10, 15]
-	}}
-	maxNumerals={1}
-	showFirstLastButtons
-	on:page={({ detail: zeroIndexedPage }) => {
-		$pagination.page = zeroIndexedPage + 1;
-	}}
-	on:amount={({ detail: pageSize }) => {
-		$pagination.pageSize = pageSize;
-	}}
-/>
+<div class="mt-4">
+	<Paginator
+		select="select min-w-[150px] py-1"
+		settings={{
+			page: $pagination.page - 1,
+			limit: $pagination.pageSize,
+			size: $query.data?.itemCount ?? 0,
+			amounts: [1, 5, 10, 15]
+		}}
+		maxNumerals={1}
+		showFirstLastButtons
+		on:page={({ detail: zeroIndexedPage }) => {
+			$pagination.page = zeroIndexedPage + 1;
+		}}
+		on:amount={({ detail: pageSize }) => {
+			$pagination.pageSize = pageSize;
+		}}
+	/>
+</div>
 
 <div class="flex justify-between items-center">
 	<button

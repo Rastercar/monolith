@@ -1,3 +1,4 @@
+import { createSimCardSchema } from '$lib/api/sim-card.schema';
 import { createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { updateVehicleSchema } from '$lib/api/vehicle.schema';
 import { error } from '@sveltejs/kit';
@@ -15,6 +16,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		vehicleId,
 		updateVehicleForm: await superValidate(updateVehicleSchema),
 		createTrackerForm: await superValidate(createTrackerSchema),
-		updateTrackerForm: await superValidate(updateTrackerSchema)
+		updateTrackerForm: await superValidate(updateTrackerSchema),
+		createSimCardForm: await superValidate(createSimCardSchema)
 	};
 };

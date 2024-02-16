@@ -58,7 +58,7 @@
 	$: canSubmit = $allErrors.length === 0;
 </script>
 
-<div class="mb-4 flex gap-4">
+<div class="mb-4 flex flex-col md:flex-row gap-4">
 	<TextInput class="label" {form} field="imei" label="IMEI *" maxlength="50" />
 
 	<SelectInput

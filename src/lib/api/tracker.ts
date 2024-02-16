@@ -4,7 +4,7 @@ import {
 	type Paginated,
 	type PaginationWithFilters
 } from './common';
-import { simCardSchema } from './sim-card.schema';
+import { simCardSchema, trackerLocationSchema } from './sim-card.schema';
 import {
 	trackerSchema,
 	type CreateTrackerBody,
@@ -92,3 +92,12 @@ export const apiGetTrackerSimCards = (trackerId: number) =>
 		.get(`/tracker/${trackerId}/sim-cards`)
 		.json<Tracker[]>()
 		.then(z.array(simCardSchema).parse);
+
+/**
+ * get the last known tracker location
+ */
+export const apiGetTrackerLastLocation = (trackerId: number) =>
+	rastercarApi
+		.get(`/tracker/${trackerId}/location`)
+		.json<Tracker[]>()
+		.then(trackerLocationSchema.nullable().parse);

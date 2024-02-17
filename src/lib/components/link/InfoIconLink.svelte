@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 
-	export let vehicleId: number;
+	export let href: string;
 </script>
 
 <div class="flex align-middle justify-center">
-	<a href={`/client/tracking/vehicles/${vehicleId}`}>
+	<a {href}>
 		<button class="btn-icon">
 			<Icon icon="mdi:info" width={24} />
 		</button>

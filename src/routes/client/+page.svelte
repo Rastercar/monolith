@@ -7,7 +7,8 @@
 
 <div class="p-10 space-y-4">
 	<!--
-		TODO: this should be a dashboard but it would need a lot of features to exist
+		TODO: 
+		this should be a dashboard but it would need a lot of features to exist
 		leave it as is for now
 	-->
 	<h1>Wellcome: {user?.username}</h1>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
+	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker, createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 	import { apiGetTrackerByVehicleId } from '$lib/api/vehicle';
 	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
@@ -15,6 +15,8 @@
 	export let createTrackerForm: SuperValidated<typeof createTrackerSchema>;
 
 	export let createSimCardForm: SuperValidated<typeof createSimCardSchema>;
+
+	export let updateSimCardForm: SuperValidated<typeof updateSimCardSchema>;
 
 	export let updateTrackerForm: SuperValidated<typeof updateTrackerSchema>;
 
@@ -49,6 +51,8 @@
 						{#if !editMode}
 							<TrackerInfo
 								{tracker}
+								{createSimCardForm}
+								{updateSimCardForm}
 								on:edit-mode-on={() => (editMode = true)}
 								on:tracker-deleted={clearTracker}
 								on:tracker-removed-from-vehicle={clearTracker}

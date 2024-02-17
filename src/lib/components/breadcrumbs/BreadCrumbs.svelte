@@ -1,12 +1,14 @@
-<script lang="ts">
-	import BreadCrumb from './BreadCrumb.svelte';
-	import BreadCrumbSeparator from './BreadCrumbSeparator.svelte';
-
-	interface BreadCrumb {
+<script lang="ts" context="module">
+	export interface BreadCrumb {
 		href?: string;
 		icon?: string;
 		text?: string;
 	}
+</script>
+
+<script lang="ts">
+	import BreadCrumbComponent from './BreadCrumb.svelte';
+	import BreadCrumbSeparator from './BreadCrumbSeparator.svelte';
 
 	export let additionalClasses = '';
 
@@ -15,7 +17,7 @@
 
 <ol class={`breadcrumb ${additionalClasses}`}>
 	{#each breadCrumbs as crumb, i}
-		<BreadCrumb {...crumb} />
+		<BreadCrumbComponent {...crumb} />
 
 		{#if i !== breadCrumbs.length - 1}
 			<BreadCrumbSeparator />

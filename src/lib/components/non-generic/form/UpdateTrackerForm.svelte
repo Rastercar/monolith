@@ -53,7 +53,7 @@
 		form.reset({ data: { model: tracker.model, imei: tracker.imei } });
 	});
 
-	$: ({ allErrors, form: xd } = form);
+	$: ({ allErrors } = form);
 
 	$: canSubmit = $allErrors.length === 0;
 </script>

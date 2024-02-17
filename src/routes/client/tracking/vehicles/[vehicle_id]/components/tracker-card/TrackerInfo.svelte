@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
+	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import { apiDeleteTracker, apiSetTrackerVehicle } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import SingleLineList from '$lib/components/list/SingleLineList.svelte';
@@ -16,6 +16,8 @@
 	export let tracker: Tracker;
 
 	export let createSimCardForm: SuperValidated<typeof createSimCardSchema>;
+
+	export let updateSimCardForm: SuperValidated<typeof updateSimCardSchema>;
 
 	const toaster = getToaster();
 	const modalStore = getModalStore();
@@ -100,4 +102,4 @@
 	<hr class="my-4" />
 </div>
 
-<TrackerSimCards {tracker} {createSimCardForm} />
+<TrackerSimCards {tracker} {createSimCardForm} {updateSimCardForm} />

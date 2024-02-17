@@ -3,7 +3,12 @@ import {
 	type Paginated,
 	type PaginationWithFilters
 } from './common';
-import { simCardSchema, type CreateSimCardBody, type SimCard } from './sim-card.schema';
+import {
+	simCardSchema,
+	type CreateSimCardBody,
+	type SimCard,
+	type UpdateSimCardBody
+} from './sim-card.schema';
 import { rastercarApi, stripUndefined } from './utils';
 
 export interface GetSimCardsFilters {
@@ -32,6 +37,16 @@ export const apiGetSimCards = (
  */
 export const apiCreateSimCard = (body: CreateSimCardBody): Promise<SimCard> =>
 	rastercarApi.post(body, '/sim-card').json<SimCard>().then(simCardSchema.parse);
+
+/**
+ * update a sim card
+ *
+ * ### required permissions
+ *
+ * - `UPDATE_SIM_CARD`
+ */
+export const apiUpdateSimCard = (id: number, body: UpdateSimCardBody): Promise<SimCard> =>
+	rastercarApi.put(body, `/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
 
 /**
  * permanently deletes a SIM card

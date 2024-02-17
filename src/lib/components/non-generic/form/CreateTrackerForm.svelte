@@ -21,7 +21,7 @@
 	/**
 	 * The ID of the vehicle to associate to the tracker
 	 */
-	export let vehicleIdToAssociate: number;
+	export let vehicleIdToAssociate: number | undefined = undefined;
 
 	const form = superForm(formSchema, { validators: createTrackerSchema });
 
@@ -44,10 +44,11 @@
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		validated.data.vehicleId = vehicleIdToAssociate;
+		if (vehicleIdToAssociate) validated.data.vehicleId = vehicleIdToAssociate;
 
 		$mutation.mutateAsync(validated.data).then((createdTracker) => {
 			dispatch('tracker-created', createdTracker);
+			form.reset();
 		});
 	};
 

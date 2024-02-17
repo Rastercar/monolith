@@ -18,6 +18,16 @@
 			href: '/client/tracking/vehicles',
 			label: 'vehicles',
 			icon: 'mdi:car'
+		},
+		{
+			href: '/client/tracking/trackers',
+			label: 'trackers',
+			icon: 'mdi:cellphone'
+		},
+		{
+			href: '/client/tracking/sim-cards',
+			label: 'SIM cards',
+			icon: 'mdi:sim'
 		}
 	];
 

@@ -3,6 +3,7 @@
 	import type { Tracker, createTrackerSchema } from '$lib/api/tracker.schema';
 	import CreateTrackerForm from '$lib/components/non-generic/form/CreateTrackerForm.svelte';
 	import SelectTrackerDataTable from '$lib/components/non-generic/table/SelectTrackerDataTable.svelte';
+	import StepperNextStepBtn from '$lib/components/stepper/StepperNextStepBtn.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import { getToaster } from '$lib/store/toaster';
@@ -10,7 +11,6 @@
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import StepperNav from '../StepperNav.svelte';
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
 
@@ -70,7 +70,7 @@
 {#if selectedTrackerForm === 'existing-tracker'}
 	<SelectTrackerDataTable>
 		<div slot="bottom-right" let:isLoading let:selectedTracker>
-			<StepperNav
+			<StepperNextStepBtn
 				{isLoading}
 				class="mt-4"
 				canSubmit={!!selectedTracker}
@@ -85,7 +85,7 @@
 		on:tracker-created={onTrackerCreated}
 	>
 		<div slot="default" class="flex justify-end" let:isLoading let:canSubmit let:createTracker>
-			<StepperNav {canSubmit} {isLoading} on:click={createTracker} />
+			<StepperNextStepBtn {canSubmit} {isLoading} on:click={createTracker} />
 		</div>
 	</CreateTrackerForm>
 {/if}

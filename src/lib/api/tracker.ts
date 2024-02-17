@@ -36,7 +36,7 @@ export const apiGetTrackers = (
 		.then(createPaginatedResponseSchema(trackerSchema).parse);
 
 /**
- * creates a new tracker
+ * update a tracker
  *
  * ### required permissions
  *

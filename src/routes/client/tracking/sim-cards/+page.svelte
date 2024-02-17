@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetVehicles, type GetVehiclesFilters } from '$lib/api/vehicle';
-	import type { Vehicle } from '$lib/api/vehicle.schema';
+	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
+	import type { SimCard } from '$lib/api/sim-card.schema';
 	import PermissionGuard from '$lib/components/guard/permission-guard.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -21,14 +21,14 @@
 
 	const pagination = writable({ page: 1, pageSize: 5 });
 
-	const filters = writable<GetVehiclesFilters>({});
+	const filters = writable<GetSimCardsFilters>({});
 
 	const query = createQuery(
 		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['vehicles', $pagination, $filters],
+			queryKey: ['sim-cards', $pagination, $filters],
 			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<Vehicle>> => {
-				const result = await apiGetVehicles({ pagination: $pagination, filters: $filters });
+			queryFn: async (): Promise<Paginated<SimCard>> => {
+				const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
 
 				$options.data = result.records;
 
@@ -37,43 +37,30 @@
 		}))
 	);
 
-	const columns: ColumnDef<Vehicle>[] = [
+	const columns: ColumnDef<SimCard>[] = [
 		{
-			accessorKey: 'model',
-			header: () => 'Model'
+			accessorKey: 'phoneNumber',
+			header: () => 'Phone'
 		},
 		{
-			accessorKey: 'plate',
-			header: () => 'Plate'
+			accessorKey: 'ssn',
+			header: () => 'SSN'
 		},
 		{
-			accessorKey: 'brand',
-			header: () => 'Brand'
-		},
-		{
-			accessorKey: 'color',
-			header: () => 'Color'
-		},
-		{
-			id: 'fabricationAndModelYear',
-			header: () => 'Year',
-			cell: ({ row }) =>
-				`${row.original.fabricationYear ?? '0000'} / ${row.original.modelYear ?? '0000'}`
-		},
-		{
-			accessorKey: 'chassisNumber',
-			header: () => 'Chassis'
+			accessorKey: 'apnAddress',
+			header: () => 'APN Address'
 		},
 		{
 			id: 'actions',
+			// TODO: info page
 			cell: ({ row }) =>
-				renderComponent(InfoIconLink, { href: `/client/tracking/vehicles/${row.original.id}` })
+				renderComponent(InfoIconLink, { href: `/client/tracking/sim-cards/${row.original.id}` })
 		}
 	];
 
 	const colspan = columns.length;
 
-	const options = writable<TableOptions<Vehicle>>({
+	const options = writable<TableOptions<SimCard>>({
 		data: $query.data?.records ?? [],
 		columns: columns,
 		manualPagination: true,
@@ -91,11 +78,11 @@
 
 <div class="p-6 max-w-4xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
-		title="vehicles"
+		title="sim cards"
 		breadCrumbs={[
 			{ href: '/client', icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
-			{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' }
+			{ href: '/client/tracking/sim-cards', icon: 'mdi:sim', text: 'sim cards' }
 		]}
 	/>
 
@@ -103,17 +90,18 @@
 
 	<div class="flex mb-4 items-center">
 		<DebouncedTextField
-			placeholder="search by plate"
-			title="filter by plate"
+			placeholder="search by phone number"
+			title="filter by phone number"
 			class="label w-full max-w-lg mr-4"
-			on:change={(e) => ($filters.plate = e.detail)}
+			on:change={(e) => ($filters.phoneNumber = e.detail)}
 		/>
 
-		<PermissionGuard requiredPermissions={['CREATE_VEHICLE']}>
-			<a href="/client/tracking/vehicles/new" class="ml-auto">
+		<!-- TODO: creating page -->
+		<PermissionGuard requiredPermissions={['CREATE_SIM_CARD']}>
+			<a href="/client/tracking/sim-cards/new" class="ml-auto">
 				<button class="btn variant-filled-primary">
 					<Icon icon="mdi:plus" class="mr-1" />
-					new vehicle
+					new sim card
 				</button>
 			</a>
 		</PermissionGuard>
@@ -135,6 +123,7 @@
 			$pagination.page = zeroIndexedPage + 1;
 		}}
 		on:amount={({ detail: pageSize }) => {
+			const itemCount = $query.data?.itemCount || 0;
 			$pagination.pageSize = pageSize;
 		}}
 	/>

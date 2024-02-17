@@ -11,6 +11,7 @@
 	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
+	import StepperNextStepBtn from '$lib/components/stepper/StepperNextStepBtn.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { carBrands } from '$lib/constants/data/car-brands';
 	import { PLATE_IN_USE } from '$lib/constants/error-codes';
@@ -20,7 +21,6 @@
 	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms/client';
-	import StepperNav from '../StepperNav.svelte';
 
 	export let formSchema: SuperValidated<typeof createVehicleSchema>;
 
@@ -163,4 +163,4 @@
 	/>
 </div>
 
-<StepperNav {canSubmit} isLoading={$mutation.isPending} on:click={createVehicle} />
+<StepperNextStepBtn {canSubmit} isLoading={$mutation.isPending} on:click={createVehicle} />

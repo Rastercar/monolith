@@ -2,6 +2,7 @@
 	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
 	import { apiGetTrackerSimCards } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
+	import StepperNextStepBtn from '$lib/components/stepper/StepperNextStepBtn.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
 	import Icon from '@iconify/svelte';
@@ -10,7 +11,6 @@
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import StepperNav from '../StepperNav.svelte';
 	import SimCardChooser from './SimCardChooser.svelte';
 	import SimCardDisplay from './SimCardDisplay.svelte';
 
@@ -93,7 +93,7 @@
 			{/each}
 		</Accordion>
 
-		<StepperNav
+		<StepperNextStepBtn
 			class="mt-4"
 			canSubmit={!$query.isLoading}
 			isLoading={$query.isLoading}

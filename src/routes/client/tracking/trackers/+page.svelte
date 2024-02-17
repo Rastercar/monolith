@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetVehicles, type GetVehiclesFilters } from '$lib/api/vehicle';
-	import type { Vehicle } from '$lib/api/vehicle.schema';
+	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
+	import type { Tracker } from '$lib/api/tracker.schema';
 	import PermissionGuard from '$lib/components/guard/permission-guard.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -21,14 +21,14 @@
 
 	const pagination = writable({ page: 1, pageSize: 5 });
 
-	const filters = writable<GetVehiclesFilters>({});
+	const filters = writable<GetTrackersFilters>({});
 
 	const query = createQuery(
 		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['vehicles', $pagination, $filters],
+			queryKey: ['trackers', $pagination, $filters],
 			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<Vehicle>> => {
-				const result = await apiGetVehicles({ pagination: $pagination, filters: $filters });
+			queryFn: async (): Promise<Paginated<Tracker>> => {
+				const result = await apiGetTrackers({ pagination: $pagination, filters: $filters });
 
 				$options.data = result.records;
 
@@ -37,43 +37,26 @@
 		}))
 	);
 
-	const columns: ColumnDef<Vehicle>[] = [
+	const columns: ColumnDef<Tracker>[] = [
 		{
 			accessorKey: 'model',
 			header: () => 'Model'
 		},
 		{
-			accessorKey: 'plate',
-			header: () => 'Plate'
-		},
-		{
-			accessorKey: 'brand',
-			header: () => 'Brand'
-		},
-		{
-			accessorKey: 'color',
-			header: () => 'Color'
-		},
-		{
-			id: 'fabricationAndModelYear',
-			header: () => 'Year',
-			cell: ({ row }) =>
-				`${row.original.fabricationYear ?? '0000'} / ${row.original.modelYear ?? '0000'}`
-		},
-		{
-			accessorKey: 'chassisNumber',
-			header: () => 'Chassis'
+			accessorKey: 'imei',
+			header: () => 'IMEI'
 		},
 		{
 			id: 'actions',
+			// TODO: info page
 			cell: ({ row }) =>
-				renderComponent(InfoIconLink, { href: `/client/tracking/vehicles/${row.original.id}` })
+				renderComponent(InfoIconLink, { href: `/client/tracking/trackers/${row.original.id}` })
 		}
 	];
 
 	const colspan = columns.length;
 
-	const options = writable<TableOptions<Vehicle>>({
+	const options = writable<TableOptions<Tracker>>({
 		data: $query.data?.records ?? [],
 		columns: columns,
 		manualPagination: true,
@@ -91,11 +74,11 @@
 
 <div class="p-6 max-w-4xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
-		title="vehicles"
+		title="trackers"
 		breadCrumbs={[
 			{ href: '/client', icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
-			{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' }
+			{ href: '/client/tracking/trackers', icon: 'mdi:cellphone', text: 'trackers' }
 		]}
 	/>
 
@@ -103,17 +86,17 @@
 
 	<div class="flex mb-4 items-center">
 		<DebouncedTextField
-			placeholder="search by plate"
-			title="filter by plate"
+			placeholder="search by imei"
+			title="filter by imei"
 			class="label w-full max-w-lg mr-4"
-			on:change={(e) => ($filters.plate = e.detail)}
+			on:change={(e) => ($filters.imei = e.detail)}
 		/>
 
-		<PermissionGuard requiredPermissions={['CREATE_VEHICLE']}>
-			<a href="/client/tracking/vehicles/new" class="ml-auto">
+		<PermissionGuard requiredPermissions={['CREATE_TRACKER']}>
+			<a href="/client/tracking/trackers/new" class="ml-auto">
 				<button class="btn variant-filled-primary">
 					<Icon icon="mdi:plus" class="mr-1" />
-					new vehicle
+					new tracker
 				</button>
 			</a>
 		</PermissionGuard>
@@ -135,6 +118,7 @@
 			$pagination.page = zeroIndexedPage + 1;
 		}}
 		on:amount={({ detail: pageSize }) => {
+			const itemCount = $query.data?.itemCount || 0;
 			$pagination.pageSize = pageSize;
 		}}
 	/>

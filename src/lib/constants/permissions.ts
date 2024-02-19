@@ -4,6 +4,7 @@
  * this gives or denies access to certain api endpoints
  */
 export type apiPermission =
+	| 'CREATE_USER'
 	| 'CREATE_TRACKER'
 	| 'UPDATE_TRACKER'
 	| 'DELETE_TRACKER'
@@ -22,6 +23,10 @@ export interface PermissionDetails {
 
 // TODO: have this be auto generated from rust code ?
 export const permissionDetails: Record<apiPermission, PermissionDetails> = {
+	CREATE_USER: {
+		title: 'Create User',
+		description: 'Allows registering new users.'
+	},
 	CREATE_TRACKER: {
 		title: 'Create Tracker',
 		description: 'Allows registering tracking devices.'

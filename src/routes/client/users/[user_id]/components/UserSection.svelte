@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { User } from '$lib/api/user.schema';
-	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
+	import type { SimpleUser } from '$lib/api/user.schema';
+	import { authStore } from '$lib/store/auth';
+	import { toDateTime } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton';
 
-	export let user: User;
+	export let user: SimpleUser;
 </script>
 
 <div class="sm:card sm:p-4 sm:rounded-lg">
@@ -25,16 +26,15 @@
 				<div class="flex justify-between">
 					<h1 class="text-2xl mb-2">{user.username}</h1>
 
-					<a href="/client/settings/profile" class="hidden sm:block">
-						<button type="button" class="btn btn-sm variant-filled-primary">
-							<Icon icon="mdi:pencil" class="mr-2" />
-							Edit
-						</button>
-					</a>
+					{#if $authStore.user?.id === user.id}
+						<div>
+							<span class="badge variant-filled-primary">that's you!</span>
+						</div>
+					{/if}
 				</div>
 
 				{#if user.description}
-					<span class="text-sm text-surface-700-200-token">About me:</span>
+					<span class="text-sm text-surface-700-200-token">About:</span>
 					<p class="text-sm">{user.description}</p>
 				{:else}
 					<p class="text-sm">no description informed</p>
@@ -43,14 +43,14 @@
 		</div>
 	</div>
 
-	<div class="mt-4 flex flex-wrap items-center justify-between">
+	<div class="mt-4 flex items-center justify-between">
 		<div class="flex items-center">
 			<Icon icon="mdi:email" class="mr-2 opacity-80" />
 			{user.email}
 		</div>
 
-		{#if !user.emailVerified}
-			<EmailNotConfirmedWarning sendConfirmationEmailTo="user" />
-		{/if}
+		<span class="text-sm">
+			Created at: {toDateTime(user.createdAt)}
+		</span>
 	</div>
 </div>

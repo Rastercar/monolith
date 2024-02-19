@@ -1,3 +1,4 @@
+import { runAuthMidleware } from '$lib/utils/server-load';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => ({});
+export const load: PageServerLoad = runAuthMidleware;

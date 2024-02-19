@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Organization } from '$lib/api/auth';
+	import type { Organization } from '$lib/api/organization.schema';
 	import Icon from '@iconify/svelte';
 	import CreatedAtText from './CreatedAtText.svelte';
 

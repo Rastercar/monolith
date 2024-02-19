@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { UserSession } from '$lib/api/auth';
+	import type { UserSession } from '$lib/api/user.schema';
 	import SessionCard from './SessionCard.svelte';
 
 	export let sessions: UserSession[];
@@ -14,7 +14,7 @@
 	};
 </script>
 
-<div class="sm:card sm:rounded-lg">
+<div class="sm:card sm:rounded-md">
 	{#each sessions as session, i}
 		<SessionCard {session} on:deleted={() => removeSession(session.publicId)} />
 

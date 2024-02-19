@@ -15,6 +15,11 @@
 			icon: 'mdi:account'
 		},
 		{
+			href: '/client/users',
+			label: 'users',
+			icon: 'mdi:account-multiple'
+		},
+		{
 			href: '/client/tracking/vehicles',
 			label: 'vehicles',
 			icon: 'mdi:car'

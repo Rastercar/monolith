@@ -1,5 +1,29 @@
-import { userSchema, type ChangePasswordBody, type UpdateUserBody, type User } from './user.schema';
-import { rastercarApi } from './utils';
+import { createPaginatedResponseSchema, type Paginated, type PaginationParameters } from './common';
+import {
+	simpleUserSchema,
+	userSchema,
+	type ChangePasswordBody,
+	type SimpleUser,
+	type UpdateUserBody,
+	type User
+} from './user.schema';
+import { rastercarApi, stripUndefined } from './utils';
+
+/**
+ * list paginated users that belong to the same organization as the request user
+ */
+export const apiGetUsers = (query?: PaginationParameters): Promise<Paginated<SimpleUser>> =>
+	rastercarApi
+		.query(stripUndefined(query))
+		.get('/user')
+		.json<Paginated<SimpleUser>>()
+		.then(createPaginatedResponseSchema(simpleUserSchema).parse);
+
+/**
+ * get a user by ID
+ */
+export const apiGetUserById = (id?: number): Promise<SimpleUser> =>
+	rastercarApi.get(`/user/${id}`).json<SimpleUser>().then(simpleUserSchema.parse);
 
 /**
  * gets the current user within the session id on the session ID cookie

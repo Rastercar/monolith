@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
-	import type { SimCard } from '$lib/api/sim-card.schema';
+	import { apiGetUsers } from '$lib/api/user';
+	import type { SimpleUser } from '$lib/api/user.schema';
 	import PermissionGuard from '$lib/components/guard/permission-guard.svelte';
-	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
+	import { toDateTime } from '$lib/utils/date';
 	import Icon from '@iconify/svelte';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
@@ -18,17 +18,16 @@
 		type TableOptions
 	} from '@tanstack/svelte-table';
 	import { derived, writable } from 'svelte/store';
+	import UserEmailColumn from './components/UserEmailColumn.svelte';
 
 	const pagination = writable({ page: 1, pageSize: 5 });
 
-	const filters = writable<GetSimCardsFilters>({});
-
 	const query = createQuery(
-		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['sim-cards', $pagination, $filters],
+		derived([pagination], ([$pagination]) => ({
+			queryKey: ['users', $pagination],
 			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<SimCard>> => {
-				const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
+			queryFn: async (): Promise<Paginated<SimpleUser>> => {
+				const result = await apiGetUsers($pagination);
 
 				$options.data = result.records;
 
@@ -37,29 +36,33 @@
 		}))
 	);
 
-	const columns: ColumnDef<SimCard>[] = [
+	const columns: ColumnDef<SimpleUser>[] = [
 		{
-			accessorKey: 'phoneNumber',
-			header: () => 'Phone'
+			accessorKey: 'username',
+			header: () => 'Username'
 		},
 		{
-			accessorKey: 'ssn',
-			header: () => 'SSN'
+			accessorKey: 'email',
+			header: () => 'Email',
+			cell: ({ row }) => {
+				const { email, emailVerified, id } = row.original;
+				return renderComponent(UserEmailColumn, { email, verified: emailVerified, idx: id });
+			}
 		},
 		{
-			accessorKey: 'apnAddress',
-			header: () => 'APN Address'
+			accessorKey: 'createdAt',
+			header: () => 'Created At',
+			cell: ({ row }) => toDateTime(row.original.createdAt)
 		},
 		{
 			id: 'actions',
-			cell: ({ row }) =>
-				renderComponent(InfoIconLink, { href: `/client/tracking/sim-cards/${row.original.id}` })
+			cell: ({ row }) => renderComponent(InfoIconLink, { href: `/client/users/${row.original.id}` })
 		}
 	];
 
 	const colspan = columns.length;
 
-	const options = writable<TableOptions<SimCard>>({
+	const options = writable<TableOptions<SimpleUser>>({
 		data: $query.data?.records ?? [],
 		columns: columns,
 		manualPagination: true,
@@ -77,29 +80,21 @@
 
 <div class="p-6 max-w-4xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
-		title="sim cards"
+		title="users"
 		breadCrumbs={[
 			{ href: '/client', icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: '/client/tracking/sim-cards', icon: 'mdi:sim', text: 'sim cards' }
+			{ href: '/client/users', icon: 'mdi:account-multiple', text: 'users' }
 		]}
 	/>
 
 	<hr class="my-4" />
 
 	<div class="flex mb-4 items-center">
-		<DebouncedTextField
-			placeholder="search by phone number"
-			title="filter by phone number"
-			class="label w-full max-w-lg mr-4"
-			on:change={(e) => ($filters.phoneNumber = e.detail)}
-		/>
-
-		<PermissionGuard requiredPermissions={['CREATE_SIM_CARD']}>
-			<a href="/client/tracking/sim-cards/new" class="ml-auto">
+		<PermissionGuard requiredPermissions={['CREATE_USER']}>
+			<a href="/client/users/new" class="ml-auto">
 				<button class="btn variant-filled-primary">
 					<Icon icon="mdi:plus" class="mr-1" />
-					new sim card
+					new user
 				</button>
 			</a>
 		</PermissionGuard>

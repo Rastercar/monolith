@@ -117,7 +117,6 @@
 			$pagination.page = zeroIndexedPage + 1;
 		}}
 		on:amount={({ detail: pageSize }) => {
-			const itemCount = $query.data?.itemCount || 0;
 			$pagination.pageSize = pageSize;
 		}}
 	/>

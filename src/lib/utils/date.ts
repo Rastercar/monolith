@@ -1,3 +1,7 @@
+type DateOrTimestamp = Date | string;
+
+const toDate = (d: DateOrTimestamp) => (typeof d === 'string' ? new Date(d) : d);
+
 /**
  * Returns true if a date has occoured in the last X milliseconds
  *
@@ -9,18 +13,18 @@
  * isDateOlderThanXMilliseconds(new Date("2020-02-15T19:06:01Z"), fiveMinutes)
  * ```
  */
-export const isDateOlderThanXMilliseconds = (date: Date, ms: number) => {
-	const nowToDateMsDiff = new Date().getTime() - date.getTime();
+export const isDateOlderThanXMilliseconds = (date: DateOrTimestamp, ms: number) => {
+	const nowToDateMsDiff = new Date().getTime() - toDate(date).getTime();
 	return nowToDateMsDiff < ms;
 };
 
-export const toDateTime = (d: Date) =>
-	d.toLocaleTimeString(undefined, {
+export const toDateTime = (d: DateOrTimestamp, withTimezone = false) =>
+	toDate(d).toLocaleTimeString(undefined, {
 		year: 'numeric',
 		month: 'numeric',
 		day: 'numeric',
 		hour: 'numeric',
 		minute: 'numeric',
 		second: 'numeric',
-		timeZoneName: 'short'
+		timeZoneName: withTimezone ? 'short' : undefined
 	});

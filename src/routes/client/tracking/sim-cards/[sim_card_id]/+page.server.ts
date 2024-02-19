@@ -1,17 +1,9 @@
 import { updateSimCardSchema } from '$lib/api/sim-card.schema';
-import { error } from '@sveltejs/kit';
+import { getIntParameterFromRouteSlug } from '$lib/utils/server-load';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params }) => {
-	const simCardId = parseInt(params.sim_card_id);
-
-	if (Number.isNaN(simCardId)) {
-		error(404, 'invalid SIM ID');
-	}
-
-	return {
-		simCardId,
-		updateSimCardForm: await superValidate(updateSimCardSchema)
-	};
-};
+export const load: PageServerLoad = async ({ params }) => ({
+	simCardId: getIntParameterFromRouteSlug(params.sim_card_id, 'invalid SIM ID'),
+	updateSimCardForm: await superValidate(updateSimCardSchema)
+});

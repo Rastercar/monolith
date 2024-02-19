@@ -20,6 +20,7 @@ export interface PermissionDetails {
 	description: string;
 }
 
+// TODO: have this be auto generated from rust code ?
 export const permissionDetails: Record<apiPermission, PermissionDetails> = {
 	CREATE_TRACKER: {
 		title: 'Create Tracker',

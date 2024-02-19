@@ -22,7 +22,7 @@
 	const toaster = getToaster();
 
 	const selectTrackerMutation = createMutation({
-		mutationFn: (trackerId: number) => apiSetTrackerVehicle({ vehicleId, trackerId }),
+		mutationFn: (vehicleTrackerId: number) => apiSetTrackerVehicle({ vehicleId, vehicleTrackerId }),
 		onError: toaster.error
 	});
 

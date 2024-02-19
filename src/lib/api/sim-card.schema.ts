@@ -19,7 +19,7 @@ export const simCardSchema = z.object({
 	puk: z.string().nullable(),
 	puk2: z.string().nullable(),
 
-	trackerId: z.number().nullable(),
+	vehicleTrackerId: z.number().nullable(),
 	organizationId: z.number()
 });
 
@@ -38,7 +38,7 @@ export const createSimCardSchema = z.object({
 	puk: z.string().nullable(),
 	puk2: z.string().nullable(),
 
-	trackerId: z.number().nullable()
+	vehicleTrackerId: z.number().nullable()
 });
 
 export const updateSimCardSchema = z.object({
@@ -56,7 +56,7 @@ export const updateSimCardSchema = z.object({
 	puk: z.string().nullable(),
 	puk2: z.string().nullable(),
 
-	trackerId: z.number().nullable()
+	vehicleTrackerId: z.number().nullable()
 });
 
 export const trackerLocationSchema = z.object({

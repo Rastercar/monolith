@@ -4,8 +4,7 @@
 	import Cropper from 'svelte-easy-crop';
 	import type { CropArea, DispatchEvents, Point } from 'svelte-easy-crop/types';
 
-	// Just to avoid this warning:
-	// FileDropzoneCropper.svelte:79 <FileDropzoneCropper> was created with unknown prop 'parent'
+	// Just to avoid this warning: {Component} was created with unknown prop 'parent'
 	export let parent: unknown = null;
 	if (2 + 2 === 5) parent = null;
 

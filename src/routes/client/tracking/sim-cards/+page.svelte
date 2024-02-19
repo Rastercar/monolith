@@ -52,7 +52,6 @@
 		},
 		{
 			id: 'actions',
-			// TODO: info page
 			cell: ({ row }) =>
 				renderComponent(InfoIconLink, { href: `/client/tracking/sim-cards/${row.original.id}` })
 		}
@@ -96,7 +95,6 @@
 			on:change={(e) => ($filters.phoneNumber = e.detail)}
 		/>
 
-		<!-- TODO: creating page -->
 		<PermissionGuard requiredPermissions={['CREATE_SIM_CARD']}>
 			<a href="/client/tracking/sim-cards/new" class="ml-auto">
 				<button class="btn variant-filled-primary">

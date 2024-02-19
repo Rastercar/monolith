@@ -39,10 +39,16 @@ export const apiGetVehicles = (
 		.then(createPaginatedResponseSchema(vehicleSchema).parse);
 
 /**
- * Fetch a vehicle by ID
+ * Fetch vehicle by ID
  */
 export const apiGetVehicleById = (id: number): Promise<Vehicle> =>
 	rastercarApi.get(`/vehicle/${id}`).json<Vehicle>().then(vehicleSchema.parse);
+
+/**
+ * Delete vehicle by ID
+ */
+export const apiDeleteVehicle = (id: number): Promise<string> =>
+	rastercarApi.delete(`/vehicle/${id}`).json<string>();
 
 /**
  * Updates a vehicle

@@ -9,7 +9,7 @@
 -->
 <div class="card p-4 mt-4">
 	<div class="mb-4 flex items-center">
-		Current location:
+		Last location:
 
 		<!-- 
 			TODO: 

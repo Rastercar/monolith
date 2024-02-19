@@ -39,6 +39,12 @@ export const apiCreateSimCard = (body: CreateSimCardBody): Promise<SimCard> =>
 	rastercarApi.post(body, '/sim-card').json<SimCard>().then(simCardSchema.parse);
 
 /**
+ * get a SIM card by ID
+ */
+export const apiGetSimCard = (id: number): Promise<SimCard> =>
+	rastercarApi.get(`/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
+
+/**
  * update a sim card
  *
  * ### required permissions
@@ -62,5 +68,5 @@ export const apiSetSimCardTracker = (ids: {
 	newTrackerId: number | null;
 }): Promise<string> =>
 	rastercarApi
-		.put({ trackerId: ids.newTrackerId }, `/sim-card/${ids.simCardId}/tracker`)
+		.put({ vehicleTrackerId: ids.newTrackerId }, `/sim-card/${ids.simCardId}/tracker`)
 		.json<string>();

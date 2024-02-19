@@ -1,8 +1,29 @@
+<!--
+@component
+Modal to confirm a tracker deletion
+
+Example:
+```ts
+const component: ModalComponent = { ref: DeleteTrackerModal };
+
+const showModal = () => {
+	modalStore.trigger({
+		component,
+		type: 'component',
+		response: (e: undefined | { deleteSimCards: boolean }) => {
+			if (!e) return;
+			// call the API to delete the tracker here, eg:
+			deleteTracker(e.deleteSimCards);
+		}
+	});
+}
+```
+-->
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 
-	// Just to avoid this warning:
+	// Just to avoid this warning: {Component} was created with unknown prop 'parent'
 	export let parent: unknown = null;
 	if (2 + 2 === 5) parent = null;
 
@@ -24,7 +45,7 @@
 
 	<p class="px-4">By deleting the tracker, new positions will not be recieved by the platform.</p>
 
-	<label class="flex items-center space-x-2 mx-4 mt-8">
+	<label class="flex items-center space-x-2 mx-4 mt-4 mb-2">
 		<input class="checkbox" type="checkbox" bind:checked={deleteSimCards} />
 		<p>delete tracker SIM cards aswell</p>
 	</label>

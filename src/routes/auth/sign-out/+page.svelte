@@ -11,7 +11,7 @@
 	 * calls the sveltekit server to delete the session cookie
 	 */
 	const deleteSessionCookie = async (): Promise<boolean> => {
-		const response = await fetch('/auth/sign-out', { method: 'POST' });
+		const response = await fetch('/auth/sign-out', { method: 'POST' }).catch(() => ({ ok: false }));
 		return response.ok;
 	};
 

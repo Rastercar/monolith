@@ -3,15 +3,15 @@
 	import { apiDeleteTracker, apiSetTrackerVehicle } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import SingleLineList from '$lib/components/list/SingleLineList.svelte';
+	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
+	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
+	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { getModalStore, popup, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
 	import type { SuperValidated } from 'sveltekit-superforms';
-	import DeleteTrackerModal from './DeleteTrackerModal.svelte';
-	import TrackerSimCards from './TrackerSimCards.svelte';
-	import TrackerStatus from './TrackerStatus.svelte';
 
 	export let tracker: Tracker;
 
@@ -23,7 +23,7 @@
 	const modalStore = getModalStore();
 
 	const removeTrackerMutation = createMutation({
-		mutationFn: () => apiSetTrackerVehicle({ trackerId: tracker.id, vehicleId: null }),
+		mutationFn: () => apiSetTrackerVehicle({ vehicleTrackerId: tracker.id, vehicleId: null }),
 		onError: toaster.error
 	});
 
@@ -76,7 +76,18 @@
 
 <div class="px-4">
 	<div class="flex mb-4">
-		<TrackerStatus trackerId={tracker.id} />
+		<div class="flex-grow">
+			<div class="flex items-center">
+				<span class="text-sm mr-3">status:</span>
+				<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
+					<div class="ml-2" let:isOnline>
+						{isOnline ? 'online' : 'offline'}
+					</div>
+				</TrackerStatusIndicator>
+			</div>
+			<div><span class="text-sm">model:</span> <b>{tracker.model}</b></div>
+			<div><span class="text-sm">imei:</span> <b>{tracker.imei}</b></div>
+		</div>
 
 		<SingleLineList
 			data-popup="tracker-options"
@@ -89,17 +100,14 @@
 		/>
 
 		<button
-			class="btn p-0"
+			class="btn p-0 mb-auto"
 			use:popup={{ event: 'click', target: 'tracker-options', placement: 'bottom-end' }}
 		>
 			<Icon icon="mdi:menu" height={24} />
 		</button>
 	</div>
 
-	<div><span class="text-sm">model:</span> <b>{tracker.model}</b></div>
-	<div><span class="text-sm">imei:</span> <b>{tracker.imei}</b></div>
-
 	<hr class="my-4" />
 </div>
 
-<TrackerSimCards {tracker} {createSimCardForm} {updateSimCardForm} />
+<TrackerSimCardsAccordion {tracker} {createSimCardForm} {updateSimCardForm} />

@@ -1,3 +1,7 @@
+<!-- 
+  @component
+  Simple data table for selecting a SIM card that is not associated with a tracker
+-->
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
 	import { apiGetSimCards, apiSetSimCardTracker, type GetSimCardsFilters } from '$lib/api/sim-card';

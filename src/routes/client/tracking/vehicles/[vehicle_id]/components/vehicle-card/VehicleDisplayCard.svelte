@@ -26,7 +26,7 @@
 
 <div class="card flex-grow">
 	{#if !editMode}
-		<VehicleCardInfo {vehicle} on:edit-click={() => (editMode = true)} />
+		<VehicleCardInfo {vehicle} on:edit-click={() => (editMode = true)} on:vehicle-deleted />
 	{:else}
 		<UpdateVehicleForm
 			{vehicle}

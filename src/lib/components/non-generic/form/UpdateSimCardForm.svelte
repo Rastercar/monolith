@@ -43,7 +43,7 @@
 
 	const dispatch = createEventDispatcher<{ 'sim-card-updated': SimCard }>();
 
-	const updateTracker = async () => {
+	const updateSimCard = async () => {
 		const validated = await form.validate();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
@@ -164,8 +164,8 @@
 		isLoading={false}
 		disabled={!canSubmit}
 		class="btn variant-filled-primary ml-auto mt-auto"
-		on:click={updateTracker}
+		on:click={updateSimCard}
 	>
-		update tracker
+		update sim card
 	</LoadableButton>
 </div>

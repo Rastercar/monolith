@@ -1,3 +1,7 @@
+<!-- 
+  @component
+  Simple data table for selecting a tracker that is not associated with a vehicle
+-->
 <script lang="ts">
 	import type { Paginated } from '$lib/api/common';
 	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';

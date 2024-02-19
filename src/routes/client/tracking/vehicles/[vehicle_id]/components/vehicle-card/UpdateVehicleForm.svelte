@@ -138,7 +138,7 @@
 <div class="flex px-4 pb-4 justify-end">
 	<LoadableButton isLoading={$mutation.isPending}>
 		<button class="btn variant-filled-primary" disabled={!canSubmit} on:click={createVehicle}>
-			create
+			update
 		</button>
 	</LoadableButton>
 </div>

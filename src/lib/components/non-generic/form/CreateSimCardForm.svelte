@@ -16,12 +16,18 @@
 
 	export let formSchema: SuperValidated<typeof createSimCardSchema>;
 
-	export let slot: number;
+	/**
+	 * The slot of the tracker the sim card being created is going to occupy
+	 *
+	 * this is also used to prevents errors when using this component multiple
+	 * times on the same page
+	 */
+	export let slot = 1;
 
 	/**
 	 * The ID of the tracker to associate with the SIM card being created
 	 */
-	export let trackerIdToAssociate: number;
+	export let trackerIdToAssociate: number | undefined = undefined;
 
 	const form = superForm(formSchema, {
 		validators: createSimCardSchema,
@@ -55,9 +61,10 @@
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		validated.data.trackerId = trackerIdToAssociate;
+		if (trackerIdToAssociate) validated.data.vehicleTrackerId = trackerIdToAssociate;
 
 		$mutation.mutateAsync(validated.data).then((createdTracker) => {
+			form.reset();
 			dispatch('sim-card-created', createdTracker);
 		});
 	};

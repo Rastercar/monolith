@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { apiGetVehicleById } from '$lib/api/vehicle';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
-	import Breadcrumbs from '$lib/components/breadcrumbs/BreadCrumbs.svelte';
+	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
 	import VehicleLocationCard from './components/VehicleLocationCard.svelte';
@@ -25,44 +26,46 @@
 		vehicle = e.detail;
 	};
 
+	let vehicleDeleted = false;
+
 	$: vehicle = $query.data;
 </script>
 
-<div class="flex mb-4 items-center">
-	<h1 class="h2 mr-auto">vehicle: {vehicle?.plate.toLocaleUpperCase() ?? ''}</h1>
+<div class="p-6 max-w-4xl mx-auto">
+	<TitleAndBreadCrumbsPageHeader
+		title={`vehicle: ${vehicle?.plate.toLocaleUpperCase() ?? ''}`}
+		breadCrumbs={[
+			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ text: 'tracking' },
+			{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' },
+			{ href: `/client/tracking/vehicles/${data.vehicleId}`, text: data.vehicleId.toString() }
+		]}
+	/>
 
-	<div class="ml-auto">
-		<Breadcrumbs
-			breadCrumbs={[
-				{ href: '/client', icon: 'mdi:home', text: 'home' },
-				{ text: 'tracking' },
-				{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' },
-				{ href: `/client/tracking/vehicles/${data.vehicleId}`, text: data.vehicleId.toString() }
-			]}
+	{#if vehicleDeleted}
+		<DeletionSuccessMessage title="Vehicle deleted successfully" href="/client/tracking/vehicles" />
+	{:else if vehicle}
+		<VehiclePhoto
+			vehicleId={vehicle.id}
+			photo={vehicle.photo}
+			on:photo-changed={onVehiclePhotoUpdated}
 		/>
-	</div>
+
+		<VehicleDisplayCard
+			{vehicle}
+			formSchema={data.updateVehicleForm}
+			on:vehicle-updated={onVehicleUpdated}
+			on:vehicle-deleted={() => (vehicleDeleted = true)}
+		/>
+
+		<VehicleTrackerCard
+			vehicleId={vehicle.id}
+			updateSimCardForm={data.updateSimCardForm}
+			createTrackerForm={data.createTrackerForm}
+			updateTrackerForm={data.updateTrackerForm}
+			createSimCardForm={data.createSimCardForm}
+		/>
+
+		<VehicleLocationCard />
+	{/if}
 </div>
-
-{#if vehicle}
-	<VehiclePhoto
-		vehicleId={vehicle.id}
-		photo={vehicle.photo}
-		on:photo-changed={onVehiclePhotoUpdated}
-	/>
-
-	<VehicleDisplayCard
-		{vehicle}
-		formSchema={data.updateVehicleForm}
-		on:vehicle-updated={onVehicleUpdated}
-	/>
-
-	<VehicleTrackerCard
-		vehicleId={vehicle.id}
-		updateSimCardForm={data.updateSimCardForm}
-		createTrackerForm={data.createTrackerForm}
-		updateTrackerForm={data.updateTrackerForm}
-		createSimCardForm={data.createSimCardForm}
-	/>
-
-	<VehicleLocationCard />
-{/if}

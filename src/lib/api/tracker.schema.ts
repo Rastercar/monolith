@@ -8,7 +8,7 @@ export const createTrackerSchema = z.object({
 });
 
 export const updateTrackerSchema = z.object({
-	imei: z.string(),
+	imei: z.string().min(1),
 	model: z.string()
 });
 

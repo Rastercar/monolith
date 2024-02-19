@@ -12,7 +12,7 @@ dependencies:
     specifier: ^7.1.3
     version: 7.1.3(svelte@4.2.0)
   '@tanstack/svelte-query':
-    specifier: ^5.18
+    specifier: ^5.18.0
     version: 5.18.0(svelte@4.2.0)
   '@tanstack/svelte-table':
     specifier: ^8.11.7
@@ -41,13 +41,13 @@ devDependencies:
     specifier: ^0.2.3
     version: 0.2.3(tailwindcss@3.3.3)
   '@sveltejs/adapter-auto':
-    specifier: ^3.0.0
+    specifier: ^3.1.1
     version: 3.1.1(@sveltejs/kit@2.5.0)
   '@sveltejs/kit':
-    specifier: ^2.0.0
+    specifier: ^2.5.0
     version: 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.0)(vite@5.1.0)
   '@sveltejs/vite-plugin-svelte':
-    specifier: ^3.0.0
+    specifier: ^3.0.2
     version: 3.0.2(svelte@4.2.0)(vite@5.1.0)
   '@tailwindcss/forms':
     specifier: 0.5.5
@@ -62,37 +62,37 @@ devDependencies:
     specifier: ^0.7.37
     version: 0.7.37
   '@typescript-eslint/eslint-plugin':
-    specifier: ^5.45.0
+    specifier: ^5.62.0
     version: 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.48.0)(typescript@5.2.2)
   '@typescript-eslint/parser':
-    specifier: ^5.45.0
+    specifier: ^5.62.0
     version: 5.62.0(eslint@8.48.0)(typescript@5.2.2)
   autoprefixer:
     specifier: 10.4.15
     version: 10.4.15(postcss@8.4.28)
   eslint:
-    specifier: ^8.28.0
+    specifier: ^8.48.0
     version: 8.48.0
   eslint-config-prettier:
-    specifier: ^8.5.0
+    specifier: ^8.10.0
     version: 8.10.0(eslint@8.48.0)
   eslint-plugin-svelte:
-    specifier: ^2.30.0
+    specifier: ^2.33.0
     version: 2.33.0(eslint@8.48.0)(svelte@4.2.0)
   postcss:
     specifier: 8.4.28
     version: 8.4.28
   prettier:
-    specifier: ^2.8.0
+    specifier: ^2.8.8
     version: 2.8.8
   prettier-plugin-svelte:
     specifier: ^2.10.1
     version: 2.10.1(prettier@2.8.8)(svelte@4.2.0)
   svelte:
-    specifier: ^4.0.5
+    specifier: ^4.2.0
     version: 4.2.0
   svelte-check:
-    specifier: ^3.4.3
+    specifier: ^3.5.0
     version: 3.5.0(postcss@8.4.28)(svelte@4.2.0)
   sveltekit-superforms:
     specifier: 1.13.4
@@ -101,16 +101,16 @@ devDependencies:
     specifier: 3.3.3
     version: 3.3.3
   tslib:
-    specifier: ^2.4.1
+    specifier: ^2.6.2
     version: 2.6.2
   typescript:
-    specifier: ^5.0.0
+    specifier: ^5.2.2
     version: 5.2.2
   vite:
-    specifier: ^5.0.0
+    specifier: ^5.1.0
     version: 5.1.0(@types/node@20.5.6)
   vite-plugin-tailwind-purgecss:
-    specifier: '0.2'
+    specifier: ~0.2.0
     version: 0.2.0(vite@5.1.0)
   zod:
     specifier: 3.22.4
@@ -925,7 +925,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.10
-      caniuse-lite: 1.0.30001523
+      caniuse-lite: 1.0.30001588
       fraction.js: 4.2.1
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -972,7 +972,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001523
+      caniuse-lite: 1.0.30001588
       electron-to-chromium: 1.4.503
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11(browserslist@4.21.10)
@@ -992,8 +992,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001523:
-    resolution: {integrity: sha512-I5q5cisATTPZ1mc588Z//pj/Ox80ERYDfR71YnvY7raS/NOk8xXlZcB0sF7JdqaV//kOaa6aus7lRfpdnt1eBA==}
+  /caniuse-lite@1.0.30001588:
+    resolution: {integrity: sha512-+hVY9jE44uKLkH0SrUTqxjxqNTOWHsbnQDIKjwkZ3lNTzUUVdBLBGXtj/q5Mp5u98r3droaZAewQuEDzjQdZlQ==}
     dev: true
 
   /chalk@4.1.2:

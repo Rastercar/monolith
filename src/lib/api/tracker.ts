@@ -63,10 +63,13 @@ export interface GetTrackersFilters {
  *
  * - `DELETE_TRACKER`
  */
-export const apiDeleteTracker = (trackerId: number, opts?: { deleteAssociatedSimCards: boolean }) =>
+export const apiDeleteTracker = (
+	vehicleTrackerId: number,
+	opts?: { deleteAssociatedSimCards: boolean }
+) =>
 	rastercarApi
 		.query({ deleteAssociatedSimCards: opts?.deleteAssociatedSimCards || false })
-		.delete(`/tracker/${trackerId}`)
+		.delete(`/tracker/${vehicleTrackerId}`)
 		.json<string>();
 
 /**
@@ -78,26 +81,26 @@ export const apiDeleteTracker = (trackerId: number, opts?: { deleteAssociatedSim
  */
 export const apiSetTrackerVehicle = (ids: {
 	vehicleId: number | null;
-	trackerId: number;
+	vehicleTrackerId: number;
 }): Promise<string> =>
 	rastercarApi
-		.put({ vehicleId: ids.vehicleId }, `/tracker/${ids.trackerId}/vehicle`)
+		.put({ vehicleId: ids.vehicleId }, `/tracker/${ids.vehicleTrackerId}/vehicle`)
 		.json<string>();
 
 /**
  * get SIM cards that belong to a tracker
  */
-export const apiGetTrackerSimCards = (trackerId: number) =>
+export const apiGetTrackerSimCards = (vehicleTrackerId: number) =>
 	rastercarApi
-		.get(`/tracker/${trackerId}/sim-cards`)
+		.get(`/tracker/${vehicleTrackerId}/sim-cards`)
 		.json<Tracker[]>()
 		.then(z.array(simCardSchema).parse);
 
 /**
  * get the last known tracker location
  */
-export const apiGetTrackerLastLocation = (trackerId: number) =>
+export const apiGetTrackerLastLocation = (vehicleTrackerId: number) =>
 	rastercarApi
-		.get(`/tracker/${trackerId}/location`)
+		.get(`/tracker/${vehicleTrackerId}/location`)
 		.json<Tracker[]>()
 		.then(trackerLocationSchema.nullable().parse);

@@ -13,32 +13,34 @@
 	let createdTracker: Tracker | null = null;
 </script>
 
-<TitleAndBreadCrumbsPageHeader
-	margin="mb-8"
-	title="create tracker"
-	breadCrumbs={[
-		{ href: '/client', icon: 'mdi:home', text: 'home' },
-		{ text: 'tracking' },
-		{ href: '/client/tracking/trackers', icon: 'mdi:cellphone', text: 'trackers' },
-		{ href: '/client/tracking/trackers/new', text: 'new' }
-	]}
-/>
+<div class="p-6 max-w-4xl mx-auto">
+	<TitleAndBreadCrumbsPageHeader
+		margin="mb-8"
+		title="create tracker"
+		breadCrumbs={[
+			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ text: 'tracking' },
+			{ href: '/client/tracking/trackers', icon: 'mdi:cellphone', text: 'trackers' },
+			{ href: '/client/tracking/trackers/new', text: 'new' }
+		]}
+	/>
 
-<Stepper>
-	<StepperHeader additionalClasses="mb-4" />
+	<Stepper>
+		<StepperHeader additionalClasses="mb-4" />
 
-	<Step>
-		<svelte:fragment slot="header">Tracker Information</svelte:fragment>
-		<CreateTrackerStep
-			createTrackerForm={data.createTrackerForm}
-			on:tracker-created={(e) => (createdTracker = e.detail)}
-		/>
-	</Step>
+		<Step>
+			<svelte:fragment slot="header">Tracker Information</svelte:fragment>
+			<CreateTrackerStep
+				createTrackerForm={data.createTrackerForm}
+				on:tracker-created={(e) => (createdTracker = e.detail)}
+			/>
+		</Step>
 
-	<Step>
-		<svelte:fragment slot="header">Tracker SIM cards</svelte:fragment>
-		{#if createdTracker}
-			<SetSimCardsStep formSchema={data.createSimCardForm} tracker={createdTracker} />
-		{/if}
-	</Step>
-</Stepper>
+		<Step>
+			<svelte:fragment slot="header">Tracker SIM cards</svelte:fragment>
+			{#if createdTracker}
+				<SetSimCardsStep formSchema={data.createSimCardForm} tracker={createdTracker} />
+			{/if}
+		</Step>
+	</Stepper>
+</div>

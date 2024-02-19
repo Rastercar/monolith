@@ -48,7 +48,6 @@
 		},
 		{
 			id: 'actions',
-			// TODO: info page
 			cell: ({ row }) =>
 				renderComponent(InfoIconLink, { href: `/client/tracking/trackers/${row.original.id}` })
 		}

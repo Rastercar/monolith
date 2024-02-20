@@ -4,6 +4,9 @@
 
 	export let sessions: UserSession[];
 
+	let clazz = '';
+	export { clazz as class };
+
 	const removeSession = (sessionPublicId: number) => {
 		const idx = sessions.findIndex((s) => s.publicId === sessionPublicId);
 
@@ -14,7 +17,7 @@
 	};
 </script>
 
-<div class="sm:card sm:rounded-md">
+<div class={clazz}>
 	{#each sessions as session, i}
 		<SessionCard {session} on:deleted={() => removeSession(session.publicId)} />
 

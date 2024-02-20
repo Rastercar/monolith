@@ -38,12 +38,16 @@
 	});
 </script>
 
-<div class="flex items-center sm:p-4">
-	<Icon {icon} height="32" />
-	<div class="flex flex-col ml-4">
-		<span>{uap.getOS().name ?? ''} {uap.getBrowser().name ?? ''} {session.ip}</span>
-		<span class="text-surface-700-200-token text-sm">created: {toDateStr(session.createdAt)}</span>
-		<span class="text-surface-700-200-token text-sm">expires: {toDateStr(session.expiresAt)}</span>
+<div class="flex flex-wrap items-center p-4 gap-4">
+	<div class="flex items-center">
+		<Icon {icon} height="32" />
+		<div class="flex flex-col ml-4">
+			<span>{uap.getOS().name ?? ''} {uap.getBrowser().name ?? ''} {session.ip}</span>
+			<span class="text-surface-700-200-token text-sm">created: {toDateStr(session.createdAt)}</span
+			>
+			<span class="text-surface-700-200-token text-sm">expires: {toDateStr(session.expiresAt)}</span
+			>
+		</div>
 	</div>
 
 	{#if session.sameAsFromRequest}

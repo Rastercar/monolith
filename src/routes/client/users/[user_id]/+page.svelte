@@ -8,6 +8,7 @@
 	export let data: PageData;
 
 	const userQuery = createQuery({
+		queryKey: ['user', data.userId],
 		queryFn: () => apiGetUserById(data.userId)
 	});
 

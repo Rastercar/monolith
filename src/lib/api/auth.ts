@@ -75,7 +75,7 @@ export const apiRecoverPasswordByToken = (body: RecoverPasswordByTokenDto): Prom
 /**
  * list all sessions that belong to the currently logged in user
  */
-export const apiGetUserSessions = (): Promise<UserSession[]> =>
+export const apiGetCurrentUserSessions = (): Promise<UserSession[]> =>
 	rastercarApi.get('/auth/sessions').json<UserSession[]>().then(z.array(userSessionSchema).parse);
 
 /**

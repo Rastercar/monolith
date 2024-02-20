@@ -1,11 +1,14 @@
+import { z } from 'zod';
 import { createPaginatedResponseSchema, type Paginated, type PaginationParameters } from './common';
 import {
 	simpleUserSchema,
 	userSchema,
+	userSessionSchema,
 	type ChangePasswordBody,
 	type SimpleUser,
 	type UpdateUserBody,
-	type User
+	type User,
+	type UserSession
 } from './user.schema';
 import { rastercarApi, stripUndefined } from './utils';
 
@@ -22,8 +25,17 @@ export const apiGetUsers = (query?: PaginationParameters): Promise<Paginated<Sim
 /**
  * get a user by ID
  */
-export const apiGetUserById = (id?: number): Promise<SimpleUser> =>
+export const apiGetUserById = (id: number): Promise<SimpleUser> =>
 	rastercarApi.get(`/user/${id}`).json<SimpleUser>().then(simpleUserSchema.parse);
+
+/**
+ * get all sessions belonging to a user
+ */
+export const apiGetUserSessions = (id: number): Promise<UserSession[]> =>
+	rastercarApi
+		.get(`/user/${id}/sessions`)
+		.json<UserSession[]>()
+		.then(z.array(userSessionSchema).parse);
 
 /**
  * gets the current user within the session id on the session ID cookie

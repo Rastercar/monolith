@@ -5,6 +5,7 @@
  */
 export type apiPermission =
 	| 'CREATE_USER'
+	| 'LIST_USER_SESSIONS'
 	| 'CREATE_TRACKER'
 	| 'UPDATE_TRACKER'
 	| 'DELETE_TRACKER'
@@ -22,10 +23,15 @@ export interface PermissionDetails {
 }
 
 // TODO: have this be auto generated from rust code ?
+// https://github.com/Aleph-Alpha/ts-rs?tab=readme-ov-file
 export const permissionDetails: Record<apiPermission, PermissionDetails> = {
 	CREATE_USER: {
 		title: 'Create User',
 		description: 'Allows registering new users.'
+	},
+	LIST_USER_SESSIONS: {
+		title: 'List User Sessions',
+		description: 'List the logged in devices of another user.'
 	},
 	CREATE_TRACKER: {
 		title: 'Create Tracker',

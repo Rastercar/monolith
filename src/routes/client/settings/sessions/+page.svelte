@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { apiGetUserSessions } from '$lib/api/auth';
+	import { apiGetCurrentUserSessions } from '$lib/api/auth';
+	import SessionList from '$lib/components/non-generic/session/SessionList.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
-	import SessionList from './components/SessionList.svelte';
 
 	const query = createQuery({
-		queryKey: ['userSessions'],
-		queryFn: apiGetUserSessions
+		queryKey: ['my-sessions'],
+		queryFn: apiGetCurrentUserSessions
 	});
 </script>
 
@@ -21,6 +21,6 @@
 	{:else if $query.isError}
 		<p class="text-error-500">failed to load your sessions</p>
 	{:else}
-		<SessionList sessions={$query.data ?? []} />
+		<SessionList class="sm:card sm:rounded-md" sessions={$query.data ?? []} />
 	{/if}
 </div>

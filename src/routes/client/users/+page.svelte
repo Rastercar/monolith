@@ -2,7 +2,7 @@
 	import type { Paginated } from '$lib/api/common';
 	import { apiGetUsers } from '$lib/api/user';
 	import type { SimpleUser } from '$lib/api/user.schema';
-	import PermissionGuard from '$lib/components/guard/permission-guard.svelte';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';

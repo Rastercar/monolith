@@ -4,6 +4,13 @@
 
 	export let sessions: UserSession[];
 
+	/**
+	 * If the sessions being show with this component
+	 * belong to the currently logged in user, and as
+	 * such can be revoked
+	 */
+	export let isSessionsFromCurrentlyLoggedUser = false;
+
 	let clazz = '';
 	export { clazz as class };
 
@@ -19,7 +26,11 @@
 
 <div class={clazz}>
 	{#each sessions as session, i}
-		<SessionCard {session} on:deleted={() => removeSession(session.publicId)} />
+		<SessionCard
+			belongsToLoggedInUser={isSessionsFromCurrentlyLoggedUser}
+			{session}
+			on:deleted={() => removeSession(session.publicId)}
+		/>
 
 		{#if i < sessions.length - 1}
 			<hr class="my-4 sm:my-0" />

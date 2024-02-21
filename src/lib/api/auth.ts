@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import {
 	signInUpResponseSchema,
 	type RecoverPasswordByTokenDto,
@@ -6,7 +5,6 @@ import {
 	type SignInUpResponse,
 	type SignUpDto
 } from './auth.schema';
-import { userSessionSchema, type UserSession } from './user.schema';
 import {
 	fallthroughApiErrorMessage,
 	rastercarApi,
@@ -71,12 +69,6 @@ export const apiRequestRecoverPasswordEmail = (email: string): Promise<string> =
  */
 export const apiRecoverPasswordByToken = (body: RecoverPasswordByTokenDto): Promise<string> =>
 	rastercarApi.post(body, '/auth/change-password-by-recovery-token').json<string>();
-
-/**
- * list all sessions that belong to the currently logged in user
- */
-export const apiGetCurrentUserSessions = (): Promise<UserSession[]> =>
-	rastercarApi.get('/auth/sessions').json<UserSession[]>().then(z.array(userSessionSchema).parse);
 
 /**
  * Deletes (signs out) of a user session by its public id

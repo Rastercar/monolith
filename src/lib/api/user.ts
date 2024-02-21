@@ -29,6 +29,15 @@ export const apiGetUserById = (id: number): Promise<SimpleUser> =>
 	rastercarApi.get(`/user/${id}`).json<SimpleUser>().then(simpleUserSchema.parse);
 
 /**
+ * list all sessions that belong to the currently logged in user
+ */
+export const apiGetCurrentUserSessions = (): Promise<UserSession[]> =>
+	rastercarApi
+		.get('/user/me/sessions')
+		.json<UserSession[]>()
+		.then(z.array(userSessionSchema).parse);
+
+/**
  * get all sessions belonging to a user
  */
 export const apiGetUserSessions = (id: number): Promise<UserSession[]> =>

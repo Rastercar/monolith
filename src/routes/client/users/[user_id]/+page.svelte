@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { apiGetUserById } from '$lib/api/user';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
 	import SessionsSection from './components/SessionsSection.svelte';
@@ -19,6 +20,8 @@
 	{#if user}
 		<UserSection {user} />
 
-		<SessionsSection userId={user.id} />
+		<PermissionGuard requiredPermissions={['LIST_USER_SESSIONS']}>
+			<SessionsSection userId={user.id} />
+		</PermissionGuard>
 	{/if}
 </div>

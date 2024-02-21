@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiGetCurrentUserSessions } from '$lib/api/auth';
+	import { apiGetCurrentUserSessions } from '$lib/api/user';
 	import SessionList from '$lib/components/non-generic/session/SessionList.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 
@@ -21,6 +21,10 @@
 	{:else if $query.isError}
 		<p class="text-error-500">failed to load your sessions</p>
 	{:else}
-		<SessionList class="sm:card sm:rounded-md" sessions={$query.data ?? []} />
+		<SessionList
+			isSessionsFromCurrentlyLoggedUser
+			class="sm:card sm:rounded-md"
+			sessions={$query.data ?? []}
+		/>
 	{/if}
 </div>

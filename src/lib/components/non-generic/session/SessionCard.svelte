@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { apiDeleteSession } from '$lib/api/auth';
 	import type { UserSession } from '$lib/api/user.schema';
+	import { hasPermission } from '$lib/store/auth';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -10,6 +11,12 @@
 	type deviceType = 'console' | 'mobile' | 'tablet' | 'smarttv' | 'wearable' | 'embedded';
 
 	export let session: UserSession;
+
+	/**
+	 * If the session belongs to the logged in user
+	 * and therefore, can be revoked.
+	 */
+	export let belongsToLoggedInUser = false;
 
 	const uap = new UAParser(session.userAgent);
 
@@ -36,6 +43,8 @@
 		mutationFn: () => awaitPromiseWithMinimumTimeOf(apiDeleteSession(session.publicId), 1_000),
 		onSuccess: () => dispatch('deleted')
 	});
+
+	$: canRemoveSessions = belongsToLoggedInUser || $hasPermission('LOGOFF_USER');
 </script>
 
 <div class="flex flex-wrap items-center p-4 gap-4">
@@ -43,10 +52,12 @@
 		<Icon {icon} height="32" />
 		<div class="flex flex-col ml-4">
 			<span>{uap.getOS().name ?? ''} {uap.getBrowser().name ?? ''} {session.ip}</span>
-			<span class="text-surface-700-200-token text-sm">created: {toDateStr(session.createdAt)}</span
-			>
-			<span class="text-surface-700-200-token text-sm">expires: {toDateStr(session.expiresAt)}</span
-			>
+			<span class="text-surface-700-200-token text-sm">
+				created: {toDateStr(session.createdAt)}
+			</span>
+			<span class="text-surface-700-200-token text-sm">
+				expires: {toDateStr(session.expiresAt)}
+			</span>
 		</div>
 	</div>
 
@@ -54,7 +65,7 @@
 		<span class="chip variant-filled-primary ml-auto">your current session</span>
 	{:else if $mutation.isError}
 		<span class="chip variant-filled-error ml-auto">failed to delete session</span>
-	{:else}
+	{:else if canRemoveSessions}
 		<button
 			disabled={$mutation.isPending}
 			type="button"

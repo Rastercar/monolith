@@ -2,7 +2,7 @@
 	import type { Paginated } from '$lib/api/common';
 	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
 	import type { SimCard } from '$lib/api/sim-card.schema';
-	import PermissionGuard from '$lib/components/guard/permission-guard.svelte';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';

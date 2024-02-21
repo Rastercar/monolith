@@ -5,7 +5,7 @@
 	import Icon from '@iconify/svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
-	import PermissionGuard from '../guard/permission-guard.svelte';
+	import PermissionGuard from '../guard/PermissionGuard.svelte';
 
 	/**
 	 * if the email that is not confirmed is the user email or the user's organization email.

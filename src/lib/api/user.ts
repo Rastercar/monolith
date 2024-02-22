@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { createPaginatedResponseSchema, type Paginated, type PaginationParameters } from './common';
+import { accessLevelSchema, type AccessLevel } from './access-level.schema';
+import {
+	createPaginatedResponseSchema,
+	type Paginated,
+	type PaginationWithFilters
+} from './common';
 import {
 	simpleUserSchema,
 	userSchema,
@@ -12,12 +17,18 @@ import {
 } from './user.schema';
 import { rastercarApi, stripUndefined } from './utils';
 
+export interface GetUserFilters {
+	email?: string;
+}
+
 /**
  * list paginated users that belong to the same organization as the request user
  */
-export const apiGetUsers = (query?: PaginationParameters): Promise<Paginated<SimpleUser>> =>
+export const apiGetUsers = (
+	query?: PaginationWithFilters<GetUserFilters>
+): Promise<Paginated<SimpleUser>> =>
 	rastercarApi
-		.query(stripUndefined(query))
+		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
 		.get('/user')
 		.json<Paginated<SimpleUser>>()
 		.then(createPaginatedResponseSchema(simpleUserSchema).parse);
@@ -32,19 +43,22 @@ export const apiGetUserById = (id: number): Promise<SimpleUser> =>
  * list all sessions that belong to the currently logged in user
  */
 export const apiGetCurrentUserSessions = (): Promise<UserSession[]> =>
-	rastercarApi
-		.get('/user/me/sessions')
-		.json<UserSession[]>()
-		.then(z.array(userSessionSchema).parse);
+	rastercarApi.get('/user/me/session').json<UserSession[]>().then(z.array(userSessionSchema).parse);
 
 /**
  * get all sessions belonging to a user
  */
 export const apiGetUserSessions = (id: number): Promise<UserSession[]> =>
 	rastercarApi
-		.get(`/user/${id}/sessions`)
+		.get(`/user/${id}/session`)
 		.json<UserSession[]>()
 		.then(z.array(userSessionSchema).parse);
+
+/**
+ * get a user access level
+ */
+export const apiGetUserAccessLevel = (id: number): Promise<AccessLevel> =>
+	rastercarApi.get(`/user/${id}/access-level`).json<AccessLevel>().then(accessLevelSchema.parse);
 
 /**
  * gets the current user within the session id on the session ID cookie

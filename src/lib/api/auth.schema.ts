@@ -1,6 +1,6 @@
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
-import { accessLevelSchema, userSchema } from './user.schema';
+import { userSchema } from './user.schema';
 
 export const signUpSchema = z
 	.object({
@@ -33,8 +33,6 @@ export const signInSchema = z.object({
 });
 
 export type SignInDto = z.infer<typeof signInSchema>;
-
-export type AccessLevel = z.infer<typeof accessLevelSchema>;
 
 export type SignInUpResponse = z.infer<typeof signInUpResponseSchema>;
 

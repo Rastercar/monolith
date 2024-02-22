@@ -1,18 +1,10 @@
 <script lang="ts">
-	import type { AccessLevel } from '$lib/api/auth.schema';
-	import {
-		permissionDetails,
-		type PermissionDetails,
-		type apiPermission
-	} from '$lib/constants/permissions';
+	import type { AccessLevel } from '$lib/api/access-level.schema';
+	import { getPermissionDetails } from '$lib/constants/permissions';
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 
 	export let accessLevel: AccessLevel;
-
-	const getPermissionDetails = (permission: string): PermissionDetails | null => {
-		return permissionDetails[permission as apiPermission] ?? null;
-	};
 </script>
 
 <div class="sm:card sm:rounded-lg">

@@ -2,12 +2,11 @@
 	import type { Paginated } from '$lib/api/common';
 	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
 	import type { SimCard } from '$lib/api/sim-card.schema';
-	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
+	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import Icon from '@iconify/svelte';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
@@ -95,14 +94,11 @@
 			on:change={(e) => ($filters.phoneNumber = e.detail)}
 		/>
 
-		<PermissionGuard requiredPermissions={['CREATE_SIM_CARD']}>
-			<a href="/client/tracking/sim-cards/new" class="ml-auto">
-				<button class="btn variant-filled-primary">
-					<Icon icon="mdi:plus" class="mr-1" />
-					new sim card
-				</button>
-			</a>
-		</PermissionGuard>
+		<CreateEntityButton
+			href="/client/tracking/sim-cards/new"
+			text="new sim card"
+			requiredPermission="CREATE_SIM_CARD"
+		/>
 	</div>
 
 	<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />

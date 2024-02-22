@@ -32,7 +32,7 @@
 
 	const query = createQuery(
 		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['trackers', $pagination, $filters],
+			queryKey: ['sim-cards', $pagination, $filters],
 			placeholderData: keepPreviousData,
 			queryFn: async (): Promise<Paginated<SimCard>> => {
 				const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });

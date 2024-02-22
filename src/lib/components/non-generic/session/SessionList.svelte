@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { UserSession } from '$lib/api/user.schema';
+	import Icon from '@iconify/svelte';
 	import SessionCard from './SessionCard.svelte';
 
 	export let sessions: UserSession[];
@@ -35,5 +36,10 @@
 		{#if i < sessions.length - 1}
 			<hr class="my-4 sm:my-0" />
 		{/if}
+	{:else}
+		<span class="mt-4 flex items-center px-4 pb-4">
+			<Icon icon="mdi:info" class="mr-2" />
+			no sessions found
+		</span>
 	{/each}
 </div>

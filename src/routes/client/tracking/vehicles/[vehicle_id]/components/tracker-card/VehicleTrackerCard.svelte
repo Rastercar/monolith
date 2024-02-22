@@ -22,6 +22,16 @@
 
 	const query = createQuery({
 		queryKey: ['vehicle', vehicleId, 'tracker'],
+		// - revisar conceito de retornar 404 quando não se encontra uma entidade
+		// ex: user/1              não deve retornar 404 se usuario com id 1 nao existe
+		// user/1/access_level     deve retornar 404 ?
+		//
+		// --- OPCAO ABAIXO
+		//
+		// TODO: se seguir com 404 quando entidade nao existe
+		// - não retornar null da API
+		// - criar um error handler generico no front que detecta 404 com sucesso
+		// - remover | null da possivel resposta aq
 		queryFn: () => apiGetTrackerByVehicleId(vehicleId)
 	});
 

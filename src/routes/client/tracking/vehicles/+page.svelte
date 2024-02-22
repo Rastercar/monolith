@@ -2,12 +2,11 @@
 	import type { Paginated } from '$lib/api/common';
 	import { apiGetVehicles, type GetVehiclesFilters } from '$lib/api/vehicle';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
-	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
+	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import Icon from '@iconify/svelte';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
@@ -109,14 +108,11 @@
 			on:change={(e) => ($filters.plate = e.detail)}
 		/>
 
-		<PermissionGuard requiredPermissions={['CREATE_VEHICLE']}>
-			<a href="/client/tracking/vehicles/new" class="ml-auto">
-				<button class="btn variant-filled-primary">
-					<Icon icon="mdi:plus" class="mr-1" />
-					new vehicle
-				</button>
-			</a>
-		</PermissionGuard>
+		<CreateEntityButton
+			href="/client/tracking/vehicles/new"
+			text="new vehicle"
+			requiredPermission="CREATE_VEHICLE"
+		/>
 	</div>
 
 	<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />

@@ -2,12 +2,11 @@
 	import type { Paginated } from '$lib/api/common';
 	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
+	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import Icon from '@iconify/svelte';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
@@ -91,14 +90,11 @@
 			on:change={(e) => ($filters.imei = e.detail)}
 		/>
 
-		<PermissionGuard requiredPermissions={['CREATE_TRACKER']}>
-			<a href="/client/tracking/trackers/new" class="ml-auto">
-				<button class="btn variant-filled-primary">
-					<Icon icon="mdi:plus" class="mr-1" />
-					new tracker
-				</button>
-			</a>
-		</PermissionGuard>
+		<CreateEntityButton
+			href="/client/tracking/trackers/new"
+			text="new tracker"
+			requiredPermission="CREATE_TRACKER"
+		/>
 	</div>
 
 	<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />

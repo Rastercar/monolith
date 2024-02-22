@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiDeleteSession } from '$lib/api/auth';
+	import { apiDeleteSession, apiSignOutSpecificSession } from '$lib/api/auth';
 	import type { UserSession } from '$lib/api/user.schema';
 	import { hasPermission } from '$lib/store/auth';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
@@ -40,7 +40,13 @@
 	const dispatch = createEventDispatcher();
 
 	const mutation = createMutation({
-		mutationFn: () => awaitPromiseWithMinimumTimeOf(apiDeleteSession(session.publicId), 1_000),
+		mutationFn: () => {
+			const promise = belongsToLoggedInUser
+				? apiSignOutSpecificSession(session.publicId)
+				: apiDeleteSession(session.publicId);
+
+			return awaitPromiseWithMinimumTimeOf(promise, 1_000);
+		},
 		onSuccess: () => dispatch('deleted')
 	});
 

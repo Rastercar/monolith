@@ -1,7 +1,10 @@
 <script lang="ts">
+	import {
+		apiGetAccessLevels,
+		type AccessLevel,
+		type GetAccessLevelsFilters
+	} from '$lib/api/access-level.schema';
 	import type { Paginated } from '$lib/api/common';
-	import { apiGetUsers, type GetUserFilters } from '$lib/api/user';
-	import type { SimpleUser } from '$lib/api/user.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
@@ -18,17 +21,16 @@
 		type TableOptions
 	} from '@tanstack/svelte-table';
 	import { derived, writable } from 'svelte/store';
-	import UserEmailColumn from './components/UserEmailColumn.svelte';
 
 	const pagination = writable({ page: 1, pageSize: 5 });
-	const filters = writable<GetUserFilters>({});
+	const filters = writable<GetAccessLevelsFilters>({});
 
 	const query = createQuery(
 		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['users', $pagination, $filters],
+			queryKey: ['access-levels', $pagination, $filters],
 			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<SimpleUser>> => {
-				const result = await apiGetUsers({ pagination: $pagination, filters: $filters });
+			queryFn: async (): Promise<Paginated<AccessLevel>> => {
+				const result = await apiGetAccessLevels({ pagination: $pagination, filters: $filters });
 
 				$options.data = result.records;
 
@@ -37,18 +39,14 @@
 		}))
 	);
 
-	const columns: ColumnDef<SimpleUser>[] = [
+	const columns: ColumnDef<AccessLevel>[] = [
 		{
-			accessorKey: 'username',
-			header: () => 'Username'
+			accessorKey: 'name',
+			header: () => 'Name'
 		},
 		{
-			accessorKey: 'email',
-			header: () => 'Email',
-			cell: ({ row }) => {
-				const { email, emailVerified, id } = row.original;
-				return renderComponent(UserEmailColumn, { email, verified: emailVerified, idx: id });
-			}
+			accessorKey: 'description',
+			header: () => 'Description'
 		},
 		{
 			accessorKey: 'createdAt',
@@ -57,13 +55,14 @@
 		},
 		{
 			id: 'actions',
-			cell: ({ row }) => renderComponent(InfoIconLink, { href: `/client/users/${row.original.id}` })
+			cell: ({ row }) =>
+				renderComponent(InfoIconLink, { href: `/client/access-levels/${row.original.id}` })
 		}
 	];
 
 	const colspan = columns.length;
 
-	const options = writable<TableOptions<SimpleUser>>({
+	const options = writable<TableOptions<AccessLevel>>({
 		data: $query.data?.records ?? [],
 		columns: columns,
 		manualPagination: true,
@@ -81,10 +80,10 @@
 
 <div class="p-6 max-w-4xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
-		title="users"
+		title="access levels"
 		breadCrumbs={[
 			{ href: '/client', icon: 'mdi:home', text: 'home' },
-			{ href: '/client/users', icon: 'mdi:account-multiple', text: 'users' }
+			{ href: '/client/access-levels', icon: 'mdi:shield', text: 'access levels' }
 		]}
 	/>
 
@@ -92,13 +91,17 @@
 
 	<div class="flex mb-4 items-center">
 		<DebouncedTextField
-			placeholder="search by email"
-			title="filter by email"
+			placeholder="search by name"
+			title="filter by name"
 			class="label w-full max-w-lg mr-4"
-			on:change={(e) => ($filters.email = e.detail)}
+			on:change={(e) => ($filters.name = e.detail)}
 		/>
 
-		<CreateEntityButton href="/client/users/new" text="new user" requiredPermission="CREATE_USER" />
+		<CreateEntityButton
+			href="/client/access-level/new"
+			text="new access level"
+			requiredPermission="CREATE_ACCESS_LEVEL"
+		/>
 	</div>
 
 	<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />

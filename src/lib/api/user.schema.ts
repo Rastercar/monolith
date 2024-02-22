@@ -1,15 +1,7 @@
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
+import { accessLevelSchema } from './access-level.schema';
 import { organizationSchema } from './organization.schema';
-
-export const accessLevelSchema = z.object({
-	id: z.number(),
-	createdAt: z.string(),
-	name: z.string(),
-	description: z.string(),
-	isFixed: z.boolean(),
-	permissions: z.array(z.string())
-});
 
 export const userSchema = z.object({
 	id: z.number(),

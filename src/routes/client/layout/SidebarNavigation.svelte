@@ -20,6 +20,11 @@
 			icon: 'mdi:account-multiple'
 		},
 		{
+			href: '/client/access-levels',
+			label: 'access levels',
+			icon: 'mdi:shield'
+		},
+		{
 			href: '/client/tracking/vehicles',
 			label: 'vehicles',
 			icon: 'mdi:car'

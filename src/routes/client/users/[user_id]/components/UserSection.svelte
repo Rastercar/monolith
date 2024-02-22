@@ -43,13 +43,26 @@
 		</div>
 	</div>
 
-	<div class="mt-4 flex items-center justify-between">
-		<div class="flex items-center">
-			<Icon icon="mdi:email" class="mr-2 opacity-80" />
-			{user.email}
+	<div class="mt-4 flex justify-between gap-4">
+		<div>
+			<div class="flex items-center mb-1">
+				<Icon icon="mdi:email" class="mr-2 opacity-80" />
+				{user.email}
+			</div>
+
+			<div class="flex items-center">
+				<div
+					class={`h-2 w-2 mr-2 rounded-full ${
+						user.emailVerified ? 'bg-success-500' : 'bg-error-500'
+					}`}
+				/>
+				<span class="text-sm">
+					{user.emailVerified ? 'email verified' : 'email not verified'}
+				</span>
+			</div>
 		</div>
 
-		<span class="text-sm">
+		<span class="text-sm hidden sm:block mt-auto">
 			Created at: {toDateTime(user.createdAt)}
 		</span>
 	</div>

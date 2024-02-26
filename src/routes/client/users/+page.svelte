@@ -7,7 +7,7 @@
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { toDateTime } from '$lib/utils/date';
+	import { toDate } from '$lib/utils/date';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
@@ -53,7 +53,7 @@
 		{
 			accessorKey: 'createdAt',
 			header: () => 'Created At',
-			cell: ({ row }) => toDateTime(row.original.createdAt)
+			cell: ({ row }) => toDate(row.original.createdAt)
 		},
 		{
 			id: 'actions',
@@ -79,7 +79,7 @@
 	const table = createSvelteTable(options);
 </script>
 
-<div class="p-6 max-w-6xl mx-auto">
+<div class="p-6 max-w-4xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		title="users"
 		breadCrumbs={[

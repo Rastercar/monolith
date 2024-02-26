@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { apiGetUserAccessLevel } from '$lib/api/user';
-	import { getPermissionDetails } from '$lib/constants/permissions';
+	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';
@@ -20,7 +20,7 @@
 		<AccordionItem regionControl="bg-surface-200-700-token px-4" spacing="space-y-3">
 			<svelte:fragment slot="summary">
 				<div class="flex items-center py-2">
-					<Icon icon="mdi:lock" width="32" height="32" class="mr-2" />
+					<Icon icon="mdi:shield" width="32" height="32" class="mr-2" />
 					Role and Permissions
 				</div>
 			</svelte:fragment>
@@ -32,7 +32,7 @@
 					<div class="p-4">loading</div>
 				{:else if accessLevel}
 					<div class="sm:px-4 py-2">
-						<h4>
+						<h4 class="text-lg">
 							<span class="opacity-80 mt-2">Access Level:</span>
 							{accessLevel.name}
 						</h4>
@@ -41,19 +41,9 @@
 							{accessLevel.description}
 						</h4>
 
-						<div class="opacity-80 mt-4 mb-1">Permissions:</div>
-						<ul class="space-y-2">
-							{#each accessLevel.permissions as permission}
-								{@const details = getPermissionDetails(permission)}
+						<hr class="my-4" />
 
-								{#if details}
-									<li>
-										<span class="text-sm">{details.title}</span>
-										<p class="text-xs text-surface-800-100-token">{details.description}</p>
-									</li>
-								{/if}
-							{/each}
-						</ul>
+						<AccessLevelPermissionsInfo {accessLevel} />
 					</div>
 				{/if}
 			</svelte:fragment>

@@ -24,7 +24,7 @@
 	];
 </script>
 
-{#each permissionsByCategory as [category, permissions]}
+{#each permissionsByCategory as [category, permissions], i}
 	<div class="mt-6 mb-2 flex items-center text-lg">
 		<Icon icon={permissionCategoryIcons[category]} class="mr-2" height={20} />
 		{category}
@@ -49,7 +49,9 @@
 			</div>
 		{/each}
 
-		<hr />
+		{#if i !== permissionsByCategory.length - 1}
+			<hr />
+		{/if}
 	</div>
 {/each}
 

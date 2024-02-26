@@ -1,9 +1,8 @@
+import { toMegabytes } from '$lib/utils/number';
 import { emptyStringToNull } from '$lib/utils/string';
 import { z } from 'zod';
 
 const TEN_YEARS_FROM_NOW = new Date().getFullYear() + 10;
-
-const FIVE_MB = 1024 * 1024 * 5;
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
@@ -28,13 +27,12 @@ export const createVehicleSchema = z.object({
 
 	photoName: z.string(),
 	photo: z
-		.any()
-		.optional()
-		.refine((f?: File) => {
-			return !f || f.size <= FIVE_MB;
-		}, `Max file size is 5MB.`)
+		.instanceof(File, { message: 'Please upload a file.' })
+		.nullish()
+		// max file size is 1MB, as that is the max value allowed by the backend
+		.refine((f?: File | null) => !f || f.size <= toMegabytes(1), `Max file size is 1MB.`)
 		.refine(
-			(f?: File) => !f || ACCEPTED_IMAGE_TYPES.includes(f.type),
+			(f?: File | null) => !f || ACCEPTED_IMAGE_TYPES.includes(f.type),
 			'jpg, jpeg, png and webp files are accepted.'
 		),
 

@@ -56,10 +56,9 @@ export const permissionCategoryIcons: Record<apiPermissionCategory, string> = {
 export const permissionDetails: Record<apiPermission, PermissionDetails> = {
 	MANAGE_USER_ACCESS_LEVELS: {
 		title: 'Manage User Access Levels',
-		summary: 'Manage Permissions',
+		summary: 'Manage User Access Levels',
 		category: 'authentication',
-		description:
-			'Allows creating, updating and deleting access levels aswell as changing a existing user access level.'
+		description: 'Control over users access levels and their permissions.'
 	},
 	LOGOFF_USER: {
 		title: 'Log Off Other Users',

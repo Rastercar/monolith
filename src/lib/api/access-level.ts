@@ -40,6 +40,12 @@ export const apiGetAccessLevelById = (id: number): Promise<AccessLevel> =>
 	rastercarApi.get(`/access-level/${id}`).json<AccessLevel>().then(accessLevelSchema.parse);
 
 /**
+ * delete a access level by id
+ */
+export const apiDeleteAccessLevel = (id: number): Promise<string> =>
+	rastercarApi.delete(`/access-level/${id}`).json<string>();
+
+/**
  * update a acess level
  */
 export const apiUpdateAccessLevel = (

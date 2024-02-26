@@ -27,7 +27,7 @@
 
 	$: isCurrentUserAccessLevel = !!accessLevel && accessLevel.id === user?.accessLevel.id;
 
-	$: canEditAccessLevel = !accessLevelIsFixed && !isCurrentUserAccessLevel;
+	$: canEditOrDeleteAccessLevel = !accessLevelIsFixed && !isCurrentUserAccessLevel;
 </script>
 
 <div class="p-6 max-w-4xl mx-auto space-y-6">
@@ -49,14 +49,37 @@
 			<ArrowUpTooltip dataPopup="accessLevelBadgePopup">
 				<div class="text-sm text-center">
 					{isCurrentUserAccessLevel
-						? 'this is your own access level and thus cannot be edited'
-						: 'this is main access level of your organization and cannot be edited'}
+						? 'this is your own access level and thus cannot be edited nor deleted'
+						: 'this is main access level of your organization and cannot be edited nor deleted'}
 				</div>
 			</ArrowUpTooltip>
 
 			<PermissionGuard requiredPermissions={['MANAGE_USER_ACCESS_LEVELS']}>
 				<button
-					disabled={!canEditAccessLevel}
+					disabled={!canEditOrDeleteAccessLevel}
+					class="btn-icon mx-2 btn-icon-sm variant-filled-error"
+					on:click={() => {
+						// TODO: DELETE ACCESS LEVEL !
+						//
+						// só é possivel deletar se não tiver usuario associado, caso contrario SQL exception
+						// pensar numa tela de reassociar, onde pode ser...
+						//
+						// 1- a mesma pagina de listagem de usuarios
+						// com uma coluna que contem o nível de acesso do usuario e pode ser editavel, mas isso tem o
+						// problema de dados duplicados
+						//
+						// 2- uma data table de usuarios selecionaveis onde se pode selecionar 1 a todos os usuarios e
+						// realoca-los a um nível de acesso existente
+						//
+						// p/ ver como escutar eventos do custom component da lista de usuarios:
+						// https://svelte.dev/repl/a16dd36f0265408a9c42409986b44acd?version=3.24.1
+					}}
+				>
+					<Icon icon="mdi:trash" />
+				</button>
+
+				<button
+					disabled={!canEditOrDeleteAccessLevel}
 					class="btn-icon btn-icon-sm variant-filled-primary"
 					on:click={() => (editMode = !editMode)}
 				>

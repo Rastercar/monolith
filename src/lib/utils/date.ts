@@ -1,6 +1,6 @@
 type DateOrTimestamp = Date | string;
 
-const toDate = (d: DateOrTimestamp) => (typeof d === 'string' ? new Date(d) : d);
+const castToDate = (d: DateOrTimestamp) => (typeof d === 'string' ? new Date(d) : d);
 
 /**
  * Returns true if a date has occoured in the last X milliseconds
@@ -14,12 +14,14 @@ const toDate = (d: DateOrTimestamp) => (typeof d === 'string' ? new Date(d) : d)
  * ```
  */
 export const isDateOlderThanXMilliseconds = (date: DateOrTimestamp, ms: number) => {
-	const nowToDateMsDiff = new Date().getTime() - toDate(date).getTime();
+	const nowToDateMsDiff = new Date().getTime() - castToDate(date).getTime();
 	return nowToDateMsDiff < ms;
 };
 
+export const toDate = (d: DateOrTimestamp) => castToDate(d).toLocaleDateString();
+
 export const toDateTime = (d: DateOrTimestamp, withTimezone = false) =>
-	toDate(d).toLocaleTimeString(undefined, {
+	castToDate(d).toLocaleTimeString(undefined, {
 		year: 'numeric',
 		month: 'numeric',
 		day: 'numeric',

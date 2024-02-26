@@ -1,10 +1,4 @@
 import { z } from 'zod';
-import {
-	createPaginatedResponseSchema,
-	type Paginated,
-	type PaginationWithFilters
-} from './common';
-import { rastercarApi, stripUndefined } from './utils';
 
 export const accessLevelSchema = z.object({
 	id: z.number(),
@@ -15,20 +9,20 @@ export const accessLevelSchema = z.object({
 	permissions: z.array(z.string())
 });
 
+export const createAccessLevelSchema = z.object({
+	name: z.string().min(1),
+	description: z.string().min(1),
+	permissions: z.array(z.string())
+});
+
+export const updateAccessLevelSchema = z.object({
+	name: z.string().min(1).optional(),
+	description: z.string().min(1).optional(),
+	permissions: z.array(z.string()).optional()
+});
+
 export type AccessLevel = z.infer<typeof accessLevelSchema>;
 
-export interface GetAccessLevelsFilters {
-	name?: string;
-}
+export type UpdateAccessLevelBody = z.infer<typeof updateAccessLevelSchema>;
 
-/**
- * list paginated access levels that belong to the same organization as the request user
- */
-export const apiGetAccessLevels = (
-	query?: PaginationWithFilters<GetAccessLevelsFilters>
-): Promise<Paginated<AccessLevel>> =>
-	rastercarApi
-		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get('/access-level')
-		.json<Paginated<AccessLevel>>()
-		.then(createPaginatedResponseSchema(accessLevelSchema).parse);
+export type CreateAccessLevelBody = z.infer<typeof createAccessLevelSchema>;

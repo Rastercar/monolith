@@ -6,32 +6,22 @@
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import TrackerInfo from './TrackerInfo.svelte';
 	import TrackerSelector from './TrackerSelector.svelte';
 
 	export let vehicleId: number;
 
-	export let createTrackerForm: SuperValidated<typeof createTrackerSchema>;
+	export let createTrackerForm: SuperValidated<Infer<typeof createTrackerSchema>>;
 
-	export let createSimCardForm: SuperValidated<typeof createSimCardSchema>;
+	export let createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 
-	export let updateSimCardForm: SuperValidated<typeof updateSimCardSchema>;
+	export let updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
 
-	export let updateTrackerForm: SuperValidated<typeof updateTrackerSchema>;
+	export let updateTrackerForm: SuperValidated<Infer<typeof updateTrackerSchema>>;
 
 	const query = createQuery({
 		queryKey: ['vehicle', vehicleId, 'tracker'],
-		// - revisar conceito de retornar 404 quando não se encontra uma entidade
-		// ex: user/1              não deve retornar 404 se usuario com id 1 nao existe
-		// user/1/access_level     deve retornar 404 ?
-		//
-		// --- OPCAO ABAIXO
-		//
-		// TODO: se seguir com 404 quando entidade nao existe
-		// - não retornar null da API
-		// - criar um error handler generico no front que detecta 404 com sucesso
-		// - remover | null da possivel resposta aq
 		queryFn: () => apiGetTrackerByVehicleId(vehicleId)
 	});
 

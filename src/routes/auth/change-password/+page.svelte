@@ -7,7 +7,8 @@
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { WretchError } from 'wretch/resolver';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
@@ -16,7 +17,7 @@
 
 	const toaster = getToaster();
 
-	const form = superForm(data.form, { validators: recoverPasswordByTokenSchema });
+	const form = superForm(data.form, { validators: zodClient(recoverPasswordByTokenSchema) });
 
 	let errorStatusCode: null | number = null;
 
@@ -38,7 +39,7 @@
 	});
 
 	const changePassword = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) {
 			return form.restore({ ...validated, tainted: undefined });

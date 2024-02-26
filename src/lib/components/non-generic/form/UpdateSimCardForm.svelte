@@ -12,14 +12,15 @@
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import type { SuperValidated } from 'sveltekit-superforms';
-	import { superForm } from 'sveltekit-superforms/client';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	export let simCard: SimCard;
 
-	export let formSchema: SuperValidated<typeof updateSimCardSchema>;
+	export let formSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
 
-	const form = superForm(formSchema, { validators: updateSimCardSchema });
+	const form = superForm(formSchema, { validators: zodClient(updateSimCardSchema) });
 
 	const toaster = getToaster();
 
@@ -44,7 +45,7 @@
 	const dispatch = createEventDispatcher<{ 'sim-card-updated': SimCard }>();
 
 	const updateSimCard = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 

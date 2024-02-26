@@ -19,15 +19,16 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import type { SuperValidated } from 'sveltekit-superforms';
-	import { superForm } from 'sveltekit-superforms/client';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let formSchema: SuperValidated<typeof createVehicleSchema>;
+	export let formSchema: SuperValidated<Infer<typeof createVehicleSchema>>;
 
 	const toaster = getToaster();
 
 	const form = superForm(formSchema, {
-		validators: createVehicleSchema,
+		validators: zodClient(createVehicleSchema),
 		validationMethod: 'oninput'
 	});
 
@@ -47,20 +48,11 @@
 	const dispatch = createEventDispatcher<{ 'vehicle-created': Vehicle }>();
 
 	const createVehicle = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		const body: Partial<CreateVehicleBody> = {};
-
-		// shitty hack, when sending formData with objects with undefined values (eg: {a: undefined})
-		// its sent as with the value set to 'undefined' string, what we really want is to exclude
-		// fields where the value is undefined or a empty string
-		Object.entries(validated.data).forEach(([k, v]) => {
-			if (v) body[k as keyof CreateVehicleBody] = v;
-		});
-
-		$mutation.mutateAsync(body as CreateVehicleBody).then((createdVehicle) => {
+		$mutation.mutateAsync(validated.data).then((createdVehicle) => {
 			dispatch('vehicle-created', createdVehicle);
 			$stepperState.current++;
 		});

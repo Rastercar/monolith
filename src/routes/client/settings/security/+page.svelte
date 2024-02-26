@@ -6,7 +6,8 @@
 	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { WretchError } from 'wretch/resolver';
 	import type { PageData } from './$types';
 
@@ -14,7 +15,7 @@
 
 	const toaster = getToaster();
 
-	const form = superForm(data.form, { validators: changePasswordSchema });
+	const form = superForm(data.form, { validators: zodClient(changePasswordSchema) });
 
 	const mutation = createMutation({
 		mutationFn: (body: ChangePasswordBody) => apiChangePassword(body),
@@ -36,7 +37,7 @@
 	});
 
 	const changePassword = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) {
 			form.restore({ ...validated, tainted: undefined });

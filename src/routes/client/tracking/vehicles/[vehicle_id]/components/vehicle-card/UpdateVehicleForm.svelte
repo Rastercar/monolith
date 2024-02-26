@@ -15,12 +15,13 @@
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import type { SuperValidated } from 'sveltekit-superforms';
-	import { superForm } from 'sveltekit-superforms/client';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	export let vehicle: Vehicle;
 
-	export let formSchema: SuperValidated<typeof updateVehicleSchema>;
+	export let formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
 
 	const getValuesFromVehicle = (v: Vehicle) => ({
 		plate: v.plate,
@@ -35,7 +36,7 @@
 	});
 
 	const form = superForm(formSchema, {
-		validators: updateVehicleSchema,
+		validators: zodClient(updateVehicleSchema),
 		validationMethod: 'oninput'
 	});
 
@@ -53,7 +54,7 @@
 	});
 
 	const createVehicle = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 

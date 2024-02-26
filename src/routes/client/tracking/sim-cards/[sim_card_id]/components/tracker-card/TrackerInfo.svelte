@@ -10,13 +10,13 @@
 	import { getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	export let tracker: Tracker;
 
-	export let createSimCardForm: SuperValidated<typeof createSimCardSchema>;
+	export let createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 
-	export let updateSimCardForm: SuperValidated<typeof updateSimCardSchema>;
+	export let updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
 
 	const toaster = getToaster();
 	const modalStore = getModalStore();

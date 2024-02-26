@@ -13,17 +13,18 @@
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
-	import type { SuperValidated } from 'sveltekit-superforms';
-	import { superForm } from 'sveltekit-superforms/client';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let formSchema: SuperValidated<typeof createTrackerSchema>;
+	export let formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
 
 	/**
 	 * The ID of the vehicle to associate to the tracker
 	 */
 	export let vehicleIdToAssociate: number | undefined = undefined;
 
-	const form = superForm(formSchema, { validators: createTrackerSchema });
+	const form = superForm(formSchema, { validators: zodClient(createTrackerSchema) });
 
 	const toaster = getToaster();
 
@@ -40,7 +41,7 @@
 	const dispatch = createEventDispatcher<{ 'tracker-created': Tracker }>();
 
 	const createTracker = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 

@@ -20,7 +20,14 @@ import {
  * - `CREATE_VEHICLE`
  */
 export const apiCreateVehicle = (body: CreateVehicleBody): Promise<Vehicle> =>
-	rastercarApi.formData(body).post(undefined, '/vehicle').json<Vehicle>().then(vehicleSchema.parse);
+	rastercarApi
+		// here we strip undefine because when sending objects with a existing key with
+		// with a value of undefined it gets parsed to a form data with undefined as a
+		// string for the given key
+		.formData(stripUndefined({ ...body }))
+		.post(undefined, '/vehicle')
+		.json<Vehicle>()
+		.then(vehicleSchema.parse);
 
 export interface GetVehiclesFilters {
 	plate?: string;

@@ -4,7 +4,7 @@
 	import CreateSimCardForm from '$lib/components/non-generic/form/CreateSimCardForm.svelte';
 	import SelectSimCardDataTable from '$lib/components/non-generic/table/SelectSimCardDataTable.svelte';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	/**
 	 * Tracker to be associated with the sim card to be created or selected
@@ -13,7 +13,7 @@
 
 	export let slot: number;
 
-	export let formSchema: SuperValidated<typeof createSimCardSchema>;
+	export let formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 
 	type action = 'new-sim-card' | 'existing-sim-card';
 

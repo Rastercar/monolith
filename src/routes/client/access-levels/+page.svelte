@@ -1,9 +1,6 @@
 <script lang="ts">
-	import {
-		apiGetAccessLevels,
-		type AccessLevel,
-		type GetAccessLevelsFilters
-	} from '$lib/api/access-level.schema';
+	import { apiGetAccessLevels, type GetAccessLevelsFilters } from '$lib/api/access-level';
+	import { type AccessLevel } from '$lib/api/access-level.schema';
 	import type { Paginated } from '$lib/api/common';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -98,9 +95,9 @@
 		/>
 
 		<CreateEntityButton
-			href="/client/access-level/new"
+			href="/client/access-levels/new"
 			text="new access level"
-			requiredPermission="CREATE_ACCESS_LEVEL"
+			requiredPermission="MANAGE_USER_ACCESS_LEVELS"
 		/>
 	</div>
 

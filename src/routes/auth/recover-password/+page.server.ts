@@ -1,6 +1,7 @@
 import { apiRequestRecoverPasswordEmail } from '$lib/api/auth';
 import { fail } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms/server';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 
@@ -9,10 +10,9 @@ const schema = z.object({
 	email: z.string().email().default('rastercar.tests.002@gmail.com')
 });
 
-export const load: PageServerLoad = async () => {
-	const form = await superValidate(schema);
-	return { form };
-};
+export const load: PageServerLoad = async () => ({
+	form: await superValidate(zod(schema))
+});
 
 export const actions = {
 	default: async ({ request }) => {

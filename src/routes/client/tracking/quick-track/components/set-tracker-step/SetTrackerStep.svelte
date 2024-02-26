@@ -10,7 +10,7 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
 
@@ -19,7 +19,7 @@
 	 */
 	export let vehicleId: number;
 
-	export let formSchema: SuperValidated<typeof createTrackerSchema>;
+	export let formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
 
 	const toaster = getToaster();
 

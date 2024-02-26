@@ -79,7 +79,7 @@
 	const table = createSvelteTable(options);
 </script>
 
-<div class="p-6 max-w-4xl mx-auto">
+<div class="p-6 max-w-6xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		title="users"
 		breadCrumbs={[

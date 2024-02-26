@@ -104,6 +104,9 @@ export const fallthroughApiErrorMessage = (err: WretchError) => {
  *
  * this is usefull to avoid parsing an object with undefined values
  * to a query string, eg: avoiding `{a: undefined, b: 1}` to be parsed as `?a=&b=1`
+ *
+ * @important
+ * This mutates the original object
  */
 export const stripUndefined = (o: unknown): Record<string, unknown> => {
 	if (typeof o !== 'object' || o === null) return {};

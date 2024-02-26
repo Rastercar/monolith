@@ -9,7 +9,8 @@
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types';
 	import ProfilePictureDropzone from './components/ProfilePictureDropzone.svelte';
 
@@ -17,7 +18,7 @@
 
 	const toaster = getToaster();
 
-	const form = superForm(data.form, { validators: updateUserSchema });
+	const form = superForm(data.form, { validators: zodClient(updateUserSchema) });
 
 	const mutation = createMutation({
 		mutationFn: (body: UpdateUserBody) => apiUpdateUser(body),
@@ -32,7 +33,7 @@
 	});
 
 	const updateProfile = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) {
 			form.restore({ ...validated, tainted: undefined });

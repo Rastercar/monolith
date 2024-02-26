@@ -9,7 +9,8 @@
 	import { authStore } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
@@ -18,7 +19,7 @@
 
 	const toaster = getToaster();
 
-	const form = superForm(data.form, { validators: signUpSchema });
+	const form = superForm(data.form, { validators: zodClient(signUpSchema) });
 
 	const handleSignUpError = (err: string) => {
 		const setFieldError = (field: 'email' | 'username', msg: string) => {
@@ -47,7 +48,7 @@
 	});
 
 	const handleSignUp = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) {
 			return form.restore({ ...validated, tainted: undefined });

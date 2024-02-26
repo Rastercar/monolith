@@ -6,6 +6,8 @@
 
 	let clazz: string = '';
 	export { clazz as class };
+
+	export let contentWrapperClasses = '!mx-0';
 </script>
 
 <button class={`${clazz} relative`} disabled={isLoading || disabled} on:click>
@@ -16,7 +18,7 @@
 		<ProgressRadial value={undefined} width="w-6" />
 	</div>
 
-	<div class:invisible={isLoading}>
+	<div class:invisible={isLoading} class={contentWrapperClasses}>
 		<slot />
 	</div>
 </button>

@@ -11,14 +11,15 @@
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	const toaster = getToaster();
 
-	const form = superForm(data.form, { validators: updateOrganizationSchema });
+	const form = superForm(data.form, { validators: zodClient(updateOrganizationSchema) });
 
 	const mutation = createMutation({
 		mutationFn: (body: UpdateOrganizationBody) => apiUpdateOrganization(body),
@@ -32,7 +33,7 @@
 	});
 
 	const updateOrg = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) {
 			form.restore({ ...validated, tainted: undefined });

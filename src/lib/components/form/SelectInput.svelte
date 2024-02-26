@@ -1,12 +1,11 @@
 <script lang="ts" context="module">
-	import type { AnyZodObject } from 'zod';
-	type T = AnyZodObject;
+	type Obj = Record<string, unknown>;
+	type T = Obj;
 </script>
 
-<script lang="ts" generics="T extends AnyZodObject">
-	import type { FormPathLeaves, ZodValidation } from 'sveltekit-superforms';
-	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms/client';
-	import type { z } from 'zod';
+<script lang="ts" generics="T extends Obj">
+	import type { FormPathLeaves } from 'sveltekit-superforms';
+	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 	import ErrorMessage from './ErrorMessage.svelte';
 
 	interface Option {
@@ -14,8 +13,8 @@
 		value: string;
 	}
 
-	export let form: SuperForm<ZodValidation<T>, unknown>;
-	export let field: FormPathLeaves<z.infer<T>>;
+	export let form: SuperForm<T, unknown>;
+	export let field: FormPathLeaves<T>;
 
 	export let options: Option[] = [];
 	export let label: string;

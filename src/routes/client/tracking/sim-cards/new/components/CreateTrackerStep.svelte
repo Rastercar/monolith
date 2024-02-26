@@ -5,8 +5,9 @@
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
-	export let createTrackerForm: SuperValidated<typeof createTrackerSchema>;
+	export let createTrackerForm: SuperValidated<Infer<typeof createTrackerSchema>>;
 
 	let stepperState: Writable<StepperState> = getContext('state');
 

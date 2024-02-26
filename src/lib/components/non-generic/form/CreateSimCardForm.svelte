@@ -11,10 +11,11 @@
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
-	import type { SuperValidated } from 'sveltekit-superforms';
-	import { superForm } from 'sveltekit-superforms/client';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let formSchema: SuperValidated<typeof createSimCardSchema>;
+	export let formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 
 	/**
 	 * The slot of the tracker the sim card being created is going to occupy
@@ -30,7 +31,7 @@
 	export let trackerIdToAssociate: number | undefined = undefined;
 
 	const form = superForm(formSchema, {
-		validators: createSimCardSchema,
+		validators: zodClient(createSimCardSchema),
 		id: `sim-card-form-for-slot-${slot}`
 	});
 
@@ -57,7 +58,7 @@
 	const dispatch = createEventDispatcher<{ 'sim-card-created': SimCard }>();
 
 	const createSimCard = async () => {
-		const validated = await form.validate();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 

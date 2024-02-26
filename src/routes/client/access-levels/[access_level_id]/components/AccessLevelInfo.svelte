@@ -23,7 +23,6 @@
 	</span>
 </div>
 
-<!-- TODO: aggregate by category, change info on other pages -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
 	{#each accessLevel.permissions as permission}
 		{@const details = getPermissionDetails(permission)}
@@ -37,5 +36,7 @@
 				{/if}
 			</div>
 		{/if}
+	{:else}
+		no permissions found
 	{/each}
 </div>

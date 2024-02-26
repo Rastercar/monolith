@@ -6,7 +6,7 @@
 	export let dataPopup: string;
 </script>
 
-<div class={`card ${padding} ${bgColor} ${additionalClasses}`} data-popup={dataPopup}>
+<div class={`card ${padding} ${bgColor} ${additionalClasses} z-20`} data-popup={dataPopup}>
 	<slot />
 	<div class={`arrow ${bgColor}`} />
 </div>

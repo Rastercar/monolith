@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
-	import type { AnyZodObject } from 'zod';
-	type T = AnyZodObject;
+	type Obj = Record<string, unknown>;
+	type T = Obj;
 </script>
 
-<script lang="ts" generics="T extends AnyZodObject">
+<script lang="ts" generics="T extends Obj">
 	import type { FormPathType } from 'sveltekit-superforms';
 
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
@@ -13,13 +13,12 @@
 		type AutocompleteOption,
 		type PopupSettings
 	} from '@skeletonlabs/skeleton';
-	import type { FormPathLeaves, UnwrapEffects, ZodValidation } from 'sveltekit-superforms';
-	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms/client';
-	import type { z } from 'zod';
+	import type { FormPathLeaves } from 'sveltekit-superforms';
+	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 
-	export let form: SuperForm<ZodValidation<T>, unknown>;
+	export let form: SuperForm<T, unknown>;
 
-	export let field: FormPathLeaves<z.infer<T>>;
+	export let field: FormPathLeaves<T>;
 	export let label: string;
 
 	export let options: AutocompleteOption<string>[];
@@ -45,7 +44,7 @@
 
 	const onSelection = ({ detail }: CustomEvent<AutocompleteOption<string>>) => {
 		stringValue = detail.value;
-		value.set(stringValue as FormPathType<z.TypeOf<UnwrapEffects<T>>, FormPathLeaves<z.infer<T>>>);
+		value.set(stringValue as FormPathType<T, FormPathLeaves<T>>);
 	};
 
 	$: stringValue = $value as string;

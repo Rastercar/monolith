@@ -3,7 +3,7 @@
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { authStore } from '$lib/store/auth';
 	import { onMount } from 'svelte';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { ActionData, PageData } from './$types';
 

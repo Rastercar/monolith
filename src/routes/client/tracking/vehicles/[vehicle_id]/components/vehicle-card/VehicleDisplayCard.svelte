@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { Vehicle, updateVehicleSchema } from '$lib/api/vehicle.schema';
 	import { createEventDispatcher } from 'svelte';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import UpdateVehicleForm from './UpdateVehicleForm.svelte';
 	import VehicleCardInfo from './VehicleCardInfo.svelte';
 
 	export let vehicle: Vehicle;
 
-	export let formSchema: SuperValidated<typeof updateVehicleSchema>;
+	export let formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
 
 	let editMode = false;
 

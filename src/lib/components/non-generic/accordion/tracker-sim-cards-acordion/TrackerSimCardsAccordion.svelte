@@ -9,14 +9,14 @@
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import SimCardChooser from './SimCardChooser.svelte';
 
 	export let tracker: Tracker;
 
-	export let createSimCardForm: SuperValidated<typeof createSimCardSchema>;
+	export let createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 
-	export let updateSimCardForm: SuperValidated<typeof updateSimCardSchema>;
+	export let updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
 
 	let editMode = false;
 

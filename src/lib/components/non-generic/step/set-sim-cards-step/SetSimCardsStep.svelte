@@ -10,7 +10,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import SimCardChooser from './SimCardChooser.svelte';
 	import SimCardDisplay from './SimCardDisplay.svelte';
 
@@ -19,7 +19,7 @@
 	 */
 	export let tracker: Tracker;
 
-	export let formSchema: SuperValidated<typeof createSimCardSchema>;
+	export let formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 

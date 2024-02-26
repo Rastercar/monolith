@@ -1,22 +1,21 @@
 <script lang="ts" context="module">
-	import type { AnyZodObject } from 'zod';
-	type T = AnyZodObject;
+	type Obj = Record<string, unknown>;
+	type T = Obj;
 </script>
 
-<script lang="ts" generics="T extends AnyZodObject">
+<script lang="ts" generics="T extends Obj">
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	import { IMask, imask } from '@imask/svelte';
-	import { onDestroy, onMount } from 'svelte';
-	import type { FormPathLeaves, ZodValidation } from 'sveltekit-superforms';
-	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms/client';
-	import type { z } from 'zod';
+	import { onDestroy, onMount, tick } from 'svelte';
+	import type { FormPathLeaves } from 'sveltekit-superforms';
+	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 
 	type MaskOptions = Parameters<typeof IMask>[1];
 
 	export let maskOptions: MaskOptions;
 
-	export let form: SuperForm<ZodValidation<T>, unknown>;
-	export let field: FormPathLeaves<z.infer<T>>;
+	export let form: SuperForm<T, unknown>;
+	export let field: FormPathLeaves<T>;
 	export let label: string;
 
 	let clazz = 'label mt-4 mb-1';
@@ -35,37 +34,26 @@
 	let maskRef: any;
 
 	const setMaskRefValue = (v: string | null) => {
-		if (maskRef) maskRef.value = v == null ? '' : v;
+		if (maskRef) maskRef.value = v === null ? '' : v;
 	};
 
-	const setValueToMaskRefValue = () => {
-		if (maskRef) value.set(maskRef.value);
+	const onInput = () => {
+		setTimeout(() => {
+			if (maskRef) value.set(maskRef.value);
+		});
 	};
 
 	onMount(() => {
 		maskRef = IMask(input, maskOptions);
-		setMaskRefValue($value as string);
+
+		// wait for the tick to register the input value then update the Imask value to match the field
+		tick().then(() => setMaskRefValue($value as string));
 	});
 
 	onDestroy(() => {
 		if (maskRef) maskRef.destroy();
 		maskRef = undefined;
 	});
-
-	// Every time the value changes, update the maskRefValue
-	$: {
-		if (maskRef) {
-			if (maskRef.value !== value) setMaskRefValue($value as string);
-
-			// this is not useless, it prevents
-			// https://github.com/PaulMaly/svelte-imask/issues/16
-			//
-			// this happens because maskRef.value set on setMaskRefValue is a
-			// setter that validates the value, thus maskRef.value might not
-			// be the same as the value in the call above.
-			value.set(maskRef.value);
-		}
-	}
 </script>
 
 <label class={clazz}>
@@ -75,13 +63,12 @@
 		name={field}
 		aria-invalid={$errors ? 'true' : undefined}
 		type="text"
+		value={$value}
 		bind:this={input}
-		bind:value={$value}
 		use:imask={maskRef}
-		on:accept={setValueToMaskRefValue}
+		on:input={onInput}
 		on:click
 		on:keydown
-		on:input
 		on:change
 		on:focus
 		on:blur

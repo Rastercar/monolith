@@ -8,7 +8,6 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
-	import CreateUserPermissionSelectedAlert from '$lib/components/non-generic/alert/CreateUserPermissionSelectedAlert.svelte';
 	import ManageAccessLevelsPermissionSelectedAlert from '$lib/components/non-generic/alert/ManageAccessLevelsPermissionSelectedAlert.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
 	import { permissionDetails, type apiPermission } from '$lib/constants/permissions';
@@ -107,10 +106,6 @@
 	{permissionToToggleStatus}
 	showManageUserAccessLevelsWarningIfToggled={!accessLevelInitiallyCouldManageUserAccessLevelsPermission}
 />
-
-{#if permissionToToggleStatus['CREATE_USER']}
-	<CreateUserPermissionSelectedAlert />
-{/if}
 
 {#if !accessLevelInitiallyCouldManageUserAccessLevelsPermission && permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS']}
 	<ManageAccessLevelsPermissionSelectedAlert

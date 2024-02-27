@@ -29,12 +29,12 @@
 </div>
 
 {#each permissionsByCategory as [category, permissions], i}
-	<div class="flex items-center text-lg mb-2">
-		<Icon icon={permissionCategoryIcons[category]} class="mr-2" height={20} />
-		{category}
-	</div>
-
 	<div class="flex flex-col space-y-4">
+		<div class="flex items-center text-lg">
+			<Icon icon={permissionCategoryIcons[category]} class="mr-2" height={20} />
+			{category}
+		</div>
+
 		{#each permissions as permissionDetails}
 			<div>
 				{permissionDetails.summary}

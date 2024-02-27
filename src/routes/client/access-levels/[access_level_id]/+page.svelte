@@ -1,27 +1,46 @@
 <script lang="ts">
-	import { apiGetAccessLevelById } from '$lib/api/access-level';
+	import { apiDeleteAccessLevel, apiGetAccessLevelById } from '$lib/api/access-level';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
 	import { authStore } from '$lib/store/auth';
+	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { popup } from '@skeletonlabs/skeleton';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
 	import AccessLevelInfo from './components/AccessLevelInfo.svelte';
 	import UpdateAccessLevelForm from './components/UpdateAccessLevelForm.svelte';
 
 	export let data: PageData;
 
-	let editMode = false;
+	let editMode = data.startInEditMode;
+
+	let accessLevelDeleted = false;
+
+	const toaster = getToaster();
 
 	const query = createQuery({
 		queryKey: ['access-level', data.accessLevelId],
 		queryFn: () => apiGetAccessLevelById(data.accessLevelId)
 	});
 
-	$: ({ user } = $authStore);
+	const deleteAccessLevelMutation = createMutation({
+		mutationFn: () => apiDeleteAccessLevel(data.accessLevelId),
+		onError: toaster.error
+	});
+
+	const deleteAccessLevel = async () => {
+		if (!confirm('Permanently delete this access level ?')) return;
+
+		await $deleteAccessLevelMutation.mutateAsync().then(() => (accessLevelDeleted = true));
+	};
 
 	$: ({ data: accessLevel, error, isLoading } = $query);
+
+	$: ({ user } = $authStore);
 
 	$: accessLevelIsFixed = !!accessLevel?.isFixed;
 
@@ -30,12 +49,25 @@
 	$: canEditOrDeleteAccessLevel = !accessLevelIsFixed && !isCurrentUserAccessLevel;
 </script>
 
-<div class="p-6 max-w-4xl mx-auto space-y-6">
-	<div class="card">
-		<div class="flex items-center p-4">
-			<div class="flex items-center mr-auto">
-				<Icon icon="mdi:shield" width="32" height="32" class="mr-2" />
-				{editMode ? 'Editing access level' : `Access Level: ${accessLevel?.name ?? ''}`}
+<div class="p-6 max-w-4xl mx-auto">
+	<TitleAndBreadCrumbsPageHeader
+		title="Access Level"
+		breadCrumbs={[
+			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ href: '/client/access-levels', icon: 'mdi:shield', text: 'access levels' },
+			{ href: `/client/access-levels/${data.accessLevelId}`, text: data.accessLevelId.toString() }
+		]}
+	/>
+
+	{#if accessLevelDeleted}
+		<DeletionSuccessMessage
+			title="Access level deleted successfully"
+			href="/client/access-levels"
+		/>
+	{:else}
+		<div class="flex items-center">
+			<div class="flex items-center mr-auto text-xl">
+				{editMode ? 'Editing access level' : `Name: ${accessLevel?.name ?? ''}`}
 			</div>
 
 			<span
@@ -55,28 +87,14 @@
 			</ArrowUpTooltip>
 
 			<PermissionGuard requiredPermissions={['MANAGE_USER_ACCESS_LEVELS']}>
-				<button
+				<LoadableButton
+					isLoading={$deleteAccessLevelMutation.isPending}
 					disabled={!canEditOrDeleteAccessLevel}
 					class="btn-icon mx-2 btn-icon-sm variant-filled-error"
-					on:click={() => {
-						// TODO: DELETE ACCESS LEVEL !
-						//
-						// só é possivel deletar se não tiver usuario associado, caso contrario SQL exception
-						// pensar numa tela de reassociar, onde pode ser...
-						//
-						// 1- a mesma pagina de listagem de usuarios
-						// com uma coluna que contem o nível de acesso do usuario e pode ser editavel, mas isso tem o
-						// problema de dados duplicados
-						//
-						// 2- uma data table de usuarios selecionaveis onde se pode selecionar 1 a todos os usuarios e
-						// realoca-los a um nível de acesso existente
-						//
-						// p/ ver como escutar eventos do custom component da lista de usuarios:
-						// https://svelte.dev/repl/a16dd36f0265408a9c42409986b44acd?version=3.24.1
-					}}
+					on:click={deleteAccessLevel}
 				>
 					<Icon icon="mdi:trash" />
-				</button>
+				</LoadableButton>
 
 				<button
 					disabled={!canEditOrDeleteAccessLevel}
@@ -88,25 +106,23 @@
 			</PermissionGuard>
 		</div>
 
-		<div class="px-4 pb-4">
-			{#if error}
-				<div class="text-error-500">Error loading access level</div>
-			{:else if isLoading}
-				<div>loading</div>
-			{:else if accessLevel}
-				{#if editMode}
-					<UpdateAccessLevelForm
-						{accessLevel}
-						formSchema={data.updateAccessLevelForm}
-						on:access-level-updated={({ detail: updatedAccessLevel }) => {
-							accessLevel = updatedAccessLevel;
-							editMode = false;
-						}}
-					/>
-				{:else}
-					<AccessLevelInfo {accessLevel} />
-				{/if}
+		{#if error}
+			<div class="text-error-500">Error loading access level</div>
+		{:else if isLoading}
+			<div>loading</div>
+		{:else if accessLevel}
+			{#if editMode}
+				<UpdateAccessLevelForm
+					{accessLevel}
+					formSchema={data.updateAccessLevelForm}
+					on:access-level-updated={({ detail: updatedAccessLevel }) => {
+						accessLevel = updatedAccessLevel;
+						editMode = false;
+					}}
+				/>
+			{:else}
+				<AccessLevelInfo {accessLevel} />
 			{/if}
-		</div>
-	</div>
+		{/if}
+	{/if}
 </div>

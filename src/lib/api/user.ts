@@ -61,6 +61,17 @@ export const apiGetUserAccessLevel = (id: number): Promise<AccessLevel> =>
 	rastercarApi.get(`/user/${id}/access-level`).json<AccessLevel>().then(accessLevelSchema.parse);
 
 /**
+ * change a user access level
+ */
+export const apiChangeUserAccessLevel = (ids: {
+	userId: number;
+	accessLevelId: number;
+}): Promise<string> =>
+	rastercarApi
+		.put({ accessLevelId: ids.accessLevelId }, `/user/${ids.userId}/access-level`)
+		.json<string>();
+
+/**
  * gets the current user within the session id on the session ID cookie
  */
 export const apiGetCurrentUser = (): Promise<User> =>
@@ -79,7 +90,7 @@ export const apiUpdateUser = (body: UpdateUserBody): Promise<User> =>
 	rastercarApi.patch(body, '/user/me').json<User>().then(userSchema.parse);
 
 /**
- * updates the user password
+ * updates the current user password
  */
 export const apiChangePassword = (body: ChangePasswordBody): Promise<string> =>
 	rastercarApi

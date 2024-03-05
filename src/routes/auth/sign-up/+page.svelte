@@ -54,9 +54,7 @@
 			return form.restore({ ...validated, tainted: undefined });
 		}
 
-		const { passwordConfirmation, ...requestBody } = validated.data;
-
-		$mutation.mutate(requestBody);
+		$mutation.mutate(validated.data);
 	};
 
 	/**

@@ -44,11 +44,12 @@
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		$mutation.mutateAsync(validated.data).then(() => {
-			toaster.success('vehicle created successfully');
-			clearFileInputsUnderFormWithId(formId);
-			form.reset();
-		});
+		await $mutation.mutateAsync(validated.data);
+
+		toaster.success('vehicle created successfully');
+		// TODO!: am i needed ? superforms support files now
+		clearFileInputsUnderFormWithId(formId);
+		form.reset();
 	};
 
 	$: ({ tainted, allErrors } = form);

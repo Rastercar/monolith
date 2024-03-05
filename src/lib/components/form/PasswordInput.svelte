@@ -14,6 +14,9 @@
 	export let label = 'Password';
 	export let placeholder = 'Password';
 
+	let clazz = 'label mt-4 mb-1';
+	export { clazz as class };
+
 	let inputType: 'password' | 'text' = 'password';
 
 	const toggleInputType = () => {
@@ -23,7 +26,7 @@
 	const { value, errors, constraints } = formFieldProxy(form, field);
 </script>
 
-<label class="label mt-4 mb-1">
+<label class={clazz}>
 	<span class="text-sm">{label}</span>
 	<div class="input-group grid-cols-[1fr_auto]">
 		<!-- 

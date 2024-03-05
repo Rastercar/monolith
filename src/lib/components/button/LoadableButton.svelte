@@ -4,10 +4,10 @@
 	export let isLoading: boolean;
 	export let disabled = false;
 
-	let clazz: string = '';
-	export { clazz as class };
-
 	export let contentWrapperClasses = '!mx-0';
+
+	let clazz = '';
+	export { clazz as class };
 </script>
 
 <button class={`${clazz} relative`} disabled={isLoading || disabled} on:click>

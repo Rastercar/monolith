@@ -4,12 +4,12 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
+	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
 	import { authStore } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import SelectAccessLevelInput from './SelectAccessLevelInput.svelte';
 
 	export let userId: number;
 

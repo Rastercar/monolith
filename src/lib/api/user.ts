@@ -13,7 +13,8 @@ import {
 	type SimpleUser,
 	type UpdateUserBody,
 	type User,
-	type UserSession
+	type UserSession,
+	type CreateUserBody
 } from './user.schema';
 import { rastercarApi, stripUndefined } from './utils';
 
@@ -32,6 +33,12 @@ export const apiGetUsers = (
 		.get('/user')
 		.json<Paginated<SimpleUser>>()
 		.then(createPaginatedResponseSchema(simpleUserSchema).parse);
+
+/**
+ * create a new user
+ */
+export const apiCreateUser = (body: CreateUserBody) =>
+	rastercarApi.post(body, '/user').json<SimpleUser>().then(simpleUserSchema.parse);
 
 /**
  * get a user by ID

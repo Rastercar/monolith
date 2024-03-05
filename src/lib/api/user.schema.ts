@@ -15,6 +15,20 @@ export const userSchema = z.object({
 	organization: organizationSchema
 });
 
+export const createUserSchema = z
+	.object({
+		email: z.string().email().optional(),
+		username: usernameValidator.optional(),
+		description: z.string().optional().nullable(),
+		accessLevelId: z.number().gt(0),
+		password: passwordValidator,
+		passwordConfirmation: z.string().min(5)
+	})
+	.refine((data) => data.password === data.passwordConfirmation, {
+		message: "Passwords didn't match",
+		path: ['passwordConfirmation']
+	});
+
 export const updateUserSchema = z.object({
 	email: z.string().email().optional(),
 	username: usernameValidator.optional(),
@@ -78,3 +92,5 @@ export type UserSession = z.infer<typeof userSessionSchema>;
 export type UpdateUserBody = z.infer<typeof updateUserSchema>;
 
 export type ChangePasswordBody = z.infer<typeof changePasswordSchema>;
+
+export type CreateUserBody = z.infer<typeof createUserSchema>;

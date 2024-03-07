@@ -47,6 +47,12 @@ export const apiGetUserById = (id: number): Promise<SimpleUser> =>
 	rastercarApi.get(`/user/${id}`).json<SimpleUser>().then(simpleUserSchema.parse);
 
 /**
+ * delete a user by id
+ */
+export const apiDeleteUserById = (id: number): Promise<string> =>
+	rastercarApi.delete(`/user/${id}`).json<string>();
+
+/**
  * list all sessions that belong to the currently logged in user
  */
 export const apiGetCurrentUserSessions = (): Promise<UserSession[]> =>

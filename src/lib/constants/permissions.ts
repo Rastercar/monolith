@@ -5,6 +5,7 @@
  */
 export type apiPermission =
 	| 'CREATE_USER'
+	| 'DELETE_USER'
 	| 'LOGOFF_USER'
 	| 'LIST_USER_SESSIONS'
 	| 'MANAGE_USER_ACCESS_LEVELS'
@@ -78,6 +79,12 @@ export const permissionDetails: Record<apiPermission, PermissionDetails> = {
 		summary: 'Create',
 		category: 'user',
 		description: 'Allows registering new users.'
+	},
+	DELETE_USER: {
+		title: 'Delete User',
+		summary: 'Delete',
+		category: 'user',
+		description: 'Allows deleting a user'
 	},
 
 	//

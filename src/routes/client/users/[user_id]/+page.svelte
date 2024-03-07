@@ -6,8 +6,11 @@
 	import AccessLevelSection from './components/AccessLevelSection.svelte';
 	import SessionsSection from './components/SessionsSection.svelte';
 	import UserSection from './components/UserSection.svelte';
+	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 
 	export let data: PageData;
+
+	let userDeleted = false;
 
 	const userQuery = createQuery({
 		queryKey: ['user', data.userId],
@@ -18,8 +21,15 @@
 </script>
 
 <div class="p-6 max-w-4xl mx-auto space-y-6">
-	{#if user}
-		<UserSection {user} />
+	{#if userDeleted}
+		<DeletionSuccessMessage title="User deleted successfully" href="/client/users" />
+	{:else if user}
+		<UserSection
+			{user}
+			on:user-deleted={() => {
+				userDeleted = true;
+			}}
+		/>
 
 		<AccessLevelSection userId={data.userId} />
 

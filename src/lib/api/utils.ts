@@ -22,6 +22,8 @@ const globalErrorHandlerAddon = {
 					try {
 						return await chain[method](cb);
 					} catch (err) {
+						// TODO: verificar se o erro é de missing permissions e se for remover do usuario
+						console.log({ xd: err });
 						return redirectOnSessionError(err);
 					}
 				}

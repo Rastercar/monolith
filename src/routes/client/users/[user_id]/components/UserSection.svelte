@@ -1,12 +1,34 @@
 <script lang="ts">
 	import type { SimpleUser } from '$lib/api/user.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import { authStore } from '$lib/store/auth';
+	import { getToaster } from '$lib/store/toaster';
 	import { toDateTime } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton';
+	import { createMutation } from '@tanstack/svelte-query';
+	import { createEventDispatcher } from 'svelte';
+	import { apiDeleteUserById } from '$lib/api/user';
 
 	export let user: SimpleUser;
+
+	const dispatch = createEventDispatcher<{ 'user-deleted': void }>();
+
+	const toaster = getToaster();
+
+	const mutation = createMutation({
+		mutationFn: () => apiDeleteUserById(user.id),
+		onError: toaster.error
+	});
+
+	const deleteUser = async () => {
+		if (!confirm('are you sure you want to delete this user? this action cannot be undone')) return;
+
+		await $mutation.mutateAsync();
+		dispatch('user-deleted');
+	};
 </script>
 
 <div class="sm:card sm:p-4 sm:rounded-lg">
@@ -30,6 +52,16 @@
 						<div>
 							<span class="badge variant-filled-primary">that's you!</span>
 						</div>
+					{:else}
+						<PermissionGuard requiredPermissions={['DELETE_USER']}>
+							<LoadableButton
+								class="btn btn-icon variant-filled-error"
+								isLoading={$mutation.isPending}
+								on:click={deleteUser}
+							>
+								<Icon icon="mdi:trash" />
+							</LoadableButton>
+						</PermissionGuard>
 					{/if}
 				</div>
 

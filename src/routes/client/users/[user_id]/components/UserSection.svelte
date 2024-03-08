@@ -20,7 +20,7 @@
 
 	const mutation = createMutation({
 		mutationFn: () => apiDeleteUserById(user.id),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const deleteUser = async () => {

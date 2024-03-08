@@ -21,6 +21,7 @@
 
 		let deleteOnRastercarApiFailed = false;
 
+		// first we sign out of the rastercar API
 		apiSignOut()
 			.catch(() => {
 				deleteOnRastercarApiFailed = true;
@@ -28,7 +29,7 @@
 			// we call the server to delete the session cookie regardless of
 			// of the result of the apiSignOut just to be sure the cookie will
 			// still be deleted even the server did not respond
-			.then(() => deleteSessionCookie())
+			.then(deleteSessionCookie)
 			.catch(() => {
 				// if the deletion on the rastercar api went ok, the session id cookie got
 				// replaced by a expired one that will be deleted on a next request, so move

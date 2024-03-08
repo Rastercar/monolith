@@ -24,12 +24,12 @@
 
 	const removeTrackerMutation = createMutation({
 		mutationFn: () => apiSetTrackerVehicle({ vehicleTrackerId: tracker.id, vehicleId: null }),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const deleteTrackerMutation = createMutation({
 		mutationFn: (r: boolean) => apiDeleteTracker(tracker.id, { deleteAssociatedSimCards: r }),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const removeTracker = async () => {

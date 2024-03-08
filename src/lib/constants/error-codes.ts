@@ -1,4 +1,9 @@
 /**
+ * a request failed because the user lacks the required permissions
+ */
+export const MISSING_PERMISSIONS = 'MISSING_PERMISSIONS';
+
+/**
  * a request to the rastercar api endpoint was unauthorized because if did not contain
  * the session id cookie
  */

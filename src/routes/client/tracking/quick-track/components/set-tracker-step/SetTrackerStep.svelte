@@ -25,7 +25,7 @@
 
 	const mutation = createMutation({
 		mutationFn: (vehicleTrackerId: number) => apiSetTrackerVehicle({ vehicleId, vehicleTrackerId }),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	let stepperState: Writable<StepperState> = getContext('state');

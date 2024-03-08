@@ -29,7 +29,7 @@
 
 	const deleteAccessLevelMutation = createMutation({
 		mutationFn: () => apiDeleteAccessLevel(data.accessLevelId),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const deleteAccessLevel = async () => {

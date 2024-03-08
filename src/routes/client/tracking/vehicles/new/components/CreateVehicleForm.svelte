@@ -47,7 +47,6 @@
 		await $mutation.mutateAsync(validated.data);
 
 		toaster.success('vehicle created successfully');
-		// TODO!: am i needed ? superforms support files now
 		clearFileInputsUnderFormWithId(formId);
 		form.reset();
 	};

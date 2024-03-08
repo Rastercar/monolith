@@ -26,12 +26,12 @@
 
 	const removeSimCardMutation = createMutation({
 		mutationFn: (simCardId: number) => apiSetSimCardTracker({ newTrackerId: null, simCardId }),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const deleteSimCardMutation = createMutation({
 		mutationFn: (simCardId: number) => apiDeleteSimCard(simCardId),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const query = createQuery({

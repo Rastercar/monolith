@@ -1,7 +1,9 @@
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
-import { INVALID_SESSION, NO_SID_COOKIE } from '$lib/constants/error-codes';
+import { INVALID_SESSION, MISSING_PERMISSIONS, NO_SID_COOKIE } from '$lib/constants/error-codes';
+import type { apiPermission } from '$lib/constants/permissions';
+import { authStore } from '$lib/store/auth';
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
 import QueryStringAddon from 'wretch/addons/queryString';
@@ -22,9 +24,14 @@ const globalErrorHandlerAddon = {
 					try {
 						return await chain[method](cb);
 					} catch (err) {
-						// TODO: verificar se o erro é de missing permissions e se for remover do usuario
-						console.log({ xd: err });
-						return redirectOnSessionError(err);
+						const missingPermissions = getMissingPermissions(err);
+
+						if (missingPermissions.length > 0) {
+							authStore.removeUserPermissions(missingPermissions);
+						}
+
+						redirectOnSessionError(err);
+						throw err;
 					}
 				}
 			}),
@@ -45,8 +52,21 @@ export interface ApiErrorObject {
 	error: string;
 }
 
+interface ApiErrorObjectWithInfo {
+	error: string;
+	info: unknown;
+}
+
 export const isApiErrorObject = (v: unknown): v is ApiErrorObject => {
 	return typeof v === 'object' && v !== null && typeof (v as ApiErrorObject).error === 'string';
+};
+
+export const isApiErrorObjectWithInfo = (v: unknown): v is ApiErrorObjectWithInfo => {
+	if (typeof v !== 'object' || v === null) return false;
+
+	const a = v as ApiErrorObject;
+
+	return typeof a.error === 'string' && 'info' in a;
 };
 
 export const isErrorResponseWithErrorCode = (e: unknown, errorCode: string): boolean => {
@@ -62,22 +82,32 @@ export const isErrorResponseWithErrorCode = (e: unknown, errorCode: string): boo
  * otherwise throws the error
  */
 export const redirectOnSessionError = (err: unknown) => {
-	if (!browser || !(err instanceof WretchError) || !isApiErrorObject(err.json)) throw err;
+	if (!browser || !(err instanceof WretchError) || !isApiErrorObject(err.json)) return;
 
 	const errorCode = err.json.error;
 
 	// if the request failed because the session id cookie is not present,
 	// the user must have cleaned his cookies, and needs to sign in again
-	if (errorCode === NO_SID_COOKIE) {
-		goto(`/auth/sign-in?redirect=${window.location.pathname}`);
-		throw err;
-	}
+	if (errorCode === NO_SID_COOKIE) goto(`/auth/sign-in?redirect=${window.location.pathname}`);
 
 	// if the session is invalid or expired, the user needs to sign in, but first
 	// we need to clear the invalid session cookie by redirecting the user to the
 	// sign out page that does delete the cookie on the server side
 	if (errorCode === INVALID_SESSION) goto('/auth/sign-out');
-	throw err;
+};
+
+/**
+ * returns the missing permissions from a the API error if
+ * the request failed because it lacked permissions
+ */
+export const getMissingPermissions = (err: unknown): apiPermission[] => {
+	if (!browser || !(err instanceof WretchError) || !isApiErrorObjectWithInfo(err.json)) return [];
+
+	const { info, error } = err.json;
+
+	if (error !== MISSING_PERMISSIONS || !Array.isArray(info)) return [];
+
+	return info;
 };
 
 export const returnErrorStringOrParsedSchemaObj = <T>(res: T, schema: AnyZodObject): string | T => {

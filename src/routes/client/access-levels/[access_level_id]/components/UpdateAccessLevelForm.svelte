@@ -48,7 +48,7 @@
 
 	const mutation = createMutation({
 		mutationFn: (b: UpdateAccessLevelBody) => apiUpdateAccessLevel(accessLevel.id, b),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const dispatch = createEventDispatcher<{ 'access-level-updated': AccessLevel }>();

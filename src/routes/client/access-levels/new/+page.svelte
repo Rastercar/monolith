@@ -35,7 +35,7 @@
 
 	const mutation = createMutation({
 		mutationFn: (b: CreateAccessLevelBody) => apiCreateAccessLevel(b),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const createAccessLevel = async () => {

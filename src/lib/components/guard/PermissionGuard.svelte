@@ -5,6 +5,7 @@
 	import { popup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import AccessDenied from './errors/AccessDenied.svelte';
+	import { PUBLIC_IS_DEV } from '$env/static/public';
 
 	/**
 	 * The permissions needed to show the main slot
@@ -30,7 +31,9 @@
 	 * [PROD-TODO]
 	 * disable this prop when on production (make it be debugMode = debug && ENV === 'dev')
 	 */
-	export let debug = false;
+	export let debug = PUBLIC_IS_DEV;
+
+	const uniqueId = `permission-guard-${Date.now() + Math.random()}`;
 
 	onMount(() => {
 		// [PROD-TODO]
@@ -39,6 +42,15 @@
 		// for debug logging
 		if (debug && requiredPermissions.length === 0) {
 			console.warn('[DEV] PermissionGuard instantiated with no required permissions');
+		}
+
+		// a very ugly hack to add the default slot classes to the wrapper div, such a hack if fine
+		// since it only runs in debug mode, but devs beware of possible CSS diffs between debug and not
+		if (debug) {
+			const parent = document.getElementById(uniqueId);
+			if (parent && parent.firstChild) {
+				parent.classList.add((parent.firstChild as unknown as { className: string }).className);
+			}
 		}
 	});
 
@@ -64,6 +76,7 @@ that are in the guard or check the authorization yourself
 -->
 {#if debug}
 	<div
+		id={uniqueId}
 		class={debugWrapperClasses}
 		use:popup={{ event: 'click', target: 'debugPopup', placement: 'top' }}
 	>

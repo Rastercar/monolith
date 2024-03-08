@@ -23,7 +23,7 @@
 
 	const selectTrackerMutation = createMutation({
 		mutationFn: (vehicleTrackerId: number) => apiSetTrackerVehicle({ vehicleId, vehicleTrackerId }),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const associateTrackerToVehicle = (tracker: Tracker | null) => {

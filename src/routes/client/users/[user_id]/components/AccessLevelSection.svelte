@@ -26,7 +26,7 @@
 
 	const changeAccessLevelMutation = createMutation({
 		mutationFn: (accessLevelId: number) => apiChangeUserAccessLevel({ userId, accessLevelId }),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const changeAccessLevel = async () => {

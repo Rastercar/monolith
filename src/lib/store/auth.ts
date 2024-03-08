@@ -17,6 +17,17 @@ export const authStore = {
 
 	clearUser: () => store.set({ user: null }),
 
+	removeUserPermissions: (permissionsToRemove: apiPermission[]) => {
+		store.update((state) => {
+			if (state.user) {
+				state.user.accessLevel.permissions = state.user.accessLevel.permissions.filter(
+					(p) => !permissionsToRemove.includes(p as apiPermission)
+				);
+			}
+			return state;
+		});
+	},
+
 	updateUser: (newUserData: Partial<User>) => {
 		store.update((state) => {
 			if (state.user) state.user = { ...state.user, ...newUserData };

@@ -29,6 +29,7 @@
 	const mutation = createMutation({
 		mutationFn: (newPassword: string) =>
 			apiRecoverPasswordByToken({ newPassword, passwordResetToken: data.passwordRecoveryToken }),
+
 		onError: (err) => {
 			if (!(err instanceof WretchError)) {
 				return toaster.error();

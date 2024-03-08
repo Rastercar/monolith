@@ -22,7 +22,7 @@
 
 	const deleteSimCardMutation = createMutation({
 		mutationFn: () => apiDeleteSimCard(data.simCardId),
-		onError: toaster.error
+		onError: () => toaster.error()
 	});
 
 	const deleteSimCard = async () => {

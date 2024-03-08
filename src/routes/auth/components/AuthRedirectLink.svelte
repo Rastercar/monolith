@@ -7,7 +7,11 @@
 <div class="mt-4 flex justify-between text-sm">
 	{question}
 
-	<a {href} class="text-primary-700-200-token underline-offset-4 hover:underline">
+	<a
+		{href}
+		data-sveltekit-preload-data="off"
+		class="text-primary-700-200-token underline-offset-4 hover:underline"
+	>
 		{linkLabel}
 	</a>
 </div>

@@ -26,7 +26,7 @@
 
 		<hr class="mt-3 mb-4" />
 
-		<div class="flex justify-end" data-sveltekit-preload-data="off">
+		<div class="flex justify-end">
 			<a href="/auth/sign-out" class="btn variant-filled-secondary btn-sm">Sign Out</a>
 		</div>
 	</div>

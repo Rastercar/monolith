@@ -22,7 +22,9 @@
 		{
 			href: '/client/access-levels',
 			label: 'access levels',
-			icon: 'mdi:shield'
+			icon: 'mdi:shield',
+
+			requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
 		},
 		{
 			href: '/client/tracking/vehicles',
@@ -71,11 +73,7 @@
 <div class="mt-4">
 	{#if isInSettingsRoute}
 		<div class="flex justify-end">
-			<a
-				href="/client"
-				class="btn btn-sm variant-filled mx-4 mb-4"
-				data-sveltekit-preload-data="off"
-			>
+			<a href="/client" class="btn btn-sm variant-filled mx-4 mb-4">
 				<Icon icon="mdi:arrow-left" class="mr-2" />
 				exit settings
 			</a>

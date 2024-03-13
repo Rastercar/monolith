@@ -2,6 +2,13 @@
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 </script>
 
+<!--
+[PROD-TODO] we could show the page if we have the following permissions
+- CREATE_VEHICLE
+- CREATE_TRACKER or UPDATE_TRACKER
+
+sim card permissions are not required since the step is optional
+-->
 <PermissionGuard
 	requiredPermissions={[
 		// Needed for the first step
@@ -10,6 +17,9 @@
 		// Needed for setting the vehicle tracker to a new one
 		'CREATE_TRACKER',
 
+		// Needed for setting the vehicle tracker to a existing one
+		'UPDATE_TRACKER',
+
 		// Needed for adding SIM cards to the vehicle tracker
 		'CREATE_SIM_CARD',
 
@@ -17,12 +27,8 @@
 		'UPDATE_SIM_CARD',
 
 		// Needed for deleting SIM cards to free the tracker slots
-		'DELETE_SIM_CARD',
-
-		// Needed for setting the vehicle tracker to a existing one
-		'UPDATE_TRACKER'
+		'DELETE_SIM_CARD'
 	]}
-	showDeniedSlot
 >
 	<div class="p-6 max-w-3xl mx-auto">
 		<slot />

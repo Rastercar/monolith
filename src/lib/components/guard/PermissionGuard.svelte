@@ -1,8 +1,6 @@
 <script lang="ts">
-	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
 	import type { apiPermission } from '$lib/constants/permissions';
 	import { hasPermission } from '$lib/store/auth';
-	import { popup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import AccessDenied from './errors/AccessDenied.svelte';
 	import { PUBLIC_IS_DEV } from '$env/static/public';
@@ -11,13 +9,6 @@
 	 * The permissions needed to show the main slot
 	 */
 	export let requiredPermissions: apiPermission[];
-
-	/**
-	 * If the denied slot should be show if the user does not have the required permissions
-	 *
-	 * @default false
-	 */
-	export let showDeniedSlot = false;
 
 	/**
 	 * Debug mode will always show the main slot regardless if the user
@@ -33,32 +24,21 @@
 	 */
 	export let debug = PUBLIC_IS_DEV;
 
-	const uniqueId = `permission-guard-${Date.now() + Math.random()}`;
-
 	onMount(() => {
 		// [PROD-TODO]
 		// implement a linting rule to disable console logging, make some utils function
 		// for dev debug that will only log if the env is 'dev' and only use that function
 		// for debug logging
-		if (debug && requiredPermissions.length === 0) {
-			console.warn('[DEV] PermissionGuard instantiated with no required permissions');
-		}
+		if (!debug) return;
 
-		// a very ugly hack to add the default slot classes to the wrapper div, such a hack if fine
-		// since it only runs in debug mode, but devs beware of possible CSS diffs between debug and not
-		if (debug) {
-			const parent = document.getElementById(uniqueId);
-			if (parent && parent.firstChild) {
-				parent.classList.add((parent.firstChild as unknown as { className: string }).className);
-			}
+		if (requiredPermissions.length === 0) {
+			console.warn('[DEV] PermissionGuard instantiated with no required permissions');
+		} else {
+			console.info('[DEV] Permission guard: ', requiredPermissions);
 		}
 	});
 
 	$: hasPermissions = $hasPermission(requiredPermissions);
-
-	$: debugWrapperClasses = `border-2 border-dashed ${
-		hasPermissions ? 'border-green-500' : 'border-red-500'
-	} m-[-2px]`;
 </script>
 
 <!--
@@ -74,29 +54,9 @@ Any code of the current component importing the `PermissionGuard` will still run
 code that needs to run only if the user is authenticated either move that code to components
 that are in the guard or check the authorization yourself
 -->
-{#if debug}
-	<div
-		id={uniqueId}
-		class={debugWrapperClasses}
-		use:popup={{ event: 'click', target: 'debugPopup', placement: 'top' }}
-	>
-		<slot />
-	</div>
-
-	<ArrowUpTooltip dataPopup="debugPopup">
-		<span class="block mb-1">required permissions:</span>
-
-		<ul class="text-sm">
-			{#each requiredPermissions as perm}
-				<li>
-					{perm}
-				</li>
-			{/each}
-		</ul>
-	</ArrowUpTooltip>
-{:else if hasPermissions}
+{#if hasPermissions}
 	<slot />
-{:else if showDeniedSlot}
+{:else}
 	<slot name="denied">
 		<AccessDenied />
 	</slot>

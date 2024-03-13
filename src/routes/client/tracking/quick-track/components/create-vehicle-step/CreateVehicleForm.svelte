@@ -52,6 +52,10 @@
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
+		if (!validated.data.photo) {
+			delete validated.data.photo;
+		}
+
 		$mutation.mutateAsync(validated.data).then((createdVehicle) => {
 			dispatch('vehicle-created', createdVehicle);
 			$stepperState.current++;

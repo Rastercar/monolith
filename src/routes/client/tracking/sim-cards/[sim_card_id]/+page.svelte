@@ -7,6 +7,7 @@
 	import Icon from '@iconify/svelte';
 	import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 
 	export let data: PageData;
 
@@ -76,20 +77,24 @@
 				<hr class="my-4" />
 
 				<div class="flex px-4">
-					<button class="btn btn-sm variant-filled-error ml-auto mr-4" on:click={deleteSimCard}>
-						<Icon icon="mdi:trash" class="mr-2" />
-						delete
-					</button>
+					<PermissionGuard requiredPermissions={['DELETE_SIM_CARD']}>
+						<button class="btn btn-sm variant-filled-error ml-auto mr-4" on:click={deleteSimCard}>
+							<Icon icon="mdi:trash" class="mr-2" />
+							delete
+						</button>
+					</PermissionGuard>
 
-					<button
-						class="btn btn-sm variant-filled-primary"
-						on:click={() => {
-							editMode = true;
-						}}
-					>
-						<Icon icon="mdi:pencil" class="mr-2" />
-						edit
-					</button>
+					<PermissionGuard requiredPermissions={['UPDATE_SIM_CARD']}>
+						<button
+							class="btn btn-sm variant-filled-primary"
+							on:click={() => {
+								editMode = true;
+							}}
+						>
+							<Icon icon="mdi:pencil" class="mr-2" />
+							edit
+						</button>
+					</PermissionGuard>
 				</div>
 			</div>
 		{:else}

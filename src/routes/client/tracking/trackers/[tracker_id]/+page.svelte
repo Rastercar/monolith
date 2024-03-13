@@ -6,7 +6,7 @@
 	import Icon from '@iconify/svelte';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
-	import TrackerInfo from './components/tracker-card/TrackerInfo.svelte';
+	import TrackerInfo from './components/TrackerInfo.svelte';
 
 	export let data: PageData;
 

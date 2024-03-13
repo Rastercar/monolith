@@ -21,7 +21,7 @@
 	$: ({ user } = $authStore);
 </script>
 
-<nav class="list-nav" data-sveltekit-preload-data="off">
+<nav class="list-nav">
 	<ul>
 		{#each routes as r}
 			{#if (r.requiredPermissions ?? []).every((p) => user && user.accessLevel.permissions.includes(p))}

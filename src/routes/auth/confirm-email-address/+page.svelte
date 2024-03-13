@@ -33,7 +33,7 @@
 		onSuccess: authStore.setUserEmailAsVerified
 	});
 
-	onMount(() => $mutation.mutate());
+	onMount($mutation.mutate);
 </script>
 
 <div class="h-full flex justify-center pt-12">

@@ -46,7 +46,7 @@
 </span>
 
 {#if $query.isLoading}
-	{#each Array(supportedSimCards) as _, i}
+	{#each Array(supportedSimCards) as _}
 		<section class="card w-full my-4">
 			<div class="p-4 space-y-4">
 				<div class="placeholder h-12" />

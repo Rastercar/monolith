@@ -11,7 +11,7 @@
 	 */
 	export let tracker: Tracker;
 
-	export let slot: number;
+	export let slotNumber: number;
 
 	export let formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 
@@ -40,5 +40,10 @@
 {#if selectedOption === 'existing-sim-card'}
 	<SelectSimCardDataTable trackerIdToAssociate={tracker.id} on:sim-card-selected />
 {:else}
-	<CreateSimCardForm {slot} trackerIdToAssociate={tracker.id} {formSchema} on:sim-card-created />
+	<CreateSimCardForm
+		{slotNumber}
+		{formSchema}
+		trackerIdToAssociate={tracker.id}
+		on:sim-card-created
+	/>
 {/if}

@@ -6,6 +6,8 @@
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
+	import type { apiPermission } from '$lib/constants/permissions';
+	import { hasPermission } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { getModalStore, popup, type ModalComponent } from '@skeletonlabs/skeleton';
@@ -72,6 +74,29 @@
 		'tracker-deleted': void;
 		'tracker-removed-from-vehicle': void;
 	}>();
+
+	interface MenuOption {
+		id: string;
+		icon: string;
+		text: string;
+		requiredPermission: apiPermission;
+	}
+
+	const menuOptions: MenuOption[] = [
+		{ id: 'edit', icon: 'mdi:pencil', text: 'Edit', requiredPermission: 'UPDATE_TRACKER' as const },
+		{
+			id: 'delete',
+			icon: 'mdi:trash',
+			text: 'Permanently delete',
+			requiredPermission: 'DELETE_TRACKER' as const
+		},
+		{
+			id: 'remove',
+			icon: 'mdi:close',
+			text: 'Remove from vehicle',
+			requiredPermission: 'UPDATE_TRACKER' as const
+		}
+	].filter((opt) => $hasPermission(opt.requiredPermission));
 </script>
 
 <div class="px-4">
@@ -91,20 +116,18 @@
 
 		<SingleLineList
 			data-popup="tracker-options"
-			items={[
-				{ id: 'edit', icon: 'mdi:pencil', text: 'Edit' },
-				{ id: 'delete', icon: 'mdi:trash', text: 'Permanently delete' },
-				{ id: 'remove', icon: 'mdi:close', text: 'Remove from vehicle' }
-			]}
+			items={menuOptions}
 			on:item-clicked={onOptionsClick}
 		/>
 
-		<button
-			class="btn p-0 mb-auto"
-			use:popup={{ event: 'click', target: 'tracker-options', placement: 'bottom-end' }}
-		>
-			<Icon icon="mdi:menu" height={24} />
-		</button>
+		{#if menuOptions.length > 0}
+			<button
+				class="btn p-0 mb-auto"
+				use:popup={{ event: 'click', target: 'tracker-options', placement: 'bottom-end' }}
+			>
+				<Icon icon="mdi:menu" height={24} />
+			</button>
+		{/if}
 	</div>
 
 	<hr class="my-4" />

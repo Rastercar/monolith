@@ -24,6 +24,12 @@
 	 */
 	export let debug = PUBLIC_IS_DEV;
 
+	/**
+	 * if when the permissions are lacking, the `AccessDenied` component should
+	 * be shown on the `denied` slot
+	 */
+	export let accessDeniedComponentAsDefaultDeniedSlot = false;
+
 	onMount(() => {
 		// [PROD-TODO]
 		// implement a linting rule to disable console logging, make some utils function
@@ -56,8 +62,10 @@ that are in the guard or check the authorization yourself
 -->
 {#if hasPermissions}
 	<slot />
-{:else}
+{:else if accessDeniedComponentAsDefaultDeniedSlot}
 	<slot name="denied">
 		<AccessDenied />
 	</slot>
+{:else}
+	<slot name="denied" />
 {/if}

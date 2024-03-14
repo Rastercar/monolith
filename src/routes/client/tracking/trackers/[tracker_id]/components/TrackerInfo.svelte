@@ -2,6 +2,7 @@
 	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import { apiDeleteTracker } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
@@ -63,18 +64,22 @@
 <div class="px-4">
 	<div class="flex items-center">
 		<span class="mr-4">model: {tracker.model}</span>
-		<span>imei: {tracker.imei}</span>
+		<span class="mr-auto">imei: {tracker.imei}</span>
 
-		<button
-			class="btn btn-sm variant-filled-error ml-auto mr-3"
-			on:click={openDeleteTrackerConfirmModal}
-		>
-			<Icon icon="mdi:trash" class="mr-2" />delete
-		</button>
+		<PermissionGuard requiredPermissions={['DELETE_TRACKER']}>
+			<button class="btn btn-sm variant-filled-error" on:click={openDeleteTrackerConfirmModal}>
+				<Icon icon="mdi:trash" class="mr-2" />delete
+			</button>
+		</PermissionGuard>
 
-		<button class="btn btn-sm variant-filled-primary" on:click={() => dispatch('edit-mode-on')}>
-			<Icon icon="mdi:pencil" class="mr-2" />edit
-		</button>
+		<PermissionGuard requiredPermissions={['UPDATE_TRACKER']}>
+			<button
+				class="btn btn-sm variant-filled-primary ml-3"
+				on:click={() => dispatch('edit-mode-on')}
+			>
+				<Icon icon="mdi:pencil" class="mr-2" />edit
+			</button>
+		</PermissionGuard>
 	</div>
 </div>
 

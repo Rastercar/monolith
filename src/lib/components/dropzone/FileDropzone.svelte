@@ -9,7 +9,7 @@
 
 	type DeleteReturn = $$Generic;
 
-	export let defaultSrc: string = '';
+	export let defaultSrc = '';
 
 	export let deleteConfirmPrompt: string;
 
@@ -17,13 +17,13 @@
 
 	export let border = 'border-dashed border-2';
 
-	export let uploadMutationFn: (file: File) => Promise<UploadReturn>;
+	export let uploadMutationFn: (_file: File) => Promise<UploadReturn>;
 
 	export let deleteMutationFn: () => Promise<DeleteReturn>;
 
-	export let onUploadSuccess: (uploadResult: UploadReturn) => void = () => {};
+	export let onUploadSuccess: (_uploadResult: UploadReturn) => void = () => undefined;
 
-	export let onDeleteSuccess: (deleteResult: DeleteReturn) => void = () => {};
+	export let onDeleteSuccess: (_deleteResult: DeleteReturn) => void = () => undefined;
 
 	const toaster = getToaster();
 	const modalStore = getModalStore();
@@ -149,7 +149,7 @@
 	on:dragleave={() => {
 		isDraggingFile = false;
 	}}
-	on:dragover|preventDefault={() => {}}
+	on:dragover|preventDefault={() => undefined}
 >
 	{#if hasPictureToShow}
 		<slot name="preview" previewSrc={newPhoto?.preview ?? defaultSrc}>

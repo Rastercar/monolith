@@ -5,6 +5,7 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
 	import VehicleCardField from './VehicleCardField.svelte';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 
 	export let vehicle: Vehicle;
 
@@ -26,20 +27,24 @@
 </script>
 
 <div class="p-4 flex items-center">
-	<span class="text-lg">
+	<span class="text-lg mr-auto">
 		{vehicle.model || 'no model'} / Plate: {vehicle.plate.toLocaleUpperCase()}
 	</span>
 
-	<button class="btn-icon btn-icon-sm ml-auto variant-filled-error" on:click={deleteVehicle}>
-		<Icon icon="mdi:trash" />
-	</button>
+	<PermissionGuard requiredPermissions={['DELETE_VEHICLE']}>
+		<button class="btn-icon btn-icon-sm variant-filled-error" on:click={deleteVehicle}>
+			<Icon icon="mdi:trash" />
+		</button>
+	</PermissionGuard>
 
-	<button
-		class="btn-icon btn-icon-sm ml-3 variant-filled-primary"
-		on:click={() => dispatch('edit-click')}
-	>
-		<Icon icon="mdi:pencil" />
-	</button>
+	<PermissionGuard requiredPermissions={['UPDATE_VEHICLE']}>
+		<button
+			class="btn-icon btn-icon-sm ml-3 variant-filled-primary"
+			on:click={() => dispatch('edit-click')}
+		>
+			<Icon icon="mdi:pencil" />
+		</button>
+	</PermissionGuard>
 </div>
 
 <hr />

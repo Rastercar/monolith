@@ -2,7 +2,6 @@
 	import { fade } from 'svelte/transition';
 	import type { Transition, TransitionParams } from './transition';
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	type FadeTransition = typeof fade;
 	type TransitionIn = Transition;
 	type TransitionOut = Transition;

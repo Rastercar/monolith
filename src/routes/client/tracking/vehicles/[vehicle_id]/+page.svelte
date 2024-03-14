@@ -3,7 +3,7 @@
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+	import { createQuery } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
 	import VehicleLocationCard from './components/VehicleLocationCard.svelte';
 	import VehiclePhoto from './components/VehiclePhoto.svelte';
@@ -14,7 +14,6 @@
 
 	const query = createQuery({
 		queryKey: ['vehicle', data.vehicleId],
-		placeholderData: keepPreviousData,
 		queryFn: () => apiGetVehicleById(data.vehicleId)
 	});
 
@@ -67,6 +66,7 @@
 		/>
 
 		{#if false}
+			<!-- TODO:  -->
 			<VehicleLocationCard />
 		{/if}
 	{/if}

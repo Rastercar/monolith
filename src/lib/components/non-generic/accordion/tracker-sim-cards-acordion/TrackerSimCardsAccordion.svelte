@@ -11,6 +11,7 @@
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import SimCardChooser from './SimCardChooser.svelte';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 
 	export let tracker: Tracker;
 
@@ -119,35 +120,41 @@
 								</div>
 
 								<div class="flex">
-									<button
-										class="btn btn-sm variant-filled-warning mr-3"
-										on:click={() => {
-											removeSimCard(simForSlot.id);
-										}}
-									>
-										<Icon icon="mdi:close" class="mr-2" />
-										remove
-									</button>
+									<PermissionGuard requiredPermissions={['UPDATE_TRACKER']}>
+										<button
+											class="btn btn-sm variant-filled-warning mr-3"
+											on:click={() => {
+												removeSimCard(simForSlot.id);
+											}}
+										>
+											<Icon icon="mdi:close" class="mr-2" />
+											remove
+										</button>
+									</PermissionGuard>
 
-									<button
-										class="btn btn-sm variant-filled-error mr-auto"
-										on:click={() => {
-											deleteSimCard(simForSlot.id);
-										}}
-									>
-										<Icon icon="mdi:trash" class="mr-2" />
-										delete
-									</button>
+									<PermissionGuard requiredPermissions={['DELETE_SIM_CARD']}>
+										<button
+											class="btn btn-sm variant-filled-error"
+											on:click={() => {
+												deleteSimCard(simForSlot.id);
+											}}
+										>
+											<Icon icon="mdi:trash" class="mr-2" />
+											delete
+										</button>
+									</PermissionGuard>
 
-									<button
-										class="btn btn-sm variant-filled-primary"
-										on:click={() => {
-											editMode = true;
-										}}
-									>
-										<Icon icon="mdi:pencil" class="mr-2" />
-										edit
-									</button>
+									<PermissionGuard requiredPermissions={['UPDATE_SIM_CARD']}>
+										<button
+											class="btn btn-sm variant-filled-primary ml-auto"
+											on:click={() => {
+												editMode = true;
+											}}
+										>
+											<Icon icon="mdi:pencil" class="mr-2" />
+											edit
+										</button>
+									</PermissionGuard>
 								</div>
 							</div>
 						{:else}
@@ -176,13 +183,19 @@
 						{/if}
 					{:else}
 						<div class="p-4">
-							<SimCardChooser
-								{tracker}
-								slot={i + 1}
-								formSchema={createSimCardForm}
-								on:sim-card-created={appendSimCard}
-								on:sim-card-selected={appendSimCard}
-							/>
+							<PermissionGuard requiredPermissions={['CREATE_SIM_CARD', 'UPDATE_SIM_CARD']}>
+								<SimCardChooser
+									{tracker}
+									slotNumber={i + 1}
+									formSchema={createSimCardForm}
+									on:sim-card-created={appendSimCard}
+									on:sim-card-selected={appendSimCard}
+								/>
+
+								<span slot="denied" class="text-error-400-500-token">
+									you lack the permissions to set or create a tracker sim card
+								</span>
+							</PermissionGuard>
 						</div>
 					{/if}
 				</div>

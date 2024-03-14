@@ -23,7 +23,7 @@
 	 * this is also used to prevents errors when using this component multiple
 	 * times on the same page
 	 */
-	export let slot = 1;
+	export let slotNumber = 1;
 
 	/**
 	 * The ID of the tracker to associate with the SIM card being created
@@ -32,7 +32,7 @@
 
 	const form = superForm(formSchema, {
 		validators: zodClient(createSimCardSchema),
-		id: `sim-card-form-for-slot-${slot}`
+		id: `sim-card-form-for-slot-${slotNumber}`
 	});
 
 	const toaster = getToaster();

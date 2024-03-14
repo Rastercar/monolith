@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { removeVehiclePhoto, updateVehiclePhoto } from '$lib/api/vehicle';
 	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
+	import { hasPermission } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import { createEventDispatcher } from 'svelte';
@@ -30,18 +31,22 @@
 </script>
 
 <div class="mb-4">
-	<FileDropzone
-		deleteConfirmPrompt="Are you sure you want to remove the vehicle photo ?"
-		border=""
-		{onDeleteSuccess}
-		{onUploadSuccess}
-		{deleteMutationFn}
-		{uploadMutationFn}
-		showCropperOnFileSelection={false}
-		defaultSrc={photo ? cloudFrontUrl(photo) : undefined}
-	>
-		<div slot="preview" class="w-full" let:previewSrc>
-			<img src={previewSrc} alt="preview" class="h-60 w-full object-cover" />
-		</div>
-	</FileDropzone>
+	{#if $hasPermission('UPDATE_VEHICLE')}
+		<FileDropzone
+			deleteConfirmPrompt="Are you sure you want to remove the vehicle photo ?"
+			border=""
+			{onDeleteSuccess}
+			{onUploadSuccess}
+			{deleteMutationFn}
+			{uploadMutationFn}
+			showCropperOnFileSelection={false}
+			defaultSrc={photo ? cloudFrontUrl(photo) : undefined}
+		>
+			<div slot="preview" class="w-full" let:previewSrc>
+				<img src={previewSrc} alt="preview" class="h-60 w-full object-cover" />
+			</div>
+		</FileDropzone>
+	{:else}
+		<img class="h-60 w-full object-cover" src={photo ? cloudFrontUrl(photo) : ''} alt="vehicle" />
+	{/if}
 </div>

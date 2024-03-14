@@ -10,6 +10,11 @@
 			icon: 'mdi:home'
 		},
 		{
+			href: '/client/tracking/map',
+			label: 'map',
+			icon: 'mdi:map'
+		},
+		{
 			href: '/client/my-profile',
 			label: 'my profile',
 			icon: 'mdi:account'

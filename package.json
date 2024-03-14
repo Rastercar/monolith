@@ -20,6 +20,7 @@
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
     "@tailwindcss/forms": "0.5.5",
     "@tailwindcss/typography": "0.5.9",
+    "@types/google.maps": "^3.55.4",
     "@types/node": "20.5.6",
     "@types/ua-parser-js": "^0.7.37",
     "@typescript-eslint/eslint-plugin": "^5.62.0",

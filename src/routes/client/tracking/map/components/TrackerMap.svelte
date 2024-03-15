@@ -7,7 +7,7 @@
 	import Icon from '@iconify/svelte';
 	import { getDrawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
 	import SelectVehicleOverlay from './SelectVehicleOverlay.svelte';
-	import { MAP_CONTEXT_KEY, type MapContext } from '../map';
+	import { MAP_CONTEXT_KEY, mapStore, type MapContext } from '../map';
 
 	let mapElement: HTMLDivElement;
 	let googleMap: InstanceType<typeof window.google.maps.Map>;
@@ -50,10 +50,21 @@
 	const openDrawer = () => {
 		const drawerSettings: DrawerSettings = {
 			position: 'bottom',
-			height: 'h-[600px]',
+			height: 'h-[500px] md:h-[600px]',
 			meta: { component: SelectVehicleOverlay }
 		};
 		drawerStore.open(drawerSettings);
+	};
+
+	// TODO: ! rm me !
+	let lat = -34.397;
+	let lng = 150.664;
+	const getLatLng = () => {
+		const v = { lat, lng };
+		lat = lat + 0.01;
+		lng = lng + 0.01;
+
+		return v;
 	};
 
 	onMount(() => {
@@ -64,13 +75,17 @@
 <div id="map" class="h-full w-full">
 	{#if googleMap}
 		<MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
-			<div class="m-[10px] py-2 px-4 shadow-lg text-black bg-white rounded-sm">
+			<div
+				class="m-[10px] h-[40px] flex items-center px-4 shadow-lg text-black bg-white rounded-sm"
+			>
 				<button class="flex items-center text-lg" on:click={openDrawer}>
-					<Icon icon={'mdi:car'} class="mr-2" height={20} /> Vehicles
+					<Icon icon={'mdi:car'} class="mr-2" height={20} /> Trackers
 				</button>
 			</div>
 		</MapControl>
 
-		<TrackerMarker position={{ lat: -34.397, lng: 150.644 }} />
+		{#each Object.values($mapStore.selectedTrackers) as tracker, _}
+			<TrackerMarker position={getLatLng()} />
+		{/each}
 	{/if}
 </div>

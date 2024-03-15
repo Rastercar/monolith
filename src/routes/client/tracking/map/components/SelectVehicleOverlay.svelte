@@ -5,7 +5,7 @@
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import Icon from '@iconify/svelte';
-	import { getDrawerStore, Paginator } from '@skeletonlabs/skeleton';
+	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		type ColumnDef,
@@ -13,7 +13,6 @@
 		createSvelteTable,
 		getCoreRowModel,
 		renderComponent,
-		type OnChangeFn,
 		type RowSelectionState
 	} from '@tanstack/svelte-table';
 	import { derived, writable } from 'svelte/store';
@@ -22,9 +21,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import type { Unsubscriber } from 'svelte/motion';
 
-	const drawerStore = getDrawerStore();
-
-	const pagination = writable({ page: 1, pageSize: 5 });
+	// if the window is bigger than the tailwind "md" breakpoint
+	// then show 5 items per page, otherwise just 3 to make the table fit
+	const pagination = writable({ page: 1, pageSize: window.innerWidth > 768 ? 5 : 3 });
 
 	const filters = writable<GetTrackersFilters>({});
 
@@ -44,36 +43,36 @@
 
 	const columns: ColumnDef<Tracker>[] = [
 		{
-			accessorKey: 'model',
-			header: () => 'Model'
-		},
-		{
-			accessorKey: 'imei',
-			header: () => 'IMEI'
-		},
-		{
 			id: 'selector',
 			cell: (cell) =>
 				renderComponent(SimpleCheckbox, {
 					checked: cell.row.getIsSelected(),
 					disabled: !cell.row.getCanSelect(),
 					indeterminate: cell.row.getIsSomeSelected(),
-					onChange: cell.row.getToggleSelectedHandler()
+					onChange: (e: Event) => {
+						const isChecked = (e.target as HTMLInputElement).checked;
+
+						const tracker = cell.row.original;
+
+						if (!isChecked) {
+							delete $mapStore.selectedTrackers[tracker.id];
+							$mapStore.selectedTrackers = $mapStore.selectedTrackers;
+						} else {
+							$mapStore.selectedTrackers[tracker.id] = tracker;
+						}
+					}
 				})
+		},
+		{
+			accessorKey: 'imei',
+			header: () => 'IMEI'
 		}
 	];
 
-	const colspan = columns.length;
-
-	const onRowSelectionChange: OnChangeFn<RowSelectionState> = (updater) => {
-		if (updater instanceof Function) {
-			$mapStore.selectedTrackers = updater($mapStore.selectedTrackers);
-		} else {
-			$mapStore.selectedTrackers = updater;
-		}
-	};
-
 	let unsubscribeFromMapStoreChanges: Unsubscriber | null = null;
+
+	const getSelectionMap = (): RowSelectionState =>
+		Object.values($mapStore.selectedTrackers).reduce((acc, t) => ({ ...acc, [t.id]: true }), {});
 
 	const options = writable<TableOptions<Tracker>>({
 		data: $query.data?.records ?? [],
@@ -81,27 +80,27 @@
 		manualPagination: true,
 		state: {
 			// initialize the data table with the selected trackers from the mapStore
-			rowSelection: { ...$mapStore.selectedTrackers },
+			rowSelection: getSelectionMap(),
 			pagination: {
 				pageIndex: $pagination.page,
 				pageSize: $pagination.pageSize
 			}
 		},
+
 		// Important, use the row item ID as the row ID and not the row IDX,
 		// since we still need to known what items are selected even after the
 		// dataset changes
 		getRowId: (e) => e.id.toString(),
-		onRowSelectionChange,
 		getCoreRowModel: getCoreRowModel()
 	});
 
 	const table = createSvelteTable(options);
 
 	onMount(() => {
-		unsubscribeFromMapStoreChanges = mapStore.subscribe((v) => {
-			options.update((old) => ({
-				...old,
-				state: { ...old.state, rowSelection: v.selectedTrackers }
+		unsubscribeFromMapStoreChanges = mapStore.subscribe(() => {
+			options.update(({ state: oldState, ...rest }) => ({
+				...rest,
+				state: { ...oldState, rowSelection: getSelectionMap() }
 			}));
 		});
 	});
@@ -109,13 +108,15 @@
 	onDestroy(() => {
 		if (unsubscribeFromMapStoreChanges) unsubscribeFromMapStoreChanges();
 	});
+
+	$: selectedTrackersCount = Object.keys($mapStore.selectedTrackers).length;
 </script>
 
-<div class="flex justify-between my-4">
-	<div class="mx-auto w-full max-w-2xl">
+<div class="flex justify-between">
+	<div class="mx-auto w-full max-w-2xl p-4">
 		<h2 class="flex items-center mb-4 text-2xl mx-auto">
 			<Icon icon="mdi:satellite" class="mr-2" height={36} />
-			Select the trackers to visualize
+			Trackers to show
 		</h2>
 
 		<DebouncedTextField
@@ -125,17 +126,17 @@
 			on:change={(e) => ($filters.imei = e.detail)}
 		/>
 
-		<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />
+		<DataTable {table} colspan={columns.length} isLoading={$query.isLoading} class="mb-2" />
 
 		<Paginator
-			select="select min-w-[150px] py-1"
+			select="select min-w-[150px] py-1 hidden md:block"
 			settings={{
 				page: $pagination.page - 1,
 				limit: $pagination.pageSize,
 				size: $query.data?.itemCount ?? 0,
-				amounts: [1, 5, 10, 15]
+				amounts: [1, 3, 5, 10, 15]
 			}}
-			maxNumerals={1}
+			maxNumerals={3}
 			showFirstLastButtons
 			on:page={({ detail: zeroIndexedPage }) => {
 				$pagination.page = zeroIndexedPage + 1;
@@ -144,12 +145,23 @@
 				$pagination.pageSize = pageSize;
 			}}
 		/>
-	</div>
 
-	<button
-		class="btn btn-icon btn-icon-sm variant-filled mx-4 mb-auto"
-		on:click={() => drawerStore.close()}
-	>
-		<Icon icon="mdi:close" />
-	</button>
+		<div class="flex items-center mt-6">
+			<span class="mr-auto">
+				{selectedTrackersCount || 'no'} selected trackers
+			</span>
+
+			<button
+				class="btn btn-sm variant-filled-primary"
+				on:click={() => ($mapStore.selectedTrackers = {})}
+			>
+				<Icon icon="mdi:trash" class="mr-1" />
+				clear all
+			</button>
+		</div>
+
+		<!-- TODO: remove me ! -->
+		<pre>{JSON.stringify($table.getState().rowSelection, null, 2)}</pre>
+		<pre>{JSON.stringify($mapStore, null, 2)}</pre>
+	</div>
 </div>

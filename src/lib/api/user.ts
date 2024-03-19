@@ -59,6 +59,12 @@ export const apiGetCurrentUserSessions = (): Promise<UserSession[]> =>
 	rastercarApi.get('/user/me/session').json<UserSession[]>().then(z.array(userSessionSchema).parse);
 
 /**
+ * gets a short lived token for the currently logged in user
+ */
+export const apiGetJwtForCurrentUser = async (): Promise<string> =>
+	rastercarApi.get('/user/me/short-lived-token').json<string>();
+
+/**
  * get all sessions belonging to a user
  */
 export const apiGetUserSessions = (id: number): Promise<UserSession[]> =>

@@ -1,5 +1,6 @@
 import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
 import type { Tracker } from '$lib/api/tracker.schema';
+import type { TrackerPosition } from '$lib/api/tracking.schema';
 import { Socket, io } from 'socket.io-client';
 import { getContext } from 'svelte';
 import { writable } from 'svelte/store';
@@ -9,6 +10,8 @@ export interface MapContext {
 	getMapElement: () => HTMLDivElement;
 }
 
+type MapTracker = Tracker & { lastPosition?: { lat: number; lng: number } };
+
 interface MapState {
 	/**
 	 * the trackers that should be shown on the map
@@ -16,7 +19,7 @@ interface MapState {
 	 * key: tracker ID
 	 * val: the tracker itself
 	 */
-	selectedTrackers: Record<number, Tracker>;
+	selectedTrackers: Record<number, MapTracker>;
 }
 
 /**
@@ -26,7 +29,7 @@ interface ServerToClientEvents {
 	/**
 	 * uma nova posição do rastreador foi recebida
 	 */
-	position: (_data: { trackerId: number; lat: number; lng: number }) => void;
+	position: (_position: TrackerPosition) => void;
 	error: (_err: { error: string }) => void;
 }
 

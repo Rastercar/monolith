@@ -1,12 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount, setContext } from 'svelte';
-	import { loadGoogleMaps } from '$lib/utils/google-maps';
-	import { PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public';
-	import TrackerMarker from './TrackerMarker.svelte';
-	import MapControl from './MapControl.svelte';
-	import Icon from '@iconify/svelte';
-	import { getDrawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
-	import SelectVehicleOverlay from './SelectVehicleOverlay.svelte';
+	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import {
 		MAP_CONTEXT_KEY,
 		mapStore,
@@ -14,123 +8,108 @@
 		createWsConnectionToTrackingNamespace
 	} from '../map';
 	import { apiGetJwtForCurrentUser } from '$lib/api/user';
+	import SelectTrackersMapControl from './SelectTrackersMapControl.svelte';
+	import { getToaster } from '$lib/store/toaster';
+	import TrackerMarker from './TrackerMarker.svelte';
 
 	let mapElement: HTMLDivElement;
+
 	let googleMap: InstanceType<typeof window.google.maps.Map>;
 
-	const drawerStore = getDrawerStore();
+	let socket: ReturnType<typeof createWsConnectionToTrackingNamespace> | null = null;
 
-	const initMap = async () => {
-		const mapEl = document.getElementById('map') as HTMLDivElement;
+	let timer: ReturnType<typeof setTimeout>;
 
-		if (!mapEl) {
-			console.error('failed to find map element');
-			return;
-		}
+	let interval: ReturnType<typeof setInterval>;
 
-		mapElement = mapEl;
-
-		googleMap = new window.google.maps.Map(mapElement, {
-			center: { lat: -34.397, lng: 150.644 },
-			zoom: 8,
-			// [TODO-PROD] do not use a demo map id in prod
-			mapId: 'DEMO_MAP_ID'
-		});
-	};
+	let oldSelectedTrackers: number[] = [];
 
 	setContext<MapContext>(MAP_CONTEXT_KEY, {
 		getGoogleMap: () => googleMap,
 		getMapElement: () => mapElement
 	});
 
-	const loadMapLibraries = async () => {
-		const googleMapsAlreadyLoaded = window.google?.maps !== undefined;
-		if (!googleMapsAlreadyLoaded) {
-			loadGoogleMaps({ key: PUBLIC_GOOGLE_MAPS_API_KEY, v: 'weekly' });
-			await window.google.maps.importLibrary('maps');
+	const toaster = getToaster();
+
+	const initMap = async () => {
+		await loadMapLibraries();
+
+		mapElement = document.getElementById('map') as HTMLDivElement;
+
+		if (!mapElement) {
+			console.error('failed to find map element');
+			return;
 		}
 
-		const markerAlreadyLoaded = window.google?.maps?.marker;
-		if (!markerAlreadyLoaded) {
-			await window.google.maps.importLibrary('marker');
-		}
+		// TODO: how do we determine the center ?
+		googleMap = new window.google.maps.Map(mapElement, {
+			center: { lat: -54.397, lng: 150.644 },
+			zoom: 12,
+			// [TODO-PROD] do not use a demo map id in prod
+			mapId: 'DEMO_MAP_ID'
+		});
 	};
 
-	const openDrawer = () => {
-		const drawerSettings: DrawerSettings = {
-			position: 'bottom',
-			height: 'h-[500px] md:h-[600px]',
-			meta: { component: SelectVehicleOverlay }
-		};
-		drawerStore.open(drawerSettings);
-	};
+	// TODO: performance
+	// since we subscribe to the mapStore but we also store the tracker lastLocation on the mapStore
+	// every time a position is recieved the subscribe callback is called, maybe its a good idead to
+	// keep a different map of (trackerId -> position) and have this map store the positions, avoiding
+	// the needless triggers
+	//
+	// Emit a SocketIO message to the rastercar API, informing the trackers we want
+	// to recieve positions of, whenever the tracker selection changed
+	const unsubscribe = mapStore.subscribe((v) => {
+		let newTrackerIds = Object.keys(v.selectedTrackers)
+			.map((v) => parseInt(v))
+			.filter((n) => !Number.isNaN(n));
 
-	// TODO: ! rm me !
-	let lat = -34.397;
-	let lng = 150.664;
+		// Debounce the selection to avoid sending messages to the API on
+		// quick selection changes such as toggling a checkbox rapidly
+		if (timer) clearTimeout(timer);
 
-	// TODO: ! rm me !
-	const getLatLng = () => {
-		const v = { lat, lng };
-		lat = lat + 0.01;
-		lng = lng + 0.01;
+		timer = setTimeout(() => {
+			if (!socket) return;
 
-		return v;
-	};
+			const trackerSelectionChanged =
+				oldSelectedTrackers.length !== newTrackerIds.length ||
+				!newTrackerIds.every((id) => oldSelectedTrackers.includes(id));
 
-	// 1- Socket io tem namespaces, que server para separar middlewares, salas, event handlers, etc
-	// podemos usar namespaces para organizar nossa aplicação, no nosso caso, usaremos o namespace
-	// /tracking
+			// If the ids of the trackers did not change (theyre the same but just)
+			// in a different order, dont bother sending the message
+			if (!trackerSelectionChanged) return;
 
-	// 2- Possivelmente cada imei de um rastreador é uma sala, e conforme chega posições para este imei,
-	// é emitido eventos para sua sala, isso simplifica o ponto 3
-
-	// 3- O requisitante então informa ao servidor quais veiculos esta interessado em receber update,
-	// o servidor armazena isso de alguma maneira em memória e então envia as posições que este cliente
-	// esta interessado (ver: https://socket.io/docs/v4/emit-cheatsheet/)
-
-	// 4- Se para um imei especifico, não há ngm interessado, a sala não deve existir, logo emits não serão
-	// feitos, (teoricamente, rooms são channels, e como não tem ngm escutando no channel nada deve ocorrer
-	// e se bobear rooms vazias são excluidas (verificar se sala existe, ver https://socket.io/docs/v4/rooms/)
-
-	// TODO: !
-	let socket: ReturnType<typeof createWsConnectionToTrackingNamespace> | null = null;
-
-	let interval: ReturnType<typeof setInterval>;
-
-	mapStore.subscribe((v) => {
-		if (socket)
-			socket.emit(
-				'change_trackers_to_listen',
-				Object.keys(v.selectedTrackers).map((v) => parseInt(v))
-			);
+			oldSelectedTrackers = newTrackerIds;
+			socket.emit('change_trackers_to_listen', newTrackerIds);
+		}, 500);
 	});
 
 	onMount(async () => {
-		const token = await apiGetJwtForCurrentUser();
-		await loadMapLibraries();
-
 		initMap();
+
+		const token = await apiGetJwtForCurrentUser().catch((e) => {
+			// TODO:
+			// add something to the map overlay and a retry button
+			toaster.error('internal error loading tracker data');
+			throw e;
+		});
 
 		socket = createWsConnectionToTrackingNamespace(token);
 
-		// TODO: realtime map update
-		socket.on('position', console.log);
+		socket.on('position', ({ trackerId, lat, lng }) => {
+			$mapStore.selectedTrackers[trackerId].lastPosition = { lat, lng };
+		});
 
+		// TODO: proper error handling
 		socket.on('error', (error) => {
 			console.warn(error);
 		});
-
-		// TODO: what now ? select the first few trackers ????
-		console.log('change_trackers_to_listen');
-		socket.emit(
-			'change_trackers_to_listen',
-			[1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 14, 15, 16, 17, 18, 600]
-		);
 	});
 
 	onDestroy(() => {
 		if (interval) clearInterval(interval);
+		if (timer) clearInterval(interval);
+
+		unsubscribe();
 
 		if (socket) {
 			socket.disconnect();
@@ -141,18 +120,12 @@
 
 <div id="map" class="h-full w-full">
 	{#if googleMap}
-		<MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
-			<div
-				class="m-[10px] h-[40px] flex items-center px-4 shadow-lg text-black bg-white rounded-sm"
-			>
-				<button class="flex items-center text-lg" on:click={openDrawer}>
-					<Icon icon={'mdi:car'} class="mr-2" height={20} /> Trackers
-				</button>
-			</div>
-		</MapControl>
+		<SelectTrackersMapControl />
 
-		{#each Object.values($mapStore.selectedTrackers) as _tracker}
-			<TrackerMarker position={getLatLng()} />
+		{#each Object.values($mapStore.selectedTrackers) as tracker}
+			{#if tracker.lastPosition}
+				<TrackerMarker position={tracker.lastPosition} />
+			{/if}
 		{/each}
 	{/if}
 </div>

@@ -1,7 +1,26 @@
 /* eslint-disable */
 
+import { PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public';
+
+/**
+ * loads the google maps and marker library
+ */
+export const loadMapLibraries = async () => {
+  const googleMapsAlreadyLoaded = window.google?.maps !== undefined;
+
+  if (!googleMapsAlreadyLoaded) {
+    loadGoogleMaps({ key: PUBLIC_GOOGLE_MAPS_API_KEY, v: 'weekly' });
+    await window.google.maps.importLibrary('maps');
+  }
+
+  const markerAlreadyLoaded = window.google?.maps?.marker;
+  if (!markerAlreadyLoaded) {
+    await window.google.maps.importLibrary('marker');
+  }
+};
+
 // https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
-export const loadGoogleMaps = (g: { key: string; v: string }) => {
+const loadGoogleMaps = (g: { key: string; v: string }) => {
   var h,
     a,
     k,

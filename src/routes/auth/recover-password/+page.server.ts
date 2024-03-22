@@ -3,7 +3,7 @@ import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 // [PROD-TODO] remove default test user
 const schema = z.object({
@@ -14,9 +14,9 @@ export const load: PageServerLoad = async () => ({
 	form: await superValidate(zod(schema))
 });
 
-export const actions = {
+export const actions: Actions = {
 	default: async ({ request }) => {
-		const form = await superValidate(request, schema);
+		const form = await superValidate(request, zod(schema));
 
 		if (!form.valid) return fail(400, { form });
 

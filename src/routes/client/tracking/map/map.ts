@@ -1,26 +1,27 @@
 import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
 import type { Tracker } from '$lib/api/tracker.schema';
 import type { TrackerPosition } from '$lib/api/tracking.schema';
+import { localStorageStore } from '@skeletonlabs/skeleton';
 import { Socket, io } from 'socket.io-client';
 import { getContext } from 'svelte';
-import { writable } from 'svelte/store';
 
 export interface MapContext {
 	getGoogleMap: () => InstanceType<typeof window.google.maps.Map>;
 	getMapElement: () => HTMLDivElement;
 }
 
-type MapTracker = Tracker & { lastPosition?: { lat: number; lng: number } };
-
-interface MapState {
-	/**
-	 * the trackers that should be shown on the map
-	 *
-	 * key: tracker ID
-	 * val: the tracker itself
-	 */
-	selectedTrackers: Record<number, MapTracker>;
+interface LatLng {
+	lat: number;
+	lng: number;
 }
+
+/**
+ * the trackers that should be shown on the map
+ *
+ * key: tracker ID
+ * val: the tracker itself
+ */
+type TrackerSelection = Record<number, Tracker>;
 
 /**
  * events recieved by the rastercar api
@@ -59,9 +60,22 @@ export const createWsConnectionToTrackingNamespace = (
 	io(wsUrl, { auth: { token }, reconnectionDelayMax: 10_000 });
 
 /**
- * state of the main `Map` page
+ * IDS of the trackers that are selected to be show on the live
+ * tracking map and should recieve real time updates.
  */
-export const mapStore = writable<MapState>({ selectedTrackers: {} });
+export const selectedTrackerStore = localStorageStore<TrackerSelection>(
+	'map-selected-trackers',
+	{}
+);
+
+/**
+ * KEY: tracker ID
+ * VAL: tracker last position
+ */
+export const trackerPositionStore = localStorageStore<Record<number, LatLng>>(
+	'tracker-position-cache',
+	{}
+);
 
 export const MAP_CONTEXT_KEY = 'MAP_CONTEXT_KEY';
 

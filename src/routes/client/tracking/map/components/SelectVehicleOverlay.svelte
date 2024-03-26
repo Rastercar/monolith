@@ -17,7 +17,7 @@
 	} from '@tanstack/svelte-table';
 	import { derived, writable } from 'svelte/store';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
-	import { mapStore } from '../map';
+	import { selectedTrackerStore } from '../map';
 	import { onDestroy, onMount } from 'svelte';
 	import type { Unsubscriber } from 'svelte/motion';
 
@@ -55,10 +55,11 @@
 						const tracker = cell.row.original;
 
 						if (!isChecked) {
-							delete $mapStore.selectedTrackers[tracker.id];
-							$mapStore.selectedTrackers = $mapStore.selectedTrackers;
+							delete $selectedTrackerStore[tracker.id];
+							$selectedTrackerStore = $selectedTrackerStore;
 						} else {
-							$mapStore.selectedTrackers[tracker.id] = tracker;
+							$selectedTrackerStore[tracker.id] = tracker;
+							$selectedTrackerStore = $selectedTrackerStore;
 						}
 					}
 				})
@@ -72,7 +73,7 @@
 	let unsubscribeFromMapStoreChanges: Unsubscriber | null = null;
 
 	const getSelectionMap = (): RowSelectionState =>
-		Object.values($mapStore.selectedTrackers).reduce((acc, t) => ({ ...acc, [t.id]: true }), {});
+		Object.values($selectedTrackerStore).reduce((acc, t) => ({ ...acc, [t.id]: true }), {});
 
 	const options = writable<TableOptions<Tracker>>({
 		data: $query.data?.records ?? [],
@@ -97,7 +98,7 @@
 	const table = createSvelteTable(options);
 
 	onMount(() => {
-		unsubscribeFromMapStoreChanges = mapStore.subscribe(() => {
+		unsubscribeFromMapStoreChanges = selectedTrackerStore.subscribe(() => {
 			options.update(({ state: oldState, ...rest }) => ({
 				...rest,
 				state: { ...oldState, rowSelection: getSelectionMap() }
@@ -109,7 +110,7 @@
 		if (unsubscribeFromMapStoreChanges) unsubscribeFromMapStoreChanges();
 	});
 
-	$: selectedTrackersCount = Object.keys($mapStore.selectedTrackers).length;
+	$: selectedTrackersCount = Object.keys($selectedTrackerStore).length;
 </script>
 
 <div class="flex justify-between">
@@ -153,7 +154,7 @@
 
 			<button
 				class="btn btn-sm variant-filled-primary"
-				on:click={() => ($mapStore.selectedTrackers = {})}
+				on:click={() => ($selectedTrackerStore = {})}
 			>
 				<Icon icon="mdi:trash" class="mr-1" />
 				clear all
@@ -162,6 +163,6 @@
 
 		<!-- TODO: remove me ! -->
 		<pre>{JSON.stringify($table.getState().rowSelection, null, 2)}</pre>
-		<pre>{JSON.stringify($mapStore, null, 2)}</pre>
+		<pre>{JSON.stringify($selectedTrackerStore, null, 2)}</pre>
 	</div>
 </div>

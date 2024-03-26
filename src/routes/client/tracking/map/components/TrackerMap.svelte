@@ -3,9 +3,10 @@
 	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import {
 		MAP_CONTEXT_KEY,
-		mapStore,
+		selectedTrackerStore,
 		type MapContext,
-		createWsConnectionToTrackingNamespace
+		createWsConnectionToTrackingNamespace,
+		trackerPositionStore
 	} from '../map';
 	import { apiGetJwtForCurrentUser } from '$lib/api/user';
 	import SelectTrackersMapControl from './SelectTrackersMapControl.svelte';
@@ -41,25 +42,21 @@
 			return;
 		}
 
-		// TODO: how do we determine the center ?
+		const defaultCenter = { lat: -20.397, lng: -54.644 };
+		const center = Object.values($trackerPositionStore)[0] ?? defaultCenter;
+
 		googleMap = new window.google.maps.Map(mapElement, {
-			center: { lat: -54.397, lng: 150.644 },
-			zoom: 12,
+			center,
+			zoom: 16,
 			// [TODO-PROD] do not use a demo map id in prod
 			mapId: 'DEMO_MAP_ID'
 		});
 	};
 
-	// TODO: performance
-	// since we subscribe to the mapStore but we also store the tracker lastLocation on the mapStore
-	// every time a position is recieved the subscribe callback is called, maybe its a good idead to
-	// keep a different map of (trackerId -> position) and have this map store the positions, avoiding
-	// the needless triggers
-	//
 	// Emit a SocketIO message to the rastercar API, informing the trackers we want
 	// to recieve positions of, whenever the tracker selection changed
-	const unsubscribe = mapStore.subscribe((v) => {
-		let newTrackerIds = Object.keys(v.selectedTrackers)
+	const unsubscribe = selectedTrackerStore.subscribe((v) => {
+		let newTrackerIds = Object.keys(v)
 			.map((v) => parseInt(v))
 			.filter((n) => !Number.isNaN(n));
 
@@ -96,7 +93,7 @@
 		socket = createWsConnectionToTrackingNamespace(token);
 
 		socket.on('position', ({ trackerId, lat, lng }) => {
-			$mapStore.selectedTrackers[trackerId].lastPosition = { lat, lng };
+			$trackerPositionStore[trackerId] = { lat, lng };
 		});
 
 		// TODO: proper error handling
@@ -122,9 +119,11 @@
 	{#if googleMap}
 		<SelectTrackersMapControl />
 
-		{#each Object.values($mapStore.selectedTrackers) as tracker}
-			{#if tracker.lastPosition}
-				<TrackerMarker position={tracker.lastPosition} />
+		{#each Object.values($selectedTrackerStore) as tracker}
+			{@const position = $trackerPositionStore[tracker.id]}
+
+			{#if position}
+				<TrackerMarker {position} />
 			{/if}
 		{/each}
 	{/if}

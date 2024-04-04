@@ -9,7 +9,7 @@
 
 <Drawer>
 	{#if $drawerStore.meta?.component}
-		<svelte:component this={$drawerStore.meta.component} />
+		<svelte:component this={$drawerStore.meta.component} {...$drawerStore.meta.props} />
 	{:else}
 		<div class="p-4 flex justify-between space-x-2 items-center">
 			<UserDisplay />

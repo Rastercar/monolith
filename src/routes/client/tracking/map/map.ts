@@ -4,15 +4,17 @@ import type { TrackerPosition } from '$lib/api/tracking.schema';
 import { localStorageStore } from '@skeletonlabs/skeleton';
 import { Socket, io } from 'socket.io-client';
 import { getContext } from 'svelte';
+import { get } from 'svelte/store';
 
 export interface MapContext {
-	getGoogleMap: () => InstanceType<typeof window.google.maps.Map>;
+	getGoogleMap: () => InstanceType<typeof google.maps.Map>;
 	getMapElement: () => HTMLDivElement;
 }
 
-interface LatLng {
+export interface Position {
 	lat: number;
 	lng: number;
+	timestamp: string;
 }
 
 /**
@@ -28,9 +30,13 @@ type TrackerSelection = Record<number, Tracker>;
  */
 interface ServerToClientEvents {
 	/**
-	 * uma nova posição do rastreador foi recebida
+	 * a new position for a tracker has been recieved
 	 */
 	position: (_position: TrackerPosition) => void;
+	/**
+	 * some server error has happened, this is mostly
+	 * usefull for debugging
+	 */
 	error: (_err: { error: string }) => void;
 }
 
@@ -46,8 +52,6 @@ interface ClientToServerEvents {
  */
 export const SOCKET_IO_TRACKING_NAMESPACE = 'tracking';
 
-const wsUrl = `${PUBLIC_RASTERCAR_API_BASE_URL}/${SOCKET_IO_TRACKING_NAMESPACE}`;
-
 /**
  * creates a SocketIO connection to the rastercar API under the tracking namspace
  *
@@ -57,7 +61,10 @@ const wsUrl = `${PUBLIC_RASTERCAR_API_BASE_URL}/${SOCKET_IO_TRACKING_NAMESPACE}`
 export const createWsConnectionToTrackingNamespace = (
 	token: string
 ): Socket<ServerToClientEvents, ClientToServerEvents> =>
-	io(wsUrl, { auth: { token }, reconnectionDelayMax: 10_000 });
+	io(`${PUBLIC_RASTERCAR_API_BASE_URL}/${SOCKET_IO_TRACKING_NAMESPACE}`, {
+		auth: { token },
+		reconnectionDelayMax: 10_000
+	});
 
 /**
  * IDS of the trackers that are selected to be show on the live
@@ -72,7 +79,7 @@ export const selectedTrackerStore = localStorageStore<TrackerSelection>(
  * KEY: tracker ID
  * VAL: tracker last position
  */
-export const trackerPositionStore = localStorageStore<Record<number, LatLng>>(
+export const trackerPositionStore = localStorageStore<Record<number, Position>>(
 	'tracker-position-cache',
 	{}
 );
@@ -83,3 +90,24 @@ export const MAP_CONTEXT_KEY = 'MAP_CONTEXT_KEY';
  * gets the appropriate context for components under the `Map` page
  */
 export const getMapContext = () => getContext<MapContext>(MAP_CONTEXT_KEY);
+
+/**
+ * creates a LatLngBounds that fits all the selected trackers
+ * that have positions to be show on the map
+ *
+ * @important
+ * the bounds might be empty if there are no trackers selected
+ * or all of them do not have cached positions.
+ */
+export const getTrackersMapBounds = () => {
+	const bounds = new google.maps.LatLngBounds();
+
+	const cachedTrackerPositions = get(trackerPositionStore);
+
+	Object.values(get(selectedTrackerStore)).forEach((selectedTracker) => {
+		const position = cachedTrackerPositions[selectedTracker.id];
+		if (position) bounds.extend(position);
+	});
+
+	return bounds;
+};

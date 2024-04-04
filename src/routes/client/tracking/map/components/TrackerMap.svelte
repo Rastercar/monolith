@@ -6,29 +6,38 @@
 		selectedTrackerStore,
 		type MapContext,
 		createWsConnectionToTrackingNamespace,
-		trackerPositionStore
+		trackerPositionStore,
+		getTrackersMapBounds
 	} from '../map';
 	import { apiGetJwtForCurrentUser } from '$lib/api/user';
-	import SelectTrackersMapControl from './SelectTrackersMapControl.svelte';
-	import { getToaster } from '$lib/store/toaster';
+	import TrackersMapControls from './TrackersMapControls.svelte';
 	import TrackerMarker from './TrackerMarker.svelte';
+	import { dev } from '$app/environment';
+	import { getToaster } from '$lib/store/toaster';
+	import ConnectionFailedAlert from './ConnectionFailedAlert.svelte';
 
 	let mapElement: HTMLDivElement;
 
 	let googleMap: InstanceType<typeof window.google.maps.Map>;
 
+	/**
+	 * SocketIO connection for realtime tracker position updates
+	 */
 	let socket: ReturnType<typeof createWsConnectionToTrackingNamespace> | null = null;
 
-	let timer: ReturnType<typeof setTimeout>;
+	/**
+	 * Timer for deboucing changed tracker selection
+	 */
+	let trackerSelectionDebounceTimer: ReturnType<typeof setTimeout>;
 
-	let interval: ReturnType<typeof setInterval>;
+	/**
+	 * The trackers currently selected to be shown on the map
+	 */
+	let selectedTrackers: number[] = [];
 
-	let oldSelectedTrackers: number[] = [];
+	let isConnectingToApi = false;
 
-	setContext<MapContext>(MAP_CONTEXT_KEY, {
-		getGoogleMap: () => googleMap,
-		getMapElement: () => mapElement
-	});
+	let showConnectionErrorAlert = false;
 
 	const toaster = getToaster();
 
@@ -36,21 +45,32 @@
 		await loadMapLibraries();
 
 		mapElement = document.getElementById('map') as HTMLDivElement;
+		if (!mapElement) throw new Error('failed to get map element');
 
-		if (!mapElement) {
-			console.error('failed to find map element');
-			return;
-		}
+		const cachedPositionsBounds = getTrackersMapBounds();
 
 		const defaultCenter = { lat: -20.397, lng: -54.644 };
-		const center = Object.values($trackerPositionStore)[0] ?? defaultCenter;
+
+		const center = cachedPositionsBounds.isEmpty()
+			? cachedPositionsBounds.getCenter()
+			: defaultCenter;
 
 		googleMap = new window.google.maps.Map(mapElement, {
 			center,
-			zoom: 16,
+			zoom: 20,
+
+			// for now we dont allow the fullscreen mode
+			// because it uses the browser fullscreen API
+			// where all elements that are not children on
+			// the map div are not shown, this is a problem
+			// for the select tracker overlay
+			fullscreenControl: false,
+
 			// [TODO-PROD] do not use a demo map id in prod
 			mapId: 'DEMO_MAP_ID'
 		});
+
+		if (!cachedPositionsBounds.isEmpty()) googleMap.fitBounds(cachedPositionsBounds);
 	};
 
 	// Emit a SocketIO message to the rastercar API, informing the trackers we want
@@ -62,49 +82,67 @@
 
 		// Debounce the selection to avoid sending messages to the API on
 		// quick selection changes such as toggling a checkbox rapidly
-		if (timer) clearTimeout(timer);
+		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
 
-		timer = setTimeout(() => {
+		trackerSelectionDebounceTimer = setTimeout(() => {
 			if (!socket) return;
 
 			const trackerSelectionChanged =
-				oldSelectedTrackers.length !== newTrackerIds.length ||
-				!newTrackerIds.every((id) => oldSelectedTrackers.includes(id));
+				selectedTrackers.length !== newTrackerIds.length ||
+				!newTrackerIds.every((id) => selectedTrackers.includes(id));
 
 			// If the ids of the trackers did not change (theyre the same but just)
 			// in a different order, dont bother sending the message
 			if (!trackerSelectionChanged) return;
 
-			oldSelectedTrackers = newTrackerIds;
+			selectedTrackers = newTrackerIds;
 			socket.emit('change_trackers_to_listen', newTrackerIds);
 		}, 500);
 	});
 
+	setContext<MapContext>(MAP_CONTEXT_KEY, {
+		getGoogleMap: () => googleMap,
+		getMapElement: () => mapElement
+	});
+
+	const createWsConnectionToApi = async () => {
+		const connect = async () => {
+			const token = await apiGetJwtForCurrentUser().catch((e) => {
+				if (dev) console.warn(e);
+				showConnectionErrorAlert = true;
+
+				throw e;
+			});
+
+			if (typeof token === 'boolean') return;
+
+			socket = createWsConnectionToTrackingNamespace(token);
+
+			socket.on('position', ({ trackerId, ...position }) => {
+				$trackerPositionStore[trackerId] = position;
+			});
+
+			socket.on('error', (error) => {
+				if (dev) console.warn(error);
+			});
+		};
+
+		isConnectingToApi = true;
+
+		try {
+			await connect();
+		} finally {
+			isConnectingToApi = false;
+		}
+	};
+
 	onMount(async () => {
-		initMap();
-
-		const token = await apiGetJwtForCurrentUser().catch((e) => {
-			// TODO:
-			// add something to the map overlay and a retry button
-			toaster.error('internal error loading tracker data');
-			throw e;
-		});
-
-		socket = createWsConnectionToTrackingNamespace(token);
-
-		socket.on('position', ({ trackerId, lat, lng }) => {
-			$trackerPositionStore[trackerId] = { lat, lng };
-		});
-
-		// TODO: proper error handling
-		socket.on('error', (error) => {
-			console.warn(error);
-		});
+		await initMap();
+		await createWsConnectionToApi();
 	});
 
 	onDestroy(() => {
-		if (interval) clearInterval(interval);
-		if (timer) clearInterval(interval);
+		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
 
 		unsubscribe();
 
@@ -115,15 +153,32 @@
 	});
 </script>
 
+{#if showConnectionErrorAlert}
+	<ConnectionFailedAlert
+		{isConnectingToApi}
+		on:reconnect-click={() => {
+			createWsConnectionToApi()
+				.then(() => {
+					toaster.success('reconnected');
+					showConnectionErrorAlert = false;
+				})
+				.catch(() => {
+					toaster.error('reconnection failed');
+				});
+		}}
+		on:close-click={() => (showConnectionErrorAlert = false)}
+	/>
+{/if}
+
 <div id="map" class="h-full w-full">
 	{#if googleMap}
-		<SelectTrackersMapControl />
+		<TrackersMapControls />
 
 		{#each Object.values($selectedTrackerStore) as tracker}
 			{@const position = $trackerPositionStore[tracker.id]}
 
 			{#if position}
-				<TrackerMarker {position} />
+				<TrackerMarker {position} {tracker} />
 			{/if}
 		{/each}
 	{/if}

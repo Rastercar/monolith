@@ -4,6 +4,8 @@
 	export let isLoading: boolean;
 	export let disabled = false;
 
+	export let loaderWidth = 'w-6';
+
 	export let contentWrapperClasses = '!mx-0';
 
 	let clazz = '';
@@ -15,7 +17,7 @@
 		class:invisible={!isLoading}
 		class="absolute top-0 left-0 w-full h-full flex align-middle justify-center items-center"
 	>
-		<ProgressRadial value={undefined} width="w-6" />
+		<ProgressRadial value={undefined} width={loaderWidth} />
 	</div>
 
 	<div class:invisible={isLoading} class={contentWrapperClasses}>

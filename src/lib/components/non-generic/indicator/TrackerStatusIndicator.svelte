@@ -5,6 +5,9 @@
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';
 
+	/**
+	 * ID of the tracker to fetch the last known position
+	 */
 	export let vehicleTrackerId: number;
 
 	const query = createQuery({
@@ -27,6 +30,12 @@
 	$: iconColor = isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300';
 </script>
 
+<!--
+@component
+A simple dot that displays if the tracker has been recently connected to the rastercar platform
+
+If a tracker has sent a position within the last 5 minutes then its considered as connected
+-->
 <ArrowUpTooltip dataPopup="trackerStatusPopup">
 	<span class="text-xs">
 		{isOnline

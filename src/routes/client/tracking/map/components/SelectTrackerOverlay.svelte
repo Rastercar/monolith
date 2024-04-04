@@ -21,6 +21,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import type { Unsubscriber } from 'svelte/motion';
 
+	/** maximun amount of trackers that can be selected */
+	const trackerSelectionLimit = 20;
+
 	// if the window is bigger than the tailwind "md" breakpoint
 	// then show 5 items per page, otherwise just 3 to make the table fit
 	const pagination = writable({ page: 1, pageSize: window.innerWidth > 768 ? 5 : 3 });
@@ -44,15 +47,18 @@
 	const columns: ColumnDef<Tracker>[] = [
 		{
 			id: 'selector',
-			cell: (cell) =>
-				renderComponent(SimpleCheckbox, {
-					checked: cell.row.getIsSelected(),
-					disabled: !cell.row.getCanSelect(),
-					indeterminate: cell.row.getIsSomeSelected(),
+			cell: ({ row }) => {
+				const isSelected = row.getIsSelected();
+
+				return renderComponent(SimpleCheckbox, {
+					checked: isSelected,
+					// if the row is selected, allow to unselect
+					disabled: isSelected ? false : !row.getCanSelect(),
+					indeterminate: false,
 					onChange: (e: Event) => {
 						const isChecked = (e.target as HTMLInputElement).checked;
 
-						const tracker = cell.row.original;
+						const tracker = row.original;
 
 						if (!isChecked) {
 							delete $selectedTrackerStore[tracker.id];
@@ -62,7 +68,8 @@
 							$selectedTrackerStore = $selectedTrackerStore;
 						}
 					}
-				})
+				});
+			}
 		},
 		{
 			accessorKey: 'imei',
@@ -92,7 +99,8 @@
 		// since we still need to known what items are selected even after the
 		// dataset changes
 		getRowId: (e) => e.id.toString(),
-		getCoreRowModel: getCoreRowModel()
+		getCoreRowModel: getCoreRowModel(),
+		enableRowSelection: () => selectionEnabled
 	});
 
 	const table = createSvelteTable(options);
@@ -111,6 +119,7 @@
 	});
 
 	$: selectedTrackersCount = Object.keys($selectedTrackerStore).length;
+	$: selectionEnabled = selectedTrackersCount < trackerSelectionLimit;
 </script>
 
 <div class="flex justify-between">
@@ -118,6 +127,13 @@
 		<h2 class="flex items-center mb-4 text-2xl mx-auto">
 			<Icon icon="mdi:satellite" class="mr-2" height={36} />
 			Trackers to show
+
+			{#if !selectionEnabled}
+				<span class="ml-auto flex items-center bg-warning-500 p-2 rounded-md text-sm">
+					<Icon icon="mdi:warning" class="mr-2" />
+					cannot select over {trackerSelectionLimit} trackers
+				</span>
+			{/if}
 		</h2>
 
 		<DebouncedTextField
@@ -127,7 +143,13 @@
 			on:change={(e) => ($filters.imei = e.detail)}
 		/>
 
-		<DataTable {table} colspan={columns.length} isLoading={$query.isLoading} class="mb-2" />
+		<DataTable
+			{table}
+			colspan={columns.length}
+			isLoading={$query.isLoading}
+			class="mb-4"
+			overflowX=""
+		/>
 
 		<Paginator
 			select="select min-w-[150px] py-1 hidden md:block"
@@ -147,7 +169,7 @@
 			}}
 		/>
 
-		<div class="flex items-center mt-6">
+		<div class="flex items-center mt-4">
 			<span class="mr-auto">
 				{selectedTrackersCount || 'no'} selected trackers
 			</span>
@@ -160,9 +182,5 @@
 				clear all
 			</button>
 		</div>
-
-		<!-- TODO: remove me ! -->
-		<pre>{JSON.stringify($table.getState().rowSelection, null, 2)}</pre>
-		<pre>{JSON.stringify($selectedTrackerStore, null, 2)}</pre>
 	</div>
 </div>

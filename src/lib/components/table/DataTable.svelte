@@ -11,11 +11,13 @@
 	export let width = 'w-full';
 	export let borderColor = 'border-surface-400-500-token';
 
+	export let overflowX = 'overflow-x-scroll';
+
 	let clazz = '';
 	export { clazz as class };
 </script>
 
-<div class={`${clazz} overflow-x-scroll`}>
+<div class={`${clazz} ${overflowX}`}>
 	<table class={`${borderColor} ${width}`}>
 		<TableHeader {isLoading} {table} {colspan} {borderColor} />
 

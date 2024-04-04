@@ -11,7 +11,7 @@
 	bind:indeterminate
 	{disabled}
 	{checked}
-	class="checkbox"
+	class="checkbox disabled:bg-surface-300-600-token disabled:cursor-not-allowed"
 	type="checkbox"
 	on:change={onChange}
 />

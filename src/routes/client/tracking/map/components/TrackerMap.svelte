@@ -15,6 +15,7 @@
 	import { dev } from '$app/environment';
 	import { getToaster } from '$lib/store/toaster';
 	import ConnectionFailedAlert from './ConnectionFailedAlert.svelte';
+	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 
 	let mapElement: HTMLDivElement;
 
@@ -39,6 +40,11 @@
 
 	let showConnectionErrorAlert = false;
 
+	setContext<MapContext>(MAP_CONTEXT_KEY, {
+		getGoogleMap: () => googleMap,
+		getMapElement: () => mapElement
+	});
+
 	const toaster = getToaster();
 
 	const initMap = async () => {
@@ -59,11 +65,9 @@
 			center,
 			zoom: 20,
 
-			// for now we dont allow the fullscreen mode
-			// because it uses the browser fullscreen API
-			// where all elements that are not children on
-			// the map div are not shown, this is a problem
-			// for the select tracker overlay
+			// for now we dont allow the fullscreen mode because it uses the browser
+			// fullscreen API where all elements that are not children on the map div
+			// are not shown, this is a problem for the select tracker overlay
 			fullscreenControl: false,
 
 			// [TODO-PROD] do not use a demo map id in prod
@@ -73,14 +77,14 @@
 		if (!cachedPositionsBounds.isEmpty()) googleMap.fitBounds(cachedPositionsBounds);
 	};
 
-	// Emit a SocketIO message to the rastercar API, informing the trackers we want
+	// emit a SocketIO message to the rastercar API, informing the trackers we want
 	// to recieve positions of, whenever the tracker selection changed
 	const unsubscribe = selectedTrackerStore.subscribe((v) => {
 		let newTrackerIds = Object.keys(v)
 			.map((v) => parseInt(v))
 			.filter((n) => !Number.isNaN(n));
 
-		// Debounce the selection to avoid sending messages to the API on
+		// debounce the selection to avoid sending messages to the API on
 		// quick selection changes such as toggling a checkbox rapidly
 		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
 
@@ -91,18 +95,23 @@
 				selectedTrackers.length !== newTrackerIds.length ||
 				!newTrackerIds.every((id) => selectedTrackers.includes(id));
 
-			// If the ids of the trackers did not change (theyre the same but just)
+			// if the ids of the trackers did not change (theyre the same but just)
 			// in a different order, dont bother sending the message
 			if (!trackerSelectionChanged) return;
 
 			selectedTrackers = newTrackerIds;
-			socket.emit('change_trackers_to_listen', newTrackerIds);
-		}, 500);
-	});
 
-	setContext<MapContext>(MAP_CONTEXT_KEY, {
-		getGoogleMap: () => googleMap,
-		getMapElement: () => mapElement
+			socket.emit('change_trackers_to_listen', newTrackerIds);
+
+			// now that we updated the trackers to see on the map, simply changing the trackers to listen
+			// is not enough, as a position would only be shown when the tracker comunicates with the platform
+			// again, so we need to fetch the last positions of all of them manually
+			apiGetTrackersLastPositions(newTrackerIds).then((trackersLastPositions) => {
+				trackersLastPositions.forEach(({ trackerId, ...position }) => {
+					$trackerPositionStore[trackerId] = position;
+				});
+			});
+		}, 500);
 	});
 
 	const createWsConnectionToApi = async () => {
@@ -136,6 +145,17 @@
 		}
 	};
 
+	const reconnectWsToApi = () => {
+		createWsConnectionToApi()
+			.then(() => {
+				toaster.success('reconnected');
+				showConnectionErrorAlert = false;
+			})
+			.catch(() => {
+				toaster.error('reconnection failed');
+			});
+	};
+
 	onMount(async () => {
 		await initMap();
 		await createWsConnectionToApi();
@@ -156,16 +176,7 @@
 {#if showConnectionErrorAlert}
 	<ConnectionFailedAlert
 		{isConnectingToApi}
-		on:reconnect-click={() => {
-			createWsConnectionToApi()
-				.then(() => {
-					toaster.success('reconnected');
-					showConnectionErrorAlert = false;
-				})
-				.catch(() => {
-					toaster.error('reconnection failed');
-				});
-		}}
+		on:reconnect-click={reconnectWsToApi}
 		on:close-click={() => (showConnectionErrorAlert = false)}
 	/>
 {/if}
@@ -174,6 +185,12 @@
 	{#if googleMap}
 		<TrackersMapControls />
 
+		<!-- 
+			[TODO-PROD] with this approach all trackers are redrawn
+			when the selection changes, causing them all to flicker
+			
+			this is not the end of the world but it can be improved
+		-->
 		{#each Object.values($selectedTrackerStore) as tracker}
 			{@const position = $trackerPositionStore[tracker.id]}
 

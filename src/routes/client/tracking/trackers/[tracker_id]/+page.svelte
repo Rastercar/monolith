@@ -7,6 +7,7 @@
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import type { PageData } from './$types';
 	import TrackerInfo from './components/TrackerInfo.svelte';
+	import TrackerPositionList from '$lib/components/non-generic/list/TrackerPositionList.svelte';
 
 	export let data: PageData;
 
@@ -51,6 +52,10 @@
 					on:edit-mode-on={() => (editMode = true)}
 					on:tracker-deleted={() => (trackerDeleted = true)}
 				/>
+			</div>
+
+			<div class="card mt-4">
+				<TrackerPositionList trackerId={tracker.id} />
 			</div>
 		{:else}
 			<div class="card p-4">

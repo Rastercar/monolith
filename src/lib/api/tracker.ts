@@ -4,7 +4,7 @@ import {
 	type Paginated,
 	type PaginationWithFilters
 } from './common';
-import { simCardSchema, trackerLocationSchema } from './sim-card.schema';
+import { simCardSchema, trackerLocationSchema, type TrackerLocation } from './sim-card.schema';
 import {
 	trackerSchema,
 	type CreateTrackerBody,
@@ -12,6 +12,11 @@ import {
 	type UpdateTrackerBody
 } from './tracker.schema';
 import { rastercarApi, stripUndefined } from './utils';
+
+export interface GetTrackersFilters {
+	imei?: string;
+	withAssociatedVehicle?: boolean;
+}
 
 /**
  * creates a new tracker
@@ -50,11 +55,6 @@ export const apiUpdateTracker = (id: number, body: UpdateTrackerBody): Promise<T
  */
 export const apiGetTrackerById = (id: number): Promise<Tracker> =>
 	rastercarApi.get(`/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
-
-export interface GetTrackersFilters {
-	imei?: string;
-	withAssociatedVehicle?: boolean;
-}
 
 /**
  * Delete a tracker by id
@@ -101,6 +101,20 @@ export const apiGetTrackerSimCards = (vehicleTrackerId: number) =>
  */
 export const apiGetTrackerLastLocation = (vehicleTrackerId: number) =>
 	rastercarApi
-		.get(`/tracker/${vehicleTrackerId}/location`)
+		.get(`/tracker/${vehicleTrackerId}/last-location`)
 		.json<Tracker[]>()
 		.then(trackerLocationSchema.nullable().parse);
+
+export interface GetTrackerLocationsDto {
+	start?: string;
+	limit?: number;
+}
+
+/**
+ * get a list of tracker locations after a start date and a limit
+ */
+export const apiGetTrackerLocations = (id: number, filters?: GetTrackerLocationsDto) =>
+	rastercarApi
+		.post(filters ?? {}, `/tracker/${id}/get-location-list`)
+		.json<TrackerLocation>()
+		.then(z.array(trackerLocationSchema).parse);

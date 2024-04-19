@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
 	import { authStore } from '$lib/store/auth';
 	import Icon from '@iconify/svelte';
+	import PositionGraphCard from './components/position-graph-card.svelte';
 
 	$: ({ user } = $authStore);
 </script>
@@ -14,6 +15,8 @@
 	<h1>Wellcome: {user?.username}</h1>
 
 	<hr />
+
+	<PositionGraphCard />
 
 	<div class="flex gap-4">
 		<div class="card p-4">

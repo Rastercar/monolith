@@ -78,6 +78,17 @@
 		<span class="opacity-80 text-xs mt-4">
 			last position at {new Date(position.timestamp).toLocaleString()}
 		</span>
+
+		<div class="flex mt-1">
+			<a
+				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
+				href={`/client/tracking/trackers/${tracker.id}`}
+				on:click={drawerStore.close}
+			>
+				<Icon icon="mdi:link" class="mr-2" />
+				see details
+			</a>
+		</div>
 	</div>
 
 	{#if vehicleTracker}
@@ -126,13 +137,11 @@
 			<p class="px-4 my-2">{vehicleTracker.additionalInfo}</p>
 		{/if}
 
-		<div class="flex px-4 justify-end link">
+		<div class="flex mt-1 px-4">
 			<a
 				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
 				href={`/client/tracking/vehicles/${vehicleTracker.id}`}
-				on:click={() => {
-					drawerStore.close();
-				}}
+				on:click={drawerStore.close}
 			>
 				<Icon icon="mdi:link" class="mr-2" />
 				see details

@@ -106,7 +106,19 @@ export const apiGetTrackerLastLocation = (vehicleTrackerId: number) =>
 		.then(trackerLocationSchema.nullable().parse);
 
 export interface GetTrackerLocationsDto {
-	start?: string;
+	/**
+	 * query positions that appear only after a timestamp
+	 */
+	after?: string;
+
+	/**
+	 * query positions that abear only before a timestamp
+	 */
+	before?: string;
+
+	/**
+	 * the amount of positions to be fetched
+	 */
 	limit?: number;
 }
 

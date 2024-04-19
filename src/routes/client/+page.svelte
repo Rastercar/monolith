@@ -11,6 +11,11 @@
 		TODO: 
 		this should be a dashboard but it would need a lot of features to exist
 		leave it as is for now
+
+		TODO: card de quantidade de posições
+		TODO: card de mapa mini com link para o map
+		TODO: link para quick tracking
+		TODO: link p/ meu perfil ?
 	-->
 	<h1>Wellcome: {user?.username}</h1>
 

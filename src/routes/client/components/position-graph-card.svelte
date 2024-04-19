@@ -14,22 +14,29 @@
 		{ day: 2016, count: 28 }
 	];
 
-	onMount(() => {
+	const renderChart = () => {
 		new Chart(document.getElementById(chartId) as HTMLCanvasElement, {
 			type: 'bar',
 			data: {
 				labels: data.map((row) => row.day),
 				datasets: [
 					{
-						label: 'Acquisitions by year',
+						label: 'positions per day',
 						data: data.map((row) => row.count)
 					}
 				]
 			}
 		});
-	});
+	};
+
+	// TODO: finish me:
+	// endpoint de consulta de contagem de posições da semana atual
+	//
+	// provavelmente fazer
+	onMount(renderChart);
 </script>
 
 <div class="card p-4 max-w-md">
+	<div class="mb-4">Registered positions this week:</div>
 	<canvas id={chartId} />
 </div>

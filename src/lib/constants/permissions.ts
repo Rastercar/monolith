@@ -181,3 +181,5 @@ export const groupPermissionsByCategory = (permissions: apiPermission[]): Permis
 export const allPermissionsGroupedByCategory = groupPermissionsByCategory(
 	Object.keys(permissionDetails) as apiPermission[]
 );
+
+export const allPermissions = Object.keys(permissionDetails);

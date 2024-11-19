@@ -1,9 +1,15 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import type { Snippet } from 'svelte';
 
-	export let title: string;
-	export let subtitle: string;
+	interface Props {
+		title: string;
+		subtitle: string;
+		children: Snippet;
+	}
+
+	const { title, subtitle, children }: Props = $props();
 </script>
 
 <div class="flex min-h-screen">
@@ -33,7 +39,7 @@
 
 			<hr class="border-t-2 my-6" />
 
-			<slot />
+			{@render children()}
 		</div>
 	</div>
 </div>

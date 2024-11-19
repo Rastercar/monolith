@@ -1,10 +1,10 @@
 const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
 
-export const fileIsImage = (file: File): boolean => {
-	return validImageTypes.includes(file.type);
-};
+export const fileIsImage = (file: File): boolean => validImageTypes.includes(file.type);
 
 /**
+ * TODO: gambiarra do caralho, superforms permite files agora, arrumar
+ *
  * Sets the value to `""` and files to `null` for all HtmlInputs
  * under a HtmlElement with the given ID
  */

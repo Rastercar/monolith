@@ -5,6 +5,7 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
+	import { route } from '$lib/ROUTES';
 	import { authStore } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -13,9 +14,8 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	const { data } = $props();
 
 	const toaster = getToaster();
 
@@ -80,38 +80,44 @@
 	/**
 	 * if the login has succeeded and the user is being redirected
 	 */
-	let redirecting = false;
+	let redirecting = $state(false);
 
-	$: isLoading = redirecting || $mutation.isPending;
+	const isLoading = $derived(redirecting || $mutation.isPending);
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">
-	<TextInput
-		form={loginForm}
-		field="email"
-		label="Email"
-		placeholder="email address"
-		disabled={isLoading}
-	/>
+	<form method="POST">
+		<TextInput
+			form={loginForm}
+			field="email"
+			label="Email"
+			placeholder="email address"
+			disabled={isLoading}
+		/>
 
-	<PasswordInput form={loginForm} field="password" disabled={isLoading} />
+		<PasswordInput form={loginForm} field="password" disabled={isLoading} />
 
-	<div class="mt-4 flex justify-end">
-		<a
-			href="/auth/recover-password"
-			class="text-primary-700-200-token text-sm underline-offset-4 hover:underline"
+		<div class="mt-4 flex justify-end">
+			<a
+				href={route('/auth/recover-password')}
+				class="text-primary-700-200-token text-sm underline-offset-4 hover:underline"
+			>
+				Forgot your password?
+			</a>
+		</div>
+
+		<LoadableButton
+			class="btn variant-filled-primary mt-4 w-full"
+			{isLoading}
+			on:click={handleSignIn}
 		>
-			Forgot your password?
-		</a>
-	</div>
+			sign in
+		</LoadableButton>
 
-	<LoadableButton
-		class="btn variant-filled-primary mt-4 w-full"
-		{isLoading}
-		on:click={handleSignIn}
-	>
-		sign in
-	</LoadableButton>
-
-	<AuthRedirectLink linkLabel="sign-up" href="/auth/sign-up" question="Don't have an account?" />
+		<AuthRedirectLink
+			linkLabel="sign-up"
+			href={route('/auth/sign-up')}
+			question="Don't have an account?"
+		/>
+	</form>
 </AuthPagesLayout>

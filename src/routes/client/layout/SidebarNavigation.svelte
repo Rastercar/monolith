@@ -37,6 +37,11 @@
 			icon: 'mdi:car'
 		},
 		{
+			href: '/client/tracking/quick-track',
+			label: 'quick track',
+			icon: 'mdi:car-info'
+		},
+		{
 			href: '/client/tracking/trackers',
 			label: 'trackers',
 			icon: 'mdi:cellphone'

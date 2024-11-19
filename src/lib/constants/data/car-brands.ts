@@ -1,3 +1,6 @@
+/**
+ * common car brands accross the world
+ */
 export const carBrands: string[] = [
 	'Abarth',
 	'AC',

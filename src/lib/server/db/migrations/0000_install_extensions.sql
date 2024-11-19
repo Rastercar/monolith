@@ -1,0 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS postgis CASCADE;
+
+--> statement-breakpoint
+CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;

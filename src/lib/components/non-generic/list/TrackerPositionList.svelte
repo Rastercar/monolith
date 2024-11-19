@@ -1,10 +1,10 @@
 <script lang="ts">
+	import type { TrackerLocation } from '$lib/api/sim-card.schema';
 	import { apiGetTrackerLocations, type GetTrackerLocationsDto } from '$lib/api/tracker';
-	import { createInfiniteQuery, keepPreviousData, type InfiniteData } from '@tanstack/svelte-query';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import Icon from '@iconify/svelte';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
-	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import type { TrackerLocation } from '$lib/api/sim-card.schema';
+	import { createInfiniteQuery, keepPreviousData, type InfiniteData } from '@tanstack/svelte-query';
 	import { derived, writable } from 'svelte/store';
 
 	export let trackerId: number;
@@ -35,10 +35,8 @@
 				limit: pageSize,
 				before: lastPositions.at(-1)?.time
 			}),
-			queryFn: ({ pageParam }: { pageParam: GetTrackerLocationsDto }) => {
-				console.log('!', pageParam);
-				return apiGetTrackerLocations(trackerId, pageParam);
-			}
+			queryFn: ({ pageParam }: { pageParam: GetTrackerLocationsDto }) =>
+				apiGetTrackerLocations(trackerId, pageParam)
 		}))
 	);
 

@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let question: string;
-	export let href: string;
-	export let linkLabel: string;
+	interface Props {
+		question: string;
+		href: string;
+		linkLabel: string;
+	}
+
+	const { linkLabel, href, question }: Props = $props();
 </script>
 
 <div class="mt-4 flex justify-between text-sm">

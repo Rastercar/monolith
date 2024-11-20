@@ -5,7 +5,7 @@ import { organizationSchema } from './organization.schema';
 
 export const userSchema = z.object({
 	id: z.number(),
-	createdAt: z.string().datetime(),
+	createdAt: z.date({ coerce: true }),
 	username: z.string(),
 	email: z.string().email(),
 	emailVerified: z.boolean(),

@@ -1,5 +1,8 @@
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
 import { redirect, type Handle } from '@sveltejs/kit';
+import { bootstrapApplication } from './bootstrap';
+
+bootstrapApplication();
 
 interface RouteMeta {
 	/**
@@ -43,9 +46,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const routeMeta = routesMeta[path] ?? {};
 
 	const sessionId = event.cookies.get(SESSION_ID_COOKIE_KEY);
-
-	// TODO: rm me !
-	console.log('loading ' + path + ' sessionID ' + sessionId);
 
 	const isLoggedIn = !!sessionId;
 

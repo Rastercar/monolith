@@ -1,21 +1,44 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { layoutStore } from '$lib/store/layout';
-	import { AppBar, AppShell, LightSwitch } from '@skeletonlabs/skeleton';
+	import { authStore } from '$lib/store/auth.svelte';
+	import { onMount } from 'svelte';
 	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
-	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
 	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
-	import SidebarNavigation from './layout/SidebarNavigation.svelte';
-	import UserDisplay from './layout/UserDisplay.svelte';
-	interface Props {
-		children?: import('svelte').Snippet;
-	}
 
-	let { children }: Props = $props();
+	let { children, data } = $props();
 
-	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
+	onMount(() => {
+		if (data.user) authStore.setUser(data.user);
+	});
+
+	// TODO:
+	// let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
 </script>
 
+<div class="grid h-screen grid-rows-[auto_1fr]">
+	<!-- Header -->
+	<header class="bg-surface-200-800 p-4">
+		<div class="flex items-center">
+			<DrawerHamburgerButton />
+			<strong class="text-xl uppercase hidden md:block pt-2">Rastercar</strong>
+
+			<AppBarUserMenu />
+		</div>
+	</header>
+
+	<!-- Grid Columns -->
+	<div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
+		<!-- Left Sidebar -->
+		<aside class="bg-yellow-500 p-4">(sidebar)</aside>
+
+		<!-- Main Content -->
+		<main class="space-y-4 bg-green-500 p-4">
+			{@render children()}
+		</main>
+	</div>
+</div>
+
+<!-- 
+TODO:
 <ApplicationDrawer />
 
 <AppShell slotSidebarLeft="bg-surface-100-800-token w-0 lg:w-64">
@@ -47,4 +70,4 @@
 	{/snippet}
 
 	{@render children?.()}
-</AppShell>
+</AppShell> -->

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const accessLevelSchema = z.object({
 	id: z.number(),
-	createdAt: z.string(),
+	createdAt: z.date({ coerce: true }),
 	name: z.string(),
 	description: z.string(),
 	isFixed: z.boolean(),

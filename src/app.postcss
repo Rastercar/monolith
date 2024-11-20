@@ -2,3 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+/* By default, your <html> and <body> may collapse vertically and not extend to full height of the viewport. */
+html,
+body {
+	@apply h-full;
+}
+
+/* See: https://floating-ui-svelte.vercel.app/docs/getting-started */
+.floating {
+	width: max-content;
+	position: absolute;
+	top: 0;
+	left: 0;
+}

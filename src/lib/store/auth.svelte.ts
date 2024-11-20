@@ -1,54 +1,56 @@
+import type { Organization } from '$lib/api/organization.schema';
 import type { User } from '$lib/api/user.schema';
-import { localStore } from './local-storage-store.svelte';
+import type { apiPermission } from '$lib/constants/permissions';
+import { useLocalStorage } from './local-storage-store.svelte';
 
 interface AuthState {
 	user: User | null;
 }
 
-const store = localStore<AuthState>('auth', { user: null });
+const authS = useLocalStorage<AuthState>('auth', { user: null });
 
-// TODO: !
 export const authStore = {
-	// setUser: (user: User) => store.set({ user }),
-	// clearUser: () => store.set({ user: null }),
-	// removeUserPermissions: (permissionsToRemove: apiPermission[]) => {
-	// 	store.update((state) => {
-	// 		if (state.user) {
-	// 			state.user.accessLevel.permissions = state.user.accessLevel.permissions.filter(
-	// 				(p) => !permissionsToRemove.includes(p as apiPermission)
-	// 			);
-	// 		}
-	// 		return state;
-	// 	});
-	// },
-	// updateUser: (newUserData: Partial<User>) => {
-	// 	store.update((state) => {
-	// 		if (state.user) state.user = { ...state.user, ...newUserData };
-	// 		return state;
-	// 	});
-	// },
-	// updateUserOrg: (newOrgData: Partial<Organization>) => {
-	// 	store.update((state) => {
-	// 		if (state.user) state.user.organization = { ...state.user.organization, ...newOrgData };
-	// 		return state;
-	// 	});
-	// },
-	// setUserEmailAsVerified: () =>
-	// 	store.update((v) => {
-	// 		if (v.user) v.user.emailVerified = true;
-	// 		return { user: v.user };
-	// 	})
+	value: authS.value,
+
+	setUser: (user: User) => (authS.value.user = user),
+
+	clearUser: () => (authS.value.user = null),
+
+	removeUserPermissions: (permissionsToRemove: apiPermission[]) => {
+		if (!authS.value.user) return;
+
+		authS.value.user.accessLevel.permissions = authS.value.user.accessLevel.permissions.filter(
+			(p) => !permissionsToRemove.includes(p as apiPermission)
+		);
+	},
+
+	updateUser: (newUserData: Partial<User>) => {
+		if (!authS.value.user) return;
+		authS.value.user = { ...authS.value.user, ...newUserData };
+	},
+
+	updateUserOrg: (newOrgData: Partial<Organization>) => {
+		if (!authS.value.user) return;
+		authS.value.user.organization = { ...authS.value.user.organization, ...newOrgData };
+	},
+
+	setUserEmailAsVerified: () => {
+		if (!authS.value.user) return;
+		authS.value.user.emailVerified = true;
+	}
 };
 
 /**
  * Checks if there is a currently logged in user containing one or more permissions
  */
-// export const hasPermission = derived(store, ($store) => {
-// 	return (permission: apiPermission | apiPermission[]): boolean => {
-// 		const requiredPermissions = typeof permission === 'string' ? [permission] : permission;
+export const hasPermission = (permission: apiPermission | apiPermission[]) => {
+	const requiredPermissions = typeof permission === 'string' ? [permission] : permission;
 
-// 		return requiredPermissions.every(
-// 			(p) => $store.user && $store.user.accessLevel.permissions.includes(p)
-// 		);
-// 	};
-// });
+	const s = $derived(
+		requiredPermissions.every(
+			(p) => authStore.value.user && authStore.value.user.accessLevel.permissions.includes(p)
+		)
+	);
+
+	return s;
+};

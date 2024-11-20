@@ -1,28 +1,24 @@
 <script lang="ts">
 	import { authStore } from '$lib/store/auth.svelte';
 	import { cloudFrontUrl } from '$lib/utils/url';
-	import { Avatar } from '@skeletonlabs/skeleton';
-	import type { AvatarProps } from '@skeletonlabs/skeleton/dist/components/Avatar/Avatar.svelte';
+	import { Avatar } from '@skeletonlabs/skeleton-svelte';
+	import type { ComponentProps } from 'svelte';
 
 	interface Props {
-		avatarProps?: Exclude<AvatarProps, 'src' | 'fallback'>;
+		wrapperClass?: string;
+		avatarProps?: Exclude<ComponentProps<typeof Avatar>, 'src' | 'fallback'>;
 	}
 
-	let {
-		avatarProps = {
-			width: 'w-32',
-			rounded: 'rounded-full'
-		}
-	}: Props = $props();
+	let { wrapperClass = 'w-32', avatarProps }: Props = $props();
 
-	let { user } = $derived($authStore);
+	const { user } = authStore.value;
+
+	const src = user?.profilePicture
+		? cloudFrontUrl(user.profilePicture)
+		: '/img/no-pic-placeholder.png';
 </script>
 
 <!-- wrapping the avatar on a div with the same width prevents the avatar from being "resized" if the parent div width cannot contain it -->
-<div class={avatarProps.width}>
-	<Avatar
-		src={user?.profilePicture ? cloudFrontUrl(user.profilePicture) : '/img/no-pic-placeholder.png'}
-		fallback="/img/no-pic-placeholder.png"
-		{...avatarProps}
-	/>
+<div class={wrapperClass}>
+	<Avatar name="profile-picture" {src} {...avatarProps} />
 </div>

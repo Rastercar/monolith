@@ -23,7 +23,7 @@ CREATE TABLE "user" (
 --> statement-breakpoint
 CREATE TABLE "session" (
     "public_id" serial NOT NULL,
-    "session_token" "bytea" PRIMARY KEY NOT NULL,
+    "session_token" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     "created_at" timestamp(0) with time zone DEFAULT now() NOT NULL,
     "expires_at" timestamp(0) with time zone NOT NULL,
     "user_agent" varchar(255) NOT NULL,

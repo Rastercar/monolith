@@ -13,12 +13,10 @@
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = $state('new-tracker');
 
-	
-
 	interface Props {
 		/**
-	 * ID of the vehicle to be associated with the tracker to be created or selected
-	 */
+		 * ID of the vehicle to be associated with the tracker to be created or selected
+		 */
 		vehicleId: number;
 		formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
 	}
@@ -63,7 +61,7 @@
 {#if selectedTrackerForm === 'existing-tracker'}
 	<SelectTrackerDataTable>
 		<!-- @migration-task: migrate this slot by hand, `bottom-right` is an invalid identifier -->
-	<div slot="bottom-right" let:isLoading let:selectedTracker>
+		<div slot="bottom-right" let:isLoading let:selectedTracker>
 			<LoadableButton
 				isLoading={$selectTrackerMutation.isPending}
 				class="btn variant-filled-primary mt-4"
@@ -76,8 +74,8 @@
 	</SelectTrackerDataTable>
 {:else}
 	<CreateTrackerForm {formSchema} vehicleIdToAssociate={vehicleId} on:tracker-created>
-		{#snippet default({ isLoading, canSubmit, createTracker })}
-				<div  class="flex justify-end"   >
+		{#snippet xddefault({ isLoading, canSubmit, createTracker })}
+			<div class="flex justify-end">
 				<LoadableButton
 					{isLoading}
 					disabled={!canSubmit}
@@ -87,6 +85,6 @@
 					create tracker
 				</LoadableButton>
 			</div>
-			{/snippet}
+		{/snippet}
 	</CreateTrackerForm>
 {/if}

@@ -1,53 +1,25 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiSignOut } from '$lib/api/auth';
+	import { route } from '$lib/ROUTES';
 	import { authStore } from '$lib/store/auth.svelte';
-	import { getToaster } from '$lib/store/toaster';
+	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import { onMount } from 'svelte';
-
-	const toaster = getToaster();
 
 	/**
 	 * calls the sveltekit server to delete the session cookie
 	 */
-	const deleteSessionCookie = async (): Promise<boolean> => {
-		const response = await fetch('/auth/sign-out', { method: 'POST' }).catch(() => ({ ok: false }));
-		return response.ok;
-	};
+	const destroySession = async () => fetch(route('/auth/sign-out'), { method: 'POST' });
 
+	// reset the user state
 	onMount(() => {
-		// reset the global auth state
 		authStore.clearUser();
 
-		let deleteOnRastercarApiFailed = false;
+		const logoutPromise = destroySession().catch(() => {
+			// if destroying the session cookies failed the user is now stuck with a unwanted/ invalid session cookie
+			throw new Error('a critical error happened, please clear your browser cookies');
+		});
 
-		// first we sign out of the rastercar API
-		apiSignOut()
-			.catch(() => {
-				deleteOnRastercarApiFailed = true;
-			})
-			// we call the server to delete the session cookie regardless of
-			// of the result of the apiSignOut just to be sure the cookie will
-			// still be deleted even the server did not respond
-			.then(deleteSessionCookie)
-			.catch(() => {
-				// if the deletion on the rastercar api went ok, the session id cookie got
-				// replaced by a expired one that will be deleted on a next request, so move
-				// forward
-				if (!deleteOnRastercarApiFailed) return;
-
-				// if both the rastercar api and the svelte server failed, then the sign out
-				// did not delete the cookies, this is a worse case scenario and the user is
-				// now stuck with a unwanted, or possibly even worse, a invalid session cookie
-				//
-				// as pathetic as this is, ask the user to delete the cookies.
-				toaster.error('a critical error happened, please clear your browser cookies');
-
-				throw new Error('failed to delete session');
-			})
-			.then(() => {
-				goto('/auth/sign-in');
-			});
+		awaitPromiseWithMinimumTimeOf(logoutPromise, 200).then(() => goto('/auth/sign-in'));
 	});
 </script>
 

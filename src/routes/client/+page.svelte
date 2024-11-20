@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { route } from '$lib/ROUTES';
 	import { authStore } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 
-	let { user } = $derived($authStore);
+	authStore.setUser({ username: '!' } as any);
 </script>
 
 <div class="p-10 space-y-4">
@@ -16,12 +17,12 @@
 		TODO: link para quick tracking
 		TODO: link p/ meu perfil ?
 	-->
-	<h1>Wellcome: {user?.username}</h1>
+	<h1>Wellcome: {authStore.value.user?.username}</h1>
 
 	<hr />
 
 	<div class="flex gap-4">
-		<a href="/client/tracking/quick-track">
+		<a href={route('/client/tracking/quick-track')}>
 			<button class="btn btn-sm variant-filled-primary">
 				<Icon icon="mdi:car" class="mr-2" />
 				Track something new !

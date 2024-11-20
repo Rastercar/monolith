@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
 	foreignKey,
 	inet,
@@ -7,18 +7,32 @@ import {
 	serial,
 	timestamp,
 	unique,
+	uuid,
 	varchar
 } from 'drizzle-orm/pg-core';
-import { bytea } from '../custom-types';
 import { createdAt } from './schema-helpers';
 import { user } from './user';
 
 export const session = pgTable(
 	'session',
 	{
-		publicId: serial('public_id').notNull(),
-		sessionToken: bytea('session_token').primaryKey().notNull(),
 		createdAt,
+
+		/**
+		 * A public ID for the session, since this is not used to determine users from sessions,
+		 * this can be publically available
+		 */
+		publicId: serial('public_id').notNull(),
+
+		/**
+		 * A UUID representing the session token, this should NOT be publically available
+		 * as getting this value can allow attackers to inpersonate other users
+		 */
+		sessionToken: uuid()
+			.default(sql`gen_random_uuid()`)
+			.primaryKey()
+			.notNull(),
+
 		expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'string' }).notNull(),
 		userAgent: varchar('user_agent', { length: 255 }).notNull(),
 		ip: inet().notNull(),

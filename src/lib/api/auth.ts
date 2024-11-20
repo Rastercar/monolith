@@ -1,7 +1,6 @@
 import {
 	signInUpResponseSchema,
 	type RecoverPasswordByTokenDto,
-	type SignInDto,
 	type SignInUpResponse,
 	type SignUpDto
 } from './auth.schema';
@@ -11,25 +10,6 @@ import {
 	returnErrorCodeOnApiError,
 	returnErrorStringOrParsedSchemaObj
 } from './utils';
-
-type SignRequestResponse = SignInUpResponse | 'not_found' | 'invalid_password';
-
-/**
- * Signs in to the rastercar API with email and password, on success a session
- * cookie will be set and the user will be authenticated for subsequent requests
- */
-export const apiSignIn = async (credentials: SignInDto): Promise<SignRequestResponse> => {
-	const response = await rastercarApi
-		.post(credentials, '/auth/sign-in')
-		.notFound(returnErrorCodeOnApiError('not_found'))
-		.unauthorized(returnErrorCodeOnApiError('invalid_password'))
-		.json<SignRequestResponse>();
-
-	if (typeof response === 'string') return response;
-
-	signInUpResponseSchema.parse(response);
-	return response;
-};
 
 /**
  * Signs up to rastercar, creating a new organization, user and root access level
@@ -44,16 +24,6 @@ export const apiSignUp = (body: SignUpDto): Promise<SignInUpResponse | string> =
 		// the response type might be SignInUpResponse | string
 		.json<SignInUpResponse | string>()
 		.then((res) => returnErrorStringOrParsedSchemaObj(res, signInUpResponseSchema));
-
-/**
- * signs out the current rastercar user session, this endpoint makes the user respond
- * with a expired session id cookie so the current session cookie is replaced by the expired one.
- *
- * on the next request to the api the browser deletes the cookie as its expired.
- */
-export const apiSignOut = async (): Promise<void> => {
-	await rastercarApi.post({}, '/auth/sign-out').text();
-};
 
 /**
  * requests a password recovery email to be sent to the email address if a user exists with said email

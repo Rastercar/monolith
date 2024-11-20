@@ -12,18 +12,15 @@
 	import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-
-	
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
 		/**
-	 * The ID of the vehicle to associate to the tracker
-	 */
+		 * The ID of the vehicle to associate to the tracker
+		 */
 		vehicleIdToAssociate?: number | undefined;
 		children?: import('svelte').Snippet<[any]>;
 	}
@@ -75,4 +72,4 @@
 	/>
 </div>
 
-{@render children?.({ isLoading: $mutation.isPending, canSubmit, createTracker, })}
+{@render children?.({ isLoading: $mutation.isPending, canSubmit, createTracker })}

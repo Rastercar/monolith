@@ -1,25 +1,17 @@
-import { randomBytes } from 'crypto';
+import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { session } from '../schema';
 
-function generateSessionToken() {
-	// 16 bytes = 128 bits
-	return randomBytes(16);
-}
-
 export async function createSession(sessionData: {
-	userAgent: string;
 	ip: string;
 	userId: number;
+	userAgent: string;
 	expiresAt: string;
 }) {
-	const [createdSession] = await db
-		.insert(session)
-		.values({
-			...sessionData,
-			sessionToken: generateSessionToken()
-		})
-		.returning();
+	const [createdSession] = await db.insert(session).values(sessionData).returning();
 
 	return createdSession;
+}
+export async function destroySessionByToken(token: string) {
+	return db.delete(session).where(eq(session.sessionToken, token));
 }

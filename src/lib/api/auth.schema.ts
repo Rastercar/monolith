@@ -1,3 +1,4 @@
+import { PUBLIC_IS_DEV } from '$env/static/public';
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 import { userSchema } from './user.schema';
@@ -28,8 +29,15 @@ export const recoverPasswordByTokenSchema = z
 
 // [PROD-TODO] remove default test user
 export const signInSchema = z.object({
-	email: z.string().min(1).email().default('rastercar.tests.002@gmail.com'),
-	password: z.string().min(1).default('testuser')
+	email: z
+		.string()
+		.min(1)
+		.email()
+		.default(PUBLIC_IS_DEV === 'true' ? 'rastercar.tests.002@gmail.com' : ''),
+	password: z
+		.string()
+		.min(1)
+		.default(PUBLIC_IS_DEV === 'true' ? 'testuser' : '')
 });
 
 export type SignInDto = z.infer<typeof signInSchema>;

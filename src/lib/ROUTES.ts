@@ -62,7 +62,8 @@ const SERVERS = {
  */
 const ACTIONS = {
   "default /auth/recover-password": `/auth/recover-password`,
-  "signIn /auth/sign-in": `/auth/sign-in?/signIn`
+  "signIn /auth/sign-in": `/auth/sign-in?/signIn`,
+  "signUp /auth/sign-up": `/auth/sign-up?/signUp`
 }
 
 /**
@@ -171,7 +172,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 export type KIT_ROUTES = {
   PAGES: { '/auth/change-password': never, '/auth/confirm-email-address': never, '/auth/recover-password': never, '/auth/sign-in': never, '/auth/sign-out': never, '/auth/sign-up': never, '/client': never, '/client/access-levels': never, '/client/access-levels/[access_level_id]': 'access_level_id', '/client/access-levels/new': never, '/client/my-profile': never, '/client/settings/organization': never, '/client/settings/profile': never, '/client/settings/security': never, '/client/settings/sessions': never, '/client/tracking/map': never, '/client/tracking/quick-track': never, '/client/tracking/sim-cards': never, '/client/tracking/sim-cards/[sim_card_id]': 'sim_card_id', '/client/tracking/sim-cards/new': never, '/client/tracking/trackers': never, '/client/tracking/trackers/[tracker_id]': 'tracker_id', '/client/tracking/trackers/new': never, '/client/tracking/vehicles': never, '/client/tracking/vehicles/[vehicle_id]': 'vehicle_id', '/client/tracking/vehicles/new': never, '/client/users': never, '/client/users/[user_id]': 'user_id', '/client/users/new': never }
   SERVERS: { 'POST /auth/sign-out': never }
-  ACTIONS: { 'default /auth/recover-password': never, 'signIn /auth/sign-in': never }
+  ACTIONS: { 'default /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never }
   LINKS: Record<string, never>
   Params: { access_level_id: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never }
 }

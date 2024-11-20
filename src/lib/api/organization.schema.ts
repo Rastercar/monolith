@@ -7,7 +7,7 @@ export const updateOrganizationSchema = z.object({
 
 export const organizationSchema = z.object({
 	id: z.number(),
-	createdAt: z.string(),
+	createdAt: z.date({ coerce: true }),
 	name: z.string(),
 	billingEmail: z.string(),
 	blocked: z.boolean(),

@@ -11,13 +11,6 @@
 
 	type DeleteReturn = $$Generic;
 
-
-
-
-
-
-
-
 	interface Props {
 		defaultSrc?: string;
 		deleteConfirmPrompt: string;
@@ -147,9 +140,11 @@
 
 	let overlayClass = $derived(isDraggingFile ? 'opacity-80' : '-z-10 opacity-0');
 
-	let containerClass = $derived(isDraggingFile
-		? 'border-slate-500 opacity-40'
-		: `border-transparent ${newPhoto ? 'border-slate-500' : ''}`);
+	let containerClass = $derived(
+		isDraggingFile
+			? 'border-slate-500 opacity-40'
+			: `border-transparent ${newPhoto ? 'border-slate-500' : ''}`
+	);
 
 	let hasPictureToShow = $derived(newPhoto?.preview || defaultSrc);
 </script>
@@ -169,7 +164,7 @@
 	ondragover={preventDefault(() => undefined)}
 >
 	{#if hasPictureToShow}
-		{#if preview}{@render preview({ previewSrc: newPhoto?.preview ?? defaultSrc, })}{:else}
+		{#if preview}{@render preview({ previewSrc: newPhoto?.preview ?? defaultSrc })}{:else}
 			<Avatar
 				src={newPhoto?.preview ?? defaultSrc}
 				class="mx-auto pointer-events-none"

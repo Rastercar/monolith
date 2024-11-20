@@ -3,19 +3,18 @@
 	import { authStore } from '$lib/store/auth.svelte';
 
 	interface Props {
-		class?: string;
+		classes?: string;
 	}
 
-	let { class: clazz = '' }: Props = $props();
-	
+	let { classes = '' }: Props = $props();
 
-	let { user } = $derived($authStore);
+	const { user } = authStore.value;
 </script>
 
 {#if user}
-	<div class={clazz}>
+	<div class={classes}>
 		<div class="flex space-x-4 items-center h-16">
-			<UserAvatar avatarProps={{ width: 'w-16' }} />
+			<UserAvatar wrapperClass="w-16" />
 
 			<div>
 				<span class="text-sm">welcome:</span>

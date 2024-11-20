@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/public';
 import { signInSchema } from '$lib/api/auth.schema';
 import { SESSION_DAYS_DURATION, SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
+import { route } from '$lib/ROUTES';
 import { compareSync } from '$lib/server/crypto';
 import { createSession } from '$lib/server/db/repo/session';
 import { getUserByCredentials } from '$lib/server/db/repo/user';
@@ -15,17 +16,14 @@ export const load: PageServerLoad = async () => ({
 });
 
 export const actions = {
-	signIn: async ({ cookies, request, getClientAddress }) => {
+	signIn: async ({ cookies, request, getClientAddress, url }) => {
 		const form = await superValidate(request, zod(signInSchema));
-
 		if (!form.valid) return fail(400, { form });
 
 		const user = await getUserByCredentials(form.data);
-
 		if (!user) return setError(form, 'email', 'user not found');
 
 		const isValidPassword = compareSync(form.data.password, user.password);
-
 		if (!isValidPassword) return setError(form, 'password', 'invalid password');
 
 		const now = new Date();
@@ -48,6 +46,14 @@ export const actions = {
 			maxAge: diffSeconds
 		});
 
-		redirect(302, '/');
+		const redirectRouteFromQuery = url.searchParams.get('redirect');
+
+		const redirectRouteIsValid =
+			!redirectRouteFromQuery || redirectRouteFromQuery === '/auth/sign-out';
+
+		redirect(
+			307,
+			redirectRouteIsValid ? (redirectRouteFromQuery ?? route('/client')) : route('/client')
+		);
 	}
 };

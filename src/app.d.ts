@@ -4,7 +4,12 @@
 declare namespace App {
 	// interface Locals {}
 	// interface PageData {}
-	// interface Error {}
+	/**
+	 * Error codes, eg (MISSING_SID_COOKIE)
+	 */
+	interface Error {
+		code?: string;
+	}
 	// interface Platform {}
 }
 

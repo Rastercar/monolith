@@ -3,10 +3,22 @@
 	import type { Writable } from 'svelte/store';
 	import type { StepperState } from './types.js';
 
-	/** Provide arbitrary classes to the step header. */
-	export let headerAdditionalClasses: string = '';
+	
 
-	export let state: Writable<StepperState> = getContext('state');
+	interface Props {
+		/** Provide arbitrary classes to the step header. */
+		headerAdditionalClasses?: string;
+		state?: Writable<StepperState>;
+		header?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		headerAdditionalClasses = '',
+		state = getContext('state'),
+		header,
+		children
+	}: Props = $props();
 
 	// Register step on init (keep these paired)
 	const stepIndex = $state.total;
@@ -21,15 +33,15 @@
 	});
 
 	// Reactive
-	$: classesHeader = `${cHeader} ${headerAdditionalClasses}`;
+	let classesHeader = $derived(`${cHeader} ${headerAdditionalClasses}`);
 </script>
 
 {#if stepIndex === $state.current}
 	<!-- Slot: Header -->
 	<header class={classesHeader}>
-		<slot name="header">step {stepIndex + 1}</slot>
+		{#if header}{@render header()}{:else}step {stepIndex + 1}{/if}
 	</header>
 
 	<!-- Slot: Default -->
-	<slot>(step {stepIndex + 1} Content)</slot>
+	{#if children}{@render children()}{:else}(step {stepIndex + 1} Content){/if}
 {/if}

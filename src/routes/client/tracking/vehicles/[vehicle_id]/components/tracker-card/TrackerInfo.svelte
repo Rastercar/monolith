@@ -15,11 +15,15 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
-	export let tracker: Tracker;
 
-	export let createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 
-	export let updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
+	interface Props {
+		tracker: Tracker;
+		createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
+		updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
+	}
+
+	let { tracker, createSimCardForm, updateSimCardForm }: Props = $props();
 
 	const toaster = getToaster();
 	const modalStore = getModalStore();
@@ -105,9 +109,11 @@
 			<div class="flex items-center">
 				<span class="text-sm mr-3">status:</span>
 				<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
-					<div class="ml-2" let:isOnline>
-						{isOnline ? 'online' : 'offline'}
-					</div>
+					<div class="ml-2" >
+						{#snippet children({ isOnline })}
+												{isOnline ? 'online' : 'offline'}
+																	{/snippet}
+										</div>
 				</TrackerStatusIndicator>
 			</div>
 			<div><span class="text-sm">model:</span> <b>{tracker.model}</b></div>

@@ -1,9 +1,15 @@
 <script lang="ts">
+	import { nonpassive } from 'svelte/legacy';
+
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let isConnectingToApi = false;
+	interface Props {
+		isConnectingToApi?: boolean;
+	}
+
+	let { isConnectingToApi = false }: Props = $props();
 
 	const dispatch = createEventDispatcher<{
 		'reconnect-click': void;
@@ -13,10 +19,13 @@
 
 <aside
 	class="alert variant-filled-error"
-	on:wheel|nonpassive={(e) => {
-		e.preventDefault();
-		e.stopPropagation();
-	}}
+	use:nonpassive={[
+		'wheel',
+		() => (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+	]}
 >
 	<Icon icon="mdi:error" height={48} />
 
@@ -32,7 +41,7 @@
 		<LoadableButton
 			isLoading={isConnectingToApi}
 			class="btn btn-sm variant-filled"
-			contentWrapperClasses="flex items-center"
+			contentWrapperClass="flex items-center"
 			loaderWidth="w-4"
 			on:click={() => dispatch('reconnect-click')}
 		>
@@ -40,7 +49,7 @@
 			<Icon icon="mdi:reload" class="ml-2" />
 		</LoadableButton>
 
-		<button class="btn btn-sm variant-filled" on:click={() => dispatch('close-click')}>
+		<button class="btn btn-sm variant-filled" onclick={() => dispatch('close-click')}>
 			close
 			<Icon icon="mdi:close" class="ml-2" />
 		</button>

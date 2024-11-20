@@ -9,11 +9,15 @@
 	import { createEventDispatcher } from 'svelte';
 	import SimDeletionOrRemovalWarning from './SimDeletionOrRemovalWarning.svelte';
 
-	export let simCard: SimCard;
 
-	export let additionalClasses = '';
+	interface Props {
+		simCard: SimCard;
+		additionalClasses?: string;
+	}
 
-	let warningToShow: 'deletion' | 'removal' | null = null;
+	let { simCard, additionalClasses = '' }: Props = $props();
+
+	let warningToShow: 'deletion' | 'removal' | null = $state(null);
 
 	const toaster = getToaster();
 
@@ -56,7 +60,7 @@
 			class="ml-auto btn-icon btn-icon-sm variant-filled p-0 [&>*]:pointer-events-none"
 			disabled={!!warningToShow || $removeSimCardMutation.isPending}
 			use:popup={{ event: 'hover', target: 'removeSimPopup', placement: 'top' }}
-			on:click={() => (warningToShow = 'removal')}
+			onclick={() => (warningToShow = 'removal')}
 		>
 			{#if $removeSimCardMutation.isPending}
 				<ProgressRadial value={undefined} width="w-6" />
@@ -74,7 +78,7 @@
 			class="ml-4 btn-icon btn-icon-sm variant-filled p-0 [&>*]:pointer-events-none"
 			disabled={!!warningToShow || $deleteSimMutation.isPending}
 			use:popup={{ event: 'hover', target: 'deleteSimPopup', placement: 'top' }}
-			on:click={() => (warningToShow = 'deletion')}
+			onclick={() => (warningToShow = 'deletion')}
 		>
 			{#if $deleteSimMutation.isPending}
 				<ProgressRadial value={undefined} width="w-6" />

@@ -9,12 +9,13 @@
 
 <Drawer>
 	{#if $drawerStore.meta?.component}
-		<svelte:component this={$drawerStore.meta.component} {...$drawerStore.meta.props} />
+		{@const SvelteComponent = $drawerStore.meta.component}
+		<SvelteComponent {...$drawerStore.meta.props} />
 	{:else}
 		<div class="p-4 flex justify-between space-x-2 items-center">
 			<UserDisplay />
 
-			<button class="btn btn-icon btn-icon-sm" on:click={() => drawerStore.close()}>
+			<button class="btn btn-icon btn-icon-sm" onclick={() => drawerStore.close()}>
 				<Icon icon="mdi:close" height="24" />
 			</button>
 		</div>

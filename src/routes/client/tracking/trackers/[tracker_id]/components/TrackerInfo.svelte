@@ -13,11 +13,15 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
-	export let tracker: Tracker;
 
-	export let createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 
-	export let updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
+	interface Props {
+		tracker: Tracker;
+		createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
+		updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
+	}
+
+	let { tracker, createSimCardForm, updateSimCardForm }: Props = $props();
 
 	const toaster = getToaster();
 	const modalStore = getModalStore();
@@ -55,9 +59,11 @@
 	<span class="mr-auto">General Info</span>
 
 	<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
-		<div class="ml-2" let:isOnline>
-			{isOnline ? 'online' : 'offline'}
-		</div>
+		<div class="ml-2" >
+			{#snippet children({ isOnline })}
+						{isOnline ? 'online' : 'offline'}
+								{/snippet}
+				</div>
 	</TrackerStatusIndicator>
 </h2>
 
@@ -67,7 +73,7 @@
 		<span class="mr-auto">imei: {tracker.imei}</span>
 
 		<PermissionGuard requiredPermissions={['DELETE_TRACKER']}>
-			<button class="btn btn-sm variant-filled-error" on:click={openDeleteTrackerConfirmModal}>
+			<button class="btn btn-sm variant-filled-error" onclick={openDeleteTrackerConfirmModal}>
 				<Icon icon="mdi:trash" class="mr-2" />delete
 			</button>
 		</PermissionGuard>
@@ -75,7 +81,7 @@
 		<PermissionGuard requiredPermissions={['UPDATE_TRACKER']}>
 			<button
 				class="btn btn-sm variant-filled-primary ml-3"
-				on:click={() => dispatch('edit-mode-on')}
+				onclick={() => dispatch('edit-mode-on')}
 			>
 				<Icon icon="mdi:pencil" class="mr-2" />edit
 			</button>

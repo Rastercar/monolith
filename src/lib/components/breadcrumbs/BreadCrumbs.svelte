@@ -10,9 +10,12 @@
 	import BreadCrumbComponent from './BreadCrumb.svelte';
 	import BreadCrumbSeparator from './BreadCrumbSeparator.svelte';
 
-	export let additionalClasses = '';
+	interface Props {
+		additionalClasses?: string;
+		breadCrumbs: BreadCrumb[];
+	}
 
-	export let breadCrumbs: BreadCrumb[];
+	let { additionalClasses = '', breadCrumbs }: Props = $props();
 </script>
 
 <ol class={`breadcrumb ${additionalClasses}`}>

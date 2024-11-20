@@ -5,12 +5,17 @@
 	import { onMount } from 'svelte';
 	import AccessDenied from './errors/AccessDenied.svelte';
 
-	/**
+	
+
+	
+
+	
+	interface Props {
+		/**
 	 * The permissions needed to show the main slot
 	 */
-	export let requiredPermissions: apiPermission[];
-
-	/**
+		requiredPermissions: apiPermission[];
+		/**
 	 * Debug mode will always show the main slot regardless if the user
 	 * contains the permissions or not, but with additional info
 	 *
@@ -22,13 +27,23 @@
 	 * [PROD-TODO]
 	 * disable this prop when on production (make it be debugMode = debug && ENV === 'dev')
 	 */
-	export let debug = PUBLIC_IS_DEV;
-
-	/**
+		debug?: any;
+		/**
 	 * if when the permissions are lacking, the `AccessDenied` component should
 	 * be shown on the `denied` slot
 	 */
-	export let accessDeniedComponentAsDefaultDeniedSlot = false;
+		accessDeniedComponentAsDefaultDeniedSlot?: boolean;
+		children?: import('svelte').Snippet;
+		denied?: import('svelte').Snippet;
+	}
+
+	let {
+		requiredPermissions,
+		debug = PUBLIC_IS_DEV,
+		accessDeniedComponentAsDefaultDeniedSlot = false,
+		children,
+		denied
+	}: Props = $props();
 
 	onMount(() => {
 		// [PROD-TODO]
@@ -44,7 +59,7 @@
 		}
 	});
 
-	$: hasPermissions = $hasPermission(requiredPermissions);
+	let hasPermissions = $derived($hasPermission(requiredPermissions));
 </script>
 
 <!--
@@ -61,11 +76,11 @@ code that needs to run only if the user is authenticated either move that code t
 that are in the guard or check the authorization yourself
 -->
 {#if hasPermissions}
-	<slot />
+	{@render children?.()}
 {:else if accessDeniedComponentAsDefaultDeniedSlot}
-	<slot name="denied">
+	{#if denied}{@render denied()}{:else}
 		<AccessDenied />
-	</slot>
+	{/if}
 {:else}
-	<slot name="denied" />
+	{@render denied?.()}
 {/if}

@@ -3,17 +3,22 @@
 	import Icon from '@iconify/svelte';
 	import SessionCard from './SessionCard.svelte';
 
-	export let sessions: UserSession[];
 
-	/**
+	
+
+	interface Props {
+		sessions: UserSession[];
+		/**
 	 * If the sessions being show with this component
 	 * belong to the currently logged in user, and as
 	 * such can be revoked
 	 */
-	export let isSessionsFromCurrentlyLoggedUser = false;
+		isSessionsFromCurrentlyLoggedUser?: boolean;
+		class?: string;
+	}
 
-	let clazz = '';
-	export { clazz as class };
+	let { sessions = $bindable(), isSessionsFromCurrentlyLoggedUser = false, class: clazz = '' }: Props = $props();
+	
 
 	const removeSession = (sessionPublicId: number) => {
 		const idx = sessions.findIndex((s) => s.publicId === sessionPublicId);

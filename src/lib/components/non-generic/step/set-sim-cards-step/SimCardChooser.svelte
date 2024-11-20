@@ -6,18 +6,23 @@
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
-	/**
+	
+
+
+	interface Props {
+		/**
 	 * Tracker to be associated with the sim card to be created or selected
 	 */
-	export let tracker: Tracker;
+		tracker: Tracker;
+		slot: number;
+		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+	}
 
-	export let slot: number;
-
-	export let formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+	let { tracker, slot, formSchema }: Props = $props();
 
 	type action = 'new-sim-card' | 'existing-sim-card';
 
-	let selectedOption: action = 'new-sim-card';
+	let selectedOption: action = $state('new-sim-card');
 </script>
 
 <OptionToggler

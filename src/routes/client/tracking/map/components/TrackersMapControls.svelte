@@ -27,7 +27,7 @@
 
 <MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
 	<button
-		on:click={openSelectTrackersDrawer}
+		onclick={openSelectTrackersDrawer}
 		class="m-[10px] h-[60px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
 	>
 		<div class="my-auto">
@@ -42,7 +42,7 @@
 
 <MapControl position={window.google.maps.ControlPosition.TOP_LEFT}>
 	<button
-		on:click={fitMapToTrackersBeingShown}
+		onclick={fitMapToTrackersBeingShown}
 		class="m-[10px] h-[40px] flex items-center px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
 	>
 		<div class="flex items-center text-lg">

@@ -3,11 +3,20 @@
 	import type { Readable } from 'svelte/store';
 	import TableRowLoader from './TableRowLoader.svelte';
 
-	export let table: Readable<Table<T>>;
-	export let colspan: number;
-	export let isLoading: boolean;
 
-	export let borderColor = 'border-surface-400-500-token';
+	interface Props {
+		table: Readable<Table<T>>;
+		colspan: number;
+		isLoading: boolean;
+		borderColor?: string;
+	}
+
+	let {
+		table,
+		colspan,
+		isLoading,
+		borderColor = 'border-surface-400-500-token'
+	}: Props = $props();
 </script>
 
 <thead>
@@ -16,8 +25,8 @@
 			{#each headerGroup.headers as header}
 				<th class={`p-3 border-x-2 ${borderColor}`}>
 					{#if !header.isPlaceholder}
-						<svelte:component
-							this={flexRender(header.column.columnDef.header, header.getContext())}
+						{@const SvelteComponent = flexRender(header.column.columnDef.header, header.getContext())}
+						<SvelteComponent
 						/>
 					{/if}
 				</th>

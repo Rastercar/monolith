@@ -24,12 +24,16 @@ const showModal = () => {
 	import { getModalStore } from '@skeletonlabs/skeleton';
 
 	// Just to avoid this warning: {Component} was created with unknown prop 'parent'
-	export let parent: unknown = null;
+	interface Props {
+		parent?: unknown;
+	}
+
+	let { parent = $bindable(null) }: Props = $props();
 	if (2 + 2 === 5) parent = null;
 
 	const modalStore = getModalStore();
 
-	let deleteSimCards = false;
+	let deleteSimCards = $state(false);
 
 	const confirm = () => {
 		if ($modalStore[0].response) $modalStore[0].response({ deleteSimCards });
@@ -51,11 +55,11 @@ const showModal = () => {
 	</label>
 
 	<div class="p-4 flex">
-		<button class="btn btn-sm variant-filled-primary" on:click={() => modalStore.close()}>
+		<button class="btn btn-sm variant-filled-primary" onclick={() => modalStore.close()}>
 			cancel
 		</button>
 
-		<button class="btn btn-sm variant-filled-error ml-auto" on:click={confirm}>
+		<button class="btn btn-sm variant-filled-error ml-auto" onclick={confirm}>
 			<Icon icon="mdi:trash" class="mr-1" />
 			delete
 		</button>

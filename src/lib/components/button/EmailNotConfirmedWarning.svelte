@@ -3,19 +3,23 @@
 	import { apiRequestUserEmailAddressConfirmationEmail } from '$lib/api/user';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
-	import { ProgressBar } from '@skeletonlabs/skeleton';
+	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import PermissionGuard from '../guard/PermissionGuard.svelte';
 
-	/**
-	 * if the email that is not confirmed is the user email or the user's organization email.
-	 *
-	 * - for users, the email will be sent to the user email address
-	 * - for organization, the component will only be visible if the user
-	 * has the needed permissions to confirm the org email. The email is sent
-	 * to the user organization billing email address
-	 */
-	export let sendConfirmationEmailTo: 'user' | 'organization';
+	interface Props {
+		/**
+		 * if the email that is not confirmed is the user email or the user's organization email.
+		 *
+		 * - for users, the email will be sent to the user email address
+		 * - for organization, the component will only be visible if the user
+		 * has the needed permissions to confirm the org email. The email is sent
+		 * to the user organization billing email address
+		 */
+		sendConfirmationEmailTo: 'user' | 'organization';
+	}
+
+	let { sendConfirmationEmailTo }: Props = $props();
 
 	const mutation = createMutation({
 		mutationFn: () => {
@@ -28,7 +32,7 @@
 		}
 	});
 
-	let dismissed = false;
+	let dismissed = $state(false);
 </script>
 
 <PermissionGuard
@@ -38,13 +42,13 @@
 		{#if $mutation.isPending}
 			<div class="text-secondary-500-400-token">
 				sending confirmation email
-				<ProgressBar class="mt-1" />
+				<Progress classes="mt-1" />
 			</div>
 		{:else if $mutation.isSuccess}
 			<span class="text-success-500-400-token flex items-center">
 				confirmation email sent to your inbox
 
-				<button type="button" class="btn-icon btn-icon-sm" on:click={() => (dismissed = true)}>
+				<button type="button" class="btn-icon btn-icon-sm" onclick={() => (dismissed = true)}>
 					<Icon icon="mdi:close" />
 				</button>
 			</span>
@@ -53,7 +57,7 @@
 				<Icon icon="mdi:error" class="mr-2" />
 				error verifying your email address
 
-				<button type="button" class="btn-icon btn-icon-sm" on:click={() => (dismissed = true)}>
+				<button type="button" class="btn-icon btn-icon-sm" onclick={() => (dismissed = true)}>
 					<Icon icon="mdi:close" />
 				</button>
 			</span>
@@ -61,7 +65,7 @@
 			<button
 				type="button"
 				class="btn btn-sm variant-filled-warning py-1"
-				on:click={() => $mutation.mutate()}
+				onclick={() => $mutation.mutate()}
 			>
 				verify email
 			</button>

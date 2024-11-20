@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { getMapContext, type Position } from '../map';
 	import Icon from '@iconify/svelte';
@@ -6,13 +8,17 @@
 	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
 	import type { Tracker } from '$lib/api/tracker.schema';
 
-	export let tracker: Tracker;
 
-	export let position: Position;
+	interface Props {
+		tracker: Tracker;
+		position: Position;
+	}
 
-	let markerContentElement: HTMLElement;
+	let { tracker, position }: Props = $props();
 
-	let markerInstance: InstanceType<typeof google.maps.marker.AdvancedMarkerElement> | null = null;
+	let markerContentElement: HTMLElement = $state();
+
+	let markerInstance: InstanceType<typeof google.maps.marker.AdvancedMarkerElement> | null = $state(null);
 
 	const mapContext = getMapContext();
 
@@ -55,11 +61,11 @@
 	onMount(addMarkerToMap);
 	onDestroy(removeMarkerFromMap);
 
-	$: {
+	run(() => {
 		if (position && markerInstance) {
 			markerInstance.position = position;
 		}
-	}
+	});
 </script>
 
 <div

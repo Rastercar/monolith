@@ -15,20 +15,26 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 
-	/**
+	
+
+	
+	interface Props {
+		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+		/**
 	 * The slot of the tracker the sim card being created is going to occupy
 	 *
 	 * this is also used to prevents errors when using this component multiple
 	 * times on the same page
 	 */
-	export let slotNumber = 1;
-
-	/**
+		slotNumber?: number;
+		/**
 	 * The ID of the tracker to associate with the SIM card being created
 	 */
-	export let trackerIdToAssociate: number | undefined = undefined;
+		trackerIdToAssociate?: number | undefined;
+	}
+
+	let { formSchema, slotNumber = 1, trackerIdToAssociate = undefined }: Props = $props();
 
 	const form = superForm(formSchema, {
 		validators: zodClient(createSimCardSchema),
@@ -70,9 +76,9 @@
 		});
 	};
 
-	$: ({ tainted, allErrors } = form);
+	let { tainted, allErrors } = $derived(form);
 
-	$: canSubmit = $tainted !== undefined && $allErrors.length === 0;
+	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
 </script>
 
 <div>
@@ -160,7 +166,7 @@
 	</div>
 
 	<div class="flex mt-4 justify-end">
-		<button class="btn variant-filled-primary" disabled={!canSubmit} on:click={createSimCard}>
+		<button class="btn variant-filled-primary" disabled={!canSubmit} onclick={createSimCard}>
 			create SIM card
 		</button>
 	</div>

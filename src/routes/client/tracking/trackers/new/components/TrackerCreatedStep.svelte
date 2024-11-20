@@ -12,7 +12,7 @@
 	<p class="mb-4">Your tracker was created successfully</p>
 	<button
 		class="btn variant-filled-primary mr-4"
-		on:click={() => {
+		onclick={() => {
 			$stepperState.current = 0;
 			dispatch('create-another-clicked');
 		}}

@@ -10,9 +10,13 @@
 	import { isDateOlderThanXMilliseconds } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 
-	export let tracker: Tracker;
 
-	export let position: Position;
+	interface Props {
+		tracker: Tracker;
+		position: Position;
+	}
+
+	let { tracker, position }: Props = $props();
 
 	const fiveMinutes = 1000 * 60 * 5;
 
@@ -24,12 +28,12 @@
 		queryFn: () => apiGetVehicleById(tracker.vehicleId ?? 0)
 	});
 
-	$: ({ data: vehicleTracker } = $query);
+	let { data: vehicleTracker } = $derived($query);
 
-	$: isOnline =
-		!!position.timestamp && isDateOlderThanXMilliseconds(position.timestamp, fiveMinutes);
+	let isOnline =
+		$derived(!!position.timestamp && isDateOlderThanXMilliseconds(position.timestamp, fiveMinutes));
 
-	$: iconColor = isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300';
+	let iconColor = $derived(isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300');
 </script>
 
 <ArrowUpTooltip dataPopup="trackerOverlayStatusPopup">
@@ -60,7 +64,7 @@
 					placement: 'top'
 				}}
 				class={`h-2 w-2 ${iconColor} rounded-full ml-2`}
-			/>
+			></div>
 		</div>
 
 		<div class="mb-2 flex items-center">
@@ -83,7 +87,7 @@
 			<a
 				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
 				href={`/client/tracking/trackers/${tracker.id}`}
-				on:click={drawerStore.close}
+				onclick={drawerStore.close}
 			>
 				<Icon icon="mdi:link" class="mr-2" />
 				see details
@@ -141,7 +145,7 @@
 			<a
 				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
 				href={`/client/tracking/vehicles/${vehicleTracker.id}`}
-				on:click={drawerStore.close}
+				onclick={drawerStore.close}
 			>
 				<Icon icon="mdi:link" class="mr-2" />
 				see details

@@ -1,14 +1,19 @@
 import { customType, pgEnum } from 'drizzle-orm/pg-core';
 
-export const bytea = customType<{ data: string; notNull: false; default: false }>({
+export const bytea = customType<{ data: string | Buffer; notNull: false; default: false }>({
 	dataType: () => 'bytea',
 
 	toDriver: (val) => {
-		let newVal = val;
+		if (typeof val === 'string') {
+			if (val.startsWith('0x')) {
+				const newVal = val.slice(2);
+				return Buffer.from(newVal, 'hex');
+			}
 
-		if (val.startsWith('0x')) newVal = val.slice(2);
+			return Buffer.from(val);
+		}
 
-		return Buffer.from(newVal, 'hex');
+		return val;
 	},
 
 	fromDriver: (val) => (val as Buffer).toString('hex')

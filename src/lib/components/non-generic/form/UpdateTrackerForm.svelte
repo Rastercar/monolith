@@ -18,9 +18,13 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let tracker: Tracker;
 
-	export let formSchema: SuperValidated<Infer<typeof updateTrackerSchema>>;
+	interface Props {
+		tracker: Tracker;
+		formSchema: SuperValidated<Infer<typeof updateTrackerSchema>>;
+	}
+
+	let { tracker = $bindable(), formSchema }: Props = $props();
 
 	const form = superForm(formSchema, { validators: zodClient(updateTrackerSchema) });
 
@@ -54,9 +58,9 @@
 		form.reset({ data: { model: tracker.model, imei: tracker.imei } });
 	});
 
-	$: ({ allErrors } = form);
+	let { allErrors } = $derived(form);
 
-	$: canSubmit = $allErrors.length === 0;
+	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
 <div class="flex flex-col md:flex-row gap-4">

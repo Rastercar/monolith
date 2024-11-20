@@ -2,10 +2,14 @@
 	import UserAvatar from '$lib/components/avatar/UserAvatar.svelte';
 	import { authStore } from '$lib/store/auth.svelte';
 
-	let clazz = '';
-	export { clazz as class };
+	interface Props {
+		class?: string;
+	}
 
-	$: ({ user } = $authStore);
+	let { class: clazz = '' }: Props = $props();
+	
+
+	let { user } = $derived($authStore);
 </script>
 
 {#if user}

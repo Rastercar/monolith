@@ -7,7 +7,11 @@
 	import { createInfiniteQuery, keepPreviousData, type InfiniteData } from '@tanstack/svelte-query';
 	import { derived, writable } from 'svelte/store';
 
-	export let trackerId: number;
+	interface Props {
+		trackerId: number;
+	}
+
+	let { trackerId }: Props = $props();
 
 	const pageSize = 15;
 
@@ -40,9 +44,10 @@
 		}))
 	);
 
-	$: hasNoPages = !$query.data?.pages;
-	$: hasOneEmptyPage =
-		$query.data && $query.data.pages.length === 1 && $query.data.pages[0].length === 0;
+	let hasNoPages = $derived(!$query.data?.pages);
+	let hasOneEmptyPage = $derived(
+		$query.data && $query.data.pages.length === 1 && $query.data.pages[0].length === 0
+	);
 </script>
 
 {#if $query.isPending}
@@ -101,7 +106,7 @@
 					<li class="px-4 pt-4">
 						<LoadableButton
 							isLoading={$query.isFetching}
-							contentWrapperClasses="flex items-center"
+							contentWrapperClass="flex items-center"
 							class="btn btn-sm variant-filled-primary w-full"
 							on:click={() => $query.fetchNextPage()}
 							disabled={!$query.hasNextPage || $query.isFetchingNextPage}

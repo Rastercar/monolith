@@ -4,7 +4,7 @@
 	import { popup } from '@skeletonlabs/skeleton';
 	import UserDisplay from './UserDisplay.svelte';
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 </script>
 
 {#if user}

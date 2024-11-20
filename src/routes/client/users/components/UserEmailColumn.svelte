@@ -3,9 +3,13 @@
 	import Icon from '@iconify/svelte';
 	import { popup } from '@skeletonlabs/skeleton';
 
-	export let idx: number;
-	export let email: string;
-	export let verified: boolean;
+	interface Props {
+		idx: number;
+		email: string;
+		verified: boolean;
+	}
+
+	let { idx, email, verified }: Props = $props();
 </script>
 
 <div class="flex items-center">

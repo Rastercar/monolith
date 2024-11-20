@@ -77,7 +77,7 @@
 		}
 	];
 
-	$: isInSettingsRoute = $page.url.pathname.includes('/settings');
+	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
 </script>
 
 <div class="mt-4">

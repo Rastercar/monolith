@@ -4,6 +4,8 @@
 </script>
 
 <script lang="ts" generics="T extends Obj">
+	import { run } from 'svelte/legacy';
+
 	import type { FormPathType } from 'sveltekit-superforms';
 
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
@@ -16,38 +18,55 @@
 	import type { FormPathLeaves } from 'sveltekit-superforms';
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 
-	export let form: SuperForm<T, unknown>;
 
-	export let field: FormPathLeaves<T>;
-	export let label: string;
 
-	export let options: AutocompleteOption<string>[];
 
-	export let inputClass = 'input mb-1';
-	export let labelClass = 'text-sm';
 
-	let clazz = 'label mt-4 mb-1';
-	export { clazz as class };
+	
 
 	const { value, errors, constraints } = formFieldProxy(form, field);
 
 	// This field reflects the value store from the formFieldProxy
 	// but is guaranteed to be a string, this avoid some type shenanigans
 	// with the autocomplete component typing
-	let stringValue = typeof value === 'string' ? value : '';
+	let stringValue = $state(typeof value === 'string' ? value : '');
 
-	export let popupSettings: PopupSettings = {
+	interface Props {
+		form: SuperForm<T, unknown>;
+		field: FormPathLeaves<T>;
+		label: string;
+		options: AutocompleteOption<string>[];
+		inputClass?: string;
+		labelClass?: string;
+		class?: string;
+		popupSettings?: PopupSettings;
+		[key: string]: any
+	}
+
+	let {
+		form,
+		field,
+		label,
+		options,
+		inputClass = 'input mb-1',
+		labelClass = 'text-sm',
+		class: clazz = 'label mt-4 mb-1',
+		popupSettings = {
 		event: 'focus-click',
 		target: 'popupAutocomplete',
 		placement: 'bottom-start'
-	};
+	},
+		...rest
+	}: Props = $props();
 
 	const onSelection = ({ detail }: CustomEvent<AutocompleteOption<string>>) => {
 		stringValue = detail.value;
 		value.set(stringValue as FormPathType<T, FormPathLeaves<T>>);
 	};
 
-	$: stringValue = $value as string;
+	run(() => {
+		stringValue = $value as string;
+	});
 </script>
 
 <label class={clazz}>
@@ -61,7 +80,7 @@
 		bind:value={$value}
 		use:popup={popupSettings}
 		{...$constraints}
-		{...$$restProps}
+		{...rest}
 	/>
 
 	<div data-popup="popupAutocomplete" class="card max-w-xs max-h-48 p-0 overflow-y-auto z-10">

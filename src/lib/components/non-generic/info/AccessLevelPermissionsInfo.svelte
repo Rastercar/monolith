@@ -10,13 +10,17 @@
 	import Icon from '@iconify/svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	export let accessLevel: AccessLevel;
+	interface Props {
+		accessLevel: AccessLevel;
+	}
 
-	let showDetails = true;
+	let { accessLevel }: Props = $props();
 
-	$: permissionsByCategory = Object.entries(
+	let showDetails = $state(true);
+
+	let permissionsByCategory = $derived(Object.entries(
 		groupPermissionsByCategory(accessLevel.permissions as apiPermission[])
-	) as [[apiPermissionCategory, PermissionDetailsAndKey[]]];
+	) as [[apiPermissionCategory, PermissionDetailsAndKey[]]]);
 </script>
 
 <div class="mb-1 flex justify-between">

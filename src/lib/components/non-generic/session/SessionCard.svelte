@@ -10,13 +10,18 @@
 
 	type deviceType = 'console' | 'mobile' | 'tablet' | 'smarttv' | 'wearable' | 'embedded';
 
-	export let session: UserSession;
 
-	/**
+	
+	interface Props {
+		session: UserSession;
+		/**
 	 * If the session belongs to the logged in user
 	 * and therefore, can be revoked.
 	 */
-	export let belongsToLoggedInUser = false;
+		belongsToLoggedInUser?: boolean;
+	}
+
+	let { session, belongsToLoggedInUser = false }: Props = $props();
 
 	const uap = new UAParser(session.userAgent);
 
@@ -50,7 +55,7 @@
 		onSuccess: () => dispatch('deleted')
 	});
 
-	$: canRemoveSessions = belongsToLoggedInUser || $hasPermission('LOGOFF_USER');
+	let canRemoveSessions = $derived(belongsToLoggedInUser || $hasPermission('LOGOFF_USER'));
 </script>
 
 <div class="flex flex-wrap items-center p-4 gap-4">
@@ -76,7 +81,7 @@
 			disabled={$mutation.isPending}
 			type="button"
 			class="btn btn-sm variant-filled-warning ml-auto"
-			on:click={() => $mutation.mutate()}
+			onclick={() => $mutation.mutate()}
 		>
 			<Icon icon="mdi:trash" />
 			<span>{$mutation.isPending ? 'removing session' : 'revoke session'}</span>

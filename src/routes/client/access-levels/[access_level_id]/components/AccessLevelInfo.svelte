@@ -2,7 +2,11 @@
 	import type { AccessLevel } from '$lib/api/access-level.schema';
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 
-	export let accessLevel: AccessLevel;
+	interface Props {
+		accessLevel: AccessLevel;
+	}
+
+	let { accessLevel }: Props = $props();
 </script>
 
 <span class="block mt-2">Description:</span>

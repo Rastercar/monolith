@@ -1,3 +1,7 @@
-<slot>
+<script lang="ts">
+	let { children } = $props();
+</script>
+
+{#if children}{@render children()}{:else}
 	<li class="crumb-separator" aria-hidden>/</li>
-</slot>
+{/if}

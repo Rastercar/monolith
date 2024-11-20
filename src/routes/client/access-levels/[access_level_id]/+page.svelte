@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { apiDeleteAccessLevel, apiGetAccessLevelById } from '$lib/api/access-level';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
@@ -14,11 +16,15 @@
 	import AccessLevelInfo from './components/AccessLevelInfo.svelte';
 	import UpdateAccessLevelForm from './components/UpdateAccessLevelForm.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let editMode = data.startInEditMode;
+	let { data }: Props = $props();
 
-	let accessLevelDeleted = false;
+	let editMode = $state(data.startInEditMode);
+
+	let accessLevelDeleted = $state(false);
 
 	const toaster = getToaster();
 
@@ -38,15 +44,18 @@
 		await $deleteAccessLevelMutation.mutateAsync().then(() => (accessLevelDeleted = true));
 	};
 
-	$: ({ data: accessLevel, error, isLoading } = $query);
+	let accessLevel;
+	run(() => {
+		({ data: accessLevel, error, isLoading } = $query);
+	});
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 
-	$: accessLevelIsFixed = !!accessLevel?.isFixed;
+	let accessLevelIsFixed = $derived(!!accessLevel?.isFixed);
 
-	$: isCurrentUserAccessLevel = !!accessLevel && accessLevel.id === user?.accessLevel.id;
+	let isCurrentUserAccessLevel = $derived(!!accessLevel && accessLevel.id === user?.accessLevel.id);
 
-	$: canEditOrDeleteAccessLevel = !accessLevelIsFixed && !isCurrentUserAccessLevel;
+	let canEditOrDeleteAccessLevel = $derived(!accessLevelIsFixed && !isCurrentUserAccessLevel);
 </script>
 
 <PermissionGuard requiredPermissions={['MANAGE_USER_ACCESS_LEVELS']}>
@@ -100,7 +109,7 @@
 					<button
 						disabled={!canEditOrDeleteAccessLevel}
 						class="btn-icon btn-icon-sm variant-filled-primary"
-						on:click={() => (editMode = !editMode)}
+						onclick={() => (editMode = !editMode)}
 					>
 						<Icon icon={editMode ? 'mdi:pencil-off' : 'mdi:pencil'} />
 					</button>

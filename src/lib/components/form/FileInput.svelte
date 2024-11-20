@@ -9,30 +9,46 @@
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 	import ErrorMessage from './ErrorMessage.svelte';
 
-	export let form: SuperForm<T, unknown>;
 
-	/**
+	
+
+	
+
+
+
+	interface Props {
+		form: SuperForm<T, unknown>;
+		/**
 	 * The form filename input field, this refers to the value of the
 	 * `<input type="file" />` which is the filename of the selected file
 	 *
 	 * @see:
 	 * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
 	 */
-	export let field: FormPathLeaves<T>;
-
-	/**
+		field: FormPathLeaves<T>;
+		/**
 	 * The form file field, this field will be set to the first selected
 	 * file of the `<input type="file" />` from this component
 	 */
-	export let fileField: FormPathLeaves<T>;
+		fileField: FormPathLeaves<T>;
+		label: string;
+		labelClass?: string;
+		inputClass?: string;
+		class?: string;
+		[key: string]: any
+	}
 
-	export let label: string;
-	export let labelClass = 'text-sm';
-
-	export let inputClass = 'input mb-1';
-
-	let clazz = 'label mt-4 mb-1';
-	export { clazz as class };
+	let {
+		form,
+		field,
+		fileField,
+		label,
+		labelClass = 'text-sm',
+		inputClass = 'input mb-1',
+		class: clazz = 'label mt-4 mb-1',
+		...rest
+	}: Props = $props();
+	
 
 	const {
 		value: filenameValue,
@@ -57,7 +73,7 @@
 		type="file"
 		aria-invalid={[...($filenameErrors || []), ...($fileErrors || [])] ? 'true' : undefined}
 		bind:value={$filenameValue}
-		on:change={({ currentTarget }) => {
+		onchange={({ currentTarget }) => {
 			const file = currentTarget.files?.[0];
 			if (!file) return;
 
@@ -65,7 +81,7 @@
 			dispatch('file-selected', file);
 		}}
 		{...$filenameConstraints}
-		{...$$restProps}
+		{...rest}
 	/>
 	<ErrorMessage errors={[...($filenameErrors || []), ...($fileErrors || [])]} />
 </label>

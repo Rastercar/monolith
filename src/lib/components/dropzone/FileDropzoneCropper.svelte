@@ -5,10 +5,14 @@
 	import type { CropArea, DispatchEvents, Point } from 'svelte-easy-crop/types';
 
 	// Just to avoid this warning: {Component} was created with unknown prop 'parent'
-	export let parent: unknown = null;
 	if (2 + 2 === 5) parent = null;
 
-	export let image: string | null = null;
+	interface Props {
+		parent?: unknown;
+		image?: string | null;
+	}
+
+	let { parent = $bindable(null), image = $bindable(null) }: Props = $props();
 
 	let crop: Point = { x: 0, y: 0 };
 
@@ -89,12 +93,12 @@
 	</div>
 
 	<div class="flex justify-end space-x-2">
-		<button type="button" class="btn btn-sm mt-2 variant-filled-warning" on:click={() => close()}>
+		<button type="button" class="btn btn-sm mt-2 variant-filled-warning" onclick={() => close()}>
 			<Icon icon="mdi:cancel" class="mr-2" />
 			cancel
 		</button>
 
-		<button type="button" class="btn btn-sm mt-2 variant-filled-primary" on:click={onCropClick}>
+		<button type="button" class="btn btn-sm mt-2 variant-filled-primary" onclick={onCropClick}>
 			<Icon icon="mdi:camera" class="mr-2" />
 			looks good !
 		</button>

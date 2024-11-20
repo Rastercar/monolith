@@ -118,8 +118,8 @@
 		if (unsubscribeFromMapStoreChanges) unsubscribeFromMapStoreChanges();
 	});
 
-	$: selectedTrackersCount = Object.keys($selectedTrackerStore).length;
-	$: selectionEnabled = selectedTrackersCount < trackerSelectionLimit;
+	let selectedTrackersCount = $derived(Object.keys($selectedTrackerStore).length);
+	let selectionEnabled = $derived(selectedTrackersCount < trackerSelectionLimit);
 </script>
 
 <div class="flex justify-between">
@@ -176,7 +176,7 @@
 
 			<button
 				class="btn btn-sm variant-filled-primary"
-				on:click={() => ($selectedTrackerStore = {})}
+				onclick={() => ($selectedTrackerStore = {})}
 			>
 				<Icon icon="mdi:trash" class="mr-1" />
 				clear all

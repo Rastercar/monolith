@@ -11,17 +11,22 @@
 	import Icon from '@iconify/svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	/**
+	
+
+	interface Props {
+		/**
 	 * key: permission key (eg: CREATE_USER)
 	 * val: boolean indicating the permission is selected
 	 */
-	export let permissionToToggleStatus: Record<apiPermission, boolean>;
+		permissionToToggleStatus: Record<apiPermission, boolean>;
+		showManageUserAccessLevelsWarningIfToggled?: boolean;
+	}
 
-	export let showManageUserAccessLevelsWarningIfToggled = true;
+	let { permissionToToggleStatus = $bindable(), showManageUserAccessLevelsWarningIfToggled = true }: Props = $props();
 
-	$: permissionsByCategory = Object.entries(allPermissionsGroupedByCategory) as [
+	let permissionsByCategory = $derived(Object.entries(allPermissionsGroupedByCategory) as [
 		[apiPermissionCategory, PermissionDetailsAndKey[]]
-	];
+	]);
 </script>
 
 {#each permissionsByCategory as [category, permissions], i}

@@ -17,22 +17,38 @@
 	import { dynamicTransition } from './transition';
 	import type { StepperState } from './types';
 
-	export let state: Writable<StepperState> = getContext('state');
 
-	/** Provide classes to style the stepper header gap. */
-	export let gap = 'gap-4';
+	
 
-	/** Provide classes to style the stepper header badges. */
-	export let badge = 'variant-filled-surface';
+	
 
-	/** Provide classes to style the stepper header active step badge. */
-	export let active = 'variant-filled';
+	
 
-	/** Provide classes to style the stepper header border. */
-	export let border = 'border-surface-400-500-token';
+	
 
-	/** Provide additional classes. */
-	export let additionalClasses = '';
+	
+	interface Props {
+		state?: Writable<StepperState>;
+		/** Provide classes to style the stepper header gap. */
+		gap?: string;
+		/** Provide classes to style the stepper header badges. */
+		badge?: string;
+		/** Provide classes to style the stepper header active step badge. */
+		active?: string;
+		/** Provide classes to style the stepper header border. */
+		border?: string;
+		/** Provide additional classes. */
+		additionalClasses?: string;
+	}
+
+	let {
+		state = getContext('state'),
+		gap = 'gap-4',
+		badge = 'variant-filled-surface',
+		active = 'variant-filled',
+		border = 'border-surface-400-500-token',
+		additionalClasses = ''
+	}: Props = $props();
 
 	/** Provide the transition to used on entry. */
 	let transitionIn: TransitionIn = getContext('transitionIn');
@@ -48,10 +64,10 @@
 
 	const cHeader = 'flex items-center border-t mt-[15px]';
 
-	$: isActive = (step: number) => step === $state.current;
-	$: classesBadge = (step: number) => (isActive(step) ? active : badge);
+	let isActive = $derived((step: number) => step === $state.current);
+	let classesBadge = $derived((step: number) => (isActive(step) ? active : badge));
 
-	$: classesHeader = `${cHeader} ${border} ${gap} ${additionalClasses}`;
+	let classesHeader = $derived(`${cHeader} ${border} ${gap} ${additionalClasses}`);
 </script>
 
 {#if $state.total}

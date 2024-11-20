@@ -1,5 +1,10 @@
 <script lang="ts">
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 </script>
 
 <!--
@@ -31,6 +36,6 @@ sim card permissions are not required since the step is optional
 	]}
 >
 	<div class="p-6 max-w-3xl mx-auto">
-		<slot />
+		{@render children?.()}
 	</div>
 </PermissionGuard>

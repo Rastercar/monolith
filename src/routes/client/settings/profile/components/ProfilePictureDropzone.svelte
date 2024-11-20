@@ -14,7 +14,7 @@
 
 	const onDeleteSuccess = () => authStore.updateUser({ profilePicture: null });
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 </script>
 
 {#if user}

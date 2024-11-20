@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { Avatar, getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
@@ -9,21 +11,36 @@
 
 	type DeleteReturn = $$Generic;
 
-	export let defaultSrc = '';
 
-	export let deleteConfirmPrompt: string;
 
-	export let showCropperOnFileSelection = true;
 
-	export let border = 'border-dashed border-2';
 
-	export let uploadMutationFn: (_file: File) => Promise<UploadReturn>;
 
-	export let deleteMutationFn: () => Promise<DeleteReturn>;
 
-	export let onUploadSuccess: (_uploadResult: UploadReturn) => void = () => undefined;
 
-	export let onDeleteSuccess: (_deleteResult: DeleteReturn) => void = () => undefined;
+	interface Props {
+		defaultSrc?: string;
+		deleteConfirmPrompt: string;
+		showCropperOnFileSelection?: boolean;
+		border?: string;
+		uploadMutationFn: (_file: File) => Promise<UploadReturn>;
+		deleteMutationFn: () => Promise<DeleteReturn>;
+		onUploadSuccess?: (_uploadResult: UploadReturn) => void;
+		onDeleteSuccess?: (_deleteResult: DeleteReturn) => void;
+		preview?: import('svelte').Snippet<[any]>;
+	}
+
+	let {
+		defaultSrc = '',
+		deleteConfirmPrompt,
+		showCropperOnFileSelection = true,
+		border = 'border-dashed border-2',
+		uploadMutationFn,
+		deleteMutationFn,
+		onUploadSuccess = () => undefined,
+		onDeleteSuccess = () => undefined,
+		preview
+	}: Props = $props();
 
 	const toaster = getToaster();
 	const modalStore = getModalStore();
@@ -31,17 +48,17 @@
 	const uploadMutation = createMutation({ mutationFn: uploadMutationFn });
 	const deleteMutation = createMutation({ mutationFn: deleteMutationFn });
 
-	let newPhoto: null | { preview: string; file: File } = null;
+	let newPhoto: null | { preview: string; file: File } = $state(null);
 
 	/**
 	 * Ref to the hidden filepicker element
 	 */
-	let filePicker: HTMLInputElement;
+	let filePicker: HTMLInputElement = $state();
 
 	/**
 	 * A file is being dragged onto the dropzone
 	 */
-	let isDraggingFile = false;
+	let isDraggingFile = $state(false);
 
 	const openCropperModal = (file: File) => {
 		const component: ModalComponent = {
@@ -128,13 +145,13 @@
 			});
 	};
 
-	$: overlayClass = isDraggingFile ? 'opacity-80' : '-z-10 opacity-0';
+	let overlayClass = $derived(isDraggingFile ? 'opacity-80' : '-z-10 opacity-0');
 
-	$: containerClass = isDraggingFile
+	let containerClass = $derived(isDraggingFile
 		? 'border-slate-500 opacity-40'
-		: `border-transparent ${newPhoto ? 'border-slate-500' : ''}`;
+		: `border-transparent ${newPhoto ? 'border-slate-500' : ''}`);
 
-	$: hasPictureToShow = newPhoto?.preview || defaultSrc;
+	let hasPictureToShow = $derived(newPhoto?.preview || defaultSrc);
 </script>
 
 <div
@@ -142,24 +159,24 @@
 	role="button"
 	tabindex="-1"
 	aria-label="dropzone"
-	on:drop|preventDefault={onDrop}
-	on:dragenter={() => {
+	ondrop={preventDefault(onDrop)}
+	ondragenter={() => {
 		isDraggingFile = true;
 	}}
-	on:dragleave={() => {
+	ondragleave={() => {
 		isDraggingFile = false;
 	}}
-	on:dragover|preventDefault={() => undefined}
+	ondragover={preventDefault(() => undefined)}
 >
 	{#if hasPictureToShow}
-		<slot name="preview" previewSrc={newPhoto?.preview ?? defaultSrc}>
+		{#if preview}{@render preview({ previewSrc: newPhoto?.preview ?? defaultSrc, })}{:else}
 			<Avatar
 				src={newPhoto?.preview ?? defaultSrc}
 				class="mx-auto pointer-events-none"
 				width="w-48 my-4"
 				rounded="rounded-full"
 			/>
-		</slot>
+		{/if}
 	{:else}
 		<div class="w-full items-center justify-center flex flex-col h-48 pointer-events-none">
 			no picture
@@ -177,7 +194,7 @@
 			<button
 				disabled={$uploadMutation.isPending}
 				class="btn-icon btn-icon-sm bg-green-500 dark:bg-green-700"
-				on:click={uploadFile}
+				onclick={uploadFile}
 			>
 				<Icon
 					icon={$uploadMutation.isPending ? 'mdi:loading' : 'mdi:check'}
@@ -188,7 +205,7 @@
 			<button
 				class="btn-icon btn-icon-sm bg-red-500 dark:bg-red-700"
 				disabled={$uploadMutation.isPending}
-				on:click={clearPreview}
+				onclick={clearPreview}
 			>
 				<Icon icon="mdi:close" />
 			</button>
@@ -202,7 +219,7 @@
 			<button
 				class="btn-icon btn-icon-sm variant-filled-primary"
 				disabled={$uploadMutation.isPending}
-				on:click={() => filePicker.click()}
+				onclick={() => filePicker.click()}
 			>
 				<Icon icon={hasPictureToShow ? 'mdi:pencil' : 'mdi:plus'} />
 			</button>
@@ -211,7 +228,7 @@
 				<button
 					class="btn-icon btn-icon-sm variant-filled-error"
 					disabled={$uploadMutation.isPending}
-					on:click={() => deleteFile()}
+					onclick={() => deleteFile()}
 				>
 					<Icon icon="mdi:trash" />
 				</button>
@@ -222,7 +239,7 @@
 				accept=".jpg, .jpeg, .png, .webp"
 				class="hidden"
 				bind:this={filePicker}
-				on:change={onFileSelected}
+				onchange={onFileSelected}
 			/>
 		</div>
 	</div>

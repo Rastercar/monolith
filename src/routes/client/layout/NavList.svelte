@@ -14,11 +14,15 @@
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import NavLink from './NavLink.svelte';
 
-	export let routes: Route[];
+	interface Props {
+		routes: Route[];
+	}
+
+	let { routes }: Props = $props();
 
 	const drawerStore = getDrawerStore();
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 </script>
 
 <nav class="list-nav">

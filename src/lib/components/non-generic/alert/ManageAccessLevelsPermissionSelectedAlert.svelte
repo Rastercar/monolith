@@ -17,7 +17,7 @@
 		</div>
 
 		<div class="mt-1 flex justify-end">
-			<button class="badge variant-soft-warning" on:click={() => dispatch('undo-clicked')}>
+			<button class="badge variant-soft-warning" onclick={() => dispatch('undo-clicked')}>
 				undo
 			</button>
 		</div>

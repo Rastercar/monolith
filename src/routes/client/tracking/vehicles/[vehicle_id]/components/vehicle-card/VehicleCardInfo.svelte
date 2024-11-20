@@ -7,7 +7,11 @@
 	import VehicleCardField from './VehicleCardField.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 
-	export let vehicle: Vehicle;
+	interface Props {
+		vehicle: Vehicle;
+	}
+
+	let { vehicle }: Props = $props();
 
 	const dispatch = createEventDispatcher<{
 		'edit-click': void;
@@ -32,7 +36,7 @@
 	</span>
 
 	<PermissionGuard requiredPermissions={['DELETE_VEHICLE']}>
-		<button class="btn-icon btn-icon-sm variant-filled-error" on:click={deleteVehicle}>
+		<button class="btn-icon btn-icon-sm variant-filled-error" onclick={deleteVehicle}>
 			<Icon icon="mdi:trash" />
 		</button>
 	</PermissionGuard>
@@ -40,7 +44,7 @@
 	<PermissionGuard requiredPermissions={['UPDATE_VEHICLE']}>
 		<button
 			class="btn-icon btn-icon-sm ml-3 variant-filled-primary"
-			on:click={() => dispatch('edit-click')}
+			onclick={() => dispatch('edit-click')}
 		>
 			<Icon icon="mdi:pencil" />
 		</button>

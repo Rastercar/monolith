@@ -5,11 +5,15 @@
 	import UpdateVehicleForm from './UpdateVehicleForm.svelte';
 	import VehicleCardInfo from './VehicleCardInfo.svelte';
 
-	export let vehicle: Vehicle;
 
-	export let formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
+	interface Props {
+		vehicle: Vehicle;
+		formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
+	}
 
-	let editMode = false;
+	let { vehicle = $bindable(), formSchema }: Props = $props();
+
+	let editMode = $state(false);
 
 	const dispatch = createEventDispatcher<{ 'vehicle-updated': Vehicle }>();
 

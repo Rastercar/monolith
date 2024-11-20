@@ -1,13 +1,21 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 
-	export let text: string | undefined = '';
-	export let href: string | undefined = '';
-	export let icon: string | undefined = '';
+	interface Props {
+		text?: string | undefined;
+		href?: string | undefined;
+		icon?: string | undefined;
+		textColor?: string;
+	}
 
-	export let textColor = 'text-primary-700-200-token';
+	let {
+		text = '',
+		href = '',
+		icon = '',
+		textColor = 'text-primary-700-200-token'
+	}: Props = $props();
 
-	$: linkClasses = `flex items-center anchor no-underline ${textColor}`;
+	let linkClasses = $derived(`flex items-center anchor no-underline ${textColor}`);
 </script>
 
 <li class="crumb text-lg">

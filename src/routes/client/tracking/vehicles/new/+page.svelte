@@ -4,7 +4,11 @@
 	import type { PageData } from './$types';
 	import CreateVehicleForm from './components/CreateVehicleForm.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 </script>
 
 <PermissionGuard requiredPermissions={['CREATE_VEHICLE']}>

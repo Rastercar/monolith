@@ -2,7 +2,7 @@
 	import { authStore } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 </script>
 
 <div class="p-10 space-y-4">

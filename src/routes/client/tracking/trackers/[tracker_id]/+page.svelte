@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { apiGetTrackerById } from '$lib/api/tracker';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
@@ -9,7 +11,11 @@
 	import TrackerInfo from './components/TrackerInfo.svelte';
 	import TrackerPositionList from '$lib/components/non-generic/list/TrackerPositionList.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const query = createQuery({
 		queryKey: ['tracker', data.vehicleTrackerId],
@@ -17,11 +23,14 @@
 		queryFn: () => apiGetTrackerById(data.vehicleTrackerId)
 	});
 
-	let editMode = false;
+	let editMode = $state(false);
 
-	let trackerDeleted = false;
+	let trackerDeleted = $state(false);
 
-	$: tracker = $query.data;
+	let tracker;
+	run(() => {
+		tracker = $query.data;
+	});
 </script>
 
 <div class="p-6 max-w-4xl mx-auto">
@@ -64,7 +73,7 @@
 
 					<button
 						class="btn-icon btn-icon-sm variant-filled-primary"
-						on:click={() => (editMode = false)}
+						onclick={() => (editMode = false)}
 					>
 						<Icon icon="mdi:pencil-off" />
 					</button>

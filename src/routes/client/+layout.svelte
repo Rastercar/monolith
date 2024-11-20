@@ -1,45 +1,50 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { layoutStore } from '$lib/store/layout';
 	import { AppBar, AppShell, LightSwitch } from '@skeletonlabs/skeleton';
 	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
-	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
+	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
 	import SidebarNavigation from './layout/SidebarNavigation.svelte';
 	import UserDisplay from './layout/UserDisplay.svelte';
-	import { layoutStore } from '$lib/store/layout';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
 
-	$: isInSettingsRoute = $page.url.pathname.includes('/settings');
+	let { children }: Props = $props();
+
+	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
 </script>
 
 <ApplicationDrawer />
 
 <AppShell slotSidebarLeft="bg-surface-100-800-token w-0 lg:w-64">
-	<svelte:fragment slot="header">
+	{#snippet header()}
 		{#if $layoutStore.showHeader}
 			<AppBar background="bg-surface-200-700-token">
-				<svelte:fragment slot="lead">
+				{#snippet lead()}
 					<div class="flex items-center">
 						<DrawerHamburgerButton />
 						<strong class="text-xl uppercase hidden md:block">Rastercar</strong>
 					</div>
-				</svelte:fragment>
+				{/snippet}
 
-				<svelte:fragment slot="trail">
+				{#snippet trail()}
 					<LightSwitch />
 
 					<AppBarUserMenu />
-				</svelte:fragment>
+				{/snippet}
 			</AppBar>
 		{/if}
-	</svelte:fragment>
+	{/snippet}
 
-	<svelte:fragment slot="sidebarLeft">
+	{#snippet sidebarLeft()}
 		<div class:hidden={isInSettingsRoute}>
 			<UserDisplay class="px-4 pt-4" />
 		</div>
 
 		<SidebarNavigation />
-	</svelte:fragment>
+	{/snippet}
 
-	<slot />
+	{@render children?.()}
 </AppShell>

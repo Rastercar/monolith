@@ -10,9 +10,13 @@
 	import { WretchError } from 'wretch/resolver';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let errorCause = 'error verifying your email address';
+	let { data }: Props = $props();
+
+	let errorCause = $state('error verifying your email address');
 
 	const mutation = createMutation({
 		mutationFn: () => {

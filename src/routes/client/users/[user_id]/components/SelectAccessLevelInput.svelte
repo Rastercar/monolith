@@ -44,7 +44,7 @@
 		debounceTimer = setTimeout(() => ($filters.name = v), 200);
 	};
 
-	$: ({ data: accessLevels } = $query);
+	let { data: accessLevels } = $derived($query);
 </script>
 
 <input
@@ -52,7 +52,7 @@
 	type="search"
 	name="autocomplete-search"
 	placeholder="Search by mame"
-	on:keyup={(e) => debounce(e.currentTarget.value)}
+	onkeyup={(e) => debounce(e.currentTarget.value)}
 	use:popup={{
 		event: 'focus-click',
 		target: 'popupAutocomplete',
@@ -62,12 +62,14 @@
 
 <div data-popup="popupAutocomplete" class="card max-h-48 p-0 overflow-y-auto z-10">
 	<AutoComplete bind:input={$filters.name} options={accessLevels ?? []} on:selection={onSelected}>
-		<div slot="option" let:option class="flex justify-between w-full">
-			{option.label}
+		{#snippet option({ option })}
+				<div   class="flex justify-between w-full">
+				{option.label}
 
-			<div class="badge variant-filled-primary ml-8">
-				{option.meta?.original.permissions.length ?? 0} permissions
+				<div class="badge variant-filled-primary ml-8">
+					{option.meta?.original.permissions.length ?? 0} permissions
+				</div>
 			</div>
-		</div>
+			{/snippet}
 	</AutoComplete>
 </div>

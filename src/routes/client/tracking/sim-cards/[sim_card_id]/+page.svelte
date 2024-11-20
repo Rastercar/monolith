@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { apiDeleteSimCard, apiGetSimCard } from '$lib/api/sim-card';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
@@ -9,11 +11,15 @@
 	import type { PageData } from './$types';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const toaster = getToaster();
 
-	let simDeleted = false;
+	let simDeleted = $state(false);
 
 	const query = createQuery({
 		queryKey: ['sim-card', data.simCardId],
@@ -32,9 +38,12 @@
 		simDeleted = true;
 	};
 
-	let editMode = false;
+	let editMode = $state(false);
 
-	$: simCard = $query.data;
+	let simCard;
+	run(() => {
+		simCard = $query.data;
+	});
 </script>
 
 <div class="p-6 max-w-4xl mx-auto">
@@ -78,7 +87,7 @@
 
 				<div class="flex px-4">
 					<PermissionGuard requiredPermissions={['DELETE_SIM_CARD']}>
-						<button class="btn btn-sm variant-filled-error ml-auto mr-4" on:click={deleteSimCard}>
+						<button class="btn btn-sm variant-filled-error ml-auto mr-4" onclick={deleteSimCard}>
 							<Icon icon="mdi:trash" class="mr-2" />
 							delete
 						</button>
@@ -87,7 +96,7 @@
 					<PermissionGuard requiredPermissions={['UPDATE_SIM_CARD']}>
 						<button
 							class="btn btn-sm variant-filled-primary"
-							on:click={() => {
+							onclick={() => {
 								editMode = true;
 							}}
 						>
@@ -102,7 +111,7 @@
 				<div class="flex mb-4 justify-end">
 					<button
 						class="btn btn-sm variant-filled-primary"
-						on:click={() => {
+						onclick={() => {
 							editMode = false;
 						}}
 					>

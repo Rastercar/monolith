@@ -5,15 +5,24 @@
 		classes?: string;
 	}
 
-	export let space = 'gap-4';
 
-	export let additionalClasses = '';
 
-	export let options: Option[];
 
-	export let selectedOption: string;
+	interface Props {
+		space?: string;
+		additionalClasses?: string;
+		options: Option[];
+		selectedOption: string;
+	}
 
-	$: classes = `flex sm:flex-row flex-col content-start justify-center ${space} ${additionalClasses}`;
+	let {
+		space = 'gap-4',
+		additionalClasses = '',
+		options,
+		selectedOption = $bindable()
+	}: Props = $props();
+
+	let classes = $derived(`flex sm:flex-row flex-col content-start justify-center ${space} ${additionalClasses}`);
 </script>
 
 {#if options.length}
@@ -22,7 +31,7 @@
 			<button
 				class={option.classes}
 				class:opacity-50={selectedOption !== option.value}
-				on:click={() => (selectedOption = option.value)}
+				onclick={() => (selectedOption = option.value)}
 			>
 				{option.label}
 			</button>

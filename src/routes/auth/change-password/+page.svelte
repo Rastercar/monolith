@@ -12,13 +12,17 @@
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const toaster = getToaster();
 
 	const form = superForm(data.form, { validators: zodClient(recoverPasswordByTokenSchema) });
 
-	let errorStatusCode: null | number = null;
+	let errorStatusCode: null | number = $state(null);
 
 	const redirectToHomePage = () => {
 		redirecting = true;
@@ -48,9 +52,9 @@
 		$mutation.mutate(validated.data.newPassword);
 	};
 
-	let redirecting = false;
+	let redirecting = $state(false);
 
-	$: isLoading = redirecting || $mutation.isPending;
+	let isLoading = $derived(redirecting || $mutation.isPending);
 </script>
 
 <div class="h-full flex justify-center px-6">
@@ -58,7 +62,7 @@
 		{#if $mutation.isSuccess}
 			<div class="flex flex-col">
 				<h1 class="mb-1 text-3xl mt-12 flex text-center">password changed successfully !</h1>
-				<button class="btn variant-filled-primary mt-4 mx-auto" on:click={redirectToHomePage}>
+				<button class="btn variant-filled-primary mt-4 mx-auto" onclick={redirectToHomePage}>
 					go to home page
 				</button>
 			</div>
@@ -83,7 +87,7 @@
 			{#if errorStatusCode === null}
 				<LoadableButton
 					{isLoading}
-					className="btn variant-filled-primary mt-4 w-full"
+					class="btn variant-filled-primary mt-4 w-full"
 					onclick={changePassword}
 				>
 					change password

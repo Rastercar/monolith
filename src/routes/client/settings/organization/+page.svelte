@@ -15,7 +15,11 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const toaster = getToaster();
 
@@ -51,7 +55,7 @@
 		form.form.set({ name, billingEmail });
 	});
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 </script>
 
 <h1 class="text-2xl mb-3">My Organization</h1>

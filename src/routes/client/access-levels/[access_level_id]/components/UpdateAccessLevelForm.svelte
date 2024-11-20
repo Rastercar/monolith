@@ -19,11 +19,15 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let accessLevel: AccessLevel;
 
-	export let formSchema: SuperValidated<Infer<typeof updateAccessLevelSchema>>;
+	interface Props {
+		accessLevel: AccessLevel;
+		formSchema: SuperValidated<Infer<typeof updateAccessLevelSchema>>;
+	}
 
-	let accessLevelInitiallyCouldManageUserAccessLevelsPermission = false;
+	let { accessLevel, formSchema }: Props = $props();
+
+	let accessLevelInitiallyCouldManageUserAccessLevelsPermission = $state(false);
 
 	const form = superForm(formSchema, { validators: zodClient(updateAccessLevelSchema) });
 
@@ -35,10 +39,10 @@
 	 * key: permission key (eg: CREATE_USER)
 	 * val: boolean indicating the permission is selected
 	 */
-	const permissionToToggleStatus = Object.keys(permissionDetails).reduce(
+	const permissionToToggleStatus = $state(Object.keys(permissionDetails).reduce(
 		(acc, v) => ({ ...acc, [v]: false }),
 		{}
-	) as Record<apiPermission, boolean>;
+	) as Record<apiPermission, boolean>);
 
 	const setPermissionsToggleStatusToTrue = (permissions: string[]) => {
 		permissions.forEach((p) => {
@@ -93,9 +97,9 @@
 			permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS'];
 	});
 
-	$: ({ allErrors } = form);
+	let { allErrors } = $derived(form);
 
-	$: canSubmit = $allErrors.length === 0;
+	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
 <TextInput field="name" label="Name" {form} />

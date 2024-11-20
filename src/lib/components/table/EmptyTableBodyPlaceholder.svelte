@@ -1,10 +1,19 @@
 <script lang="ts">
-	export let colspan = 1;
 
-	export let isLoading = false;
 
-	export let loadingText = 'loading';
-	export let noItemsText = 'no items found';
+	interface Props {
+		colspan?: number;
+		isLoading?: boolean;
+		loadingText?: string;
+		noItemsText?: string;
+	}
+
+	let {
+		colspan = 1,
+		isLoading = false,
+		loadingText = 'loading',
+		noItemsText = 'no items found'
+	}: Props = $props();
 </script>
 
 <tr>

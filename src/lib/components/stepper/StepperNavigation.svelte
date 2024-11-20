@@ -9,24 +9,41 @@
 	type TransitionIn = $$Generic<Transition>;
 	type TransitionOut = $$Generic<Transition>;
 
-	export let locked = false;
 
-	/** Arbitrary classes to the step navigation region. */
-	export let regionNavigation: string = '';
+	
 
-	export let state: Writable<StepperState> = getContext('state');
 
-	export let gap: string = getContext('gap');
-	export let justify = 'justify-between';
 
-	export let buttonBack = 'variant-ghost';
-	export let buttonBackLabel = '&larr; Back';
 
-	export let buttonNext = 'variant-filled';
-	export let buttonNextLabel = 'Next &rarr;';
 
-	export let buttonComplete = 'variant-filled-primary';
-	export let buttonCompleteLabel = 'Complete';
+	interface Props {
+		locked?: boolean;
+		/** Arbitrary classes to the step navigation region. */
+		regionNavigation?: string;
+		state?: Writable<StepperState>;
+		gap?: string;
+		justify?: string;
+		buttonBack?: string;
+		buttonBackLabel?: string;
+		buttonNext?: string;
+		buttonNextLabel?: string;
+		buttonComplete?: string;
+		buttonCompleteLabel?: string;
+	}
+
+	let {
+		locked = false,
+		regionNavigation = '',
+		state = getContext('state'),
+		gap = getContext('gap'),
+		justify = 'justify-between',
+		buttonBack = 'variant-ghost',
+		buttonBackLabel = '&larr; Back',
+		buttonNext = 'variant-filled',
+		buttonNextLabel = 'Next &rarr;',
+		buttonComplete = 'variant-filled-primary',
+		buttonCompleteLabel = 'Complete'
+	}: Props = $props();
 
 	let stepperDispatch = getContext<StepperEventDispatcher>('stepperDispatch');
 
@@ -71,7 +88,7 @@
 		stepperDispatch('complete', { step: stepIndex, state: $state });
 	}
 
-	$: classesNavigation = `${cNavigation} ${justify} ${gap} ${regionNavigation}`;
+	let classesNavigation = $derived(`${cNavigation} ${justify} ${gap} ${regionNavigation}`);
 </script>
 
 <!--
@@ -97,13 +114,13 @@ component per step, for more fine grained control.
 		}}
 	>
 		<!-- Button: Back -->
-		<button class="btn {buttonBack}" on:click={onBack} disabled={$state.current === 0}>
+		<button class="btn {buttonBack}" onclick={onBack} disabled={$state.current === 0}>
 			{@html buttonBackLabel}
 		</button>
 
 		{#if $state.current < $state.total - 1}
 			<!-- Button: Next -->
-			<button class="btn {buttonNext}" on:click={onNext} disabled={locked}>
+			<button class="btn {buttonNext}" onclick={onNext} disabled={locked}>
 				{#if locked}
 					<Icon icon="mdi:lock" />
 				{/if}
@@ -111,7 +128,7 @@ component per step, for more fine grained control.
 			</button>
 		{:else}
 			<!-- Button: Complete -->
-			<button class="btn {buttonComplete}" on:click={onComplete} disabled={locked}>
+			<button class="btn {buttonComplete}" onclick={onComplete} disabled={locked}>
 				{@html buttonCompleteLabel}
 			</button>
 		{/if}

@@ -22,10 +22,15 @@
 	import { createEventDispatcher } from 'svelte';
 	import { derived, writable } from 'svelte/store';
 
-	/**
+	
+	interface Props {
+		/**
 	 * The ID of the tracker to associate the selected SIM card to
 	 */
-	export let trackerIdToAssociate: number;
+		trackerIdToAssociate: number;
+	}
+
+	let { trackerIdToAssociate }: Props = $props();
 
 	const pagination = writable({ page: 1, pageSize: 3 });
 	const filters = writable<GetSimCardsFilters>({ withAssociatedTracker: false });
@@ -128,9 +133,9 @@
 		});
 	};
 
-	$: isLoading = $query.isLoading || $query.isFetching;
+	let isLoading = $derived($query.isLoading || $query.isFetching);
 
-	$: hasSelectedItem = Object.keys($table.getState().rowSelection).length > 0;
+	let hasSelectedItem = $derived(Object.keys($table.getState().rowSelection).length > 0);
 </script>
 
 <DebouncedTextField
@@ -138,16 +143,18 @@
 	title="Filter by phone number"
 	on:change={(e) => ($filters.phoneNumber = e.detail)}
 >
-	<div slot="label" class="flex">
-		<span>Filter by phone number</span>
-		<button
-			type="button"
-			class="btn p-0 text-primary-700-200-token ml-auto"
-			on:click={showSimInfoModal}
-		>
-			not finding your sim card ?
-		</button>
-	</div>
+	{#snippet label()}
+		<div  class="flex">
+			<span>Filter by phone number</span>
+			<button
+				type="button"
+				class="btn p-0 text-primary-700-200-token ml-auto"
+				onclick={showSimInfoModal}
+			>
+				not finding your sim card ?
+			</button>
+		</div>
+	{/snippet}
 </DebouncedTextField>
 
 <DataTable {table} {colspan} {isLoading} class="mb-4" />
@@ -171,6 +178,6 @@
 
 {#if hasSelectedItem}
 	<div class="flex justify-end mt-4">
-		<button class="btn variant-filled-primary" on:click={addSimToTracker}>Select SIM card</button>
+		<button class="btn variant-filled-primary" onclick={addSimToTracker}>Select SIM card</button>
 	</div>
 {/if}

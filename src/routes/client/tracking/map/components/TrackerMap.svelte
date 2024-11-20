@@ -19,7 +19,7 @@
 
 	let mapElement: HTMLDivElement;
 
-	let googleMap: InstanceType<typeof window.google.maps.Map>;
+	let googleMap: InstanceType<typeof window.google.maps.Map> = $state();
 
 	/**
 	 * SocketIO connection for realtime tracker position updates
@@ -36,9 +36,9 @@
 	 */
 	let selectedTrackers: number[] = [];
 
-	let isConnectingToApi = false;
+	let isConnectingToApi = $state(false);
 
-	let showConnectionErrorAlert = false;
+	let showConnectionErrorAlert = $state(false);
 
 	setContext<MapContext>(MAP_CONTEXT_KEY, {
 		getGoogleMap: () => googleMap,

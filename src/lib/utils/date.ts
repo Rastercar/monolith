@@ -30,3 +30,17 @@ export const toDateTime = (d: DateOrTimestamp, withTimezone = false) =>
 		second: 'numeric',
 		timeZoneName: withTimezone ? 'short' : undefined
 	});
+
+export const getDatesDiffInSeconds = (a: DateOrTimestamp, b: DateOrTimestamp) => {
+	const diffMilliseconds = castToDate(a).getTime() - castToDate(b).getTime();
+	return Math.abs(Math.floor(diffMilliseconds / 1000));
+};
+
+export const createDateXDaysFromNow = (days: number) => {
+	const now = new Date();
+
+	const futureDate = new Date();
+	futureDate.setDate(now.getDate() + days);
+
+	return futureDate;
+};

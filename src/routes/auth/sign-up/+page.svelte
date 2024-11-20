@@ -15,7 +15,11 @@
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const toaster = getToaster();
 
@@ -60,9 +64,9 @@
 	/**
 	 * if the sign up has succeeded and the user is being redirected
 	 */
-	let redirecting = false;
+	let redirecting = $state(false);
 
-	$: isLoading = redirecting || $mutation.isPending;
+	let isLoading = $derived(redirecting || $mutation.isPending);
 </script>
 
 <AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">
@@ -80,7 +84,7 @@
 		disabled={isLoading}
 	/>
 
-	<LoadableButton className="btn preset-filled mt-4 w-full" {isLoading} onclick={handleSignUp}>
+	<LoadableButton class="btn preset-filled mt-4 w-full" {isLoading} onclick={handleSignUp}>
 		sign up
 	</LoadableButton>
 

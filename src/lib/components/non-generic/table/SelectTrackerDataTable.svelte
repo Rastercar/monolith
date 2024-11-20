@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
+<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
 <!-- 
   @component
   Simple data table for selecting a tracker that is not associated with a vehicle

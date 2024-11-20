@@ -16,9 +16,13 @@
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 	import type { AccessLevel } from '$lib/api/access-level.schema';
 
-	export let formSchema: SuperValidated<Infer<typeof createUserSchema>>;
+	interface Props {
+		formSchema: SuperValidated<Infer<typeof createUserSchema>>;
+	}
 
-	let selectedAccessLevel: null | AccessLevel = null;
+	let { formSchema }: Props = $props();
+
+	let selectedAccessLevel: null | AccessLevel = $state(null);
 
 	const form = superForm(formSchema, { validators: zodClient(createUserSchema) });
 
@@ -56,7 +60,7 @@
 		form.reset();
 	};
 
-	$: ({ form: f } = form);
+	let { form: f } = $derived(form);
 </script>
 
 <div class="grid grid-cols-2 gap-4 mb-4">

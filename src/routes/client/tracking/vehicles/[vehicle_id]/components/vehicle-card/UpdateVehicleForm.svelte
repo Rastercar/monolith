@@ -19,9 +19,13 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let vehicle: Vehicle;
 
-	export let formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
+	interface Props {
+		vehicle: Vehicle;
+		formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
+	}
+
+	let { vehicle, formSchema }: Props = $props();
 
 	const getValuesFromVehicle = (v: Vehicle) => ({
 		plate: v.plate,
@@ -74,9 +78,9 @@
 		form.reset({ data: getValuesFromVehicle(vehicle) });
 	});
 
-	$: ({ allErrors } = form);
+	let { allErrors } = $derived(form);
 
-	$: canSubmit = $allErrors.length === 0;
+	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
 <div class="p-4 flex">
@@ -84,7 +88,7 @@
 
 	<button
 		class="btn-icon btn-icon-sm ml-auto variant-filled-primary"
-		on:click={() => dispatch('edit-canceled')}
+		onclick={() => dispatch('edit-canceled')}
 	>
 		<Icon icon="mdi:pencil-off" />
 	</button>
@@ -138,7 +142,7 @@
 
 <div class="flex px-4 pb-4 justify-end">
 	<LoadableButton isLoading={$mutation.isPending}>
-		<button class="btn variant-filled-primary" disabled={!canSubmit} on:click={createVehicle}>
+		<button class="btn variant-filled-primary" disabled={!canSubmit} onclick={createVehicle}>
 			update
 		</button>
 	</LoadableButton>

@@ -7,8 +7,12 @@
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 	import type { ActionData, PageData } from './$types';
 
-	export let data: PageData;
-	export let form: ActionData;
+	interface Props {
+		data: PageData;
+		form: ActionData;
+	}
+
+	let { data, form }: Props = $props();
 
 	const recoverForm = superForm(data.form);
 
@@ -26,7 +30,7 @@
 		if (user) recoverForm.form.set({ email: user.email });
 	});
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 </script>
 
 <div class="h-full flex justify-center px-6">

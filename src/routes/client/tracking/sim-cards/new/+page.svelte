@@ -5,7 +5,11 @@
 	import { getToaster } from '$lib/store/toaster';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const toast = getToaster();
 </script>

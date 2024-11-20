@@ -6,9 +6,13 @@
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import { createEventDispatcher } from 'svelte';
 
-	export let photo: string | null;
 
-	export let vehicleId: number;
+	interface Props {
+		photo: string | null;
+		vehicleId: number;
+	}
+
+	let { photo = $bindable(), vehicleId }: Props = $props();
 
 	const toaster = getToaster();
 
@@ -42,9 +46,11 @@
 			showCropperOnFileSelection={false}
 			defaultSrc={photo ? cloudFrontUrl(photo) : undefined}
 		>
-			<div slot="preview" class="w-full" let:previewSrc>
-				<img src={previewSrc} alt="preview" class="h-60 w-full object-cover" />
-			</div>
+			{#snippet preview({ previewSrc })}
+						<div  class="w-full" >
+					<img src={previewSrc} alt="preview" class="h-60 w-full object-cover" />
+				</div>
+					{/snippet}
 		</FileDropzone>
 	{:else}
 		<img class="h-60 w-full object-cover" src={photo ? cloudFrontUrl(photo) : ''} alt="vehicle" />

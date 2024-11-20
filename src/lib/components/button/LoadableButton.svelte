@@ -3,27 +3,25 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		className?: string;
+		classes?: string;
 		isLoading: boolean;
 		disabled?: boolean;
-		loaderWidth?: string;
-		contentWrapperClasses?: string;
+		contentWrapperClass?: string;
 		children: Snippet;
-		onclick: () => void;
+		onclick?: () => void;
 	}
 
 	const {
 		onclick,
 		children,
-		className = '',
 		isLoading,
+		classes = '',
 		disabled = false,
-		loaderWidth = 'w-6',
-		contentWrapperClasses = '!mx-0'
+		contentWrapperClass = '!mx-0'
 	}: Props = $props();
 </script>
 
-<button class={`${className} relative`} disabled={isLoading || disabled} {onclick}>
+<button class={`${classes} relative`} disabled={isLoading || disabled} {onclick}>
 	<div
 		class:invisible={!isLoading}
 		class="absolute top-0 left-0 w-full h-full flex align-middle justify-center items-center"
@@ -31,7 +29,7 @@
 		<Progress value={null} classes="mx-2" />
 	</div>
 
-	<div class:invisible={isLoading} class={contentWrapperClasses}>
+	<div class:invisible={isLoading} class={contentWrapperClass}>
 		{@render children()}
 	</div>
 </button>

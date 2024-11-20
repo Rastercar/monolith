@@ -3,7 +3,11 @@
 	import Icon from '@iconify/svelte';
 	import CreatedAtText from './CreatedAtText.svelte';
 
-	export let organization: Organization;
+	interface Props {
+		organization: Organization;
+	}
+
+	let { organization }: Props = $props();
 </script>
 
 <div class="sm:card sm:p-4 sm:rounded-lg">

@@ -9,10 +9,14 @@
 	import CreateVehicleForm from './components/create-vehicle-step/CreateVehicleForm.svelte';
 	import SetTrackerStep from './components/set-tracker-step/SetTrackerStep.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let createdVehicle: Vehicle | null = null;
-	let createdOrSelectedTracker: Tracker | null = null;
+	let { data }: Props = $props();
+
+	let createdVehicle: Vehicle | null = $state(null);
+	let createdOrSelectedTracker: Tracker | null = $state(null);
 
 	const setVehicle = (e: CustomEvent<Vehicle>) => (createdVehicle = e.detail);
 	const setTracker = (e: CustomEvent<Tracker>) => (createdOrSelectedTracker = e.detail);
@@ -22,12 +26,16 @@
 	<StepperHeader additionalClasses="mb-4" />
 
 	<Step>
-		<svelte:fragment slot="header">Vehicle Information</svelte:fragment>
+		{#snippet header()}
+				Vehicle Information
+			{/snippet}
 		<CreateVehicleForm formSchema={data.createVehicleForm} on:vehicle-created={setVehicle} />
 	</Step>
 
 	<Step>
-		<svelte:fragment slot="header">Inform your vehicle tracker</svelte:fragment>
+		{#snippet header()}
+				Inform your vehicle tracker
+			{/snippet}
 		{#if createdVehicle}
 			<span class="text-sm mb-4 block">How will you track your vehicle ?</span>
 
@@ -41,14 +49,18 @@
 	</Step>
 
 	<Step>
-		<svelte:fragment slot="header">Set the SIM card</svelte:fragment>
+		{#snippet header()}
+				Set the SIM card
+			{/snippet}
 		{#if createdOrSelectedTracker}
 			<SetSimCardsStep tracker={createdOrSelectedTracker} formSchema={data.createSimCardForm} />
 		{/if}
 	</Step>
 
 	<Step>
-		<svelte:fragment slot="header">Review</svelte:fragment>
+		{#snippet header()}
+				Review
+			{/snippet}
 		<!--
 			TODO: 
 			wherener we got the following pages 

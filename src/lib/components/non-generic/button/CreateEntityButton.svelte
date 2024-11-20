@@ -3,9 +3,13 @@
 	import type { apiPermission } from '$lib/constants/permissions';
 	import Icon from '@iconify/svelte';
 
-	export let text: string;
-	export let href: string;
-	export let requiredPermission: apiPermission;
+	interface Props {
+		text: string;
+		href: string;
+		requiredPermission: apiPermission;
+	}
+
+	let { text, href, requiredPermission }: Props = $props();
 </script>
 
 <PermissionGuard requiredPermissions={[requiredPermission]}>

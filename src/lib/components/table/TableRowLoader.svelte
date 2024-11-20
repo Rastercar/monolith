@@ -1,15 +1,25 @@
 <script lang="ts">
 	import { ProgressBar } from '@skeletonlabs/skeleton';
 
-	export let colspan = 1;
 
-	export let isLoading = false;
 
-	export let borderX = 'border-x-2';
-	export let borderTop = 'border-t-2';
-	export let borderColor = 'border-surface-400-500-token';
+	interface Props {
+		colspan?: number;
+		isLoading?: boolean;
+		borderX?: string;
+		borderTop?: string;
+		borderColor?: string;
+	}
 
-	$: clazz = `${borderX} ${borderTop} ${borderColor}`;
+	let {
+		colspan = 1,
+		isLoading = false,
+		borderX = 'border-x-2',
+		borderTop = 'border-t-2',
+		borderColor = 'border-surface-400-500-token'
+	}: Props = $props();
+
+	let clazz = $derived(`${borderX} ${borderTop} ${borderColor}`);
 </script>
 
 <tr class={clazz}>

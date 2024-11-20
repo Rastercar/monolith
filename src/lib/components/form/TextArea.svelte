@@ -8,16 +8,27 @@
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 	import ErrorMessage from './ErrorMessage.svelte';
 
-	export let form: SuperForm<T, unknown>;
-	export let field: FormPathLeaves<T>;
-	export let label: string;
-	export let withCharacterCounter = true;
+	interface Props {
+		form: SuperForm<T, unknown>;
+		field: FormPathLeaves<T>;
+		label: string;
+		withCharacterCounter?: boolean;
+		class?: string;
+		inputClass?: string;
+		labelClass?: string;
+		[key: string]: any;
+	}
 
-	let clazz = 'label mt-4 mb-1';
-	export { clazz as class };
-
-	export let inputClass = 'textarea mb-1';
-	export let labelClass = 'text-sm';
+	let {
+		form,
+		field,
+		label,
+		withCharacterCounter = true,
+		class: clazz = 'label mt-4 mb-1',
+		inputClass = 'textarea mb-1',
+		labelClass = 'text-sm',
+		...rest
+	}: Props = $props();
 
 	const { value, errors, constraints } = formFieldProxy(form, field);
 </script>
@@ -26,9 +37,9 @@
 	<div class="flex justify-between">
 		<span class={labelClass}>{label}</span>
 
-		{#if ($$restProps?.maxlength || 0) > 0 && withCharacterCounter}
+		{#if (rest?.maxlength || 0) > 0 && withCharacterCounter}
 			<span class="text-xs text-surface-700-200-token">
-				{$value?.length || 0}/{$$restProps?.maxlength}
+				{$value?.length || 0}/{rest?.maxlength}
 			</span>
 		{/if}
 	</div>
@@ -39,7 +50,7 @@
 		aria-invalid={$errors ? 'true' : undefined}
 		bind:value={$value}
 		{...$constraints}
-		{...$$restProps}
-	/>
+		{...rest}
+	></textarea>
 	<ErrorMessage errors={$errors} />
 </label>

@@ -34,7 +34,7 @@
 			<h2 class="font-heading text-3xl font-medium mt-6">{title}</h2>
 			<p class="font-alt text-sm font-normal mb-6">{subtitle}</p>
 
-			<hr class="border-t-2 my-6" />
+			<hr class="border-t-1 my-6" />
 
 			{@render children()}
 		</div>

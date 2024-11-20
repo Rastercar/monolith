@@ -2,7 +2,11 @@
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let type: 'deletion' | 'removal';
+	interface Props {
+		type: 'deletion' | 'removal';
+	}
+
+	let { type }: Props = $props();
 
 	const dispatch = createEventDispatcher<{
 		'cancel-click': void;
@@ -23,7 +27,7 @@
 		<button
 			type="button"
 			class="btn btn-sm variant-filled"
-			on:click={() => dispatch('cancel-click')}
+			onclick={() => dispatch('cancel-click')}
 		>
 			No
 		</button>
@@ -31,7 +35,7 @@
 		<button
 			type="button"
 			class="btn btn-sm variant-filled"
-			on:click={() => dispatch('confirm-click')}
+			onclick={() => dispatch('confirm-click')}
 		>
 			Yes
 		</button>

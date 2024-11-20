@@ -12,9 +12,13 @@
 	import CreateTrackerStep from './components/CreateTrackerStep.svelte';
 	import TrackerCreatedStep from './components/TrackerCreatedStep.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let createdTracker: Tracker | null = null;
+	let { data }: Props = $props();
+
+	let createdTracker: Tracker | null = $state(null);
 </script>
 
 <PermissionGuard requiredPermissions={['CREATE_TRACKER']}>
@@ -34,7 +38,9 @@
 			<StepperHeader additionalClasses="mb-4" />
 
 			<Step>
-				<svelte:fragment slot="header">Tracker Information</svelte:fragment>
+				{#snippet header()}
+								Tracker Information
+							{/snippet}
 				<CreateTrackerStep
 					createTrackerForm={data.createTrackerForm}
 					on:tracker-created={(e) => (createdTracker = e.detail)}
@@ -43,7 +49,9 @@
 
 			{#if $hasPermission(['UPDATE_TRACKER', 'CREATE_SIM_CARD'])}
 				<Step>
-					<svelte:fragment slot="header">Tracker SIM cards</svelte:fragment>
+					{#snippet header()}
+										Tracker SIM cards
+									{/snippet}
 					{#if createdTracker}
 						<SetSimCardsStep formSchema={data.createSimCardForm} tracker={createdTracker} />
 					{/if}
@@ -51,12 +59,14 @@
 			{/if}
 
 			<Step>
-				<svelte:fragment slot="header">
-					<div class="flex items-center">
-						<Icon icon="mdi:check" class="mr-2 text-success-400-500-token" height={24} />
-						Success
-					</div>
-				</svelte:fragment>
+				{#snippet header()}
+							
+						<div class="flex items-center">
+							<Icon icon="mdi:check" class="mr-2 text-success-400-500-token" height={24} />
+							Success
+						</div>
+					
+							{/snippet}
 
 				<TrackerCreatedStep
 					on:create-another-clicked={() => {

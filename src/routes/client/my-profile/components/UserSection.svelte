@@ -5,7 +5,11 @@
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton';
 
-	export let user: User;
+	interface Props {
+		user: User;
+	}
+
+	let { user }: Props = $props();
 </script>
 
 <div class="sm:card sm:p-4 sm:rounded-lg">

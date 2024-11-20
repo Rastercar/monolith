@@ -3,8 +3,8 @@
 	import { apiSignIn } from '$lib/api/auth';
 	import { signInSchema, type SignInDto } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
+	import PasswordField from '$lib/components/form/v2/PasswordField.svelte';
+	import TextField from '$lib/components/form/v2/TextField.svelte';
 	import { route } from '$lib/ROUTES';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms';
@@ -14,11 +14,12 @@
 
 	const { data } = $props();
 
-	const loginForm = superForm(data.form, { validators: zodClient(signInSchema) });
+	const form = superForm(data.form, { validators: zodClient(signInSchema) });
+	const { form: formData, enhance } = form;
 
 	const handleErrorResponse = (errorCode: string) => {
 		const setFieldError = (field: 'email' | 'password', msg: string) => {
-			loginForm.validate(field, { value: '', errors: msg, update: 'errors' });
+			form.validate(field, { value: '', errors: msg, update: 'errors' });
 		};
 
 		if (errorCode === 'not_found') {
@@ -58,10 +59,10 @@
 	});
 
 	const handleSignIn = async () => {
-		const validated = await loginForm.validateForm();
+		const validated = await form.validateForm();
 
 		if (!validated.valid) {
-			loginForm.restore({ ...validated, tainted: undefined });
+			form.restore({ ...validated, tainted: undefined });
 			return;
 		}
 
@@ -85,16 +86,18 @@
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">
-	<form method="POST">
-		<TextInput
-			form={loginForm}
-			field="email"
+	<form method="POST" action={route('signIn /auth/sign-in')} use:enhance>
+		<TextField
+			{form}
+			name="email"
+			type="email"
+			autocomplete="email"
 			label="Email"
 			placeholder="email address"
 			disabled={isLoading}
 		/>
 
-		<PasswordInput form={loginForm} field="password" disabled={isLoading} />
+		<PasswordField {form} name="password" label="password" disabled={isLoading} />
 
 		<div class="mt-4 flex justify-end">
 			<a
@@ -105,11 +108,7 @@
 			</a>
 		</div>
 
-		<LoadableButton
-			className="btn preset-filled-primary-200-800 mt-4 w-full"
-			{isLoading}
-			onclick={handleSignIn}
-		>
+		<LoadableButton classes="btn preset-filled-primary-200-800 mt-4 w-full" {isLoading}>
 			sign in
 		</LoadableButton>
 

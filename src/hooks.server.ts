@@ -44,6 +44,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const sessionId = event.cookies.get(SESSION_ID_COOKIE_KEY);
 
+	// TODO: rm me !
+	console.log('loading ' + path + ' sessionID ' + sessionId);
+
 	const isLoggedIn = !!sessionId;
 
 	const routeIsInProtectedPath = protectedPaths.some((p) => path.startsWith(p));

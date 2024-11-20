@@ -8,16 +8,20 @@
 	import UserSection from './components/UserSection.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let userDeleted = false;
+	let { data }: Props = $props();
+
+	let userDeleted = $state(false);
 
 	const userQuery = createQuery({
 		queryKey: ['user', data.userId],
 		queryFn: () => apiGetUserById(data.userId)
 	});
 
-	$: user = $userQuery.data;
+	let user = $derived($userQuery.data);
 </script>
 
 <div class="p-6 max-w-4xl mx-auto space-y-6">

@@ -4,12 +4,18 @@
 	import { Avatar } from '@skeletonlabs/skeleton';
 	import type { AvatarProps } from '@skeletonlabs/skeleton/dist/components/Avatar/Avatar.svelte';
 
-	export let avatarProps: Exclude<AvatarProps, 'src' | 'fallback'> = {
-		width: 'w-32',
-		rounded: 'rounded-full'
-	};
+	interface Props {
+		avatarProps?: Exclude<AvatarProps, 'src' | 'fallback'>;
+	}
 
-	$: ({ user } = $authStore);
+	let {
+		avatarProps = {
+			width: 'w-32',
+			rounded: 'rounded-full'
+		}
+	}: Props = $props();
+
+	let { user } = $derived($authStore);
 </script>
 
 <!-- wrapping the avatar on a div with the same width prevents the avatar from being "resized" if the parent div width cannot contain it -->

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { apiGetVehicleById } from '$lib/api/vehicle';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -10,7 +12,11 @@
 	import VehicleTrackerCard from './components/tracker-card/VehicleTrackerCard.svelte';
 	import VehicleDisplayCard from './components/vehicle-card/VehicleDisplayCard.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const query = createQuery({
 		queryKey: ['vehicle', data.vehicleId],
@@ -25,9 +31,12 @@
 		vehicle = e.detail;
 	};
 
-	let vehicleDeleted = false;
+	let vehicleDeleted = $state(false);
 
-	$: vehicle = $query.data;
+	let vehicle;
+	run(() => {
+		vehicle = $query.data;
+	});
 </script>
 
 <div class="p-6 max-w-4xl mx-auto">

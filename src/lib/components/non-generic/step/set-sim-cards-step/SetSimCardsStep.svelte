@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: slot attribute must be a static value -->
+<!-- @migration-task Error while migrating Svelte code: slot attribute must be a static value -->
 <script lang="ts">
 	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
 	import { apiGetTrackerSimCards } from '$lib/api/tracker';

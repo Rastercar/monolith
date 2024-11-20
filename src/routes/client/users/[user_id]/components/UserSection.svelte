@@ -12,7 +12,11 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
 
-	export let user: SimpleUser;
+	interface Props {
+		user: SimpleUser;
+	}
+
+	let { user }: Props = $props();
 
 	const dispatch = createEventDispatcher<{ 'user-deleted': void }>();
 
@@ -87,7 +91,7 @@
 					class={`h-2 w-2 mr-2 rounded-full ${
 						user.emailVerified ? 'bg-success-500' : 'bg-error-500'
 					}`}
-				/>
+				></div>
 				<span class="text-sm">
 					{user.emailVerified ? 'email verified' : 'email not verified'}
 				</span>

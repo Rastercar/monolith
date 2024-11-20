@@ -23,7 +23,11 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let formSchema: SuperValidated<Infer<typeof createVehicleSchema>>;
+	interface Props {
+		formSchema: SuperValidated<Infer<typeof createVehicleSchema>>;
+	}
+
+	let { formSchema }: Props = $props();
 
 	const toaster = getToaster();
 
@@ -62,9 +66,9 @@
 		});
 	};
 
-	$: ({ tainted, allErrors } = form);
+	let { tainted, allErrors } = $derived(form);
 
-	$: canSubmit = $tainted !== undefined && $allErrors.length === 0;
+	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
 </script>
 
 <span class="text-sm">Fields marked as * are required</span>

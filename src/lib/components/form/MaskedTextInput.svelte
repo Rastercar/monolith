@@ -4,6 +4,9 @@
 </script>
 
 <script lang="ts" generics="T extends Obj">
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	import { IMask, imask } from '@imask/svelte';
 	import { onDestroy, onMount, tick } from 'svelte';
@@ -12,26 +15,40 @@
 
 	type MaskOptions = Parameters<typeof IMask>[1];
 
-	export let maskOptions: MaskOptions;
 
-	export let form: SuperForm<T, unknown>;
-	export let field: FormPathLeaves<T>;
-	export let label: string;
 
-	let clazz = 'label mt-4 mb-1';
-	export { clazz as class };
+	
 
-	export let inputClass = 'input mb-1';
-	export let labelClass = 'text-sm';
+	interface Props {
+		maskOptions: MaskOptions;
+		form: SuperForm<T, unknown>;
+		field: FormPathLeaves<T>;
+		label: string;
+		class?: string;
+		inputClass?: string;
+		labelClass?: string;
+		[key: string]: any
+	}
+
+	let {
+		maskOptions,
+		form,
+		field,
+		label,
+		class: clazz = 'label mt-4 mb-1',
+		inputClass = 'input mb-1',
+		labelClass = 'text-sm',
+		...rest
+	}: Props = $props();
 
 	let { value, errors, constraints } = formFieldProxy(form, field);
 
-	let input: HTMLInputElement;
+	let input: HTMLInputElement = $state();
 
 	// TS typings for the IMask value are shit
 	// this should be ReturnType<typeof IMask> | undefined
 	// but it does not work
-	let maskRef: any;
+	let maskRef: any = $state();
 
 	const setMaskRefValue = (v: string | null) => {
 		if (maskRef) maskRef.value = v === null ? '' : v;
@@ -66,16 +83,16 @@
 		value={$value}
 		bind:this={input}
 		use:imask={maskRef}
-		on:input={onInput}
-		on:click
-		on:keydown
-		on:change
-		on:focus
-		on:blur
-		on:invalid
-		on:complete
+		oninput={onInput}
+		onclick={bubble('click')}
+		onkeydown={bubble('keydown')}
+		onchange={bubble('change')}
+		onfocus={bubble('focus')}
+		onblur={bubble('blur')}
+		oninvalid={bubble('invalid')}
+		oncomplete={bubble('complete')}
 		{...$constraints}
-		{...$$restProps}
+		{...rest}
 	/>
 	<ErrorMessage errors={$errors} />
 </label>

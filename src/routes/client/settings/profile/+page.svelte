@@ -14,7 +14,11 @@
 	import type { PageData } from './$types';
 	import ProfilePictureDropzone from './components/ProfilePictureDropzone.svelte';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const toaster = getToaster();
 
@@ -51,7 +55,7 @@
 		form.form.set({ email, description: description ?? '', username });
 	});
 
-	$: ({ user } = $authStore);
+	let { user } = $derived($authStore);
 </script>
 
 {#if user}

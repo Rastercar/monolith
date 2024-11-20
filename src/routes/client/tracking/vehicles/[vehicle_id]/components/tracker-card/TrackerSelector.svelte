@@ -1,3 +1,4 @@
+<!-- @migration-task Error while migrating Svelte code: 'default' is a reserved word in JavaScript and cannot be used here -->
 <script lang="ts">
 	import { apiSetTrackerVehicle } from '$lib/api/tracker';
 	import type { Tracker, createTrackerSchema } from '$lib/api/tracker.schema';
@@ -10,14 +11,19 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
-	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = 'new-tracker';
+	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = $state('new-tracker');
 
-	/**
+	
+
+	interface Props {
+		/**
 	 * ID of the vehicle to be associated with the tracker to be created or selected
 	 */
-	export let vehicleId: number;
+		vehicleId: number;
+		formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
+	}
 
-	export let formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
+	let { vehicleId, formSchema }: Props = $props();
 
 	const toaster = getToaster();
 
@@ -56,7 +62,8 @@
 
 {#if selectedTrackerForm === 'existing-tracker'}
 	<SelectTrackerDataTable>
-		<div slot="bottom-right" let:isLoading let:selectedTracker>
+		<!-- @migration-task: migrate this slot by hand, `bottom-right` is an invalid identifier -->
+	<div slot="bottom-right" let:isLoading let:selectedTracker>
 			<LoadableButton
 				isLoading={$selectTrackerMutation.isPending}
 				class="btn variant-filled-primary mt-4"
@@ -69,15 +76,17 @@
 	</SelectTrackerDataTable>
 {:else}
 	<CreateTrackerForm {formSchema} vehicleIdToAssociate={vehicleId} on:tracker-created>
-		<div slot="default" class="flex justify-end" let:isLoading let:canSubmit let:createTracker>
-			<LoadableButton
-				{isLoading}
-				disabled={!canSubmit}
-				class="btn variant-filled-primary"
-				on:click={createTracker}
-			>
-				create tracker
-			</LoadableButton>
-		</div>
+		{#snippet default({ isLoading, canSubmit, createTracker })}
+				<div  class="flex justify-end"   >
+				<LoadableButton
+					{isLoading}
+					disabled={!canSubmit}
+					class="btn variant-filled-primary"
+					on:click={createTracker}
+				>
+					create tracker
+				</LoadableButton>
+			</div>
+			{/snippet}
 	</CreateTrackerForm>
 {/if}

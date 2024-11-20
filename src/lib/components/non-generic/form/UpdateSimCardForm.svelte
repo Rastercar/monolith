@@ -16,9 +16,13 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let simCard: SimCard;
 
-	export let formSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
+	interface Props {
+		simCard: SimCard;
+		formSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
+	}
+
+	let { simCard = $bindable(), formSchema }: Props = $props();
 
 	const form = superForm(formSchema, { validators: zodClient(updateSimCardSchema) });
 
@@ -72,9 +76,9 @@
 		});
 	});
 
-	$: ({ allErrors } = form);
+	let { allErrors } = $derived(form);
 
-	$: canSubmit = $allErrors.length === 0;
+	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
 <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

@@ -1,11 +1,15 @@
 <script lang="ts">
 	import Breadcrumbs, { type BreadCrumb } from '$lib/components/breadcrumbs/BreadCrumbs.svelte';
 
-	export let title: string;
 
-	export let breadCrumbs: BreadCrumb[];
 
-	export let margin = 'mb-4';
+	interface Props {
+		title: string;
+		breadCrumbs: BreadCrumb[];
+		margin?: string;
+	}
+
+	let { title, breadCrumbs, margin = 'mb-4' }: Props = $props();
 </script>
 
 <div class={`flex ${margin} items-center`}>

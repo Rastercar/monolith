@@ -17,12 +17,18 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	export let formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
 
-	/**
+	
+	interface Props {
+		formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
+		/**
 	 * The ID of the vehicle to associate to the tracker
 	 */
-	export let vehicleIdToAssociate: number | undefined = undefined;
+		vehicleIdToAssociate?: number | undefined;
+		children?: import('svelte').Snippet<[any]>;
+	}
+
+	let { formSchema, vehicleIdToAssociate = undefined, children }: Props = $props();
 
 	const form = superForm(formSchema, { validators: zodClient(createTrackerSchema) });
 
@@ -53,9 +59,9 @@
 		});
 	};
 
-	$: ({ tainted, allErrors } = form);
+	let { tainted, allErrors } = $derived(form);
 
-	$: canSubmit = $tainted !== undefined && $allErrors.length === 0;
+	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
 </script>
 
 <div class="mb-4">
@@ -69,4 +75,4 @@
 	/>
 </div>
 
-<slot isLoading={$mutation.isPending} {canSubmit} {createTracker} />
+{@render children?.({ isLoading: $mutation.isPending, canSubmit, createTracker, })}

@@ -17,7 +17,11 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const form = superForm(data.createAccessLevelForm, {
 		validators: zodClient(createAccessLevelSchema)
@@ -29,10 +33,10 @@
 	 * key: permission key (eg: CREATE_USER)
 	 * val: boolean indicating the permission is selected
 	 */
-	const permissionToToggleStatus = Object.keys(permissionDetails).reduce(
+	const permissionToToggleStatus = $state(Object.keys(permissionDetails).reduce(
 		(acc, v) => ({ ...acc, [v]: false }),
 		{}
-	) as Record<apiPermission, boolean>;
+	) as Record<apiPermission, boolean>);
 
 	const mutation = createMutation({
 		mutationFn: (b: CreateAccessLevelBody) => apiCreateAccessLevel(b),
@@ -58,9 +62,9 @@
 		});
 	};
 
-	$: ({ allErrors } = form);
+	let { allErrors } = $derived(form);
 
-	$: canSubmit = $allErrors.length === 0;
+	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
 <PermissionGuard requiredPermissions={['MANAGE_USER_ACCESS_LEVELS']} />

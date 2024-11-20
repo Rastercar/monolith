@@ -17,20 +17,37 @@
 
 	const dispatch = createEventDispatcher<StepperEvent>();
 
-	/** Provide the initially selected step*/
-	export let start = 0;
+	
 
-	/** Provide the transition to used on entry. */
-	export let transitionIn: TransitionIn = fade as TransitionIn;
+	
 
-	/** Transition params provided to `transitionIn`. */
-	export let transitionInParams: TransitionParams<TransitionIn> = { duration: 100 };
+	
 
-	/** Provide the transition to used on exit. */
-	export let transitionOut: TransitionOut = fade as TransitionOut;
+	
 
-	/** Transition params provided to `transitionOut`. */
-	export let transitionOutParams: TransitionParams<TransitionOut> = { duration: 100 };
+	
+	interface Props {
+		/** Provide the initially selected step*/
+		start?: number;
+		/** Provide the transition to used on entry. */
+		transitionIn?: TransitionIn;
+		/** Transition params provided to `transitionIn`. */
+		transitionInParams?: TransitionParams<TransitionIn>;
+		/** Provide the transition to used on exit. */
+		transitionOut?: TransitionOut;
+		/** Transition params provided to `transitionOut`. */
+		transitionOutParams?: TransitionParams<TransitionOut>;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		start = 0,
+		transitionIn = fade as TransitionIn,
+		transitionInParams = { duration: 100 },
+		transitionOut = fade as TransitionOut,
+		transitionOutParams = { duration: 100 },
+		children
+	}: Props = $props();
 
 	let state: Writable<StepperState> = writable({ current: start, total: 0 });
 
@@ -52,4 +69,4 @@ a lot of patterns and features cannot be done.
 
 so we copy paste the component and add functionality as needed
 -->
-<slot />
+{@render children?.()}

@@ -1,26 +1,37 @@
 <script lang="ts">
-	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { Progress } from '@skeletonlabs/skeleton-svelte';
+	import type { Snippet } from 'svelte';
 
-	export let isLoading: boolean;
-	export let disabled = false;
+	interface Props {
+		className?: string;
+		isLoading: boolean;
+		disabled?: boolean;
+		loaderWidth?: string;
+		contentWrapperClasses?: string;
+		children: Snippet;
+		onclick: () => void;
+	}
 
-	export let loaderWidth = 'w-6';
-
-	export let contentWrapperClasses = '!mx-0';
-
-	let clazz = '';
-	export { clazz as class };
+	const {
+		onclick,
+		children,
+		className = '',
+		isLoading,
+		disabled = false,
+		loaderWidth = 'w-6',
+		contentWrapperClasses = '!mx-0'
+	}: Props = $props();
 </script>
 
-<button class={`${clazz} relative`} disabled={isLoading || disabled} on:click>
+<button class={`${className} relative`} disabled={isLoading || disabled} {onclick}>
 	<div
 		class:invisible={!isLoading}
 		class="absolute top-0 left-0 w-full h-full flex align-middle justify-center items-center"
 	>
-		<ProgressRadial value={undefined} width={loaderWidth} />
+		<Progress value={null} classes="mx-2" />
 	</div>
 
 	<div class:invisible={isLoading} class={contentWrapperClasses}>
-		<slot />
+		{@render children()}
 	</div>
 </button>

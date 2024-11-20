@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
-	import { Modal, Toast, initializeStores, storePopup } from '@skeletonlabs/skeleton';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import type { Snippet } from 'svelte';
 	import '../app.postcss';
 
 	const queryClient = new QueryClient({
@@ -11,14 +10,9 @@
 		}
 	});
 
-	initializeStores();
-	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+	const { children }: { children: Snippet } = $props();
 </script>
 
 <QueryClientProvider client={queryClient}>
-	<Toast />
-
-	<Modal />
-
-	<slot />
+	{@render children()}
 </QueryClientProvider>

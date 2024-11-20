@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import { Avatar } from '@skeletonlabs/skeleton';
 	import type { AvatarProps } from '@skeletonlabs/skeleton/dist/components/Avatar/Avatar.svelte';

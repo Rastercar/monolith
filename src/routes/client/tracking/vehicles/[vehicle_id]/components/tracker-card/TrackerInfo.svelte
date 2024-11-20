@@ -7,7 +7,7 @@
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
 	import type { apiPermission } from '$lib/constants/permissions';
-	import { hasPermission } from '$lib/store/auth';
+	import { hasPermission } from '$lib/store/auth.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { getModalStore, popup, type ModalComponent } from '@skeletonlabs/skeleton';

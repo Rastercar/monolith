@@ -1,6 +1,6 @@
 <script lang="ts">
 	import UserAvatar from '$lib/components/avatar/UserAvatar.svelte';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 
 	let clazz = '';
 	export { clazz as class };

@@ -1,18 +1,20 @@
-import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+// TODO: !!!!!!!!!!
 
-/**
- * a abstraction over skeletons toast store, to trigger common toasts with less LOC
- */
-export const getToaster = () => {
-	const t = getToastStore();
+// import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
-	return {
-		trigger: (settings: ToastSettings) => t.trigger(settings),
+// /**
+//  * a abstraction over skeletons toast store, to trigger common toasts with less LOC
+//  */
+// export const getToaster = () => {
+// 	const t = getToastStore();
 
-		error: (message = 'a unknown error happened') =>
-			t.trigger({ message, background: 'variant-filled-error' }),
+// 	return {
+// 		trigger: (settings: ToastSettings) => t.trigger(settings),
 
-		success: (message = 'operation successful') =>
-			t.trigger({ message, background: 'variant-filled-success' })
-	};
-};
+// 		error: (message = 'a unknown error happened') =>
+// 			t.trigger({ message, background: 'variant-filled-error' }),
+
+// 		success: (message = 'operation successful') =>
+// 			t.trigger({ message, background: 'variant-filled-success' })
+// 	};
+// };

@@ -5,7 +5,7 @@
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';

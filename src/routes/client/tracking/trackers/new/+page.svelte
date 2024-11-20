@@ -6,11 +6,11 @@
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
+	import { hasPermission } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
 	import CreateTrackerStep from './components/CreateTrackerStep.svelte';
 	import TrackerCreatedStep from './components/TrackerCreatedStep.svelte';
-	import { hasPermission } from '$lib/store/auth';
 
 	export let data: PageData;
 

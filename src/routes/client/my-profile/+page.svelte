@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import AccessLevelSection from './components/AccessLevelSection.svelte';
 	import OrgSection from './components/OrgSection.svelte';
 	import UserSection from './components/UserSection.svelte';

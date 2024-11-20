@@ -2,7 +2,7 @@
 	import { apiConfirmUserEmailAddressByToken } from '$lib/api/auth';
 	import { apiConfirmOrgEmailAddressByToken } from '$lib/api/organization';
 	import { isApiErrorObject } from '$lib/api/utils';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';

@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export type Route = {
 		href: string;
 		icon: string;
@@ -10,7 +10,7 @@
 
 <script lang="ts">
 	import type { apiPermission } from '$lib/constants/permissions';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import NavLink from './NavLink.svelte';
 

@@ -6,18 +6,13 @@
 	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth';
-	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 
 	const { data } = $props();
-
-	const toaster = getToaster();
 
 	const loginForm = superForm(data.form, { validators: zodClient(signInSchema) });
 
@@ -54,12 +49,12 @@
 
 			redirecting = true;
 
-			authStore.setUser(res.user);
+			// authStore.setUser(res.user);
 
 			// redirect a few frames after svelte updated the auth store
 			setTimeout(redirectAfterLogin, 100);
-		},
-		onError: () => toaster.error()
+		}
+		// onError: () => toaster.error()
 	});
 
 	const handleSignIn = async () => {
@@ -73,9 +68,13 @@
 		$mutation.mutate(validated.data);
 	};
 
+	// TODO: !
 	// clear the user whenever loading this page, since if this page could only be loaded
 	// if there is no current user session so any user on the auth store is outdated
-	onMount(authStore.clearUser);
+	// onMount(authStore.clearUser);
+
+	// TODO: ver a lib de formulario
+	// se implementar com ela ou n, ver como vamos fazer a chamada de login
 
 	/**
 	 * if the login has succeeded and the user is being redirected
@@ -100,16 +99,16 @@
 		<div class="mt-4 flex justify-end">
 			<a
 				href={route('/auth/recover-password')}
-				class="text-primary-700-200-token text-sm underline-offset-4 hover:underline"
+				class="text-primary-800-200 text-sm underline-offset-4 hover:underline"
 			>
 				Forgot your password?
 			</a>
 		</div>
 
 		<LoadableButton
-			class="btn variant-filled-primary mt-4 w-full"
+			className="btn preset-filled-primary-200-800 mt-4 w-full"
 			{isLoading}
-			on:click={handleSignIn}
+			onclick={handleSignIn}
 		>
 			sign in
 		</LoadableButton>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';

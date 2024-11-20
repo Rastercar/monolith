@@ -1,104 +1,230 @@
-import type { CustomThemeConfig } from '@skeletonlabs/tw-plugin';
+import type { Theme } from '@skeletonlabs/skeleton/themes';
 
-export const rastercarTheme: CustomThemeConfig = {
+// as copy-paste of catppuccin theme
+export const rastercarTheme = {
 	name: 'rastercar',
-	properties_dark: {},
 	properties: {
-		// =~= Theme Properties =~=
-		'--theme-font-family-base':
-			"Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-		'--theme-font-family-heading':
-			"Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-		'--theme-font-color-base': '0 0 0',
-		'--theme-font-color-dark': '255 255 255',
-		'--theme-rounded-base': '4px',
-		'--theme-rounded-container': '4px',
-		'--theme-border-base': '2px',
-		// =~= Theme On-X Colors =~=
-		'--on-primary': '255 255 255',
-		'--on-secondary': '255 255 255',
-		'--on-tertiary': '255 255 255',
-		'--on-success': '255 255 255',
-		'--on-warning': '255 255 255',
-		'--on-error': '255 255 255',
-		'--on-surface': '255 255 255',
-		// =~= Theme Colors  =~=
-		// primary | #3741c8
-		'--color-primary-50': '225 227 247', // #e1e3f7
-		'--color-primary-100': '215 217 244', // #d7d9f4
-		'--color-primary-200': '205 208 241', // #cdd0f1
-		'--color-primary-300': '175 179 233', // #afb3e9
-		'--color-primary-400': '115 122 217', // #737ad9
-		'--color-primary-500': '55 65 200', // #3741c8
-		'--color-primary-600': '50 59 180', // #323bb4
-		'--color-primary-700': '41 49 150', // #293196
-		'--color-primary-800': '33 39 120', // #212778
-		'--color-primary-900': '27 32 98', // #1b2062
-		// secondary | #890cac
-		'--color-secondary-50': '237 219 243', // #eddbf3
-		'--color-secondary-100': '231 206 238', // #e7ceee
-		'--color-secondary-200': '226 194 234', // #e2c2ea
-		'--color-secondary-300': '208 158 222', // #d09ede
-		'--color-secondary-400': '172 85 197', // #ac55c5
-		'--color-secondary-500': '137 12 172', // #890cac
-		'--color-secondary-600': '123 11 155', // #7b0b9b
-		'--color-secondary-700': '103 9 129', // #670981
-		'--color-secondary-800': '82 7 103', // #520767
-		'--color-secondary-900': '67 6 84', // #430654
-		// tertiary | #474e9a
-		'--color-tertiary-50': '227 228 240', // #e3e4f0
-		'--color-tertiary-100': '218 220 235', // #dadceb
-		'--color-tertiary-200': '209 211 230', // #d1d3e6
-		'--color-tertiary-300': '181 184 215', // #b5b8d7
-		'--color-tertiary-400': '126 131 184', // #7e83b8
-		'--color-tertiary-500': '71 78 154', // #474e9a
-		'--color-tertiary-600': '64 70 139', // #40468b
-		'--color-tertiary-700': '53 59 116', // #353b74
-		'--color-tertiary-800': '43 47 92', // #2b2f5c
-		'--color-tertiary-900': '35 38 75', // #23264b
-		// success | #1a6510
-		'--color-success-50': '221 232 219', // #dde8db
-		'--color-success-100': '209 224 207', // #d1e0cf
-		'--color-success-200': '198 217 195', // #c6d9c3
-		'--color-success-300': '163 193 159', // #a3c19f
-		'--color-success-400': '95 147 88', // #5f9358
-		'--color-success-500': '26 101 16', // #1a6510
-		'--color-success-600': '23 91 14', // #175b0e
-		'--color-success-700': '20 76 12', // #144c0c
-		'--color-success-800': '16 61 10', // #103d0a
-		'--color-success-900': '13 49 8', // #0d3108
-		// warning | #7c4e0e
-		'--color-warning-50': '235 228 219', // #ebe4db
-		'--color-warning-100': '229 220 207', // #e5dccf
-		'--color-warning-200': '222 211 195', // #ded3c3
-		'--color-warning-300': '203 184 159', // #cbb89f
-		'--color-warning-400': '163 131 86', // #a38356
-		'--color-warning-500': '124 78 14', // #7c4e0e
-		'--color-warning-600': '112 70 13', // #70460d
-		'--color-warning-700': '93 59 11', // #5d3b0b
-		'--color-warning-800': '74 47 8', // #4a2f08
-		'--color-warning-900': '61 38 7', // #3d2607
-		// error | #8b2d2d
-		'--color-error-50': '238 224 224', // #eee0e0
-		'--color-error-100': '232 213 213', // #e8d5d5
-		'--color-error-200': '226 203 203', // #e2cbcb
-		'--color-error-300': '209 171 171', // #d1abab
-		'--color-error-400': '174 108 108', // #ae6c6c
-		'--color-error-500': '139 45 45', // #8b2d2d
-		'--color-error-600': '125 41 41', // #7d2929
-		'--color-error-700': '104 34 34', // #682222
-		'--color-error-800': '83 27 27', // #531b1b
-		'--color-error-900': '68 22 22', // #441616
-		// surface | #3d5161
-		'--color-surface-50': '226 229 231', // #e2e5e7
-		'--color-surface-100': '216 220 223', // #d8dcdf
-		'--color-surface-200': '207 212 216', // #cfd4d8
-		'--color-surface-300': '177 185 192', // #b1b9c0
-		'--color-surface-400': '119 133 144', // #778590
-		'--color-surface-500': '61 81 97', // #3d5161
-		'--color-surface-600': '55 73 87', // #374957
-		'--color-surface-700': '46 61 73', // #2e3d49
-		'--color-surface-800': '37 49 58', // #25313a
-		'--color-surface-900': '30 40 48' // #1e2830
+		'--type-scale-factor': '1.125',
+		'--type-scale-1': 'calc(0.75rem * var(--type-scale-factor))',
+		'--type-scale-2': 'calc(0.875rem * var(--type-scale-factor))',
+		'--type-scale-3': 'calc(1rem * var(--type-scale-factor))',
+		'--type-scale-4': 'calc(1.125rem * var(--type-scale-factor))',
+		'--type-scale-5': 'calc(1.25rem * var(--type-scale-factor))',
+		'--type-scale-6': 'calc(1.5rem * var(--type-scale-factor))',
+		'--type-scale-7': 'calc(1.875rem * var(--type-scale-factor))',
+		'--type-scale-8': 'calc(2.25rem * var(--type-scale-factor))',
+		'--type-scale-9': 'calc(3rem * var(--type-scale-factor))',
+		'--type-scale-10': 'calc(3.75rem * var(--type-scale-factor))',
+		'--type-scale-11': 'calc(4.5rem * var(--type-scale-factor))',
+		'--type-scale-12': 'calc(6rem * var(--type-scale-factor))',
+		'--type-scale-13': 'calc(8rem * var(--type-scale-factor))',
+		'--base-font-color': 'var(--color-surface-700)',
+		'--base-font-color-dark': 'var(--color-surface-50)',
+		'--base-font-family':
+			'ui-rounded, Hiragino Maru Gothic ProN, Quicksand, Comfortaa, Manjari, Arial Rounded MT, Arial Rounded MT Bold, Calibri, source-sans-pro, sans-serif',
+		'--base-font-size': 'inherit',
+		'--base-line-height': 'inherit',
+		'--base-font-weight': 'normal',
+		'--base-font-style': 'normal',
+		'--base-letter-spacing': '0em',
+		'--heading-font-color': 'var(--color-tertiary-500)',
+		'--heading-font-color-dark': 'var(--color-secondary-200)',
+		'--heading-font-family':
+			'Seravek, Gill Sans Nova, Ubuntu, Calibri, DejaVu Sans, source-sans-pro, sans-serif',
+		'--heading-font-weight': 'bolder',
+		'--heading-font-style': 'normal',
+		'--heading-letter-spacing': 'inherit',
+		'--anchor-font-color': 'var(--color-secondary-600)',
+		'--anchor-font-color-dark': 'var(--color-tertiary-400)',
+		'--anchor-font-family': 'inherit',
+		'--anchor-font-size': 'inherit',
+		'--anchor-line-height': 'inherit',
+		'--anchor-font-weight': 'normal',
+		'--anchor-font-style': 'normal',
+		'--anchor-letter-spacing': 'inherit',
+		'--anchor-text-decoration': 'none',
+		'--anchor-text-decoration-hover': 'underline',
+		'--anchor-text-decoration-active': 'none',
+		'--anchor-text-decoration-focus': 'none',
+		'--space-scale-factor': '1',
+		'--radii-default': '6px',
+		'--radii-container': '12px',
+		'--border-width-default': '0px',
+		'--divide-width-default': '1px',
+		'--outline-width-default': '1px',
+		'--ring-width-default': '1px',
+		'--body-background-color': '255 255 255',
+		'--body-background-color-dark': 'var(--color-surface-950)',
+		'--color-primary-50': '235 251 255',
+		'--color-primary-100': '211 228 255',
+		'--color-primary-200': '187 205 254',
+		'--color-primary-300': '162 181 254',
+		'--color-primary-400': '138 158 253',
+		'--color-primary-500': '114 135 253',
+		'--color-primary-600': '110 129 238',
+		'--color-primary-700': '106 123 223',
+		'--color-primary-800': '101 118 207',
+		'--color-primary-900': '97 112 192',
+		'--color-primary-950': '93 106 177',
+		'--color-primary-contrast-dark': 'var(--color-primary-950)',
+		'--color-primary-contrast-light': 'var(--color-primary-50)',
+		'--color-primary-contrast-50': 'var(--color-primary-contrast-dark)',
+		'--color-primary-contrast-100': 'var(--color-primary-contrast-dark)',
+		'--color-primary-contrast-200': 'var(--color-primary-contrast-dark)',
+		'--color-primary-contrast-300': 'var(--color-primary-contrast-dark)',
+		'--color-primary-contrast-400': 'var(--color-primary-contrast-light)',
+		'--color-primary-contrast-500': 'var(--color-primary-contrast-light)',
+		'--color-primary-contrast-600': 'var(--color-primary-contrast-light)',
+		'--color-primary-contrast-700': 'var(--color-primary-contrast-light)',
+		'--color-primary-contrast-800': 'var(--color-primary-contrast-light)',
+		'--color-primary-contrast-900': 'var(--color-primary-contrast-light)',
+		'--color-primary-contrast-950': 'var(--color-primary-contrast-light)',
+		'--color-secondary-50': '245 194 231',
+		'--color-secondary-100': '243 179 225',
+		'--color-secondary-200': '241 164 220',
+		'--color-secondary-300': '238 148 214',
+		'--color-secondary-400': '236 133 209',
+		'--color-secondary-500': '234 118 203',
+		'--color-secondary-600': '207 104 179',
+		'--color-secondary-700': '179 89 156',
+		'--color-secondary-800': '152 75 132',
+		'--color-secondary-900': '124 60 109',
+		'--color-secondary-950': '97 46 85',
+		'--color-secondary-contrast-dark': 'var(--color-secondary-950)',
+		'--color-secondary-contrast-light': 'var(--color-secondary-50)',
+		'--color-secondary-contrast-50': 'var(--color-secondary-contrast-dark)',
+		'--color-secondary-contrast-100': 'var(--color-secondary-contrast-dark)',
+		'--color-secondary-contrast-200': 'var(--color-secondary-contrast-dark)',
+		'--color-secondary-contrast-300': 'var(--color-secondary-contrast-dark)',
+		'--color-secondary-contrast-400': 'var(--color-secondary-contrast-dark)',
+		'--color-secondary-contrast-500': 'var(--color-secondary-contrast-dark)',
+		'--color-secondary-contrast-600': 'var(--color-secondary-contrast-dark)',
+		'--color-secondary-contrast-700': 'var(--color-secondary-contrast-light)',
+		'--color-secondary-contrast-800': 'var(--color-secondary-contrast-light)',
+		'--color-secondary-contrast-900': 'var(--color-secondary-contrast-light)',
+		'--color-secondary-contrast-950': 'var(--color-secondary-contrast-light)',
+		'--color-tertiary-50': '148 226 213',
+		'--color-tertiary-100': '123 210 201',
+		'--color-tertiary-200': '98 194 189',
+		'--color-tertiary-300': '73 178 177',
+		'--color-tertiary-400': '48 162 165',
+		'--color-tertiary-500': '23 146 153',
+		'--color-tertiary-600': '22 130 135',
+		'--color-tertiary-700': '20 114 118',
+		'--color-tertiary-800': '19 98 100',
+		'--color-tertiary-900': '17 82 83',
+		'--color-tertiary-950': '16 66 65',
+		'--color-tertiary-contrast-dark': 'var(--color-tertiary-950)',
+		'--color-tertiary-contrast-light': 'var(--color-tertiary-50)',
+		'--color-tertiary-contrast-50': 'var(--color-tertiary-contrast-dark)',
+		'--color-tertiary-contrast-100': 'var(--color-tertiary-contrast-dark)',
+		'--color-tertiary-contrast-200': 'var(--color-tertiary-contrast-dark)',
+		'--color-tertiary-contrast-300': 'var(--color-tertiary-contrast-dark)',
+		'--color-tertiary-contrast-400': 'var(--color-tertiary-contrast-dark)',
+		'--color-tertiary-contrast-500': 'var(--color-tertiary-contrast-light)',
+		'--color-tertiary-contrast-600': 'var(--color-tertiary-contrast-light)',
+		'--color-tertiary-contrast-700': 'var(--color-tertiary-contrast-light)',
+		'--color-tertiary-contrast-800': 'var(--color-tertiary-contrast-light)',
+		'--color-tertiary-contrast-900': 'var(--color-tertiary-contrast-light)',
+		'--color-tertiary-contrast-950': 'var(--color-tertiary-contrast-light)',
+		'--color-success-50': '166 227 161',
+		'--color-success-100': '146 214 137',
+		'--color-success-200': '125 200 114',
+		'--color-success-300': '105 187 90',
+		'--color-success-400': '84 173 67',
+		'--color-success-500': '64 160 43',
+		'--color-success-600': '57 144 43',
+		'--color-success-700': '50 127 42',
+		'--color-success-800': '43 111 42',
+		'--color-success-900': '36 94 41',
+		'--color-success-950': '29 78 41',
+		'--color-success-contrast-dark': 'var(--color-success-950)',
+		'--color-success-contrast-light': 'var(--color-success-50)',
+		'--color-success-contrast-50': 'var(--color-success-contrast-dark)',
+		'--color-success-contrast-100': 'var(--color-success-contrast-dark)',
+		'--color-success-contrast-200': 'var(--color-success-contrast-dark)',
+		'--color-success-contrast-300': 'var(--color-success-contrast-dark)',
+		'--color-success-contrast-400': 'var(--color-success-contrast-dark)',
+		'--color-success-contrast-500': 'var(--color-success-contrast-light)',
+		'--color-success-contrast-600': 'var(--color-success-contrast-light)',
+		'--color-success-contrast-700': 'var(--color-success-contrast-light)',
+		'--color-success-contrast-800': 'var(--color-success-contrast-light)',
+		'--color-success-contrast-900': 'var(--color-success-contrast-light)',
+		'--color-success-contrast-950': 'var(--color-success-contrast-light)',
+		'--color-warning-50': '249 226 175',
+		'--color-warning-100': '244 209 146',
+		'--color-warning-200': '239 192 117',
+		'--color-warning-300': '233 176 87',
+		'--color-warning-400': '228 159 58',
+		'--color-warning-500': '223 142 29',
+		'--color-warning-600': '199 128 28',
+		'--color-warning-700': '174 115 28',
+		'--color-warning-800': '150 101 27',
+		'--color-warning-900': '125 88 27',
+		'--color-warning-950': '101 74 26',
+		'--color-warning-contrast-dark': 'var(--color-warning-950)',
+		'--color-warning-contrast-light': 'var(--color-warning-50)',
+		'--color-warning-contrast-50': 'var(--color-warning-contrast-dark)',
+		'--color-warning-contrast-100': 'var(--color-warning-contrast-dark)',
+		'--color-warning-contrast-200': 'var(--color-warning-contrast-dark)',
+		'--color-warning-contrast-300': 'var(--color-warning-contrast-dark)',
+		'--color-warning-contrast-400': 'var(--color-warning-contrast-dark)',
+		'--color-warning-contrast-500': 'var(--color-warning-contrast-dark)',
+		'--color-warning-contrast-600': 'var(--color-warning-contrast-light)',
+		'--color-warning-contrast-700': 'var(--color-warning-contrast-light)',
+		'--color-warning-contrast-800': 'var(--color-warning-contrast-light)',
+		'--color-warning-contrast-900': 'var(--color-warning-contrast-light)',
+		'--color-warning-contrast-950': 'var(--color-warning-contrast-light)',
+		'--color-error-50': '243 139 168',
+		'--color-error-100': '236 114 146',
+		'--color-error-200': '230 89 124',
+		'--color-error-300': '223 65 101',
+		'--color-error-400': '217 40 79',
+		'--color-error-500': '210 15 57',
+		'--color-error-600': '188 16 55',
+		'--color-error-700': '167 17 52',
+		'--color-error-800': '145 19 50',
+		'--color-error-900': '124 20 47',
+		'--color-error-950': '102 21 45',
+		'--color-error-contrast-dark': 'var(--color-error-950)',
+		'--color-error-contrast-light': 'var(--color-error-50)',
+		'--color-error-contrast-50': 'var(--color-error-contrast-dark)',
+		'--color-error-contrast-100': 'var(--color-error-contrast-dark)',
+		'--color-error-contrast-200': 'var(--color-error-contrast-dark)',
+		'--color-error-contrast-300': 'var(--color-error-contrast-dark)',
+		'--color-error-contrast-400': 'var(--color-error-contrast-dark)',
+		'--color-error-contrast-500': 'var(--color-error-contrast-light)',
+		'--color-error-contrast-600': 'var(--color-error-contrast-light)',
+		'--color-error-contrast-700': 'var(--color-error-contrast-light)',
+		'--color-error-contrast-800': 'var(--color-error-contrast-light)',
+		'--color-error-contrast-900': 'var(--color-error-contrast-light)',
+		'--color-error-contrast-950': 'var(--color-error-contrast-light)',
+		'--color-surface-50': '220 224 232',
+		'--color-surface-100': '204 208 218',
+		'--color-surface-200': '188 192 204',
+		'--color-surface-300': '172 175 189',
+		'--color-surface-400': '156 159 175',
+		'--color-surface-500': '140 143 161',
+		'--color-surface-600': '118 120 138',
+		'--color-surface-700': '96 98 115',
+		'--color-surface-800': '74 75 92',
+		'--color-surface-900': '52 53 69',
+		'--color-surface-950': '30 30 46',
+		'--color-surface-contrast-dark': 'var(--color-surface-950)',
+		'--color-surface-contrast-light': 'var(--color-surface-50)',
+		'--color-surface-contrast-50': 'var(--color-surface-contrast-dark)',
+		'--color-surface-contrast-100': 'var(--color-surface-contrast-dark)',
+		'--color-surface-contrast-200': 'var(--color-surface-contrast-dark)',
+		'--color-surface-contrast-300': 'var(--color-surface-contrast-dark)',
+		'--color-surface-contrast-400': 'var(--color-surface-contrast-dark)',
+		'--color-surface-contrast-500': 'var(--color-surface-contrast-dark)',
+		'--color-surface-contrast-600': 'var(--color-surface-contrast-dark)',
+		'--color-surface-contrast-700': 'var(--color-surface-contrast-light)',
+		'--color-surface-contrast-800': 'var(--color-surface-contrast-light)',
+		'--color-surface-contrast-900': 'var(--color-surface-contrast-light)',
+		'--color-surface-contrast-950': 'var(--color-surface-contrast-light)'
+	},
+	metadata: {
+		version: '3.0.0'
 	}
-};
+} satisfies Theme;

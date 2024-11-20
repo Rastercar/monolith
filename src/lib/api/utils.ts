@@ -3,7 +3,7 @@ import { goto } from '$app/navigation';
 import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
 import { INVALID_SESSION, MISSING_PERMISSIONS, NO_SID_COOKIE } from '$lib/constants/error-codes';
 import type { apiPermission } from '$lib/constants/permissions';
-import { authStore } from '$lib/store/auth';
+import { authStore } from '$lib/store/auth.svelte';
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
 import QueryStringAddon from 'wretch/addons/queryString';

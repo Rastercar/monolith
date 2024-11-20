@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 
 	$: ({ user } = $authStore);

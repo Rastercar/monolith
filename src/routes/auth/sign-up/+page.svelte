@@ -6,7 +6,7 @@
 	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms';
@@ -80,11 +80,7 @@
 		disabled={isLoading}
 	/>
 
-	<LoadableButton
-		class="btn variant-filled-primary mt-4 w-full"
-		{isLoading}
-		on:click={handleSignUp}
-	>
+	<LoadableButton className="btn preset-filled mt-4 w-full" {isLoading} onclick={handleSignUp}>
 		sign up
 	</LoadableButton>
 

@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { slide } from 'svelte/transition';
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

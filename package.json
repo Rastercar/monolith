@@ -35,8 +35,8 @@
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^9.2.0",
-		"@skeletonlabs/skeleton": "2.4.0",
-		"@skeletonlabs/tw-plugin": "0.4.0",
+		"@skeletonlabs/skeleton": "3.0.0-next.9",
+		"@skeletonlabs/skeleton-svelte": "1.0.0-next.13",
 		"@sveltejs/adapter-auto": "3.1.1",
 		"@sveltejs/kit": "2.8.1",
 		"@sveltejs/vite-plugin-svelte": "4.0.0",

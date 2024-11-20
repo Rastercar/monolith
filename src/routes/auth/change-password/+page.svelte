@@ -4,7 +4,6 @@
 	import { recoverPasswordByTokenSchema } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
-	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms';
@@ -84,8 +83,8 @@
 			{#if errorStatusCode === null}
 				<LoadableButton
 					{isLoading}
-					class="btn variant-filled-primary mt-4 w-full"
-					on:click={changePassword}
+					className="btn variant-filled-primary mt-4 w-full"
+					onclick={changePassword}
 				>
 					change password
 				</LoadableButton>

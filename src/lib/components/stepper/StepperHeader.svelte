@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import type { fade } from 'svelte/transition';
 	import type { Transition, TransitionParams } from './transition';
 

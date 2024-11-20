@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { PUBLIC_IS_DEV } from '$env/static/public';
 	import type { apiPermission } from '$lib/constants/permissions';
-	import { hasPermission } from '$lib/store/auth';
+	import { hasPermission } from '$lib/store/auth.svelte';
 	import { onMount } from 'svelte';
 	import AccessDenied from './errors/AccessDenied.svelte';
-	import { PUBLIC_IS_DEV } from '$env/static/public';
 
 	/**
 	 * The permissions needed to show the main slot

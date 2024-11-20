@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 	import { popup } from '@skeletonlabs/skeleton';
 	import UserDisplay from './UserDisplay.svelte';

@@ -4,21 +4,30 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { accessLevel, organization, user } from '../schema';
 
-export async function getUserByCredentials(credentials: { email: string; password: string }) {
-	const user = await db.query.user.findFirst({
+export async function findUserByCredentials(credentials: { email: string; password: string }) {
+	return db.query.user.findFirst({
 		with: { accessLevel: true, organization: true },
 		where: (user, { eq }) => eq(user.email, credentials.email)
 	});
-
-	return user;
 }
 
-export async function getUserByUsername(username: string) {
-	const user = await db.query.user.findFirst({
+export async function findUserByUsername(username: string) {
+	return db.query.user.findFirst({
 		where: (user, { eq }) => eq(user.username, username)
 	});
+}
 
-	return user;
+export async function findUserByEmail(email: string) {
+	return db.query.user.findFirst({
+		where: (user, { eq }) => eq(user.email, email)
+	});
+}
+
+export async function confirmUserEmailAddressByToken(confirmEmailToken: string) {
+	return db
+		.update(user)
+		.set({ emailVerified: true })
+		.where(eq(user.confirmEmailToken, confirmEmailToken));
 }
 
 export async function checkEmailIsInUse(email: string) {
@@ -39,11 +48,11 @@ export async function checkEmailIsInUse(email: string) {
 	return foundOrgsWithEmail.length > 0;
 }
 
-export async function registerUserAndOrganization(args: {
-	username: string;
-	email: string;
-	password: string;
-}) {
+/**
+ * Signs up a new rastercar user, creating the user
+ * their organization and the org root access level
+ */
+export async function signUpUser(args: { username: string; email: string; password: string }) {
 	const { username, email, password } = args;
 
 	return db.transaction(async (tx) => {

@@ -6,17 +6,12 @@
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
-	import type { PageData } from './$types';
 	import VehicleLocationCard from './components/VehicleLocationCard.svelte';
 	import VehiclePhoto from './components/VehiclePhoto.svelte';
 	import VehicleTrackerCard from './components/tracker-card/VehicleTrackerCard.svelte';
 	import VehicleDisplayCard from './components/vehicle-card/VehicleDisplayCard.svelte';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	const query = createQuery({
 		queryKey: ['vehicle', data.vehicleId],

@@ -5,8 +5,8 @@
 		type CreateAccessLevelBody
 	} from '$lib/api/access-level.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
@@ -15,13 +15,8 @@
 	import { createMutation } from '@tanstack/svelte-query';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import type { PageData } from './$types';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	const form = superForm(data.createAccessLevelForm, {
 		validators: zodClient(createAccessLevelSchema)
@@ -33,10 +28,12 @@
 	 * key: permission key (eg: CREATE_USER)
 	 * val: boolean indicating the permission is selected
 	 */
-	const permissionToToggleStatus = $state(Object.keys(permissionDetails).reduce(
-		(acc, v) => ({ ...acc, [v]: false }),
-		{}
-	) as Record<apiPermission, boolean>);
+	const permissionToToggleStatus = $state(
+		Object.keys(permissionDetails).reduce((acc, v) => ({ ...acc, [v]: false }), {}) as Record<
+			apiPermission,
+			boolean
+		>
+	);
 
 	const mutation = createMutation({
 		mutationFn: (b: CreateAccessLevelBody) => apiCreateAccessLevel(b),

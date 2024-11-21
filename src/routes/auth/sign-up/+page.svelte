@@ -8,13 +8,8 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
-	import type { PageData } from './$types';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	const form = superForm(data.form, { validators: zodClient(signUpSchema) });
 	const { delayed: isLoading } = form;
@@ -49,7 +44,7 @@
 		/>
 
 		<LoadableButton
-			classes="btn preset-filled-primary-200-800 mt-4 w-full"
+			classes="btn preset-filled-primary-200-800 mt-6 w-full"
 			disabled={$isLoading}
 			isLoading={$isLoading}
 		>

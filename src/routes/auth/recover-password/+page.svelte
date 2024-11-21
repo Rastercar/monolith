@@ -1,23 +1,21 @@
 <script lang="ts">
-	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
+	import { recoverPasswordSchema } from '$lib/api/auth.schema';
+	import TextField from '$lib/components/form/v2/TextField.svelte';
+	import { route } from '$lib/ROUTES';
 	import { authStore } from '$lib/store/auth.svelte';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
-	import type { ActionData, PageData } from './$types';
 
-	interface Props {
-		data: PageData;
-		form: ActionData;
-	}
+	let { data } = $props();
 
-	let { data, form }: Props = $props();
+	const form = superForm(data.form, { validators: zodClient(recoverPasswordSchema) });
+	const { delayed: isLoading } = form;
 
-	const recoverForm = superForm(data.form);
+	const { message } = form;
 
-	const success = form?.error === null;
-
+	const success = $message && $message.type === 'success';
 	const title = success ? 'Success !' : 'Recover Password';
 
 	const subtitle = success
@@ -29,32 +27,23 @@
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to
 		// recover is most certainly the one he is currently logged as
-		if (user) recoverForm.form.set({ email: user.email });
+		if (user) form.form.set({ email: user.email });
 	});
 </script>
 
 <div class="h-full flex justify-center px-6">
-	<div class="w-96">
-		<h1 class="mb-1 text-center text-3xl mt-12">{title}</h1>
-		<p class="text-sm text-center text-surface-600-300-token mb-4">
+	<div class="max-w-xl">
+		<h1 class="mb-1 text-center h1 mt-12">{title}</h1>
+		<p class="type-scale-3 text-center text-surface-700-300 mb-8">
 			{subtitle}
 		</p>
 
 		{#if success}
-			<a href="/" class="btn variant-filled mt-4 w-full">back to home</a>
+			<a href="/" class="btn preset-filled-primary-200-800 mt-4 w-full">back to home</a>
 		{:else}
-			<form method="post">
-				<TextInput
-					form={recoverForm}
-					field="email"
-					label="Your account email"
-					placeholder="email address"
-				/>
-				{#if form?.error === 'not_found'}
-					<ErrorMessage errors={['user not found with this email']} />
-				{/if}
-
-				<button class="btn variant-filled-primary mt-4 w-full"> recover password </button>
+			<form method="post" action={route('recoverPassword /auth/recover-password')} use:form.enhance>
+				<TextField {form} name="email" label="Your account email" placeholder="email address" />
+				<button class="btn preset-filled-primary-200-800 mt-4 w-full"> recover password </button>
 			</form>
 
 			{#if user}

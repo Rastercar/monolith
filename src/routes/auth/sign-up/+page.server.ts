@@ -1,11 +1,7 @@
 import { signUpSchema } from '$lib/api/auth.schema';
 import { route } from '$lib/ROUTES';
 import { createSession } from '$lib/server/db/repo/session';
-import {
-	checkEmailIsInUse,
-	getUserByUsername,
-	registerUserAndOrganization
-} from '$lib/server/db/repo/user';
+import { checkEmailIsInUse, findUserByUsername, signUpUser } from '$lib/server/db/repo/user';
 import { createSessionExpirationDateFromNow, setSessionCookie } from '$lib/utils/session';
 import { redirect, type Actions } from '@sveltejs/kit';
 import { fail, setError, superValidate } from 'sveltekit-superforms';
@@ -24,10 +20,10 @@ export const actions: Actions = {
 		const emailIsInUse = await checkEmailIsInUse(form.data.email);
 		if (emailIsInUse) return setError(form, 'email', 'email address not available');
 
-		const userWithUsername = await getUserByUsername(form.data.username);
+		const userWithUsername = await findUserByUsername(form.data.username);
 		if (userWithUsername) return setError(form, 'username', 'username not available');
 
-		const { user } = await registerUserAndOrganization(form.data);
+		const { user } = await signUpUser(form.data);
 
 		const { maxAge, expiresAt } = createSessionExpirationDateFromNow();
 

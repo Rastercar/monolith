@@ -12,15 +12,10 @@
 	import Icon from '@iconify/svelte';
 	import { popup } from '@skeletonlabs/skeleton';
 	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import type { PageData } from './$types';
 	import AccessLevelInfo from './components/AccessLevelInfo.svelte';
 	import UpdateAccessLevelForm from './components/UpdateAccessLevelForm.svelte';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	let editMode = $state(data.startInEditMode);
 

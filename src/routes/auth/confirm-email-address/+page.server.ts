@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const confirmingForOrg = url.searchParams.get('confirmingFor') === 'organization';
 
 	if (!confirmEmailToken) {
-		error(500, { message: 'no confirm email token found' });
+		return error(500, { message: 'no confirm email token found' });
 	}
 
 	return { confirmEmailToken, confirmingForOrg };

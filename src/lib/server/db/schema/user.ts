@@ -7,6 +7,7 @@ import {
 	serial,
 	text,
 	unique,
+	uuid,
 	varchar
 } from 'drizzle-orm/pg-core';
 import { accessLevel } from './access-level';
@@ -23,8 +24,19 @@ export const user = pgTable(
 		email: varchar({ length: 255 }).notNull(),
 		emailVerified: boolean('email_verified').default(false).notNull(),
 		password: varchar({ length: 255 }).notNull(),
+
+		/**
+		 * A UUID that is sent to the user email address to so it
+		 * can be reset after verifying the user has access to the
+		 * email.
+		 */
 		resetPasswordToken: text('reset_password_token'),
-		confirmEmailToken: text('confirm_email_token'),
+
+		/**
+		 * A UUID that is sent to the user email address to confirm
+		 * it belongs to the user
+		 */
+		confirmEmailToken: uuid(),
 		profilePicture: varchar('profile_picture', { length: 255 }),
 		description: text(),
 		organizationId: integer('organization_id'),

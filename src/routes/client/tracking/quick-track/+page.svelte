@@ -5,15 +5,10 @@
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
-	import type { PageData } from './$types';
 	import CreateVehicleForm from './components/create-vehicle-step/CreateVehicleForm.svelte';
 	import SetTrackerStep from './components/set-tracker-step/SetTrackerStep.svelte';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	let createdVehicle: Vehicle | null = $state(null);
 	let createdOrSelectedTracker: Tracker | null = $state(null);
@@ -27,15 +22,15 @@
 
 	<Step>
 		{#snippet header()}
-				Vehicle Information
-			{/snippet}
+			Vehicle Information
+		{/snippet}
 		<CreateVehicleForm formSchema={data.createVehicleForm} on:vehicle-created={setVehicle} />
 	</Step>
 
 	<Step>
 		{#snippet header()}
-				Inform your vehicle tracker
-			{/snippet}
+			Inform your vehicle tracker
+		{/snippet}
 		{#if createdVehicle}
 			<span class="text-sm mb-4 block">How will you track your vehicle ?</span>
 
@@ -50,8 +45,8 @@
 
 	<Step>
 		{#snippet header()}
-				Set the SIM card
-			{/snippet}
+			Set the SIM card
+		{/snippet}
 		{#if createdOrSelectedTracker}
 			<SetSimCardsStep tracker={createdOrSelectedTracker} formSchema={data.createSimCardForm} />
 		{/if}
@@ -59,8 +54,8 @@
 
 	<Step>
 		{#snippet header()}
-				Review
-			{/snippet}
+			Review
+		{/snippet}
 		<!--
 			TODO: 
 			wherener we got the following pages 

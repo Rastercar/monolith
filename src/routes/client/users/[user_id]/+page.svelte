@@ -1,18 +1,13 @@
 <script lang="ts">
 	import { apiGetUserById } from '$lib/api/user';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
-	import type { PageData } from './$types';
 	import AccessLevelSection from './components/AccessLevelSection.svelte';
 	import SessionsSection from './components/SessionsSection.svelte';
 	import UserSection from './components/UserSection.svelte';
-	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	let userDeleted = $state(false);
 

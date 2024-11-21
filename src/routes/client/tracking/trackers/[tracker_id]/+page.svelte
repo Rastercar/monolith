@@ -4,18 +4,13 @@
 	import { apiGetTrackerById } from '$lib/api/tracker';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
+	import TrackerPositionList from '$lib/components/non-generic/list/TrackerPositionList.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import Icon from '@iconify/svelte';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
-	import type { PageData } from './$types';
 	import TrackerInfo from './components/TrackerInfo.svelte';
-	import TrackerPositionList from '$lib/components/non-generic/list/TrackerPositionList.svelte';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	const query = createQuery({
 		queryKey: ['tracker', data.vehicleTrackerId],

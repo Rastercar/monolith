@@ -53,7 +53,7 @@
 		</div>
 
 		<LoadableButton
-			classes="btn preset-filled-primary-200-800 mt-4 w-full"
+			classes="btn preset-filled-primary-200-800 mt-6 w-full"
 			disabled={$isLoading}
 			isLoading={$isLoading}
 		>

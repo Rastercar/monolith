@@ -2,20 +2,15 @@
 	import { run } from 'svelte/legacy';
 
 	import { apiDeleteSimCard, apiGetSimCard } from '$lib/api/sim-card';
+	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
-	import type { PageData } from './$types';
-	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	const toaster = getToaster();
 

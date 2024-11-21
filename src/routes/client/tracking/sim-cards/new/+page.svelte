@@ -3,13 +3,8 @@
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import CreateSimCardForm from '$lib/components/non-generic/form/CreateSimCardForm.svelte';
 	import { getToaster } from '$lib/store/toaster';
-	import type { PageData } from './$types';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 
 	const toast = getToaster();
 </script>

@@ -1,14 +1,9 @@
 <script lang="ts">
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
-	import type { PageData } from './$types';
 	import CreateUserForm from './components/CreateUserForm.svelte';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data } = $props();
 </script>
 
 <PermissionGuard requiredPermissions={['CREATE_USER']}>

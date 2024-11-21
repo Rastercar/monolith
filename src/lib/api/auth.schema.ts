@@ -27,7 +27,6 @@ export const recoverPasswordByTokenSchema = z
 		path: ['passwordConfirmation']
 	});
 
-// [PROD-TODO] remove default test user
 export const signInSchema = z.object({
 	email: z
 		.string()
@@ -38,6 +37,13 @@ export const signInSchema = z.object({
 		.string()
 		.min(1)
 		.default(PUBLIC_IS_DEV === 'true' ? 'testuser' : '')
+});
+
+export const recoverPasswordSchema = z.object({
+	email: z
+		.string()
+		.email()
+		.default(PUBLIC_IS_DEV === 'true' ? 'rastercar.tests.002@gmail.com' : '')
 });
 
 export type SignInDto = z.infer<typeof signInSchema>;

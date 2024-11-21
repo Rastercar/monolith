@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { PUBLIC_IS_DEV } from '$env/static/public';
+	import { env } from '$lib/public-env';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -11,6 +12,6 @@
 @component
 A Guard that only renders the default slot if in development mode
 -->
-{#if PUBLIC_IS_DEV === 'true'}
+{#if env.PUBLIC_IS_DEV}
 	{@render children?.()}
 {/if}

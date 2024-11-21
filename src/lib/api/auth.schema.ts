@@ -1,4 +1,4 @@
-import { PUBLIC_IS_DEV } from '$env/static/public';
+import { env } from '$lib/public-env';
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 import { userSchema } from './user.schema';
@@ -32,18 +32,18 @@ export const signInSchema = z.object({
 		.string()
 		.min(1)
 		.email()
-		.default(PUBLIC_IS_DEV === 'true' ? 'rastercar.tests.002@gmail.com' : ''),
+		.default(env.PUBLIC_IS_DEV ? 'rastercar.tests.002@gmail.com' : ''),
 	password: z
 		.string()
 		.min(1)
-		.default(PUBLIC_IS_DEV === 'true' ? 'testuser' : '')
+		.default(env.PUBLIC_IS_DEV ? 'testuser' : '')
 });
 
 export const recoverPasswordSchema = z.object({
 	email: z
 		.string()
 		.email()
-		.default(PUBLIC_IS_DEV === 'true' ? 'rastercar.tests.002@gmail.com' : '')
+		.default(env.PUBLIC_IS_DEV ? 'rastercar.tests.002@gmail.com' : '')
 });
 
 export type SignInDto = z.infer<typeof signInSchema>;

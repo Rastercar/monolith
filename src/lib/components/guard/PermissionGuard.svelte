@@ -1,48 +1,46 @@
 <script lang="ts">
-	import { PUBLIC_IS_DEV } from '$env/static/public';
 	import type { apiPermission } from '$lib/constants/permissions';
+	import { env } from '$lib/public-env';
 	import { hasPermission } from '$lib/store/auth.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import AccessDenied from './errors/AccessDenied.svelte';
 
-	
-
-	
-
-	
 	interface Props {
 		/**
-	 * The permissions needed to show the main slot
-	 */
+		 * The permissions needed to show the main slot
+		 */
 		requiredPermissions: apiPermission[];
+
 		/**
-	 * Debug mode will always show the main slot regardless if the user
-	 * contains the permissions or not, but with additional info
-	 *
-	 * @default false
-	 *
-	 * @important
-	 * USE ONLY IN WHEN DEVELOPING
-	 *
-	 * [PROD-TODO]
-	 * disable this prop when on production (make it be debugMode = debug && ENV === 'dev')
-	 */
-		debug?: any;
+		 * Debug mode will always show the main slot regardless if the user
+		 * contains the permissions or not, but with additional info
+		 *
+		 * @default false
+		 *
+		 * @important
+		 * USE ONLY IN WHEN DEVELOPING
+		 *
+		 * [PROD-TODO]
+		 * disable this prop when on production (make it be debugMode = debug && ENV === 'dev')
+		 */
+		debug?: boolean;
+
 		/**
-	 * if when the permissions are lacking, the `AccessDenied` component should
-	 * be shown on the `denied` slot
-	 */
+		 * if when the permissions are lacking, the `AccessDenied` component should
+		 * be shown on the `denied` slot
+		 */
 		accessDeniedComponentAsDefaultDeniedSlot?: boolean;
-		children?: import('svelte').Snippet;
-		denied?: import('svelte').Snippet;
+
+		denied?: Snippet;
+		children: Snippet;
 	}
 
 	let {
-		requiredPermissions,
-		debug = PUBLIC_IS_DEV,
-		accessDeniedComponentAsDefaultDeniedSlot = false,
+		denied,
 		children,
-		denied
+		debug = env.PUBLIC_IS_DEV,
+		requiredPermissions,
+		accessDeniedComponentAsDefaultDeniedSlot = false
 	}: Props = $props();
 
 	onMount(() => {
@@ -59,7 +57,7 @@
 		}
 	});
 
-	let hasPermissions = $derived($hasPermission(requiredPermissions));
+	let hasPermissions = hasPermission(requiredPermissions);
 </script>
 
 <!--
@@ -76,7 +74,7 @@ code that needs to run only if the user is authenticated either move that code t
 that are in the guard or check the authorization yourself
 -->
 {#if hasPermissions}
-	{@render children?.()}
+	{@render children()}
 {:else if accessDeniedComponentAsDefaultDeniedSlot}
 	{#if denied}{@render denied()}{:else}
 		<AccessDenied />

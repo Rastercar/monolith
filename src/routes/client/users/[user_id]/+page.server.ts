@@ -1,4 +1,4 @@
-import { getIntParameterFromRouteSlug } from '$lib/utils/server-load';
+import { getIntParameterFromRouteSlug } from '$lib/utils/routes';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => ({

@@ -4,20 +4,39 @@ import { session } from './db/schema';
 
 interface Cron {
 	timeout: ReturnType<typeof setInterval>;
-	interval: number;
 	description: string;
+	intervalSeconds: number;
 }
-
-const runningCrons: Record<string, Cron | undefined> = {};
 
 interface CreateCronArgs {
 	key: string;
 	description: string;
-	intervalMilliseconds: number;
+	intervalSeconds: number;
 	cb: () => void;
 }
 
-function createCron({ key, description, intervalMilliseconds, cb }: CreateCronArgs) {
+function formatDuration(seconds: number): string {
+	if (seconds < 60) {
+		return `${seconds} second${seconds !== 1 ? 's' : ''}`;
+	}
+
+	if (seconds < 3600) {
+		const minutes = Math.floor(seconds / 60);
+		return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+	}
+
+	if (seconds < 86400) {
+		const hours = Math.floor(seconds / 3600);
+		return `${hours} hour${hours !== 1 ? 's' : ''}`;
+	}
+
+	const days = Math.floor(seconds / 86400);
+	return `${days} day${days !== 1 ? 's' : ''}`;
+}
+
+function createCron({ key, description, intervalSeconds, cb }: CreateCronArgs) {
+	console.log(`[CRON] running cronjob: ${key} every ${formatDuration(intervalSeconds)}`);
+
 	// If a cron with this key already exists, then clear the previous interval
 	if (runningCrons[key]) {
 		console.warn(`[CRON] conjob with key ${key} has changed`);
@@ -26,12 +45,13 @@ function createCron({ key, description, intervalMilliseconds, cb }: CreateCronAr
 
 	runningCrons[key] = {
 		description,
-		interval: intervalMilliseconds,
+		intervalSeconds,
 		timeout: setInterval(() => {
-			const timeStamp = new Date().toLocaleString();
-			console.log(`[CRON] ${timeStamp} running cron job: ${key} - ${description}`);
+			const timestamp = new Date().toLocaleString();
+			console.log(`[CRON] ${timestamp} running cron job: ${key} - ${description}`);
+
 			cb();
-		}, intervalMilliseconds)
+		}, intervalSeconds * 1_000)
 	};
 }
 
@@ -40,14 +60,17 @@ function createCron({ key, description, intervalMilliseconds, cb }: CreateCronAr
  * whenever running sveltekit on dev mode with HMR modifying cronjobs wont
  * delete the previous cronjobs, so restart the DEV server.
  */
-export function startCronjobs() {
-	console.log('[CRON] removing sessions every 5 minutes');
+function startCronjobs() {
 	createCron({
-		key: 'deleteExpiredSessions',
+		key: 'DeleteSessions',
 		description: 'Deletes Expired Sessions',
-		intervalMilliseconds: 5 * 60 * 1000,
+		intervalSeconds: 5 * 60,
 		cb: () => {
 			db.delete(session).where(lt(session.expiresAt, sql`NOW()`));
 		}
 	});
 }
+
+export const runningCrons: Record<string, Cron | undefined> = {};
+
+startCronjobs();

@@ -1,7 +1,7 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { updateVehicleSchema } from '$lib/api/vehicle.schema';
-import { getIntParameterFromRouteSlug } from '$lib/utils/server-load';
+import { getIntParameterFromRouteSlug } from '$lib/utils/routes';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { PageServerLoad } from './$types';

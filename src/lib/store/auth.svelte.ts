@@ -10,7 +10,7 @@ interface AuthState {
 const authS = useLocalStorage<AuthState>('auth', { user: null });
 
 export const authStore = {
-	value: authS.value,
+	getValue: () => authS.value,
 
 	setUser: (user: User) => (authS.value.user = user),
 
@@ -48,7 +48,7 @@ export const hasPermission = (permission: apiPermission | apiPermission[]) => {
 
 	const s = $derived(
 		requiredPermissions.every(
-			(p) => authStore.value.user && authStore.value.user.accessLevel.permissions.includes(p)
+			(p) => authS.value.user && authS.value.user.accessLevel.permissions.includes(p)
 		)
 	);
 

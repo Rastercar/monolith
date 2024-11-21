@@ -1,6 +1,8 @@
 const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
 
-export const fileIsImage = (file: File): boolean => validImageTypes.includes(file.type);
+export function fileIsImage(file: File): boolean {
+	return validImageTypes.includes(file.type);
+}
 
 /**
  * TODO: gambiarra do caralho, superforms permite files agora, arrumar
@@ -8,9 +10,8 @@ export const fileIsImage = (file: File): boolean => validImageTypes.includes(fil
  * Sets the value to `""` and files to `null` for all HtmlInputs
  * under a HtmlElement with the given ID
  */
-export const clearFileInputsUnderFormWithId = (id: string) => {
+export function clearFileInputsUnderFormWithId(id: string) {
 	const form = document.getElementById(id) as HTMLElement | null;
-
 	if (!form) return;
 
 	const fileInputs = form.querySelectorAll('input[type="file"]') as NodeListOf<HTMLInputElement>;
@@ -19,4 +20,4 @@ export const clearFileInputsUnderFormWithId = (id: string) => {
 		f.value = '';
 		f.files = null;
 	});
-};
+}

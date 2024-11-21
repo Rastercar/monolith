@@ -1,8 +1,8 @@
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
-import { PUBLIC_RASTERCAR_API_BASE_URL } from '$env/static/public';
 import { INVALID_SESSION, MISSING_PERMISSIONS, NO_SID_COOKIE } from '$lib/constants/error-codes';
 import type { apiPermission } from '$lib/constants/permissions';
+import { env } from '$lib/public-env';
 import { authStore } from '$lib/store/auth.svelte';
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
@@ -39,7 +39,7 @@ const globalErrorHandlerAddon = {
 		)
 };
 
-export const rastercarApi = wretch(PUBLIC_RASTERCAR_API_BASE_URL)
+export const rastercarApi = wretch(env.PUBLIC_RASTERCAR_API_BASE_URL)
 	.addon(FormDataAddon)
 	.addon(QueryStringAddon)
 	.addon(globalErrorHandlerAddon)

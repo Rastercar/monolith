@@ -19,9 +19,7 @@
 
 	// clear the user whenever loading this page, since if this page could only be loaded
 	// if there is no current user session so any user on the auth store is outdated
-	onMount(() => {
-		authStore.value.user = null;
-	});
+	onMount(() => authStore.clearUser());
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">

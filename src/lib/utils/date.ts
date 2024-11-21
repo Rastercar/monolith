@@ -13,12 +13,14 @@ const castToDate = (d: DateOrTimestamp) => (typeof d === 'string' ? new Date(d) 
  * isDateOlderThanXMilliseconds(new Date("2020-02-15T19:06:01Z"), fiveMinutes)
  * ```
  */
-export const isDateOlderThanXMilliseconds = (date: DateOrTimestamp, ms: number) => {
+export function isDateOlderThanXMilliseconds(date: DateOrTimestamp, ms: number) {
 	const nowToDateMsDiff = new Date().getTime() - castToDate(date).getTime();
 	return nowToDateMsDiff < ms;
-};
+}
 
-export const toDate = (d: DateOrTimestamp) => castToDate(d).toLocaleDateString();
+export function toDate(d: DateOrTimestamp) {
+	return castToDate(d).toLocaleDateString();
+}
 
 export const toDateTime = (d: DateOrTimestamp, withTimezone = false) =>
 	castToDate(d).toLocaleTimeString(undefined, {

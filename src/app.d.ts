@@ -1,16 +1,34 @@
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
-// and what to do when importing types
+// see: https://stackoverflow.com/questions/71342646/adding-import-statement-to-global-d-ts-destroys-type-and-module-declarations
+type User = import('$lib/api/user.schema').User;
+type UserSession = import('$lib/api/user.schema').UserSession;
+
+// see: https://kit.svelte.dev/docs/types#app
 declare namespace App {
-	// interface Locals {}
 	// interface PageData {}
 	// interface Platform {}
+
+	/**
+	 * Loaded from auth middleware
+	 */
+	interface Locals {
+		/**
+		 * The user loaded and authenticated by his session cookie
+		 */
+		user: User | null;
+
+		/**
+		 * The session of the authenticated user
+		 */
+		session: UserSession | null;
+	}
+
 	/**
 	 * Error codes, eg (MISSING_SID_COOKIE)
 	 */
 	interface Error {
 		code?: string;
 	}
+
 	namespace Superforms {
 		type Message = {
 			type: 'error' | 'success';

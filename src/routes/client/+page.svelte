@@ -17,7 +17,7 @@
 		TODO: link para quick tracking
 		TODO: link p/ meu perfil ?
 	-->
-	<h1>Wellcome: {authStore.value.user?.username}</h1>
+	<h1>Wellcome: {authStore.getValue().user?.username}</h1>
 
 	<hr />
 

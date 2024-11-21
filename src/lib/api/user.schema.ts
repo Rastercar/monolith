@@ -49,9 +49,10 @@ export const changePasswordSchema = z
 export const userSessionSchema = z.object({
 	ip: z.string(),
 	publicId: z.number().positive(),
-	createdAt: z.string().datetime(),
-	expiresAt: z.string().datetime(),
+	createdAt: z.date({ coerce: true }),
+	expiresAt: z.date({ coerce: true }),
 	userAgent: z.string(),
+
 	/**
 	 * If this session fetched from the API is the
 	 * same session used to authenticate the request itself.
@@ -67,7 +68,7 @@ export const userSessionSchema = z.object({
 
 export const simpleUserSchema = z.object({
 	id: z.number(),
-	createdAt: z.string().datetime(),
+	createdAt: z.date({ coerce: true }),
 	username: z.string(),
 	email: z.string().email(),
 	emailVerified: z.boolean(),

@@ -6,8 +6,8 @@ lazy:
 run_dev:
 	pnpm dev
 
-.PHONY: run_deps
-run_deps: 
+.PHONY: start_deps
+start_deps: 
 	docker compose -f docker/docker-compose.yml -p rastercar_api up -d
 
 .PHONY: stop_deps

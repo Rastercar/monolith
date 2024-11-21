@@ -1,5 +1,5 @@
 import { updateSimCardSchema } from '$lib/api/sim-card.schema';
-import { getIntParameterFromRouteSlug } from '$lib/utils/server-load';
+import { getIntParameterFromRouteSlug } from '$lib/utils/routes';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { PageServerLoad } from './$types';

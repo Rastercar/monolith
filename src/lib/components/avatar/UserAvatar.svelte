@@ -11,7 +11,7 @@
 
 	let { wrapperClass = 'w-32', avatarProps }: Props = $props();
 
-	const { user } = authStore.value;
+	const { user } = authStore.getValue();
 
 	const src = user?.profilePicture
 		? cloudFrontUrl(user.profilePicture)

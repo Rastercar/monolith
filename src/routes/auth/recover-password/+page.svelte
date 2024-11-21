@@ -22,7 +22,7 @@
 		? 'Follow the instructions sent to your email address'
 		: 'Inform your account email address to receive password recovery instructions';
 
-	const { user } = authStore.value;
+	const { user } = authStore.getValue();
 
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to

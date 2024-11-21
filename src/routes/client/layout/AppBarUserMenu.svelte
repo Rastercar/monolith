@@ -16,7 +16,7 @@
 	import { fade } from 'svelte/transition';
 	import UserDisplay from './UserDisplay.svelte';
 
-	const { user } = authStore.value;
+	const { user } = authStore.getValue();
 
 	// State
 	let open = $state(false);

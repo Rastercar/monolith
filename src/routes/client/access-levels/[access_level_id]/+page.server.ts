@@ -1,5 +1,5 @@
 import { updateAccessLevelSchema } from '$lib/api/access-level.schema';
-import { getIntParameterFromRouteSlug } from '$lib/utils/server-load';
+import { getIntParameterFromRouteSlug } from '$lib/utils/routes';
 import { getBooleanFromUrlQuery } from '$lib/utils/url';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';

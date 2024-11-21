@@ -8,7 +8,7 @@
 
 	let { classes = '' }: Props = $props();
 
-	const { user } = authStore.value;
+	const { user } = authStore.getValue();
 </script>
 
 {#if user}

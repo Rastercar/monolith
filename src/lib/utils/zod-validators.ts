@@ -17,3 +17,11 @@ export const usernameValidator = z
 	.min(5)
 	.max(32)
 	.regex(/^[a-z0-9_]+$/, 'must contain only lowercase letters, numbers and underscores');
+
+export const castStringToBool = z.preprocess((val) => {
+	if (typeof val === 'string') {
+		if (['1', 'true'].includes(val.toLowerCase())) return true;
+		if (['0', 'false'].includes(val.toLowerCase())) return false;
+	}
+	return val;
+}, z.coerce.boolean());

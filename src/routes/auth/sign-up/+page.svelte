@@ -18,70 +18,48 @@
 
 	const form = superForm(data.form, { validators: zodClient(signUpSchema) });
 	const { delayed: isLoading } = form;
-
-	// const handleSignUpError = (err: string) => {
-	// 	const setFieldError = (field: 'email' | 'username', msg: string) => {
-	// 		form.validate(field, { value: '', errors: msg, update: 'errors' });
-	// 	};
-
-	// 	if (err === EMAIL_IN_USE) return setFieldError('email', 'email not available');
-	// 	if (err === USERNAME_IN_USE) return setFieldError('username', 'username not available');
-	// };
-
-	// const mutation = createMutation({
-	// 	mutationFn: (body: SignUpDto) => apiSignUp(body),
-	// 	onSuccess: (res) => {
-	// 		if (typeof res === 'string') return handleSignUpError(res);
-
-	// 		redirecting = true;
-
-	// 		authStore.setUser(res.user);
-
-	// 		// redirect a few frames after svelte updated the auth store
-	// 		setTimeout(() => {
-	// 			goto('/client').finally(() => (redirecting = false));
-	// 		}, 100);
-	// 	},
-	// 	onError: () => toaster.error()
-	// });
-
-	// const handleSignUp = async () => {
-	// 	const validated = await form.validateForm();
-
-	// 	if (!validated.valid) {
-	// 		return form.restore({ ...validated, tainted: undefined });
-	// 	}
-
-	// 	$mutation.mutate(validated.data);
-	// };
 </script>
 
 <AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">
-	<TextField {form} name="email" label="Email" placeholder="email address" disabled={$isLoading} />
+	<form method="POST" action={route('signUp /auth/sign-up')} use:form.enhance>
+		<TextField {form} name="email" label="Email" labelExtraClasses="mt-4" disabled={$isLoading} />
 
-	<TextField {form} name="username" label="Username" placeholder="username" disabled={$isLoading} />
+		<TextField
+			{form}
+			name="username"
+			label="Username"
+			labelExtraClasses="mt-4"
+			disabled={$isLoading}
+		/>
 
-	<PasswordField {form} name="password" label="Password" disabled={$isLoading} />
+		<PasswordField
+			{form}
+			name="password"
+			label="Password"
+			labelExtraClasses="mt-4"
+			disabled={$isLoading}
+		/>
 
-	<PasswordField
-		{form}
-		name="passwordConfirmation"
-		label="Confirm Password"
-		placeholder="Confirm Password"
-		disabled={$isLoading}
-	/>
+		<PasswordField
+			{form}
+			name="passwordConfirmation"
+			label="Confirm Password"
+			labelExtraClasses="mt-4"
+			disabled={$isLoading}
+		/>
 
-	<LoadableButton
-		classes="btn preset-filled mt-4 w-full"
-		disabled={$isLoading}
-		isLoading={$isLoading}
-	>
-		sign up
-	</LoadableButton>
+		<LoadableButton
+			classes="btn preset-filled-primary-200-800 mt-4 w-full"
+			disabled={$isLoading}
+			isLoading={$isLoading}
+		>
+			sign up
+		</LoadableButton>
 
-	<AuthRedirectLink
-		linkLabel="sign-in"
-		href={route('/auth/sign-in')}
-		question="Already have an account?"
-	/>
+		<AuthRedirectLink
+			linkLabel="sign-in"
+			href={route('/auth/sign-in')}
+			question="Already have an account?"
+		/>
+	</form>
 </AuthPagesLayout>

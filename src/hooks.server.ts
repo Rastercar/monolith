@@ -1,4 +1,5 @@
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
+import { route } from '$lib/ROUTES';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { bootstrapApplication } from './bootstrap';
 
@@ -53,14 +54,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const requiredAuth = routeIsInProtectedPath ? 'logged-in' : routeMeta.requiredAuth;
 
-	const startingPointPage = isLoggedIn ? '/client' : '/auth/sign-in';
+	const startingPointPage = isLoggedIn ? route('/client') : route('/auth/sign-in');
 
 	if (path === '/') {
 		return redirect(303, startingPointPage);
 	}
 
 	if (requiredAuth === 'logged-in' && !isLoggedIn) {
-		return redirect(303, `/auth/sign-in?redirect=${path}`);
+		return redirect(303, route('/auth/sign-in', { redirect: path }));
 	}
 
 	if (requiredAuth === 'logged-off' && isLoggedIn) {

@@ -9,9 +9,9 @@ export async function createSession(sessionData: {
 	expiresAt: string;
 }) {
 	const [createdSession] = await db.insert(session).values(sessionData).returning();
-
 	return createdSession;
 }
+
 export async function destroySessionByToken(token: string) {
 	return db.delete(session).where(eq(session.sessionToken, token));
 }

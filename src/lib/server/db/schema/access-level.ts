@@ -11,6 +11,11 @@ export const accessLevel = pgTable(
 		createdAt,
 		name: varchar({ length: 255 }).notNull(),
 		description: text().notNull(),
+
+		/**
+		 * If the access level is the first access level of the organization
+		 * it belongs to and cannot have its permissions changed
+		 */
 		isFixed: boolean('is_fixed').notNull(),
 		permissions: text().array().default(['']).notNull(),
 		organizationId: integer('organization_id')

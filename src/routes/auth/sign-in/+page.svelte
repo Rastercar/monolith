@@ -32,11 +32,16 @@
 			type="email"
 			autocomplete="email"
 			label="Email"
-			placeholder="email address"
 			disabled={$isLoading}
 		/>
 
-		<PasswordField {form} name="password" label="password" disabled={$isLoading} />
+		<PasswordField
+			{form}
+			name="password"
+			label="Password"
+			disabled={$isLoading}
+			labelExtraClasses="mt-4"
+		/>
 
 		<div class="mt-4 flex justify-end">
 			<a

@@ -24,13 +24,13 @@
 		? 'Follow the instructions sent to your email address'
 		: 'Inform your account email address to receive password recovery instructions';
 
+	const { user } = authStore.value;
+
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to
 		// recover is most certainly the one he is currently logged as
 		if (user) recoverForm.form.set({ email: user.email });
 	});
-
-	let { user } = $derived($authStore);
 </script>
 
 <div class="h-full flex justify-center px-6">

@@ -32,9 +32,6 @@ importers:
       drizzle-orm:
         specifier: 0.36.3
         version: 0.36.3(postgres@3.4.4)
-      drizzle-zod:
-        specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.36.3(postgres@3.4.4))(zod@3.23.8)
       formsnap:
         specifier: ^1.0.1
         version: 1.0.1(svelte@5.0.0)(sveltekit-superforms@2.20.1(@sveltejs/kit@2.8.1(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.0.0)(vite@5.4.11(@types/node@22.9.0)))(svelte@5.0.0)(vite@5.4.11(@types/node@22.9.0)))(@types/json-schema@7.0.15)(svelte@5.0.0)(typescript@5.6.3))
@@ -1735,12 +1732,6 @@ packages:
         optional: true
       sqlite3:
         optional: true
-
-  drizzle-zod@0.5.1:
-    resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
-    peerDependencies:
-      drizzle-orm: '>=0.23.13'
-      zod: '*'
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -4383,11 +4374,6 @@ snapshots:
   drizzle-orm@0.36.3(postgres@3.4.4):
     optionalDependencies:
       postgres: 3.4.4
-
-  drizzle-zod@0.5.1(drizzle-orm@0.36.3(postgres@3.4.4))(zod@3.23.8):
-    dependencies:
-      drizzle-orm: 0.36.3(postgres@3.4.4)
-      zod: 3.23.8
 
   eastasianwidth@0.2.0: {}
 

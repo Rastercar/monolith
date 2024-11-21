@@ -12,7 +12,9 @@ const PAGES = {
   "/auth/change-password": `/auth/change-password`,
   "/auth/confirm-email-address": `/auth/confirm-email-address`,
   "/auth/recover-password": `/auth/recover-password`,
-  "/auth/sign-in": `/auth/sign-in`,
+  "/auth/sign-in": (params?: { redirect?: (string) }) => {
+    return `/auth/sign-in${appendSp({ redirect: params?.redirect })}`
+  },
   "/auth/sign-out": `/auth/sign-out`,
   "/auth/sign-up": `/auth/sign-up`,
   "/client": `/client`,
@@ -174,5 +176,5 @@ export type KIT_ROUTES = {
   SERVERS: { 'POST /auth/sign-out': never }
   ACTIONS: { 'default /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never }
   LINKS: Record<string, never>
-  Params: { access_level_id: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never }
+  Params: { redirect: never, access_level_id: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never }
 }

@@ -15,6 +15,7 @@
 		label: Snippet | string;
 		labelClass?: string;
 		inputClass?: string;
+		labelExtraClasses?: string;
 	}
 
 	const {
@@ -22,7 +23,8 @@
 		name,
 		label,
 		inputClass = 'input',
-		labelClass = 'label mt-4 mb-1 text-sm',
+		labelClass = 'label mb-2 text-sm',
+		labelExtraClasses = '',
 		...fieldAttributes
 	}: Props = $props();
 
@@ -37,7 +39,7 @@
 
 <FieldWithErrors {form} {name}>
 	<Control let:attrs>
-		<Label class={labelClass}>
+		<Label class={`${labelClass} ${labelExtraClasses}`}>
 			<SnippetOrString children={label} />
 		</Label>
 

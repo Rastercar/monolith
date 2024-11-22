@@ -78,7 +78,7 @@ async function createTestUser(tx: Tx) {
 			username: 'test_user',
 			email: 'rastercar.tests.002@gmail.com',
 			emailVerified: true,
-			password: hashSync('testuser'),
+			password: hashSync('Contafake3!'),
 			description: faker.word.words(5),
 			organizationId: org.id,
 			accessLevelId: al.id

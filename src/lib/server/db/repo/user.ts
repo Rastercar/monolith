@@ -4,30 +4,47 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { accessLevel, organization, user } from '../schema';
 
-export async function findUserByCredentials(credentials: { email: string; password: string }) {
+export function findUserBy(
+	col: 'resetPasswordToken' | 'email' | 'username' | 'confirmEmailToken',
+	value: string
+) {
 	return db.query.user.findFirst({
-		with: { accessLevel: true, organization: true },
-		where: (user, { eq }) => eq(user.email, credentials.email)
+		where: (user, { eq }) => eq(user[col], value)
 	});
 }
 
 export async function findUserByUsername(username: string) {
-	return db.query.user.findFirst({
-		where: (user, { eq }) => eq(user.username, username)
-	});
+	return findUserBy('username', username);
 }
 
 export async function findUserByEmail(email: string) {
-	return db.query.user.findFirst({
-		where: (user, { eq }) => eq(user.email, email)
-	});
+	return findUserBy('email', email);
 }
 
-export async function confirmUserEmailAddressByToken(confirmEmailToken: string) {
+export async function findUserByConfirmEmailToken(token: string) {
+	return findUserBy('confirmEmailToken', token);
+}
+
+export async function findUserByResetPasswordToken(token: string) {
+	return findUserBy('resetPasswordToken', token);
+}
+
+export async function setUserResetPasswordToken(userId: number, token: string) {
+	return db.update(user).set({ resetPasswordToken: token }).where(eq(user.id, userId));
+}
+
+export async function setPasswordAndClearResetPasswordToken(password: string, token: string) {
 	return db
 		.update(user)
-		.set({ emailVerified: true })
-		.where(eq(user.confirmEmailToken, confirmEmailToken));
+		.set({ password: password, resetPasswordToken: null })
+		.where(eq(user.resetPasswordToken, token));
+}
+
+export async function setEmailVerifiedAndClearConfirmEmailToken(token: string) {
+	return db
+		.update(user)
+		.set({ emailVerified: true, confirmEmailToken: null })
+		.where(eq(user.confirmEmailToken, token));
 }
 
 export async function checkEmailIsInUse(email: string) {

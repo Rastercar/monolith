@@ -19,6 +19,7 @@ export const signInUpResponseSchema = z.object({ user: userSchema });
 
 export const recoverPasswordByTokenSchema = z
 	.object({
+		token: z.string().uuid(),
 		newPassword: passwordValidator,
 		passwordConfirmation: z.string().min(5)
 	})
@@ -36,7 +37,7 @@ export const signInSchema = z.object({
 	password: z
 		.string()
 		.min(1)
-		.default(env.PUBLIC_IS_DEV ? 'testuser' : '')
+		.default(env.PUBLIC_IS_DEV ? 'Contafake3!' : '')
 });
 
 export const recoverPasswordSchema = z.object({

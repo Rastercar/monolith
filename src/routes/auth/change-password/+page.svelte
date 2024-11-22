@@ -1,116 +1,91 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiRecoverPasswordByToken } from '$lib/api/auth';
 	import { recoverPasswordByTokenSchema } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
+	import PasswordField from '$lib/components/form/v2/PasswordField.svelte';
+	import TextField from '$lib/components/form/v2/TextField.svelte';
+	import { route } from '$lib/ROUTES';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
+	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { WretchError } from 'wretch/resolver';
 	import AuthRedirectLink from '../components/AuthRedirectLink.svelte';
 
 	let { data } = $props();
 
-	const toaster = getToaster();
-
 	const form = superForm(data.form, { validators: zodClient(recoverPasswordByTokenSchema) });
+	const { message, delayed: isLoading, form: f } = form;
 
-	let errorStatusCode: null | number = $state(null);
+	const formStatus = $derived($message ? $message.type : 'not-sent');
+	const formErrorCode = $derived($message?.code);
+	const formErrorMsg = $derived($message?.text);
 
-	const redirectToHomePage = () => {
-		redirecting = true;
-		goto('/client').finally(() => (redirecting = false));
-	};
-
-	const mutation = createMutation({
-		mutationFn: (newPassword: string) =>
-			apiRecoverPasswordByToken({ newPassword, passwordResetToken: data.passwordRecoveryToken }),
-
-		onError: (err) => {
-			if (!(err instanceof WretchError)) {
-				return toaster.error();
-			}
-
-			errorStatusCode = err.response.status;
-		}
+	onMount(() => {
+		$f.token = data.passwordRecoveryToken;
 	});
-
-	const changePassword = async () => {
-		const validated = await form.validateForm();
-
-		if (!validated.valid) {
-			return form.restore({ ...validated, tainted: undefined });
-		}
-
-		$mutation.mutate(validated.data.newPassword);
-	};
-
-	let redirecting = $state(false);
-
-	let isLoading = $derived(redirecting || $mutation.isPending);
 </script>
 
-<div class="h-full flex justify-center px-6">
+<div class="h-full flex justify-center px-6 bg-surface-100-900">
 	<div class="w-96">
-		{#if $mutation.isSuccess}
-			<div class="flex flex-col">
-				<h1 class="mb-1 text-3xl mt-12 flex text-center">password changed successfully !</h1>
-				<button class="btn variant-filled-primary mt-4 mx-auto" onclick={redirectToHomePage}>
-					go to home page
-				</button>
-			</div>
-		{:else}
-			<h1 class="mb-1 text-center text-3xl mt-12">Change Password</h1>
+		{#if formStatus === 'not-sent'}
+			<h1 class="mb-4 text-center h2 mt-12">Change Password</h1>
 
-			<PasswordInput
-				{form}
-				placeholder="New Password"
-				field="newPassword"
-				disabled={isLoading || errorStatusCode !== null}
-			/>
+			<form action={route('changePassword /auth/change-password')} method="POST" use:form.enhance>
+				<TextField {form} label="token" name="token" labelExtraClasses="hidden" class="hidden" />
 
-			<PasswordInput
-				{form}
-				label="Confirm new password"
-				placeholder="Confirm new password"
-				field="passwordConfirmation"
-				disabled={isLoading || errorStatusCode !== null}
-			/>
+				<PasswordField {form} label="New Password" name="newPassword" />
 
-			{#if errorStatusCode === null}
+				<PasswordField
+					{form}
+					label="Confirm new password"
+					name="passwordConfirmation"
+					labelExtraClasses="mt-4"
+				/>
+
 				<LoadableButton
-					{isLoading}
-					class="btn variant-filled-primary mt-4 w-full"
-					onclick={changePassword}
+					isLoading={$isLoading}
+					classes="btn preset-filled-primary-300-700 mt-4 w-full"
 				>
 					change password
 				</LoadableButton>
 
 				<AuthRedirectLink linkLabel="go back" href="/client" question="False alert?" />
-			{:else}
-				<aside class="alert variant-filled-error mt-4 mb-2">
+			</form>
+		{:else if formStatus === 'error'}
+			<aside class="preset-filled-error-100-900 p-4 rounded mt-4 mb-2">
+				<div class="flex items-center space-x-4 mb-4">
 					<Icon icon="mdi:alert" width="32" height="32" />
 
-					<p class="alert-message">
-						{errorStatusCode === 401 || errorStatusCode === 404
-							? 'Your password reset token is invalid'
-							: 'A unknown error happened'}
+					<p>
+						{formErrorMsg ?? 'A unknown error happened'}
 					</p>
-				</aside>
+				</div>
 
-				<span class="text-sm">
-					Please click
-					<a
-						href="/auth/recover-password"
-						class="text-primary-700-200-token underline-offset-4 hover:underline"
-					>
-						follow this link
-					</a>
-					to recover your password
-				</span>
-			{/if}
+				{#if formErrorCode === 'ERR_TOKEN_NOT_FOUND'}
+					<span class="text-sm">
+						Please
+						<a
+							href={route('/auth/recover-password')}
+							class="text-primary-700-300 underline-offset-4 hover:underline"
+						>
+							follow this link
+						</a>
+						to recover your password
+					</span>
+				{/if}
+			</aside>
+		{:else if formStatus === 'success'}
+			<div class="flex flex-col">
+				<h1 class="mb-4 text-center h2 mt-12">password changed successfully !</h1>
+
+				<button
+					class="btn preset-filled-primary-300-700 mt-4 mx-auto flex items-center"
+					onclick={() => goto(route('/client'))}
+				>
+					go to home page
+					<Icon icon="mdi:home" />
+				</button>
+			</div>
 		{/if}
 	</div>
 </div>

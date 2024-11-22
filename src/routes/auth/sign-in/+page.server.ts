@@ -2,7 +2,7 @@ import { signInSchema } from '$lib/api/auth.schema';
 import { route } from '$lib/ROUTES';
 import { compareSync } from '$lib/server/crypto';
 import { createSession } from '$lib/server/db/repo/session';
-import { findUserByCredentials } from '$lib/server/db/repo/user';
+import { findUserByEmail } from '$lib/server/db/repo/user';
 import { createSessionExpirationDateFromNow, setSessionCookie } from '$lib/utils/session';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
@@ -18,7 +18,7 @@ export const actions: Actions = {
 		const form = await superValidate(request, zod(signInSchema));
 		if (!form.valid) return fail(400, { form });
 
-		const user = await findUserByCredentials(form.data);
+		const user = await findUserByEmail(form.data.email);
 		if (!user) return setError(form, 'email', 'user not found');
 
 		const isValidPassword = compareSync(form.data.password, user.password);

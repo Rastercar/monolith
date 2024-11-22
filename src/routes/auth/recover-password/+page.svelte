@@ -11,16 +11,9 @@
 	let { data } = $props();
 
 	const form = superForm(data.form, { validators: zodClient(recoverPasswordSchema) });
-	const { delayed: isLoading } = form;
-
 	const { message } = form;
 
-	const success = $message && $message.type === 'success';
-	const title = success ? 'Success !' : 'Recover Password';
-
-	const subtitle = success
-		? 'Follow the instructions sent to your email address'
-		: 'Inform your account email address to receive password recovery instructions';
+	const success = $derived(!!$message && $message.type === 'success');
 
 	const { user } = $derived(authStore.getValue());
 
@@ -33,9 +26,11 @@
 
 <div class="h-full flex justify-center px-6">
 	<div class="max-w-xl">
-		<h1 class="mb-1 text-center h1 mt-12">{title}</h1>
+		<h1 class="mb-1 text-center h1 mt-12">{success ? 'Success !' : 'Recover Password'}</h1>
 		<p class="type-scale-3 text-center text-surface-700-300 mb-8">
-			{subtitle}
+			{success
+				? 'Follow the instructions sent to your email address'
+				: 'Inform your account email address to receive password recovery instructions'}
 		</p>
 
 		{#if success}

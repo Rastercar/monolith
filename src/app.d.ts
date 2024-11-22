@@ -39,6 +39,7 @@ declare namespace App {
 		type Message = {
 			type: 'error' | 'success';
 			text: string;
+			code?: string;
 		};
 	}
 }

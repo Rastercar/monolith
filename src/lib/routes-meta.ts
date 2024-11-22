@@ -17,12 +17,12 @@ export interface RouteMeta {
 	requiredAuth?: RouteRequiredAuth;
 
 	/**
-	 * if the header should be visible
+	 * if the header of the client layout should be visible
 	 */
 	headerVisibility?: boolean;
 
 	/**
-	 * if the sidebar should be visible
+	 * if the sidebar of the client layout should be visible
 	 */
 	sidebarVisibility?: boolean;
 }

@@ -7,15 +7,13 @@
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
 	import type { apiPermission } from '$lib/constants/permissions';
-	import { hasPermission } from '$lib/store/auth.svelte';
+	import { hasPermission } from '$lib/store/auth';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { getModalStore, popup, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
-
-
 
 	interface Props {
 		tracker: Tracker;
@@ -109,11 +107,11 @@
 			<div class="flex items-center">
 				<span class="text-sm mr-3">status:</span>
 				<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
-					<div class="ml-2" >
+					<div class="ml-2">
 						{#snippet children({ isOnline })}
-												{isOnline ? 'online' : 'offline'}
-																	{/snippet}
-										</div>
+							{isOnline ? 'online' : 'offline'}
+						{/snippet}
+					</div>
 				</TrackerStatusIndicator>
 			</div>
 			<div><span class="text-sm">model:</span> <b>{tracker.model}</b></div>

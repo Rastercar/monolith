@@ -10,8 +10,7 @@
 
 <script lang="ts">
 	import type { apiPermission } from '$lib/constants/permissions';
-	import { authStore } from '$lib/store/auth.svelte';
-	import { getDrawerStore } from '@skeletonlabs/skeleton';
+	import { authStore } from '$lib/store/auth';
 	import NavLink from './NavLink.svelte';
 
 	interface Props {
@@ -20,9 +19,7 @@
 
 	let { routes }: Props = $props();
 
-	const drawerStore = getDrawerStore();
-
-	let { user } = $derived($authStore);
+	let { user } = $derived(authStore.getValue());
 </script>
 
 <nav class="list-nav">
@@ -30,12 +27,9 @@
 		{#each routes as r}
 			{#if (r.requiredPermissions ?? []).every((p) => user && user.accessLevel.permissions.includes(p))}
 				<li>
-					<NavLink
-						href={r.href}
-						icon={r.icon}
-						label={r.label}
-						on:click={() => r.closeSidebarOnClick && drawerStore.close()}
-					/>
+					<NavLink href={r.href} icon={r.icon} label={r.label} />
+					<!-- TODO: -->
+					<!-- on:click={() => r.closeSidebarOnClick && drawerStore.close()} -->
 				</li>
 			{/if}
 		{/each}

@@ -1,6 +1,7 @@
 // see: https://stackoverflow.com/questions/71342646/adding-import-statement-to-global-d-ts-destroys-type-and-module-declarations
 type User = import('$lib/api/user.schema').User;
 type UserSession = import('$lib/api/user.schema').UserSession;
+type RouteMeta = import('$lib/routes-meta').RouteMeta;
 
 // see: https://kit.svelte.dev/docs/types#app
 declare namespace App {
@@ -20,6 +21,11 @@ declare namespace App {
 		 * The session of the authenticated user
 		 */
 		session: UserSession | null;
+
+		/**
+		 * Route metadata
+		 */
+		routeMeta?: RouteMeta;
 	}
 
 	/**

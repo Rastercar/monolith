@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth.svelte';
+	import { authStore } from '$lib/store/auth';
 	import Icon from '@iconify/svelte';
 
 	authStore.setUser({ username: '!' } as any);

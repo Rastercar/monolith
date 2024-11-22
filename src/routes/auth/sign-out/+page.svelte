@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth.svelte';
+	import { authStore } from '$lib/store/auth';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import { onMount } from 'svelte';
 

@@ -2,7 +2,7 @@
 	import { recoverPasswordSchema } from '$lib/api/auth.schema';
 	import TextField from '$lib/components/form/v2/TextField.svelte';
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth.svelte';
+	import { authStore } from '$lib/store/auth';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -22,7 +22,7 @@
 		? 'Follow the instructions sent to your email address'
 		: 'Inform your account email address to receive password recovery instructions';
 
-	const { user } = authStore.getValue();
+	const { user } = $derived(authStore.getValue());
 
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to

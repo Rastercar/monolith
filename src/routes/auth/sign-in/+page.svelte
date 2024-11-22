@@ -4,7 +4,7 @@
 	import PasswordField from '$lib/components/form/v2/PasswordField.svelte';
 	import TextField from '$lib/components/form/v2/TextField.svelte';
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth.svelte';
+	import { authStore } from '$lib/store/auth';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';

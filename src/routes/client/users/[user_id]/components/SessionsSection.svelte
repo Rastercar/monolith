@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiGetUserSessions } from '$lib/api/user';
 	import SessionList from '$lib/components/non-generic/session/SessionList.svelte';
-	import { authStore } from '$lib/store/auth.svelte';
+	import { authStore } from '$lib/store/auth';
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';

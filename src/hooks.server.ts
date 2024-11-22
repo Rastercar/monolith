@@ -26,6 +26,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return error(404, { message: 'Page not found' });
 	}
 
+	event.locals.routeMeta = routeMeta;
+
 	if (routeMeta.requiredAuth === 'logged-in') {
 		await authenticateUserFromSessionCookieAndSetRequestLocals(event);
 	}

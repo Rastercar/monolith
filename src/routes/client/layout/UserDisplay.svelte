@@ -1,6 +1,6 @@
 <script lang="ts">
 	import UserAvatar from '$lib/components/avatar/UserAvatar.svelte';
-	import { authStore } from '$lib/store/auth.svelte';
+	import { authStore } from '$lib/store/auth';
 
 	interface Props {
 		classes?: string;

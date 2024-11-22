@@ -15,6 +15,16 @@ export interface RouteMeta {
 	 * this is ignored if the route starts with a protected path
 	 */
 	requiredAuth?: RouteRequiredAuth;
+
+	/**
+	 * if the header should be visible
+	 */
+	headerVisibility?: boolean;
+
+	/**
+	 * if the sidebar should be visible
+	 */
+	sidebarVisibility?: boolean;
 }
 
 const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {

@@ -18,12 +18,6 @@
 	import type { FormPathLeaves } from 'sveltekit-superforms';
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 
-
-
-
-
-	
-
 	const { value, errors, constraints } = formFieldProxy(form, field);
 
 	// This field reflects the value store from the formFieldProxy
@@ -40,7 +34,7 @@
 		labelClass?: string;
 		class?: string;
 		popupSettings?: PopupSettings;
-		[key: string]: any
+		[key: string]: any;
 	}
 
 	let {
@@ -52,10 +46,10 @@
 		labelClass = 'text-sm',
 		class: clazz = 'label mt-4 mb-1',
 		popupSettings = {
-		event: 'focus-click',
-		target: 'popupAutocomplete',
-		placement: 'bottom-start'
-	},
+			event: 'focus-click',
+			target: 'popupAutocomplete',
+			placement: 'bottom-start'
+		},
 		...rest
 	}: Props = $props();
 

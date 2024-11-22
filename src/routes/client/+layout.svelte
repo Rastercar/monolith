@@ -19,19 +19,16 @@
 	<header class="bg-surface-200-800 p-4">
 		<div class="flex items-center">
 			<DrawerHamburgerButton />
-			<strong class="text-xl uppercase hidden md:block pt-2">Rastercar</strong>
+			<strong class="text-xl uppercase hidden md:block">Rastercar</strong>
 
 			<AppBarUserMenu />
 		</div>
 	</header>
 
-	<!-- Grid Columns -->
 	<div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
-		<!-- Left Sidebar -->
-		<aside class="bg-yellow-500 p-4">(sidebar)</aside>
+		<aside class="hidden md:block bg-surface-300-700 p-4">(sidebar)</aside>
 
-		<!-- Main Content -->
-		<main class="space-y-4 bg-green-500 p-4">
+		<main class="space-y-4 p-4">
 			{@render children()}
 		</main>
 	</div>

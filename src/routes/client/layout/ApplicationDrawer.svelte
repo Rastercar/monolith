@@ -1,10 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import SidebarNavigation from './SidebarNavigation.svelte';
 	import UserDisplay from './UserDisplay.svelte';
-
-	const drawerStore = getDrawerStore();
 </script>
 
 <Drawer>

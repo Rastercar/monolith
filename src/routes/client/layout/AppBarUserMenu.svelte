@@ -1,94 +1,35 @@
 <script lang="ts">
+	import { route } from '$lib/ROUTES';
 	import { authStore } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
-	import {
-		arrow,
-		autoUpdate,
-		flip,
-		FloatingArrow,
-		offset,
-		useClick,
-		useDismiss,
-		useFloating,
-		useInteractions,
-		useRole
-	} from '@skeletonlabs/floating-ui-svelte';
-	import { fade } from 'svelte/transition';
+	import { Popover } from 'bits-ui';
 	import UserDisplay from './UserDisplay.svelte';
 
-	const { user } = authStore.getValue();
-
-	// State
-	let open = $state(false);
-	let elemArrow: HTMLElement | null = $state(null);
-
-	// Use Floating
-	const floating = useFloating({
-		whileElementsMounted: autoUpdate,
-		get open() {
-			return open;
-		},
-		onOpenChange: (v) => (open = v),
-		placement: 'top',
-		get middleware() {
-			return [offset(10), flip(), elemArrow && arrow({ element: elemArrow })];
-		}
-	});
-
-	// Interactions
-	const role = useRole(floating.context);
-	const click = useClick(floating.context);
-	const dismiss = useDismiss(floating.context);
-	const interactions = useInteractions([role, click, dismiss]);
+	const { user } = $derived(authStore.getValue());
 </script>
 
-<!-- Reference Element -->
-<button
-	bind:this={floating.elements.reference}
-	{...interactions.getReferenceProps()}
-	class="btn-gradient"
->
-	Click Me
-</button>
-
-<!-- Floating Element -->
-{#if floating.open}
-	<div
-		bind:this={floating.elements.floating}
-		style={floating.floatingStyles}
-		{...interactions.getFloatingProps()}
-		class="floating popover-neutral bg-red-100"
-		transition:fade={{ duration: 200 }}
-	>
-		<p>
-			You can press the <kbd class="kbd">esc</kbd> key or click outside to
-			<strong>*dismiss*</strong> this floating element.
-		</p>
-		<FloatingArrow bind:ref={elemArrow} context={floating.context} fill="#575969" />
-	</div>
-{/if}
-
 {#if user}
-	<!-- 
-		use:popup={{
-			event: 'click',
-			target: 'theme',
-			closeQuery: 'a[href]',
-			placement: 'bottom-end',
-			middleware: { offset: { mainAxis: 10, alignmentAxis: 16 } }
-		}} 
-	-->
-	<button class="btn hover:variant-filled-primary">
-		<Icon icon="mdi:user" width="32" height="32" />
-	</button>
+	<Popover.Root>
+		<Popover.Trigger class="ml-auto btn hover:cursor-pointer hover:preset-filled-primary-200-800">
+			<Icon icon="mdi:user" width="32" height="32" />
+		</Popover.Trigger>
 
-	<div class="card p-4 w-60 shadow-xl !z-50" data-popup="theme">
-		<UserDisplay />
+		<Popover.Portal>
+			<Popover.Content
+				class="z-30  max-w-96 rounded-lg bg-surface-300-700 p-4"
+				align={'end'}
+				sideOffset={8}
+			>
+				<UserDisplay />
 
-		<hr class="mt-3 mb-4" />
+				<hr class="hr my-4 border-t-2" />
 
-		<div class="flex justify-end">
-			<a href="/auth/sign-out" class="btn variant-filled-secondary btn-sm">Sign Out</a>
-		</div>
-	</div>
+				<div class="flex justify-end">
+					<a href={route('/auth/sign-out')} class="btn btn-sm preset-filled-primary-100-900">
+						Sign Out
+					</a>
+				</div>
+			</Popover.Content>
+		</Popover.Portal>
+	</Popover.Root>
 {/if}

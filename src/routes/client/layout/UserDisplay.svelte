@@ -1,14 +1,11 @@
 <script lang="ts">
 	import UserAvatar from '$lib/components/avatar/UserAvatar.svelte';
 	import { authStore } from '$lib/store/auth';
+	import type { PropsWithClasses } from '$lib/utils/svelte';
 
-	interface Props {
-		classes?: string;
-	}
+	let { classes = '' }: PropsWithClasses = $props();
 
-	let { classes = '' }: Props = $props();
-
-	const { user } = authStore.getValue();
+	const { user } = $derived(authStore.getValue());
 </script>
 
 {#if user}
@@ -16,9 +13,11 @@
 		<div class="flex space-x-4 items-center h-16">
 			<UserAvatar wrapperClass="w-16" />
 
-			<div>
-				<span class="text-sm">welcome:</span>
-				<p class="text-ellipsis overflow-hidden">{user.username}</p>
+			<div class="max-w-24">
+				welcome
+				<p class="text-ellipsis overflow-hidden line-clamp-2">
+					{user.username}
+				</p>
 			</div>
 		</div>
 	</div>

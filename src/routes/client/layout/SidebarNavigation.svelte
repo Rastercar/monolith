@@ -80,10 +80,10 @@
 	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
 </script>
 
-<div class="mt-4">
+<aside>
 	{#if isInSettingsRoute}
 		<div class="flex justify-end">
-			<a href="/client" class="btn btn-sm variant-filled mx-4 mb-4">
+			<a href="/client" class="btn btn-sm preset-filled-primary-500 mx-4 mb-4">
 				<Icon icon="mdi:arrow-left" class="mr-2" />
 				exit settings
 			</a>
@@ -93,10 +93,12 @@
 	{:else}
 		<NavList routes={routes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
 
-		<hr class="my-4" />
+		<div class="px-5">
+			<hr class="hr border-t-2 my-4" />
+		</div>
 
 		<NavList
 			routes={[{ href: '/client/settings/profile', icon: 'mdi:settings', label: 'settings' }]}
 		/>
 	{/if}
-</div>
+</aside>

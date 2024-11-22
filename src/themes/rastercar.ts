@@ -1,6 +1,8 @@
 import type { Theme } from '@skeletonlabs/skeleton/themes';
 
 // as copy-paste of catppuccin theme
+//
+// TODO FIX DOGSHIT FONTS https://next.skeleton.dev/docs/design/themes
 export const rastercarTheme = {
 	name: 'rastercar',
 	properties: {

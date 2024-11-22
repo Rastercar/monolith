@@ -2,8 +2,6 @@
 	import { route } from '$lib/ROUTES';
 	import { authStore } from '$lib/store/auth';
 	import Icon from '@iconify/svelte';
-
-	authStore.setUser({ username: '!' } as any);
 </script>
 
 <div class="p-10 space-y-4">

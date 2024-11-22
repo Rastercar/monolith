@@ -1,6 +1,9 @@
 <script lang="ts" module>
+	import { page } from '$app/stores';
+	import type { KIT_ROUTES } from '$lib/ROUTES';
+
 	export type Route = {
-		href: string;
+		href: keyof KIT_ROUTES['PAGES'];
 		icon: string;
 		label: string;
 		closeSidebarOnClick?: boolean;
@@ -18,18 +21,23 @@
 	}
 
 	let { routes }: Props = $props();
-
 	let { user } = $derived(authStore.getValue());
 </script>
 
-<nav class="list-nav">
+<nav>
 	<ul>
 		{#each routes as r}
-			{#if (r.requiredPermissions ?? []).every((p) => user && user.accessLevel.permissions.includes(p))}
-				<li>
-					<NavLink href={r.href} icon={r.icon} label={r.label} />
-					<!-- TODO: -->
-					<!-- on:click={() => r.closeSidebarOnClick && drawerStore.close()} -->
+			{#if (r.requiredPermissions ?? []).every((p) => user?.accessLevel && user.accessLevel.permissions.includes(p))}
+				<li
+					class="hover:bg-primary-300-700"
+					class:bg-primary-200-800={r.href === $page.url.pathname}
+				>
+					<NavLink
+						href={r.href}
+						icon={r.icon}
+						label={r.label}
+						onclick={() => r.closeSidebarOnClick && console.log('TODO: close sidebar')}
+					/>
 				</li>
 			{/if}
 		{/each}

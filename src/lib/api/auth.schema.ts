@@ -1,7 +1,8 @@
 import { env } from '$lib/public-env';
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
-import { userSchema } from './user.schema';
+
+// TODO: where do we move schema files ?
 
 export const signUpSchema = z
 	.object({
@@ -14,8 +15,6 @@ export const signUpSchema = z
 		message: "Passwords didn't match",
 		path: ['passwordConfirmation']
 	});
-
-export const signInUpResponseSchema = z.object({ user: userSchema });
 
 export const recoverPasswordByTokenSchema = z
 	.object({
@@ -46,14 +45,3 @@ export const recoverPasswordSchema = z.object({
 		.email()
 		.default(env.PUBLIC_IS_DEV ? 'rastercar.tests.002@gmail.com' : '')
 });
-
-export type SignInDto = z.infer<typeof signInSchema>;
-
-export type SignInUpResponse = z.infer<typeof signInUpResponseSchema>;
-
-export type SignUpDto = Omit<z.infer<typeof signUpSchema>, 'passwordConfirmation'>;
-
-export type RecoverPasswordByTokenDto = Omit<
-	z.infer<typeof recoverPasswordByTokenSchema>,
-	'passwordConfirmation'
-> & { passwordResetToken: string };

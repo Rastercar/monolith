@@ -113,7 +113,7 @@ export class RabbitMQConnection {
 		await this.publishChannel.assertQueue(TRACKER_EVENTS_QUEUE, {
 			exclusive: false,
 			durable: false,
-			autoDelete: false
+			autoDelete: true
 		});
 
 		console.log('[RMQ] declaring MAILER_QUEUE');

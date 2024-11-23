@@ -35,7 +35,9 @@ function formatDuration(seconds: number): string {
 }
 
 function createCron({ key, description, intervalSeconds, cb }: CreateCronArgs) {
-	console.log(`[CRON] running cronjob: ${key} every ${formatDuration(intervalSeconds)}`);
+	console.log(
+		`[CRON] registering cronjob: ${key} with interval of ${formatDuration(intervalSeconds)}`
+	);
 
 	// If a cron with this key already exists, then clear the previous interval
 	if (runningCrons[key]) {
@@ -71,6 +73,9 @@ function startCronjobs() {
 	});
 }
 
-export const runningCrons: Record<string, Cron | undefined> = {};
+const runningCrons: Record<string, Cron | undefined> = {};
 
 startCronjobs();
+
+/** noop to start cronjobs */
+export const initCronJobs = () => null;

@@ -17,3 +17,6 @@ export const db = drizzle<typeof schema>({
 
 console.log('[DB] running migrations');
 migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
+
+/** noop to load the db connection */
+export const initDb = () => null;

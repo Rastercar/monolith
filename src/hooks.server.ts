@@ -1,8 +1,11 @@
 import { getRouteMetaFromPath, redirectToStartingPage } from '$lib/routes-meta';
 import { authenticateUserFromSessionCookieAndSetRequestLocals } from '$lib/server/middlewares';
+import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
 import { error, type Handle } from '@sveltejs/kit';
 import { bootstrapApplication } from './bootstrap';
 
+// important: initialize telemetry before anything else
+initTelemetry();
 bootstrapApplication();
 
 // server hook:

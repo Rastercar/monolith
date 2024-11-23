@@ -24,3 +24,6 @@ export async function publishJsonToQueue(
 		contentType: 'application/json'
 	});
 }
+
+/** noop to load the RabbitMQ connection */
+export const initRabbitMq = () => null;

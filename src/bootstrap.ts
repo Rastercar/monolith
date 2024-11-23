@@ -1,6 +1,6 @@
-import { runningCrons } from '$lib/server/cronjobs';
-import { db } from '$lib/server/db/db';
-import { rmqConnection } from '$lib/server/rabbitmq/rabbitmq';
+import { initCronJobs } from '$lib/server/cronjobs';
+import { initDb } from '$lib/server/db/db';
+import { initRabbitMq } from '$lib/server/rabbitmq/rabbitmq';
 
 /**
  * TODO: after migrating and fixing all errors, we need to
@@ -8,7 +8,9 @@ import { rmqConnection } from '$lib/server/rabbitmq/rabbitmq';
  * are we in risk of starting cron jobs or db connections mutiple times ?
  */
 export async function bootstrapApplication() {
-	const _ = db;
-	const __ = rmqConnection;
-	const ___ = runningCrons;
+	// each of these calls are noops, the startup code
+	// is evaluated and executed when importing their modules
+	initDb();
+	initRabbitMq();
+	initCronJobs();
 }

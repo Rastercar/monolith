@@ -8,9 +8,8 @@
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
 	import type { apiPermission } from '$lib/constants/permissions';
 	import { hasPermission } from '$lib/store/auth.svelte';
-	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
-	import { getModalStore, popup, type ModalComponent } from '@skeletonlabs/skeleton';
+	import { popup, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
@@ -22,9 +21,6 @@
 	}
 
 	let { tracker, createSimCardForm, updateSimCardForm }: Props = $props();
-
-	const toaster = getToaster();
-	const modalStore = getModalStore();
 
 	const removeTrackerMutation = createMutation({
 		mutationFn: () => apiSetTrackerVehicle({ vehicleTrackerId: tracker.id, vehicleId: null }),

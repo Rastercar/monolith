@@ -10,7 +10,7 @@
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import { getToaster } from '$lib/store/toaster';
-	import { getModalStore, Paginator } from '@skeletonlabs/skeleton';
+	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -22,11 +22,10 @@
 	import { createEventDispatcher } from 'svelte';
 	import { derived, writable } from 'svelte/store';
 
-	
 	interface Props {
 		/**
-	 * The ID of the tracker to associate the selected SIM card to
-	 */
+		 * The ID of the tracker to associate the selected SIM card to
+		 */
 		trackerIdToAssociate: number;
 	}
 
@@ -122,8 +121,6 @@
 		});
 	};
 
-	const modalStore = getModalStore();
-
 	const showSimInfoModal = () => {
 		modalStore.trigger({
 			type: 'alert',
@@ -144,7 +141,7 @@
 	on:change={(e) => ($filters.phoneNumber = e.detail)}
 >
 	{#snippet label()}
-		<div  class="flex">
+		<div class="flex">
 			<span>Filter by phone number</span>
 			<button
 				type="button"

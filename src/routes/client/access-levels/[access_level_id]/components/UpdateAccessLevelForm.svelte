@@ -11,14 +11,12 @@
 	import ManageAccessLevelsPermissionSelectedAlert from '$lib/components/non-generic/alert/ManageAccessLevelsPermissionSelectedAlert.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
 	import { permissionDetails, type apiPermission } from '$lib/constants/permissions';
-	import { getToaster } from '$lib/store/toaster';
-	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import { type ModalSettings } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-
 
 	interface Props {
 		accessLevel: AccessLevel;
@@ -33,16 +31,16 @@
 
 	const toaster = getToaster();
 
-	const modalStore = getModalStore();
-
 	/**
 	 * key: permission key (eg: CREATE_USER)
 	 * val: boolean indicating the permission is selected
 	 */
-	const permissionToToggleStatus = $state(Object.keys(permissionDetails).reduce(
-		(acc, v) => ({ ...acc, [v]: false }),
-		{}
-	) as Record<apiPermission, boolean>);
+	const permissionToToggleStatus = $state(
+		Object.keys(permissionDetails).reduce((acc, v) => ({ ...acc, [v]: false }), {}) as Record<
+			apiPermission,
+			boolean
+		>
+	);
 
 	const setPermissionsToggleStatusToTrue = (permissions: string[]) => {
 		permissions.forEach((p) => {

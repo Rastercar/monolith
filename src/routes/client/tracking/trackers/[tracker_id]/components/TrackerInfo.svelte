@@ -6,14 +6,11 @@
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
-	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
-	import { getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
+	import { type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
-
-
 
 	interface Props {
 		tracker: Tracker;
@@ -22,9 +19,6 @@
 	}
 
 	let { tracker, createSimCardForm, updateSimCardForm }: Props = $props();
-
-	const toaster = getToaster();
-	const modalStore = getModalStore();
 
 	const deleteTrackerMutation = createMutation({
 		mutationFn: (r: boolean) => apiDeleteTracker(tracker.id, { deleteAssociatedSimCards: r }),
@@ -59,11 +53,11 @@
 	<span class="mr-auto">General Info</span>
 
 	<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
-		<div class="ml-2" >
+		<div class="ml-2">
 			{#snippet children({ isOnline })}
-						{isOnline ? 'online' : 'offline'}
-								{/snippet}
-				</div>
+				{isOnline ? 'online' : 'offline'}
+			{/snippet}
+		</div>
 	</TrackerStatusIndicator>
 </h2>
 

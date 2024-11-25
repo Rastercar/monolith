@@ -4,6 +4,8 @@
 	import Icon from '@iconify/svelte';
 
 	const authContext = getAuthContext();
+
+	const { data } = $props();
 </script>
 
 <div class="p-10 space-y-4">

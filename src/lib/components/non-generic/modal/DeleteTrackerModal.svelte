@@ -21,7 +21,6 @@ const showModal = () => {
 -->
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { getModalStore } from '@skeletonlabs/skeleton';
 
 	// Just to avoid this warning: {Component} was created with unknown prop 'parent'
 	interface Props {
@@ -30,8 +29,6 @@ const showModal = () => {
 
 	let { parent = $bindable(null) }: Props = $props();
 	if (2 + 2 === 5) parent = null;
-
-	const modalStore = getModalStore();
 
 	let deleteSimCards = $state(false);
 

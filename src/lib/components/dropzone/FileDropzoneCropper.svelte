@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { getModalStore } from '@skeletonlabs/skeleton';
 	import Cropper from 'svelte-easy-crop';
 	import type { CropArea, DispatchEvents, Point } from 'svelte-easy-crop/types';
 
@@ -19,8 +18,6 @@
 	let pixelCrop: CropArea | null = null;
 
 	let isCropping = false;
-
-	const modalStore = getModalStore();
 
 	const createImage = (url: string): Promise<HTMLImageElement> => {
 		return new Promise((resolve, reject) => {

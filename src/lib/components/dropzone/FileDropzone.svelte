@@ -1,9 +1,5 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
-	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
-	import { Avatar, getModalStore, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import FileDropzoneCropper from './FileDropzoneCropper.svelte';
 
@@ -34,9 +30,6 @@
 		onDeleteSuccess = () => undefined,
 		preview
 	}: Props = $props();
-
-	const toaster = getToaster();
-	const modalStore = getModalStore();
 
 	const uploadMutation = createMutation({ mutationFn: uploadMutationFn });
 	const deleteMutation = createMutation({ mutationFn: deleteMutationFn });
@@ -154,14 +147,17 @@
 	role="button"
 	tabindex="-1"
 	aria-label="dropzone"
-	ondrop={preventDefault(onDrop)}
+	ondrop={(e) => {
+		e.preventDefault();
+		onDrop(e);
+	}}
 	ondragenter={() => {
 		isDraggingFile = true;
 	}}
 	ondragleave={() => {
 		isDraggingFile = false;
 	}}
-	ondragover={preventDefault(() => undefined)}
+	ondragover={(e) => e.preventDefault()}
 >
 	{#if hasPictureToShow}
 		{#if preview}{@render preview({ previewSrc: newPhoto?.preview ?? defaultSrc })}{:else}

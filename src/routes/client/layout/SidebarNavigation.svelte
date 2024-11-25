@@ -27,9 +27,7 @@
 		{
 			href: '/client/access-levels',
 			label: 'access levels',
-			icon: 'mdi:shield',
-
-			requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
+			icon: 'mdi:shield'
 		},
 		{
 			href: '/client/tracking/vehicles',
@@ -62,8 +60,7 @@
 		{
 			href: '/client/settings/organization',
 			label: 'organization',
-			icon: 'mdi:building',
-			requiredPermissions: ['UPDATE_ORGANIZATION']
+			icon: 'mdi:building'
 		},
 		{
 			href: '/client/settings/sessions',
@@ -82,14 +79,20 @@
 
 <aside>
 	{#if isInSettingsRoute}
+		<span class="block mt-8 px-5 type-scale-4">Account Settings</span>
+
+		<div class="px-5">
+			<hr class="hr border-t-2 mt-6 mb-8" />
+		</div>
+
+		<NavList routes={settingsRoutes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
+
 		<div class="flex justify-end">
-			<a href="/client" class="btn btn-sm preset-filled-primary-500 mx-4 mb-4">
+			<a href="/client" class="btn preset-filled-primary-500 mx-4 my-4">
 				<Icon icon="mdi:arrow-left" class="mr-2" />
 				exit settings
 			</a>
 		</div>
-
-		<NavList routes={settingsRoutes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
 	{:else}
 		<NavList routes={routes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
 

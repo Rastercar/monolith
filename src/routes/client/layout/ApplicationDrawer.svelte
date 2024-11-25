@@ -5,11 +5,11 @@
 	import SidebarNavigation from './SidebarNavigation.svelte';
 	import UserDisplay from './UserDisplay.svelte';
 
-	const layoutContext = getLayoutContext();
+	const layout = getLayoutContext();
 </script>
 
 <Modal
-	bind:open={layoutContext.drawerOpen}
+	bind:open={layout.drawerOpen}
 	triggerBase="btn preset-tonal"
 	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl w-[480px] h-screen"
 	positionerJustify="justify-start"
@@ -22,7 +22,7 @@
 		<div class="p-4 flex justify-between space-x-2 items-center">
 			<UserDisplay />
 
-			<button class="btn btn-icon" onclick={() => (layoutContext.drawerOpen = false)}>
+			<button class="btn btn-icon" onclick={() => (layout.drawerOpen = false)}>
 				<Icon icon="mdi:close" class="h-8 w-8" />
 			</button>
 		</div>

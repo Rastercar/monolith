@@ -1,44 +1,41 @@
 <script lang="ts" module>
 	import { page } from '$app/stores';
 	import type { KIT_ROUTES } from '$lib/ROUTES';
+	import { routesMeta } from '$lib/routes-meta';
 
 	export type Route = {
 		href: keyof KIT_ROUTES['PAGES'];
 		icon: string;
 		label: string;
-		closeSidebarOnClick?: boolean;
-		requiredPermissions?: apiPermission[];
 	};
 </script>
 
 <script lang="ts">
-	import type { apiPermission } from '$lib/constants/permissions';
 	import { getAuthContext } from '$lib/store/auth.svelte';
 	import NavLink from './NavLink.svelte';
 
 	interface Props {
 		routes: Route[];
+		classes?: string;
 	}
 
 	const auth = getAuthContext();
 
-	let { routes }: Props = $props();
+	let { routes, classes }: Props = $props();
 </script>
 
-<nav>
+<nav class={classes}>
 	<ul>
 		{#each routes as r}
-			{#if !r.requiredPermissions || auth.hasPermission(r.requiredPermissions)}
+			{@const meta = routesMeta[r.href]}
+			{@const requiredPerms = meta.requiredAuth === 'logged-in' ? meta.requiredPermissions : []}
+
+			{#if !requiredPerms || auth.hasPermission(requiredPerms)}
 				<li
 					class="hover:bg-primary-300-700"
 					class:bg-primary-200-800={r.href === $page.url.pathname}
 				>
-					<NavLink
-						href={r.href}
-						icon={r.icon}
-						label={r.label}
-						onclick={() => r.closeSidebarOnClick && console.log('TODO: close sidebar')}
-					/>
+					<NavLink href={r.href} icon={r.icon} label={r.label} />
 				</li>
 			{/if}
 		{/each}

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
 	import { INVALID_SESSION, NO_SID_COOKIE } from '$lib/constants/error-codes';
 	import { route } from '$lib/ROUTES';

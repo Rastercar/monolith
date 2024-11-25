@@ -1,39 +1,49 @@
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { route, type KIT_ROUTES } from './ROUTES';
+import type { apiPermission } from './constants/permissions';
 
 /**
  * - logged-in: the user MUST be logged in to access the route
  * - logged-off: the user MUST NOT be logged in to access the route
  * - any: the user can access the route regardless of being logged in
  */
-export type RouteRequiredAuth = 'logged-in' | 'logged-off' | 'any';
+export type RouteMeta = LoggedInMeta | NonLoggedInMeta;
 
-export interface RouteMeta {
+interface NonLoggedInMeta {
+	requiredAuth: 'logged-off' | 'any';
+}
+
+interface LoggedInMeta {
+	requiredAuth: 'logged-in';
+
 	/**
-	 * the required authentication status for the route
-	 *
-	 * this is ignored if the route starts with a protected path
+	 * the user required permissions to access the route
 	 */
-	requiredAuth?: RouteRequiredAuth;
+	requiredPermissions?: apiPermission | apiPermission[];
 
 	/**
-	 * if the header of the client layout should be visible
+	 * if the layout header should be visible
 	 */
 	headerVisibility?: boolean;
 
 	/**
-	 * if the sidebar of the client layout should be visible
+	 * if the layout sidebar be visible
 	 */
 	sidebarVisibility?: boolean;
 }
 
-const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {
+/**
+ * metadata of every route of the application
+ */
+export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {
 	'/auth/sign-in': { requiredAuth: 'logged-off' },
 	'/auth/sign-up': { requiredAuth: 'logged-off' },
 	'/auth/sign-out': { requiredAuth: 'logged-in' },
 	'/auth/change-password': { requiredAuth: 'any' },
 	'/auth/confirm-email-address': { requiredAuth: 'any' },
 	'/auth/recover-password': { requiredAuth: 'any' },
+
+	// logged-in routes
 	'/client': { requiredAuth: 'logged-in' },
 	'/client/access-levels': { requiredAuth: 'logged-in' },
 	'/client/access-levels/[access_level_id]': { requiredAuth: 'logged-in' },

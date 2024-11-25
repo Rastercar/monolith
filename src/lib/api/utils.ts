@@ -3,7 +3,7 @@ import { goto } from '$app/navigation';
 import { INVALID_SESSION, MISSING_PERMISSIONS, NO_SID_COOKIE } from '$lib/constants/error-codes';
 import type { apiPermission } from '$lib/constants/permissions';
 import { env } from '$lib/public-env';
-import { authStore } from '$lib/store/auth.svelte';
+import { getAuthContext } from '$lib/store/auth.svelte';
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
 import QueryStringAddon from 'wretch/addons/queryString';
@@ -27,7 +27,9 @@ const globalErrorHandlerAddon = {
 						const missingPermissions = getMissingPermissions(err);
 
 						if (missingPermissions.length > 0) {
-							authStore.removeUserPermissions(missingPermissions);
+							if (browser) {
+								getAuthContext().removeUserPermissions(missingPermissions);
+							}
 						}
 
 						redirectOnSessionError(err);

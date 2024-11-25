@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -24,15 +23,8 @@
 		class="bg-surface-100-900 relative flex flex-1 flex-col justify-center px-6 py-12 lg:w-2/5 lg:flex-none"
 	>
 		<div class="relative mx-auto w-full max-w-sm">
-			<div class="flex w-full items-center justify-between">
-				<a href="/" type="button" class="btn hover:text-primary-600-300 px-0">
-					<Icon icon="mdi:keyboard-backspace" />
-					<span>Back to Home</span>
-				</a>
-			</div>
-
-			<h2 class="font-heading text-3xl font-medium mt-6 mb-1">{title}</h2>
-			<p class="font-alt text-sm font-normal mb-6">{subtitle}</p>
+			<h2 class="font-heading h2 font-medium mt-6 mb-1">{title}</h2>
+			<p class="font-alt font-normal mb-6">{subtitle}</p>
 
 			<hr class="border-t-1 my-6" />
 

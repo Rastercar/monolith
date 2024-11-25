@@ -6,9 +6,9 @@
 		type CreateVehicleBody,
 		type Vehicle
 	} from '$lib/api/vehicle.schema';
-	import ComboBox from '$lib/components/form/ComboBox.svelte';
 	import FileInput from '$lib/components/form/FileInput.svelte';
 	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
+	import ComboBox from '$lib/components/form/old/ComboBox.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import StepperNextStepBtn from '$lib/components/stepper/StepperNextStepBtn.svelte';

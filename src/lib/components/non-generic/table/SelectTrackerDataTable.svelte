@@ -11,7 +11,7 @@
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { getModalStore, Paginator } from '@skeletonlabs/skeleton';
+	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -87,8 +87,6 @@
 	});
 
 	const table = createSvelteTable(options);
-
-	const modalStore = getModalStore();
 
 	const showTrackerInfoModal = () => {
 		modalStore.trigger({

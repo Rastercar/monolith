@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getAuthContext } from '$lib/store/auth.svelte';
-	import { onMount } from 'svelte';
 	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
 	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
@@ -10,11 +9,13 @@
 
 	let { children, data } = $props();
 
-	let { headerVisibility, sidebarVisibility } = data.routeMeta;
+	let { headerVisibility = true, sidebarVisibility = true } = data.routeMeta;
 
 	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
 
-	onMount(() => getAuthContext().setUser(data.user));
+	const auth = getAuthContext();
+
+	auth.setUser(data.user);
 </script>
 
 <div
@@ -27,7 +28,7 @@
 		<header class="bg-surface-200-800 p-4">
 			<div class="flex items-center">
 				<DrawerHamburgerButton />
-				<strong class="text-xl uppercase hidden lg:block">Rastercar</strong>
+				<span class="type-scale-5 hidden lg:block">Dashboard</span>
 
 				<AppBarUserMenu />
 			</div>

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { recoverPasswordSchema } from '$lib/api/auth.schema';
-	import TextField from '$lib/components/form/v2/TextField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { route } from '$lib/ROUTES';
-	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -13,14 +12,15 @@
 	const form = superForm(data.form, { validators: zodClient(recoverPasswordSchema) });
 	const { message } = form;
 
-	const auth = getAuthContext();
-
 	const success = $derived(!!$message && $message.type === 'success');
 
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to
 		// recover is most certainly the one he is currently logged as
-		if (auth.user) form.form.set({ email: auth.user.email });
+		if (data.user) {
+			// TODO: BUG HERE USER NEVER AVAILABLE< REMOVE LMAO
+			form.form.set({ email: data.user.email + 'lmao' });
+		}
 	});
 </script>
 
@@ -41,7 +41,7 @@
 				<button class="btn preset-filled-primary-200-800 mt-4 w-full"> recover password </button>
 			</form>
 
-			{#if auth.user}
+			{#if data.user}
 				<AuthRedirectLink
 					linkLabel="go to home page"
 					href={route('/client')}

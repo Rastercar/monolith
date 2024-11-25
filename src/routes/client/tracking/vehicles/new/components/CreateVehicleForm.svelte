@@ -3,9 +3,9 @@
 	import { apiCreateVehicle } from '$lib/api/vehicle';
 	import { createVehicleSchema, type CreateVehicleBody } from '$lib/api/vehicle.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import ComboBox from '$lib/components/form/ComboBox.svelte';
 	import FileInput from '$lib/components/form/FileInput.svelte';
 	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
+	import ComboBox from '$lib/components/form/old/ComboBox.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';

@@ -1,6 +1,7 @@
 import { getRouteMetaFromPath, redirectToStartingPage } from '$lib/routes-meta';
 import { authenticateUserFromSessionCookieAndSetRequestLocals } from '$lib/server/middlewares';
 import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
+import { wrapToArray } from '$lib/utils/arrays';
 import { error, type Handle } from '@sveltejs/kit';
 import { bootstrapApplication } from './bootstrap';
 
@@ -33,6 +34,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	if (routeMeta.requiredAuth === 'logged-in') {
 		await authenticateUserFromSessionCookieAndSetRequestLocals(event);
+
+		if (routeMeta.requiredPermissions) {
+			const requiredPerms = wrapToArray(routeMeta.requiredPermissions);
+
+			const hasPerms = requiredPerms.every((p) =>
+				event.locals.user?.accessLevel.permissions.includes(p)
+			);
+
+			if (!hasPerms) return error(400, 'missing permissions');
+		}
 	}
 
 	const isLoggedIn = !!event.locals.user?.id;

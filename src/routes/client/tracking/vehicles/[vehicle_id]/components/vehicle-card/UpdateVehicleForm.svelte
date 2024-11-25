@@ -4,9 +4,9 @@
 	import type { UpdateVehicleBody, Vehicle } from '$lib/api/vehicle.schema';
 	import { updateVehicleSchema } from '$lib/api/vehicle.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import ComboBox from '$lib/components/form/ComboBox.svelte';
 	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
 	import NumberInput from '$lib/components/form/NumberInput.svelte';
+	import ComboBox from '$lib/components/form/old/ComboBox.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';
@@ -18,7 +18,6 @@
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-
 
 	interface Props {
 		vehicle: Vehicle;

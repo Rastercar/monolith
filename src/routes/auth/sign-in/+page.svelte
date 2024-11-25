@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { signInSchema } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordField from '$lib/components/form/v2/PasswordField.svelte';
-	import TextField from '$lib/components/form/v2/TextField.svelte';
+	import PasswordField from '$lib/components/form/PasswordField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { route } from '$lib/ROUTES';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -22,8 +22,8 @@
 			{form}
 			name="email"
 			type="email"
-			autocomplete="email"
 			label="Email"
+			autocomplete="email"
 			disabled={$isLoading}
 		/>
 

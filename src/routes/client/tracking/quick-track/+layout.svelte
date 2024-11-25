@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}

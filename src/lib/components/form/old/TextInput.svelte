@@ -4,6 +4,8 @@
 </script>
 
 <script lang="ts" generics="T extends Obj">
+	// TODO: REMOVE ME AND ALL v1 fields once references have been dealt with
+
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import type { FormPathLeaves } from 'sveltekit-superforms';
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';

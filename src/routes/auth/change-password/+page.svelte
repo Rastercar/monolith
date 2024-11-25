@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { recoverPasswordByTokenSchema } from '$lib/api/auth.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordField from '$lib/components/form/v2/PasswordField.svelte';
-	import TextField from '$lib/components/form/v2/TextField.svelte';
+	import PasswordField from '$lib/components/form/PasswordField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { route } from '$lib/ROUTES';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';

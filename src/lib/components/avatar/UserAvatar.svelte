@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { authStore } from '$lib/store/auth';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import { Avatar } from '@skeletonlabs/skeleton-svelte';
 	import type { ComponentProps } from 'svelte';
@@ -11,10 +11,10 @@
 
 	let { wrapperClass = 'w-32', avatarProps }: Props = $props();
 
-	const { user } = authStore.getValue();
+	const auth = getAuthContext();
 
-	const src = user?.profilePicture
-		? cloudFrontUrl(user.profilePicture)
+	const src = auth.user?.profilePicture
+		? cloudFrontUrl(auth.user.profilePicture)
 		: '/img/no-pic-placeholder.png';
 </script>
 

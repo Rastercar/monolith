@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { removeVehiclePhoto, updateVehiclePhoto } from '$lib/api/vehicle';
 	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
-	import { hasPermission } from '$lib/store/auth';
+	import { hasPermission } from '$lib/store/auth.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import { createEventDispatcher } from 'svelte';

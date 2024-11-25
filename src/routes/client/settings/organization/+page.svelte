@@ -7,7 +7,7 @@
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
-	import { authStore } from '$lib/store/auth.js';
+	import { authStore } from '$lib/store/auth.svelte.js';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';

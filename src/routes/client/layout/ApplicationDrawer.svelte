@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { navigationDrawerState } from '$lib/store/layout-store.svelte';
+	import { getLayoutContext } from '$lib/store/layout.svelte';
 	import Icon from '@iconify/svelte';
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import SidebarNavigation from './SidebarNavigation.svelte';
 	import UserDisplay from './UserDisplay.svelte';
+
+	const layoutContext = getLayoutContext();
 </script>
 
 <Modal
-	bind:open={navigationDrawerState.open}
+	bind:open={layoutContext.drawerOpen}
 	triggerBase="btn preset-tonal"
 	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl w-[480px] h-screen"
 	positionerJustify="justify-start"
@@ -20,7 +22,7 @@
 		<div class="p-4 flex justify-between space-x-2 items-center">
 			<UserDisplay />
 
-			<button class="btn btn-icon" onclick={() => (navigationDrawerState.open = false)}>
+			<button class="btn btn-icon" onclick={() => (layoutContext.drawerOpen = false)}>
 				<Icon icon="mdi:close" class="h-8 w-8" />
 			</button>
 		</div>

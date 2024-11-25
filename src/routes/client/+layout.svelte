@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { authStore } from '$lib/store/auth';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { onMount } from 'svelte';
 	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
@@ -10,13 +10,11 @@
 
 	let { children, data } = $props();
 
-	onMount(() => {
-		if (data.user) authStore.setUser(data.user);
-	});
-
 	let { headerVisibility, sidebarVisibility } = data.routeMeta;
 
 	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
+
+	onMount(() => getAuthContext().setUser(data.user));
 </script>
 
 <div

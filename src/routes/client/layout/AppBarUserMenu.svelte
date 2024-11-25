@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 	import { Popover } from 'bits-ui';
 	import UserDisplay from './UserDisplay.svelte';
 
-	const { user } = $derived(authStore.getValue());
+	const auth = getAuthContext();
 </script>
 
-{#if user}
+{#if auth.user}
 	<Popover.Root>
 		<Popover.Trigger class="ml-auto btn hover:cursor-pointer hover:preset-filled-primary-200-800">
 			<Icon icon="mdi:user" width="32" height="32" />

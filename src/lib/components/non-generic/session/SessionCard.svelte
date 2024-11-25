@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { apiDeleteSession, apiSignOutSpecificSession } from '$lib/api/auth';
 	import type { UserSession } from '$lib/api/user.schema';
-	import { hasPermission } from '$lib/store/auth';
+	import { hasPermission } from '$lib/store/auth.svelte';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher } from 'svelte';
 	import { UAParser } from 'ua-parser-js';
 
 	type deviceType = 'console' | 'mobile' | 'tablet' | 'smarttv' | 'wearable' | 'embedded';

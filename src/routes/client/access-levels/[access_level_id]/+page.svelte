@@ -7,7 +7,7 @@
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import Icon from '@iconify/svelte';
 	import { popup } from '@skeletonlabs/skeleton';

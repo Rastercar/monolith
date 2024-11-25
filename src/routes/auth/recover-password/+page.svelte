@@ -2,7 +2,7 @@
 	import { recoverPasswordSchema } from '$lib/api/auth.schema';
 	import TextField from '$lib/components/form/v2/TextField.svelte';
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -13,14 +13,14 @@
 	const form = superForm(data.form, { validators: zodClient(recoverPasswordSchema) });
 	const { message } = form;
 
-	const success = $derived(!!$message && $message.type === 'success');
+	const auth = getAuthContext();
 
-	const { user } = $derived(authStore.getValue());
+	const success = $derived(!!$message && $message.type === 'success');
 
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to
 		// recover is most certainly the one he is currently logged as
-		if (user) form.form.set({ email: user.email });
+		if (auth.user) form.form.set({ email: auth.user.email });
 	});
 </script>
 
@@ -41,10 +41,18 @@
 				<button class="btn preset-filled-primary-200-800 mt-4 w-full"> recover password </button>
 			</form>
 
-			{#if user}
-				<AuthRedirectLink linkLabel="go to home page" href="/client" question="False alert?" />
+			{#if auth.user}
+				<AuthRedirectLink
+					linkLabel="go to home page"
+					href={route('/client')}
+					question="False alert?"
+				/>
 			{:else}
-				<AuthRedirectLink linkLabel="sign-in" href="/auth/sign-in" question="False alert?" />
+				<AuthRedirectLink
+					linkLabel="sign-in"
+					href={route('/auth/sign-in')}
+					question="False alert?"
+				/>
 			{/if}
 		{/if}
 	</div>

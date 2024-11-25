@@ -13,21 +13,22 @@
 
 <script lang="ts">
 	import type { apiPermission } from '$lib/constants/permissions';
-	import { authStore } from '$lib/store/auth';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import NavLink from './NavLink.svelte';
 
 	interface Props {
 		routes: Route[];
 	}
 
+	const auth = getAuthContext();
+
 	let { routes }: Props = $props();
-	let { user } = $derived(authStore.getValue());
 </script>
 
 <nav>
 	<ul>
 		{#each routes as r}
-			{#if (r.requiredPermissions ?? []).every((p) => user?.accessLevel && user.accessLevel.permissions.includes(p))}
+			{#if !r.requiredPermissions || auth.hasPermission(r.requiredPermissions)}
 				<li
 					class="hover:bg-primary-300-700"
 					class:bg-primary-200-800={r.href === $page.url.pathname}

@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
+
+	const authContext = getAuthContext();
 </script>
 
 <div class="p-10 space-y-4">
@@ -15,7 +17,7 @@
 		TODO: link para quick tracking
 		TODO: link p/ meu perfil ?
 	-->
-	<h1>Wellcome: {authStore.getValue().user?.username}</h1>
+	<h1>Wellcome: {authContext.user?.username}</h1>
 
 	<hr />
 

@@ -3,7 +3,7 @@
 	import type { SimpleUser } from '$lib/api/user.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
-	import { authStore } from '$lib/store/auth';
+	import { authStore } from '$lib/store/auth.svelte';
 	import { getToaster } from '$lib/store/toaster';
 	import { toDateTime } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';

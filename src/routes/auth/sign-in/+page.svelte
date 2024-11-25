@@ -4,8 +4,6 @@
 	import PasswordField from '$lib/components/form/v2/PasswordField.svelte';
 	import TextField from '$lib/components/form/v2/TextField.svelte';
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth';
-	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import AuthPagesLayout from '../components/AuthPagesLayout.svelte';
@@ -16,10 +14,6 @@
 	const form = superForm(data.form, { validators: zodClient(signInSchema) });
 
 	const { delayed: isLoading } = form;
-
-	// clear the user whenever loading this page, since if this page could only be loaded
-	// if there is no current user session so any user on the auth store is outdated
-	onMount(() => authStore.clearUser());
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">

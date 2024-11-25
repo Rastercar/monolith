@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { route } from '$lib/ROUTES';
-	import { authStore } from '$lib/store/auth';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import { onMount } from 'svelte';
 
@@ -10,12 +10,14 @@
 	 */
 	const destroySession = async () => fetch(route('/auth/sign-out'), { method: 'POST' });
 
+	const auth = getAuthContext();
+
 	// reset the user state
 	onMount(() => {
-		authStore.clearUser();
+		auth.clearUser();
 
+		// if destroying the session cookies failed the user is now stuck with a unwanted/ invalid session cookie
 		const logoutPromise = destroySession().catch(() => {
-			// if destroying the session cookies failed the user is now stuck with a unwanted/ invalid session cookie
 			throw new Error('a critical error happened, please clear your browser cookies');
 		});
 

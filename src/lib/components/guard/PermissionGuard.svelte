@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { apiPermission } from '$lib/constants/permissions';
 	import { env } from '$lib/public-env';
-	import { hasPermission } from '$lib/store/auth';
+	import { hasPermission } from '$lib/store/auth.svelte';
 	import { onMount, type Snippet } from 'svelte';
 	import AccessDenied from './errors/AccessDenied.svelte';
 

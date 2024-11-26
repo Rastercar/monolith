@@ -33,7 +33,10 @@ export interface LoggedInRouteMeta {
 }
 
 /**
- * metadata of every route of the application
+ * metadata of every page on the application
+ *
+ * important: this only refers to routes generated from +page.svelte
+ * files, API endpoints and form actions are not considered here
  */
 export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {
 	'/auth/sign-in': { requiredAuth: 'logged-off' },

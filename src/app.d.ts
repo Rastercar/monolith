@@ -2,6 +2,7 @@
 type User = import('$lib/api/user.schema').User;
 type UserSession = import('$lib/api/user.schema').UserSession;
 type RouteMeta = import('$lib/routes-meta').RouteMeta;
+type ZodError = import('zod').ZodError['issues'];
 
 // see: https://kit.svelte.dev/docs/types#app
 declare namespace App {
@@ -33,6 +34,7 @@ declare namespace App {
 	 */
 	interface Error {
 		code?: string;
+		issues?: ZodError;
 	}
 
 	namespace Superforms {

@@ -54,18 +54,15 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 	});
 }
 
-export function verifyUserCanAccessAuthenticatedRoute(
-	event: RequestEvent,
-	routeMeta: LoggedInRouteMeta
-) {
-	const { user } = event.locals;
+export function verifyUserCanAccessAuthenticatedRoute(evt: RequestEvent, meta: LoggedInRouteMeta) {
+	const { user } = evt.locals;
 
 	if (!user) {
-		return redirect(303, route('/auth/sign-in', { redirect: event.url.pathname }));
+		return redirect(303, route('/auth/sign-in', { redirect: evt.url.pathname }));
 	}
 
-	if (routeMeta.requiredPermissions) {
-		const requiredPerms = wrapToArray(routeMeta.requiredPermissions);
+	if (meta.requiredPermissions) {
+		const requiredPerms = wrapToArray(meta.requiredPermissions);
 		const hasPerms = requiredPerms.every((p) => user.accessLevel.permissions.includes(p));
 
 		if (!hasPerms) return error(400, 'missing permissions');

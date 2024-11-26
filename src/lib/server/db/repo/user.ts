@@ -41,6 +41,10 @@ export async function setPasswordAndClearResetPasswordToken(password: string, to
 		.where(eq(user.resetPasswordToken, token));
 }
 
+export async function setConfirmEmailToken(userId: number, token: string) {
+	return db.update(user).set({ confirmEmailToken: token }).where(eq(user.id, userId));
+}
+
 export async function setEmailVerifiedAndClearConfirmEmailToken(token: string) {
 	return db
 		.update(user)

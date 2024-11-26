@@ -5,11 +5,10 @@
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';
 
-	
 	interface Props {
 		/**
-	 * ID of the tracker to fetch the last known position
-	 */
+		 * ID of the tracker to fetch the last known position
+		 */
 		vehicleTrackerId: number;
 		children?: import('svelte').Snippet<[any]>;
 	}
@@ -31,9 +30,13 @@
 
 	let lastPositionDate = $derived($query.data?.time ? new Date($query.data.time) : null);
 
-	let isOnline = $derived(!!lastPositionDate && isDateOlderThanXMilliseconds(lastPositionDate, fiveMinutes));
+	let isOnline = $derived(
+		!!lastPositionDate && isDateOlderThanXMilliseconds(lastPositionDate, fiveMinutes)
+	);
 
-	let iconColor = $derived(isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300');
+	let iconColor = $derived(
+		isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300'
+	);
 </script>
 
 <!--
@@ -52,4 +55,4 @@ If a tracker has sent a position within the last 5 minutes then its considered a
 
 <div use:popup={popupHover} class={`h-2 w-2 ${iconColor} rounded-full`}></div>
 
-{@render children?.({ isOnline, lastPositionDate, })}
+{@render children?.({ isOnline, lastPositionDate })}

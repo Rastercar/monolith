@@ -10,11 +10,11 @@ import {
 	userSchema,
 	userSessionSchema,
 	type ChangePasswordBody,
+	type CreateUserBody,
 	type SimpleUser,
 	type UpdateUserBody,
 	type User,
-	type UserSession,
-	type CreateUserBody
+	type UserSession
 } from './user.schema';
 import { rastercarApi, stripUndefined } from './utils';
 

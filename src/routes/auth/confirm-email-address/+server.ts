@@ -1,15 +1,21 @@
-import { setEmailVerifiedAndClearConfirmEmailToken } from '$lib/server/db/repo/user';
-import type { RequestHandler } from '@sveltejs/kit';
+import {
+	findUserByConfirmEmailToken,
+	setEmailVerifiedAndClearConfirmEmailToken
+} from '$lib/server/db/repo/user';
+import { validateRequestBody } from '$lib/server/middlewares/validation';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { z } from 'zod';
 
+// TODO: use me !
 export const POST: RequestHandler = async ({ request }) => {
-	const { token } = await request.json();
+	const token = await validateRequestBody(request, z.string().uuid());
 
-	const { success } = z.string().uuid().safeParse(token);
+	// TODO: we should display this on svelte pages
+	const user = await findUserByConfirmEmailToken(token);
+	if (!user) error(404, 'invalid or expired token');
 
-	if (!success) return new Response('invalid token', { status: 400 });
-
+	// TODO: check if user with token exists and return error on failure
 	await setEmailVerifiedAndClearConfirmEmailToken(token);
 
-	return new Response('email address confirmed successfully');
+	return json('email address confirmed successfully');
 };

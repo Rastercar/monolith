@@ -1,7 +1,9 @@
 import { getRouteMetaFromPath, redirectToStartingPage } from '$lib/routes-meta';
-import { authenticateUserFromSessionCookieAndSetRequestLocals } from '$lib/server/middlewares';
+import {
+	setUserLocalsFromSessionCookie,
+	verifyUserCanAccessAuthenticatedRoute
+} from '$lib/server/middlewares';
 import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
-import { wrapToArray } from '$lib/utils/arrays';
 import { error, type Handle } from '@sveltejs/kit';
 import { bootstrapApplication } from './bootstrap';
 
@@ -16,37 +18,26 @@ bootstrapApplication();
 //
 // This should be as slim as possible and not contain any compute heavy or blocking code
 // such as a HTTP request.
-//
-// See the project readme `Good to know` section for more info
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
 	const routeMeta = getRouteMetaFromPath(path);
 
 	if (path === '/') return redirectToStartingPage(event);
 
+	// if we cant find the page metadata, we cannot decide if the user should be
+	// allowed to view it so even though it exists treat it as if it does not
 	if (!routeMeta) {
-		// if we cant find the page metadata, we cannot decide if the user should be
-		// allowed to view it so even though it exists treat it as if it does not
 		return error(404, { message: 'Page not found' });
 	}
 
 	event.locals.routeMeta = routeMeta;
+	await setUserLocalsFromSessionCookie(event);
+
+	const isLoggedIn = !!event.locals.user;
 
 	if (routeMeta.requiredAuth === 'logged-in') {
-		await authenticateUserFromSessionCookieAndSetRequestLocals(event);
-
-		if (routeMeta.requiredPermissions) {
-			const requiredPerms = wrapToArray(routeMeta.requiredPermissions);
-
-			const hasPerms = requiredPerms.every((p) =>
-				event.locals.user?.accessLevel.permissions.includes(p)
-			);
-
-			if (!hasPerms) return error(400, 'missing permissions');
-		}
+		verifyUserCanAccessAuthenticatedRoute(event, routeMeta);
 	}
-
-	const isLoggedIn = !!event.locals.user?.id;
 
 	if (routeMeta.requiredAuth === 'logged-off' && isLoggedIn) {
 		return redirectToStartingPage(event);

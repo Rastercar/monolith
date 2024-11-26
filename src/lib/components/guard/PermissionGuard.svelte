@@ -11,24 +11,17 @@
 		requiredPermissions?: apiPermission | apiPermission[];
 
 		/**
-		 * Debug mode will always show the main slot regardless if the user
-		 * contains the permissions or not, but with additional info
+		 * If the user doesnt have the permissions nothing should be rendered
 		 *
-		 * @default false
-		 *
-		 * @important
-		 * USE ONLY IN WHEN DEVELOPING
-		 *
-		 * [PROD-TODO]
-		 * disable this prop when on production (make it be debugMode = debug && ENV === 'dev')
+		 * @default true
 		 */
-		debug?: boolean;
+		hideOnDenied?: boolean;
 
 		denied?: Snippet;
 		children: Snippet;
 	}
 
-	let { denied, children, requiredPermissions }: Props = $props();
+	let { denied, children, requiredPermissions, hideOnDenied = true }: Props = $props();
 
 	const auth = getAuthContext();
 
@@ -47,7 +40,9 @@ that are in the guard or check the authorization yourself
 -->
 {#if hasPermissions}
 	{@render children()}
-{:else if denied}{@render denied()}{:else}
+{:else if denied && !hideOnDenied}
+	{@render denied()}
+{:else if !hideOnDenied}
 	<div
 		class="flex items-center space-x-2 p-2 border-dashed border-error-600-400 text-error-600-400"
 	>

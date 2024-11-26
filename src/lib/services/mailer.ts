@@ -80,7 +80,19 @@ export async function sendRecoverPasswordEmail(
 	return sendEmail({
 		uuid: randomUUID(),
 		to: [{ email, replacements }],
-		subject: 'Rastercar account recovery',
+		subject: 'Rastercar - account recovery',
 		bodyHtml: loadTemplate('recover-password')
+	});
+}
+
+export async function sendConfirmEmailAddressEmail(
+	email: string,
+	replacements: { title: string; confirmationLink: string }
+) {
+	return sendEmail({
+		uuid: randomUUID(),
+		to: [{ email, replacements }],
+		subject: 'Rastercar - confirm your email address',
+		bodyHtml: loadTemplate('confirm-email')
 	});
 }

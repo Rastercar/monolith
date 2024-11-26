@@ -17,10 +17,7 @@
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to
 		// recover is most certainly the one he is currently logged as
-		if (data.user) {
-			// TODO: BUG HERE USER NEVER AVAILABLE< REMOVE LMAO
-			form.form.set({ email: data.user.email + 'lmao' });
-		}
+		if (data.user) form.form.set({ email: data.user.email });
 	});
 </script>
 

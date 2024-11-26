@@ -12,8 +12,7 @@
 	const { data } = $props();
 
 	const form = superForm(data.form, { validators: zodClient(signInSchema) });
-
-	const { delayed: isLoading } = form;
+	const { submitting: isLoading } = form;
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">

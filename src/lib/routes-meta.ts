@@ -7,13 +7,13 @@ import type { apiPermission } from './constants/permissions';
  * - logged-off: the user MUST NOT be logged in to access the route
  * - any: the user can access the route regardless of being logged in
  */
-export type RouteMeta = LoggedInMeta | NonLoggedInMeta;
+export type RouteMeta = LoggedInRouteMeta | NonLoggedInRouteMeta;
 
-interface NonLoggedInMeta {
+interface NonLoggedInRouteMeta {
 	requiredAuth: 'logged-off' | 'any';
 }
 
-interface LoggedInMeta {
+export interface LoggedInRouteMeta {
 	requiredAuth: 'logged-in';
 
 	/**
@@ -77,8 +77,6 @@ export function getRouteMetaFromPath(path: string): RouteMeta | undefined {
  * Redirects to the appropriate page according to user login status
  */
 export async function redirectToStartingPage(event: RequestEvent) {
-	const isLoggedIn = !!event.locals.user?.id;
-	const startingPointPage = isLoggedIn ? route('/client') : route('/auth/sign-in');
-
-	return redirect(303, startingPointPage);
+	const isLoggedIn = !!event.locals.user;
+	return redirect(303, isLoggedIn ? route('/client') : route('/auth/sign-in'));
 }

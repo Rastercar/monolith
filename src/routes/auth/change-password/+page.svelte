@@ -14,7 +14,7 @@
 	let { data } = $props();
 
 	const form = superForm(data.form, { validators: zodClient(recoverPasswordByTokenSchema) });
-	const { message, delayed: isLoading, form: f } = form;
+	const { message, submitting: isLoading, form: f } = form;
 
 	const formStatus = $derived($message ? $message.type : 'not-sent');
 	const formErrorCode = $derived($message?.code);

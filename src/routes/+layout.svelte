@@ -3,6 +3,7 @@
 	import { setAuthContext } from '$lib/store/auth.svelte';
 	import { setLayoutContext } from '$lib/store/layout.svelte';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { Snippet } from 'svelte';
 	import '../app.postcss';
 
@@ -19,5 +20,7 @@
 </script>
 
 <QueryClientProvider client={queryClient}>
+	<SvelteToast />
+
 	{@render children()}
 </QueryClientProvider>

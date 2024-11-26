@@ -1,3 +1,4 @@
+import type { UpdateUserBody } from '$lib/api/user.schema';
 import { allPermissions } from '$lib/constants/permissions';
 import { hashSync } from '$lib/server/crypto';
 import { eq } from 'drizzle-orm';
@@ -113,4 +114,9 @@ export async function signUpUser(args: { username: string; email: string; passwo
 
 		return { user: createdUser, organization: createdOrg, accessLevel: rootAccessLevel };
 	});
+}
+
+export async function updateUser(id: number, body: UpdateUserBody) {
+	const [updatedUser] = await db.update(user).set(body).where(eq(user.id, id)).returning();
+	return updatedUser;
 }

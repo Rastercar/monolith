@@ -13,13 +13,15 @@
 		 *
 		 * - for users, the email will be sent to the user email address
 		 * - for organization, the component will only be visible if the user
-		 * has the needed permissions to confirm the org email. The email is sent
-		 * to the user organization billing email address
+		 * has the needed permissions to confirm the org email. The email is
+		 * sent to the user organization billing email address
 		 */
 		sendConfirmationEmailTo: 'user' | 'organization';
+
+		extraClasses?: string;
 	}
 
-	let { sendConfirmationEmailTo }: Props = $props();
+	let { sendConfirmationEmailTo, extraClasses = '' }: Props = $props();
 
 	const mutation = createMutation({
 		mutationFn: () => {
@@ -35,40 +37,43 @@
 	let dismissed = $state(false);
 </script>
 
-<PermissionGuard
-	requiredPermissions={sendConfirmationEmailTo === 'organization' ? ['UPDATE_ORGANIZATION'] : []}
->
-	<div class="max-w-xs flex items-center space-x-2 text-sm" class:hidden={dismissed}>
-		{#if $mutation.isPending}
-			<div class="text-secondary-500-400-token">
-				sending confirmation email
-				<Progress classes="mt-1" />
-			</div>
-		{:else if $mutation.isSuccess}
-			<span class="text-success-500-400-token flex items-center">
-				confirmation email sent to your inbox
+{#if !dismissed}
+	<PermissionGuard
+		requiredPermissions={sendConfirmationEmailTo === 'organization' ? ['UPDATE_ORGANIZATION'] : []}
+	>
+		<div class={`flex items-center space-x-2 ${extraClasses}`}>
+			{#if $mutation.isPending}
+				<div class="text-tertiary-600-400">
+					sending confirmation email
+					<Progress value={null} classes="mt-1" />
+				</div>
+			{:else if $mutation.isSuccess}
+				<div class="text-success-600-400 flex items-center">
+					confirmation email sent to your inbox
 
-				<button type="button" class="btn-icon btn-icon-sm" onclick={() => (dismissed = true)}>
-					<Icon icon="mdi:close" />
-				</button>
-			</span>
-		{:else if $mutation.isError}
-			<span class="text-error-500-400-token flex items-center">
-				<Icon icon="mdi:error" class="mr-2" />
-				error verifying your email address
+					<button type="button" class="btn-icon" onclick={() => (dismissed = true)}>
+						<Icon icon="mdi:close" />
+					</button>
+				</div>
+			{:else if $mutation.isError}
+				<div class="text-error-600-400 flex items-center">
+					<Icon icon="mdi:error" class="mr-2" />
+					error verifying your email address
 
-				<button type="button" class="btn-icon btn-icon-sm" onclick={() => (dismissed = true)}>
-					<Icon icon="mdi:close" />
+					<button type="button" class="btn-icon" onclick={() => (dismissed = true)}>
+						<Icon icon="mdi:close" />
+					</button>
+				</div>
+			{:else}
+				<button
+					type="button"
+					class="btn preset-filled-warning-400-600 py-1"
+					onclick={() => $mutation.mutate()}
+				>
+					<Icon icon="mdi:warning" />
+					verify email
 				</button>
-			</span>
-		{:else}
-			<button
-				type="button"
-				class="btn btn-sm variant-filled-warning py-1"
-				onclick={() => $mutation.mutate()}
-			>
-				verify email
-			</button>
-		{/if}
-	</div>
-</PermissionGuard>
+			{/if}
+		</div>
+	</PermissionGuard>
+{/if}

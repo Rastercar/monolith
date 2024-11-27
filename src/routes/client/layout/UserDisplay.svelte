@@ -16,7 +16,7 @@
 			<div class="max-w-24">
 				welcome
 				<p class="text-ellipsis overflow-hidden line-clamp-2">
-					{auth.user.username}
+					{auth?.user.username}
 				</p>
 			</div>
 		</div>

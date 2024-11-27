@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import DarkModeSwitch from '../../client/layout/DarkModeSwitch.svelte';
 
 	interface Props {
 		title: string;
@@ -23,7 +24,11 @@
 		class="bg-surface-100-900 relative flex flex-1 flex-col justify-center px-6 py-12 lg:w-2/5 lg:flex-none"
 	>
 		<div class="relative mx-auto w-full max-w-sm">
-			<h2 class="font-heading h2 font-medium mt-6 mb-1">{title}</h2>
+			<div class="flex justify-end">
+				<DarkModeSwitch />
+			</div>
+
+			<h1 class="font-heading h2 font-medium mt-6 mb-1">{title}</h1>
 			<p class="font-alt font-normal mb-6">{subtitle}</p>
 
 			<hr class="border-t-1 my-6" />

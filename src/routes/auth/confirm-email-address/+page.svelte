@@ -2,7 +2,7 @@
 	import { apiConfirmEmailAddress } from '$lib/api/auth.js';
 	import { route } from '$lib/ROUTES.js';
 	import { getAuthContext } from '$lib/store/auth.svelte.js';
-	import { showApiErrorToast } from '$lib/toast.js';
+	import { showErrorToast } from '$lib/toast.js';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises.js';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -18,7 +18,7 @@
 			const promise = apiConfirmEmailAddress({ confirmingForOrg, token });
 			return awaitPromiseWithMinimumTimeOf(promise, 1_500);
 		},
-		onError: showApiErrorToast,
+		onError: showErrorToast,
 		onSuccess: () => authContext.setUserEmailAsVerified()
 	});
 

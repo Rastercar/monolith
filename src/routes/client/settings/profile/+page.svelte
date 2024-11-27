@@ -9,6 +9,7 @@
 	import { showSuccessToast } from '$lib/toast.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import ProfilePictureDropzone from './components/ProfilePictureDropzone.svelte';
 
 	let { data } = $props();
 
@@ -32,8 +33,7 @@
 {#if auth.user}
 	<h1 class="h1 mb-3">My Profile</h1>
 
-	<!-- TODO: -->
-	<!-- <ProfilePictureDropzone /> -->
+	<ProfilePictureDropzone />
 
 	<form
 		class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4"

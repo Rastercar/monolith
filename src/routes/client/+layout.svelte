@@ -3,6 +3,7 @@
 	import { getAuthContext } from '$lib/store/auth.svelte';
 	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
+	import DarkModeSwitch from './layout/DarkModeSwitch.svelte';
 	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
 	import SidebarNavigation from './layout/SidebarNavigation.svelte';
 	import ThemeSelector from './layout/ThemeSelector.svelte';
@@ -31,7 +32,8 @@
 				<DrawerHamburgerButton />
 				<span class="type-scale-5 hidden lg:block">Dashboard</span>
 
-				<ThemeSelector extraClasses="max-w-48 select mr-4 ml-auto" />
+				<DarkModeSwitch classes="ml-auto" />
+				<ThemeSelector extraClasses="max-w-48 mx-4" />
 				<AppBarUserMenu />
 			</div>
 		</header>

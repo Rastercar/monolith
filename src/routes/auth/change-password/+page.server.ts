@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ url }) => {
 };
 
 export const actions: Actions = {
-	changePassword: async ({ request, url }) => {
+	changePassword: async ({ request }) => {
 		const form = await superValidate(request, zod(recoverPasswordByTokenSchema));
 		if (!form.valid) return fail(400, { form });
 

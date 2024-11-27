@@ -45,7 +45,7 @@ async function createMasterUser(tx: Tx) {
 		username: 'test_master_user',
 		email: 'rastercar.tests.001@gmail.com',
 		emailVerified: true,
-		password: hashSync('test_master_user'),
+		password: hashSync('Contafake3!'),
 		accessLevelId: al.id
 	});
 }

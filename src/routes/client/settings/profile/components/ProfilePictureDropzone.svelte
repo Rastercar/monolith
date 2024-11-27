@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { removeUserProfilePicture, updateUserProfilePicture } from '$lib/api/user';
 	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
-	import { authStore } from '$lib/store/auth.svelte';
-	import { getToaster } from '$lib/store/toaster';
+	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { showSuccessToast } from '$lib/toast';
 	import { cloudFrontUrl } from '$lib/utils/url';
 
-	const toaster = getToaster();
+	const auth = getAuthContext();
 
 	const onUploadSuccess = (profilePicture: string) => {
-		toaster.success('profile picture changed successfully');
-		authStore.updateUser({ profilePicture });
+		showSuccessToast('profile picture changed successfully');
+		auth.updateUser({ profilePicture });
 	};
 
-	const onDeleteSuccess = () => authStore.updateUser({ profilePicture: null });
+	const onDeleteSuccess = () => auth.updateUser({ profilePicture: null });
 
-	let { user } = $derived($authStore);
+	let { user } = $derived(auth);
 </script>
 
 {#if user}

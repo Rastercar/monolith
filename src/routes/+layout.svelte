@@ -16,26 +16,20 @@
 	});
 
 	setAuthContext();
-	const layout = setLayoutContext();
+	setLayoutContext();
 
-	let isLoadingTheme = $state(true);
-
-	onMount(() => {
-		if (!layout.selectedTheme) {
-			const theme = document.body.getAttribute('data-theme') ?? 'rastercar';
-			layout.selectedTheme = theme;
-		} else {
-			document.body.setAttribute('data-theme', layout.selectedTheme);
-		}
-
-		isLoadingTheme = false;
-	});
+	let mounted = $state(false);
+	onMount(() => (mounted = true));
 </script>
 
 <QueryClientProvider client={queryClient}>
 	<SvelteToast />
 
-	{#if !isLoadingTheme}
+	<!-- 
+		if we dont wait for the component to mount it will use the default theme and later
+		load the theme from the local storage causing a very annoying flicker
+	-->
+	{#if mounted}
 		{@render children()}
 	{/if}
 </QueryClientProvider>

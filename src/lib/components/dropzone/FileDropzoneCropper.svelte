@@ -1,17 +1,26 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import Cropper from 'svelte-easy-crop';
-	import type { CropArea, DispatchEvents, Point } from 'svelte-easy-crop/types';
 
-	// Just to avoid this warning: {Component} was created with unknown prop 'parent'
-	if (2 + 2 === 5) parent = null;
+	interface Point {
+		x: number;
+		y: number;
+	}
+
+	interface CropArea {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}
 
 	interface Props {
-		parent?: unknown;
+		onClose: () => void;
+		onImageCropped: (_: Blob) => void;
 		image?: string | null;
 	}
 
-	let { parent = $bindable(null), image = $bindable(null) }: Props = $props();
+	let { image, onImageCropped, onClose }: Props = $props();
 
 	let crop: Point = { x: 0, y: 0 };
 
@@ -60,13 +69,9 @@
 		});
 	};
 
-	const previewCrop = (e: CustomEvent<DispatchEvents['cropcomplete']>) => {
-		pixelCrop = e.detail.pixels;
-	};
-
 	const close = () => {
 		image = null;
-		$modalStore[0].response?.('close');
+		onClose();
 	};
 
 	const onCropClick = async () => {
@@ -76,27 +81,39 @@
 			isCropping = false;
 		});
 
-		if (croppedImg) {
-			$modalStore[0].response?.({ image: croppedImg });
-		}
+		if (croppedImg) onImageCropped(croppedImg);
 	};
 </script>
 
-<div class="bg-surface-500 p-2">
-	<div class="w-80 h-[500px] relative">
+<div class="bg-surface-500">
+	<div class="flex justify-end p-2">
+		<button
+			type="button"
+			class="btn btn-icon preset-filled-warning-300-700"
+			onclick={() => close()}
+		>
+			<Icon icon="mdi:close" />
+		</button>
+	</div>
+
+	<div class="w-full h-[500px] relative">
 		{#if image}
-			<Cropper {image} {crop} zoom={1} on:cropcomplete={previewCrop} aspect={1} cropShape="round" />
+			<Cropper
+				{image}
+				{crop}
+				zoom={1}
+				aspect={1}
+				cropShape="round"
+				on:cropcomplete={({ detail }) => {
+					pixelCrop = detail.pixels;
+				}}
+			/>
 		{/if}
 	</div>
 
-	<div class="flex justify-end space-x-2">
-		<button type="button" class="btn btn-sm mt-2 variant-filled-warning" onclick={() => close()}>
-			<Icon icon="mdi:cancel" class="mr-2" />
-			cancel
-		</button>
-
-		<button type="button" class="btn btn-sm mt-2 variant-filled-primary" onclick={onCropClick}>
-			<Icon icon="mdi:camera" class="mr-2" />
+	<div class="flex justify-end p-4">
+		<button type="button" class="btn preset-filled-primary-300-700" onclick={onCropClick}>
+			<Icon icon="mdi:camera" />
 			looks good !
 		</button>
 	</div>

@@ -1,10 +1,13 @@
 <script lang="ts">
+	import { showErrorToast } from '$lib/toast';
 	import Icon from '@iconify/svelte';
+	import { Avatar } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
+	import { Dialog } from 'bits-ui';
+	import type { Snippet } from 'svelte';
 	import FileDropzoneCropper from './FileDropzoneCropper.svelte';
 
 	type UploadReturn = $$Generic;
-
 	type DeleteReturn = $$Generic;
 
 	interface Props {
@@ -12,11 +15,11 @@
 		deleteConfirmPrompt: string;
 		showCropperOnFileSelection?: boolean;
 		border?: string;
-		uploadMutationFn: (_file: File) => Promise<UploadReturn>;
+		preview?: Snippet<[{ previewSrc: string }]>;
 		deleteMutationFn: () => Promise<DeleteReturn>;
-		onUploadSuccess?: (_uploadResult: UploadReturn) => void;
-		onDeleteSuccess?: (_deleteResult: DeleteReturn) => void;
-		preview?: import('svelte').Snippet<[any]>;
+		uploadMutationFn: (_: File) => Promise<UploadReturn>;
+		onUploadSuccess?: (_: UploadReturn) => void;
+		onDeleteSuccess?: (_: DeleteReturn) => void;
 	}
 
 	let {
@@ -24,22 +27,25 @@
 		deleteConfirmPrompt,
 		showCropperOnFileSelection = true,
 		border = 'border-dashed border-2',
+		preview,
 		uploadMutationFn,
 		deleteMutationFn,
 		onUploadSuccess = () => undefined,
-		onDeleteSuccess = () => undefined,
-		preview
+		onDeleteSuccess = () => undefined
 	}: Props = $props();
 
 	const uploadMutation = createMutation({ mutationFn: uploadMutationFn });
 	const deleteMutation = createMutation({ mutationFn: deleteMutationFn });
 
-	let newPhoto: null | { preview: string; file: File } = $state(null);
+	let newPhoto = $state<null | { preview: string; file: File }>(null);
+
+	let isCropperModalOpen = $state(false);
+	let image = $state('');
 
 	/**
 	 * Ref to the hidden filepicker element
 	 */
-	let filePicker: HTMLInputElement = $state();
+	let filePicker = $state<HTMLInputElement>();
 
 	/**
 	 * A file is being dragged onto the dropzone
@@ -47,16 +53,12 @@
 	let isDraggingFile = $state(false);
 
 	const openCropperModal = (file: File) => {
-		const component: ModalComponent = {
-			ref: FileDropzoneCropper,
-			props: { image: URL.createObjectURL(file) }
-		};
-
-		modalStore.trigger({ component, type: 'component', response: onModalEvent });
+		image = URL.createObjectURL(file);
+		isCropperModalOpen = true;
 	};
 
 	const loadPreview = (file?: File) => {
-		if (!file) return toaster.error('file is not a valid image');
+		if (!file) return showErrorToast('file is not a valid image');
 
 		showCropperOnFileSelection ? openCropperModal(file) : previewFile(file);
 	};
@@ -66,8 +68,10 @@
 	 */
 	const clearPreview = () => {
 		newPhoto = null;
-		filePicker.value = '';
-		filePicker.files = null;
+		if (filePicker) {
+			filePicker.value = '';
+			filePicker.files = null;
+		}
 	};
 
 	/**
@@ -97,23 +101,13 @@
 		loadPreview(e.dataTransfer?.files[0]);
 	};
 
-	const onModalEvent = (modalEvent?: 'close' | { image: Blob }) => {
-		if (!modalEvent) return;
-
-		modalStore.close();
-
-		if (typeof modalEvent === 'string') return;
-
-		previewFile(new File([modalEvent.image], 'picture.jpeg'));
-	};
-
 	const uploadFile = () => {
 		if (!newPhoto?.file) return;
 
 		$uploadMutation
 			.mutateAsync(newPhoto.file)
 			.then((uploadResult) => onUploadSuccess(uploadResult))
-			.catch(() => toaster.error('failed to upload picture'))
+			.catch(() => showErrorToast('failed to upload picture'))
 			.finally(() => {
 				newPhoto = null;
 			});
@@ -125,7 +119,7 @@
 		$deleteMutation
 			.mutateAsync()
 			.then((deletionResult) => onDeleteSuccess(deletionResult))
-			.catch(() => toaster.error('failed to remove picture'))
+			.catch(() => showErrorToast('failed to remove picture'))
 			.finally(() => {
 				newPhoto = null;
 			});
@@ -160,22 +154,25 @@
 	ondragover={(e) => e.preventDefault()}
 >
 	{#if hasPictureToShow}
-		{#if preview}{@render preview({ previewSrc: newPhoto?.preview ?? defaultSrc })}{:else}
+		{#if preview}
+			{@render preview({ previewSrc: newPhoto?.preview ?? defaultSrc })}
+		{:else}
 			<Avatar
+				name="TODO"
 				src={newPhoto?.preview ?? defaultSrc}
-				class="mx-auto pointer-events-none"
-				width="w-48 my-4"
-				rounded="rounded-full"
+				classes="mx-auto pointer-events-none h-48 w-48"
 			/>
 		{/if}
 	{:else}
-		<div class="w-full items-center justify-center flex flex-col h-48 pointer-events-none">
+		<div
+			class="w-full items-center justify-center flex flex-col h-48 pointer-events-none border-surface-300-700 border-2 border-dashed rounded"
+		>
 			no picture
 		</div>
 	{/if}
 
 	<div
-		class={`flex pointer-events-none justify-center items-center w-full h-full absolute top-0 left-0 bg-slate-900 rounded-lg ${overlayClass}`}
+		class={`flex pointer-events-none justify-center items-center w-full h-full absolute top-0 left-0 bg-slate-900 rounded ${overlayClass}`}
 	>
 		<span class="text-xl">DROP PHOTO HERE</span>
 	</div>
@@ -184,7 +181,7 @@
 		<div class:hidden={newPhoto === null} class="flex flex-col space-y-4">
 			<button
 				disabled={$uploadMutation.isPending}
-				class="btn-icon btn-icon-sm bg-green-500 dark:bg-green-700"
+				class="btn-icon preset-filled-success-300-700"
 				onclick={uploadFile}
 			>
 				<Icon
@@ -194,7 +191,7 @@
 			</button>
 
 			<button
-				class="btn-icon btn-icon-sm bg-red-500 dark:bg-red-700"
+				class="btn-icon preset-filled-error-300-700"
 				disabled={$uploadMutation.isPending}
 				onclick={clearPreview}
 			>
@@ -208,16 +205,16 @@
 			class:pointer-events-none={isDraggingFile}
 		>
 			<button
-				class="btn-icon btn-icon-sm variant-filled-primary"
+				class="btn-icon preset-filled-primary-300-700"
 				disabled={$uploadMutation.isPending}
-				onclick={() => filePicker.click()}
+				onclick={() => filePicker?.click()}
 			>
 				<Icon icon={hasPictureToShow ? 'mdi:pencil' : 'mdi:plus'} />
 			</button>
 
 			{#if hasPictureToShow}
 				<button
-					class="btn-icon btn-icon-sm variant-filled-error"
+					class="btn-icon preset-filled-error-300-700"
 					disabled={$uploadMutation.isPending}
 					onclick={() => deleteFile()}
 				>
@@ -235,3 +232,21 @@
 		</div>
 	</div>
 </div>
+
+<Dialog.Root bind:open={isCropperModalOpen}>
+	<Dialog.Portal>
+		<Dialog.Overlay class="fixed inset-0 z-50 bg-black/80" />
+		<Dialog.Content
+			class="fixed left-[50%] top-[50%] z-50 w-full max-w-[94%] translate-x-[-50%] translate-y-[-50%] rounded-card-lg border bg-background p-5 shadow-popover outline-none sm:max-w-[490px] md:w-full"
+		>
+			<FileDropzoneCropper
+				{image}
+				onClose={() => (isCropperModalOpen = false)}
+				onImageCropped={(blob) => {
+					previewFile(new File([blob], 'picture.jpeg'));
+					isCropperModalOpen = false;
+				}}
+			/>
+		</Dialog.Content>
+	</Dialog.Portal>
+</Dialog.Root>

@@ -1,3 +1,4 @@
+import { route } from '$lib/ROUTES';
 import { z } from 'zod';
 import { accessLevelSchema, type AccessLevel } from './access-level.schema';
 import {
@@ -120,7 +121,10 @@ export const apiChangePassword = (body: ChangePasswordBody): Promise<string> =>
  * changes the current user profile picture
  */
 export const updateUserProfilePicture = (image: File): Promise<string> =>
-	rastercarApi.formData({ image }).put(undefined, '/user/me/profile-picture').json<string>();
+	rastercarApi
+		.formData({ image })
+		.put(undefined, route('PUT /client/settings/profile/picture'))
+		.json<string>();
 
 /**
  * deletes the current user profile picture

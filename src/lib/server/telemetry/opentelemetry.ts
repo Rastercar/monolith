@@ -1,5 +1,5 @@
 import { env } from '$lib/private-env';
-import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
+import { diag, DiagConsoleLogger, DiagLogLevel, trace } from '@opentelemetry/api';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
 import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
@@ -37,8 +37,11 @@ const sdk = new NodeSDK({
 	]
 });
 
-console.log('[OTEL] starting telemetry');
-sdk.start();
+// if tracing has not start start it (this is a hack to avoid duplicate registrations when using HMR)
+if (Object.keys(trace.getTracerProvider()).length !== 0) {
+	console.log('[OTEL] starting telemetry');
+	sdk.start();
+}
 
 process.on('beforeExit', async () => {
 	await sdk.shutdown();

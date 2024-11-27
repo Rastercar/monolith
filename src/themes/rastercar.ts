@@ -23,7 +23,7 @@ export const rastercarTheme = {
 		'--base-font-color': 'var(--color-surface-700)',
 		'--base-font-color-dark': 'var(--color-surface-50)',
 		'--base-font-family':
-			'ui-rounded, Hiragino Maru Gothic ProN, Quicksand, Comfortaa, Manjari, Arial Rounded MT, Arial Rounded MT Bold, Calibri, source-sans-pro, sans-serif',
+			'Seravek, Gill Sans Nova, Ubuntu, Calibri, DejaVu Sans, source-sans-pro, sans-serif',
 		'--base-font-size': 'inherit',
 		'--base-line-height': 'inherit',
 		'--base-font-weight': 'normal',

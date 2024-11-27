@@ -28,7 +28,7 @@ function getMessageFromError(error: unknown) {
 	return 'aplication error';
 }
 
-export const showApiErrorToast = (error: unknown) => {
+export const showErrorToast = (error: unknown) => {
 	toast.push(getMessageFromError(error), {
 		theme: {
 			'--toastColor': 'white',

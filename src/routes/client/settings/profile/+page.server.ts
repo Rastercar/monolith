@@ -23,5 +23,17 @@ export const actions: Actions = {
 		locals.user = { ...locals.user, ...{ email, username, password } };
 
 		return message(form, { text: 'user updated', type: 'success' });
+	},
+
+	updateProfilePicture: async ({ request, locals }) => {
+		if (!locals.user) return error(400);
+
+		const form = await superValidate(request, zod(updateUserSchema));
+		if (!form.valid) return fail(400, { form });
+
+		const { email, username, password } = await updateUser(locals.user.id, form.data);
+		locals.user = { ...locals.user, ...{ email, username, password } };
+
+		return message(form, { text: 'user updated', type: 'success' });
 	}
 };

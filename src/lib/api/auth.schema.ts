@@ -2,8 +2,6 @@ import { env } from '$lib/public-env';
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 
-// TODO: where do we move schema files ?
-
 export const signUpSchema = z
 	.object({
 		email: z.string().email(),
@@ -45,3 +43,10 @@ export const recoverPasswordSchema = z.object({
 		.email()
 		.default(env.PUBLIC_IS_DEV ? 'rastercar.tests.002@gmail.com' : '')
 });
+
+export const confirmEmailAddressSchema = z.object({
+	token: z.string().uuid(),
+	confirmingForOrg: z.boolean().default(false)
+});
+
+export type ConfirmEmailAddressBody = z.infer<typeof confirmEmailAddressSchema>;

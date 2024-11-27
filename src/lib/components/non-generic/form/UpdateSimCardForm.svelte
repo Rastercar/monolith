@@ -5,7 +5,7 @@
 		type SimCard,
 		type UpdateSimCardBody
 	} from '$lib/api/sim-card.schema';
-	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
+	import { isAppErrorWithCode } from '$lib/api/utils';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { PHONE_NUMBER_IN_USE, SSN_IN_USE } from '$lib/constants/error-codes';
@@ -15,7 +15,6 @@
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-
 
 	interface Props {
 		simCard: SimCard;
@@ -32,12 +31,12 @@
 		mutationFn: (b: UpdateSimCardBody) => apiUpdateSimCard(simCard.id, b),
 
 		onError: (e) => {
-			if (isErrorResponseWithErrorCode(e, SSN_IN_USE)) {
+			if (isAppErrorWithCode(e, SSN_IN_USE)) {
 				form.validate('ssn', { value: '', errors: 'ssn in use', update: 'errors' });
 				return;
 			}
 
-			if (isErrorResponseWithErrorCode(e, PHONE_NUMBER_IN_USE)) {
+			if (isAppErrorWithCode(e, PHONE_NUMBER_IN_USE)) {
 				form.validate('phoneNumber', { value: '', errors: 'phone number', update: 'errors' });
 				return;
 			}

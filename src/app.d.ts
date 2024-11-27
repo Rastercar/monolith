@@ -33,6 +33,7 @@ declare namespace App {
 	 * Error codes, eg (MISSING_SID_COOKIE)
 	 */
 	interface Error {
+		message: string;
 		code?: string;
 		issues?: ZodError;
 	}

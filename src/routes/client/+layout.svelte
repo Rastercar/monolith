@@ -5,6 +5,7 @@
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
 	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
 	import SidebarNavigation from './layout/SidebarNavigation.svelte';
+	import ThemeSelector from './layout/ThemeSelector.svelte';
 	import UserDisplay from './layout/UserDisplay.svelte';
 
 	let { children, data } = $props();
@@ -30,6 +31,7 @@
 				<DrawerHamburgerButton />
 				<span class="type-scale-5 hidden lg:block">Dashboard</span>
 
+				<ThemeSelector extraClasses="max-w-48 select mr-4 ml-auto" />
 				<AppBarUserMenu />
 			</div>
 		</header>

@@ -39,37 +39,102 @@ export interface LoggedInRouteMeta {
  * files, API endpoints and form actions are not considered here
  */
 export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {
-	'/auth/sign-in': { requiredAuth: 'logged-off' },
-	'/auth/sign-up': { requiredAuth: 'logged-off' },
-	'/auth/sign-out': { requiredAuth: 'logged-in' },
-	'/auth/change-password': { requiredAuth: 'any' },
-	'/auth/confirm-email-address': { requiredAuth: 'any' },
-	'/auth/recover-password': { requiredAuth: 'any' },
+	'/auth/sign-in': {
+		requiredAuth: 'logged-off'
+	},
+	'/auth/sign-up': {
+		requiredAuth: 'logged-off'
+	},
+	'/auth/sign-out': {
+		requiredAuth: 'logged-in'
+	},
+	'/auth/change-password': {
+		requiredAuth: 'any'
+	},
+	'/auth/confirm-email-address': {
+		requiredAuth: 'any'
+	},
+	'/auth/recover-password': {
+		requiredAuth: 'any'
+	},
 
 	// logged-in routes
-	'/client': { requiredAuth: 'logged-in' },
-	'/client/access-levels': { requiredAuth: 'logged-in' },
-	'/client/access-levels/[access_level_id]': { requiredAuth: 'logged-in' },
-	'/client/access-levels/new': { requiredAuth: 'logged-in' },
-	'/client/my-profile': { requiredAuth: 'logged-in' },
-	'/client/settings/organization': { requiredAuth: 'logged-in' },
-	'/client/settings/profile': { requiredAuth: 'logged-in' },
-	'/client/settings/security': { requiredAuth: 'logged-in' },
-	'/client/settings/sessions': { requiredAuth: 'logged-in' },
-	'/client/tracking/map': { requiredAuth: 'logged-in' },
-	'/client/tracking/quick-track': { requiredAuth: 'logged-in' },
-	'/client/tracking/sim-cards': { requiredAuth: 'logged-in' },
-	'/client/tracking/sim-cards/[sim_card_id]': { requiredAuth: 'logged-in' },
-	'/client/tracking/sim-cards/new': { requiredAuth: 'logged-in' },
-	'/client/tracking/trackers': { requiredAuth: 'logged-in' },
-	'/client/tracking/trackers/[tracker_id]': { requiredAuth: 'logged-in' },
-	'/client/tracking/trackers/new': { requiredAuth: 'logged-in' },
-	'/client/tracking/vehicles': { requiredAuth: 'logged-in' },
-	'/client/tracking/vehicles/[vehicle_id]': { requiredAuth: 'logged-in' },
-	'/client/tracking/vehicles/new': { requiredAuth: 'logged-in' },
-	'/client/users': { requiredAuth: 'logged-in' },
-	'/client/users/[user_id]': { requiredAuth: 'logged-in' },
-	'/client/users/new': { requiredAuth: 'logged-in' }
+	'/client': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/access-levels': {
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
+	},
+	'/client/access-levels/[access_level_id]': {
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
+	},
+	'/client/access-levels/new': {
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
+	},
+	'/client/my-profile': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/settings/organization': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/settings/profile': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/settings/security': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/settings/sessions': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/map': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/quick-track': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/sim-cards': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/sim-cards/[sim_card_id]': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/sim-cards/new': {
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['CREATE_SIM_CARD']
+	},
+	'/client/tracking/trackers': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/trackers/[tracker_id]': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/trackers/new': {
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['CREATE_TRACKER']
+	},
+	'/client/tracking/vehicles': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/vehicles/[vehicle_id]': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/tracking/vehicles/new': {
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['CREATE_VEHICLE']
+	},
+	'/client/users': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/users/[user_id]': {
+		requiredAuth: 'logged-in'
+	},
+	'/client/users/new': {
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['CREATE_USER']
+	}
 };
 
 export function getRouteMetaFromPath(path: string): RouteMeta | undefined {

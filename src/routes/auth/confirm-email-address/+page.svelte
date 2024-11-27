@@ -1,25 +1,24 @@
 <script lang="ts">
+	import { apiConfirmEmailAddress } from '$lib/api/auth.js';
 	import { route } from '$lib/ROUTES.js';
 	import { getAuthContext } from '$lib/store/auth.svelte.js';
+	import { showApiErrorToast } from '$lib/toast.js';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises.js';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
+	const { confirmingForOrg, token } = data;
 
 	const authContext = getAuthContext();
 
 	const mutation = createMutation({
 		mutationFn: () => {
-			const promise = fetch(route('POST /auth/confirm-email-address'), {
-				method: 'POST',
-				body: JSON.stringify(data.token)
-			});
-
-			// TODO: this does not throw an error, i think the wretch wrapper does this
+			const promise = apiConfirmEmailAddress({ confirmingForOrg, token });
 			return awaitPromiseWithMinimumTimeOf(promise, 1_500);
 		},
+		onError: showApiErrorToast,
 		onSuccess: () => authContext.setUserEmailAsVerified()
 	});
 

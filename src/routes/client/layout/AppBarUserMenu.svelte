@@ -10,7 +10,7 @@
 
 {#if auth.user}
 	<Popover.Root>
-		<Popover.Trigger class="ml-auto btn hover:cursor-pointer hover:preset-filled-primary-200-800">
+		<Popover.Trigger class="btn hover:cursor-pointer hover:preset-filled-primary-200-800">
 			<Icon icon="mdi:user" width="32" height="32" />
 		</Popover.Trigger>
 

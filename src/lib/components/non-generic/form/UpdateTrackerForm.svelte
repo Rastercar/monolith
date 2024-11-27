@@ -5,7 +5,7 @@
 		type Tracker,
 		type UpdateTrackerBody
 	} from '$lib/api/tracker.schema';
-	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
+	import { isAppErrorWithCode } from '$lib/api/utils';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import SelectInput from '$lib/components/form/SelectInput.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
@@ -17,7 +17,6 @@
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-
 
 	interface Props {
 		tracker: Tracker;
@@ -34,7 +33,7 @@
 		mutationFn: (b: UpdateTrackerBody) => apiUpdateTracker(tracker.id, b),
 
 		onError: (e) => {
-			isErrorResponseWithErrorCode(e, IMEI_IN_USE)
+			isAppErrorWithCode(e, IMEI_IN_USE)
 				? form.validate('imei', { value: '', errors: 'imei in use', update: 'errors' })
 				: toaster.error();
 		}

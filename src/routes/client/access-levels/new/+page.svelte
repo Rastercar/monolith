@@ -7,7 +7,6 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
-	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
 	import { permissionDetails, type apiPermission } from '$lib/constants/permissions';
@@ -63,8 +62,6 @@
 
 	let canSubmit = $derived($allErrors.length === 0);
 </script>
-
-<PermissionGuard requiredPermissions={['MANAGE_USER_ACCESS_LEVELS']} />
 
 <div class="p-6 max-w-4xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader

@@ -1,20 +1,20 @@
 <script lang="ts">
+	import type { AccessLevel } from '$lib/api/access-level.schema';
 	import { apiCreateUser } from '$lib/api/user';
 	import { createUserSchema, type CreateUserBody } from '$lib/api/user.schema';
-	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
+	import { isAppErrorWithCode } from '$lib/api/utils';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
+	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
+	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
 	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
 	import { getToaster } from '$lib/store/toaster';
 	import { createMutation } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
-	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
-	import type { AccessLevel } from '$lib/api/access-level.schema';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createUserSchema>>;
@@ -37,12 +37,12 @@
 		},
 
 		onError: (e) => {
-			if (isErrorResponseWithErrorCode(e, EMAIL_IN_USE)) {
+			if (isAppErrorWithCode(e, EMAIL_IN_USE)) {
 				form.validate('email', { value: '', errors: 'email in use', update: 'errors' });
 				return;
 			}
 
-			if (isErrorResponseWithErrorCode(e, USERNAME_IN_USE)) {
+			if (isAppErrorWithCode(e, USERNAME_IN_USE)) {
 				form.validate('username', { value: '', errors: 'username in use', update: 'errors' });
 				return;
 			}

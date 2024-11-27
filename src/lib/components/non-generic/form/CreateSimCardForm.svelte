@@ -5,7 +5,7 @@
 		type CreateSimCardBody,
 		type SimCard
 	} from '$lib/api/sim-card.schema';
-	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
+	import { isAppErrorWithCode } from '$lib/api/utils';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { PHONE_NUMBER_IN_USE, SSN_IN_USE } from '$lib/constants/error-codes';
 	import { getToaster } from '$lib/store/toaster';
@@ -15,22 +15,18 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-
-	
-
-	
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 		/**
-	 * The slot of the tracker the sim card being created is going to occupy
-	 *
-	 * this is also used to prevents errors when using this component multiple
-	 * times on the same page
-	 */
+		 * The slot of the tracker the sim card being created is going to occupy
+		 *
+		 * this is also used to prevents errors when using this component multiple
+		 * times on the same page
+		 */
 		slotNumber?: number;
 		/**
-	 * The ID of the tracker to associate with the SIM card being created
-	 */
+		 * The ID of the tracker to associate with the SIM card being created
+		 */
 		trackerIdToAssociate?: number | undefined;
 	}
 
@@ -47,12 +43,12 @@
 		mutationFn: (b: CreateSimCardBody) => apiCreateSimCard(b),
 
 		onError: (e) => {
-			if (isErrorResponseWithErrorCode(e, SSN_IN_USE)) {
+			if (isAppErrorWithCode(e, SSN_IN_USE)) {
 				form.validate('ssn', { value: '', errors: 'ssn in use', update: 'errors' });
 				return;
 			}
 
-			if (isErrorResponseWithErrorCode(e, PHONE_NUMBER_IN_USE)) {
+			if (isAppErrorWithCode(e, PHONE_NUMBER_IN_USE)) {
 				form.validate('phoneNumber', { value: '', errors: 'phone number', update: 'errors' });
 				return;
 			}

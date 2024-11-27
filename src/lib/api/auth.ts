@@ -1,3 +1,5 @@
+import { route } from '$lib/ROUTES';
+import type { ConfirmEmailAddressBody } from './auth.schema';
 import { rastercarApi } from './utils';
 
 /**
@@ -14,10 +16,10 @@ export const apiDeleteSession = (sessionPublicId: number): Promise<string> =>
 	rastercarApi.delete(`/auth/session/${sessionPublicId}`).json<string>();
 
 /**
- * confirms the email address of a user that owns the email address confirmation token
+ * confirms the email address of a user or org that owns the email address confirmation token
  *
  * this token is obtained on the a link sent to the user email address, meaning it can
  * only be retrieved by someone with access to said email address
  */
-export const apiConfirmUserEmailAddressByToken = (token: string): Promise<string> =>
-	rastercarApi.post({ token }, '/auth/confirm-email-address-by-token').json<string>();
+export const apiConfirmEmailAddress = (body: ConfirmEmailAddressBody): Promise<string> =>
+	rastercarApi.post(body, route('POST /auth/confirm-email-address')).json();

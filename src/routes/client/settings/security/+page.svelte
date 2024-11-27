@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiChangePassword } from '$lib/api/user';
 	import { changePasswordSchema, type ChangePasswordBody } from '$lib/api/user.schema';
-	import { isApiErrorObject } from '$lib/api/utils';
+	import { isAppError } from '$lib/api/utils';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
 	import { getToaster } from '$lib/store/toaster';
@@ -25,7 +25,7 @@
 		},
 
 		onError: (err) => {
-			if (!(err instanceof WretchError) || !isApiErrorObject(err.json)) {
+			if (!(err instanceof WretchError) || !isAppError(err.json)) {
 				return toaster.error();
 			}
 

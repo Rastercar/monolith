@@ -1,25 +1,22 @@
 <script lang="ts">
-	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import CreateVehicleForm from './components/CreateVehicleForm.svelte';
 
 	let { data } = $props();
 </script>
 
-<PermissionGuard requiredPermissions={['CREATE_VEHICLE']}>
-	<div class="p-6 max-w-4xl mx-auto">
-		<TitleAndBreadCrumbsPageHeader
-			title="create vehicle"
-			breadCrumbs={[
-				{ href: '/client', icon: 'mdi:home', text: 'home' },
-				{ text: 'tracking' },
-				{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' },
-				{ href: '/client/tracking/vehicles/new', text: 'new' }
-			]}
-		/>
+<div class="p-6 max-w-4xl mx-auto">
+	<TitleAndBreadCrumbsPageHeader
+		title="create vehicle"
+		breadCrumbs={[
+			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ text: 'tracking' },
+			{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' },
+			{ href: '/client/tracking/vehicles/new', text: 'new' }
+		]}
+	/>
 
-		<hr class="my-4" />
+	<hr class="my-4" />
 
-		<CreateVehicleForm formSchema={data.createVehicleForm} />
-	</div>
-</PermissionGuard>
+	<CreateVehicleForm formSchema={data.createVehicleForm} />
+</div>

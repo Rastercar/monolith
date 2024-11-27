@@ -5,7 +5,7 @@
 		type CreateTrackerBody,
 		type Tracker
 	} from '$lib/api/tracker.schema';
-	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
+	import { isAppErrorWithCode } from '$lib/api/utils';
 	import SelectInput from '$lib/components/form/SelectInput.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { IMEI_IN_USE } from '$lib/constants/error-codes';
@@ -35,7 +35,7 @@
 		mutationFn: (b: CreateTrackerBody) => apiCreateTracker(b),
 
 		onError: (e) => {
-			isErrorResponseWithErrorCode(e, IMEI_IN_USE)
+			isAppErrorWithCode(e, IMEI_IN_USE)
 				? form.validate('imei', { value: '', errors: 'imei in use', update: 'errors' })
 				: toaster.error();
 		}

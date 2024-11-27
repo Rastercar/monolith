@@ -1,136 +1,19 @@
-import { browser } from '$app/environment';
-import { goto } from '$app/navigation';
-import { INVALID_SESSION, MISSING_PERMISSIONS, NO_SID_COOKIE } from '$lib/constants/error-codes';
-import type { apiPermission } from '$lib/constants/permissions';
-import { env } from '$lib/public-env';
-import { getAuthContext } from '$lib/store/auth.svelte';
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
 import QueryStringAddon from 'wretch/addons/queryString';
 import { WretchError } from 'wretch/resolver';
-import type { AnyZodObject } from 'zod';
 
-/**
- * wretch methods that should have a global error handler
- */
-const globalErrorHandlerSubjectMethods = ['res', 'json', 'text', 'blob', 'formData', 'arrayBuffer'];
-
-const globalErrorHandlerAddon = {
-	resolver: (chain: Record<string, (_: unknown) => Promise<unknown>>) =>
-		globalErrorHandlerSubjectMethods.reduce(
-			(acc, method) => ({
-				...acc,
-				async [method](cb: unknown) {
-					try {
-						return await chain[method](cb);
-					} catch (err) {
-						const missingPermissions = getMissingPermissions(err);
-
-						if (missingPermissions.length > 0) {
-							if (browser) {
-								getAuthContext().removeUserPermissions(missingPermissions);
-							}
-						}
-
-						redirectOnSessionError(err);
-						throw err;
-					}
-				}
-			}),
-			{}
-		)
-};
-
-export const rastercarApi = wretch(env.PUBLIC_RASTERCAR_API_BASE_URL)
+export const rastercarApi = wretch()
 	.addon(FormDataAddon)
 	.addon(QueryStringAddon)
-	.addon(globalErrorHandlerAddon)
 	.options({ credentials: 'include' });
 
-/**
- * simple error interface returned by the rastercar api in most error cases
- */
-export interface ApiErrorObject {
-	error: string;
-}
-
-interface ApiErrorObjectWithInfo {
-	error: string;
-	info: unknown;
-}
-
-export const isApiErrorObject = (v: unknown): v is ApiErrorObject => {
-	return typeof v === 'object' && v !== null && typeof (v as ApiErrorObject).error === 'string';
+export const isAppError = (v: unknown): v is App.Error => {
+	return typeof v === 'object' && v !== null && typeof (v as App.Error).message === 'string';
 };
 
-export const isApiErrorObjectWithInfo = (v: unknown): v is ApiErrorObjectWithInfo => {
-	if (typeof v !== 'object' || v === null) return false;
-
-	const a = v as ApiErrorObject;
-
-	return typeof a.error === 'string' && 'info' in a;
-};
-
-export const isErrorResponseWithErrorCode = (e: unknown, errorCode: string): boolean => {
-	return e instanceof WretchError && isApiErrorObject(e.json) && e.json.error === errorCode;
-};
-
-/**
- * Redirects to the auto sign-out page if the session does not exist
- * on the API database.
- *
- * Redirects to the sign in page if there is not a session ID cookie
- *
- * otherwise throws the error
- */
-export const redirectOnSessionError = (err: unknown) => {
-	if (!browser || !(err instanceof WretchError) || !isApiErrorObject(err.json)) return;
-
-	const errorCode = err.json.error;
-
-	// if the request failed because the session id cookie is not present,
-	// the user must have cleaned his cookies, and needs to sign in again
-	if (errorCode === NO_SID_COOKIE) goto(`/auth/sign-in?redirect=${window.location.pathname}`);
-
-	// if the session is invalid or expired, the user needs to sign in, but first
-	// we need to clear the invalid session cookie by redirecting the user to the
-	// sign out page that does delete the cookie on the server side
-	if (errorCode === INVALID_SESSION) goto('/auth/sign-out');
-};
-
-/**
- * returns the missing permissions from a the API error if
- * the request failed because it lacked permissions
- */
-export const getMissingPermissions = (err: unknown): apiPermission[] => {
-	if (!browser || !(err instanceof WretchError) || !isApiErrorObjectWithInfo(err.json)) return [];
-
-	const { info, error } = err.json;
-
-	if (error !== MISSING_PERMISSIONS || !Array.isArray(info)) return [];
-
-	return info;
-};
-
-export const returnErrorStringOrParsedSchemaObj = <T>(res: T, schema: AnyZodObject): string | T => {
-	if (typeof res === 'string') return res;
-
-	schema.parse(res);
-	return res;
-};
-
-/**
- * return a error code if the error response is a standard api error
- */
-export const returnErrorCodeOnApiError = (errorCode: string) => (err: WretchError) => {
-	if (isApiErrorObject(err.json)) return errorCode;
-};
-
-/**
- * return the error message string if the error is a standard api error
- */
-export const fallthroughApiErrorMessage = (err: WretchError) => {
-	if (isApiErrorObject(err.json)) return err.json.error;
+export const isAppErrorWithCode = (e: unknown, errorCode: string): boolean => {
+	return e instanceof WretchError && isAppError(e.json) && e.json.code === errorCode;
 };
 
 /**

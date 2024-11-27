@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isErrorResponseWithErrorCode } from '$lib/api/utils';
+	import { isAppErrorWithCode } from '$lib/api/utils';
 	import { apiCreateVehicle } from '$lib/api/vehicle';
 	import {
 		createVehicleSchema,
@@ -43,7 +43,7 @@
 	const mutation = createMutation({
 		mutationFn: (b: CreateVehicleBody) => apiCreateVehicle(b),
 		onError: (e) => {
-			isErrorResponseWithErrorCode(e, PLATE_IN_USE)
+			isAppErrorWithCode(e, PLATE_IN_USE)
 				? form.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
 				: toaster.error();
 		}

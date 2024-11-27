@@ -17,10 +17,7 @@ export const POST: RequestHandler = async ({ url, locals }) => {
 
 	const confirmationLink = `${url.origin}${route('/auth/confirm-email-address')}?token=${token}`;
 
-	await sendConfirmEmailAddressEmail(email, {
-		title: `Hello ${username}`,
-		confirmationLink
-	});
+	await sendConfirmEmailAddressEmail(email, { title: `Hello ${username}`, confirmationLink });
 
 	return json('confirmation email sent');
 };

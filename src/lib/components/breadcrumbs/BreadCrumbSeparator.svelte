@@ -3,5 +3,5 @@
 </script>
 
 {#if children}{@render children()}{:else}
-	<li class="crumb-separator" aria-hidden>/</li>
+	<li class="crumb-separator">/</li>
 {/if}

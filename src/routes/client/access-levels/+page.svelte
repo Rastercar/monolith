@@ -10,7 +10,6 @@
 	import { toDateTime } from '$lib/utils/date';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
-	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -76,51 +75,49 @@
 	const table = createSvelteTable(options);
 </script>
 
-<PermissionGuard requiredPermissions={['MANAGE_USER_ACCESS_LEVELS']}>
-	<div class="p-6 max-w-4xl mx-auto">
-		<TitleAndBreadCrumbsPageHeader
-			title="access levels"
-			breadCrumbs={[
-				{ href: '/client', icon: 'mdi:home', text: 'home' },
-				{ href: '/client/access-levels', icon: 'mdi:shield', text: 'access levels' }
-			]}
+<div class="p-6 max-w-4xl mx-auto">
+	<TitleAndBreadCrumbsPageHeader
+		title="access levels"
+		breadCrumbs={[
+			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ href: '/client/access-levels', icon: 'mdi:shield', text: 'access levels' }
+		]}
+	/>
+
+	<hr class="my-4" />
+
+	<div class="flex mb-4 items-center">
+		<DebouncedTextField
+			placeholder="search by name"
+			title="filter by name"
+			class="label w-full max-w-lg mr-4"
+			on:change={(e) => ($filters.name = e.detail)}
 		/>
 
-		<hr class="my-4" />
-
-		<div class="flex mb-4 items-center">
-			<DebouncedTextField
-				placeholder="search by name"
-				title="filter by name"
-				class="label w-full max-w-lg mr-4"
-				on:change={(e) => ($filters.name = e.detail)}
-			/>
-
-			<CreateEntityButton
-				href="/client/access-levels/new"
-				text="new access level"
-				requiredPermission="MANAGE_USER_ACCESS_LEVELS"
-			/>
-		</div>
-
-		<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />
-
-		<Paginator
-			select="select min-w-[150px] py-1"
-			settings={{
-				page: $pagination.page - 1,
-				limit: $pagination.pageSize,
-				size: $query.data?.itemCount ?? 0,
-				amounts: [1, 5, 10, 15]
-			}}
-			maxNumerals={1}
-			showFirstLastButtons
-			on:page={({ detail: zeroIndexedPage }) => {
-				$pagination.page = zeroIndexedPage + 1;
-			}}
-			on:amount={({ detail: pageSize }) => {
-				$pagination.pageSize = pageSize;
-			}}
+		<CreateEntityButton
+			href="/client/access-levels/new"
+			text="new access level"
+			requiredPermission="MANAGE_USER_ACCESS_LEVELS"
 		/>
 	</div>
-</PermissionGuard>
+
+	<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />
+
+	<Paginator
+		select="select min-w-[150px] py-1"
+		settings={{
+			page: $pagination.page - 1,
+			limit: $pagination.pageSize,
+			size: $query.data?.itemCount ?? 0,
+			amounts: [1, 5, 10, 15]
+		}}
+		maxNumerals={1}
+		showFirstLastButtons
+		on:page={({ detail: zeroIndexedPage }) => {
+			$pagination.page = zeroIndexedPage + 1;
+		}}
+		on:amount={({ detail: pageSize }) => {
+			$pagination.pageSize = pageSize;
+		}}
+	/>
+</div>

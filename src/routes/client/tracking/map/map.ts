@@ -1,6 +1,5 @@
 import type { Tracker } from '$lib/api/tracker.schema';
 import type { TrackerPosition } from '$lib/api/tracking.schema';
-import { env } from '$lib/public-env';
 import { Socket, io } from 'socket.io-client';
 import { getContext } from 'svelte';
 import { get } from 'svelte/store';
@@ -60,7 +59,7 @@ export const SOCKET_IO_TRACKING_NAMESPACE = 'tracking';
 export const createWsConnectionToTrackingNamespace = (
 	token: string
 ): Socket<ServerToClientEvents, ClientToServerEvents> =>
-	io(`${env.PUBLIC_RASTERCAR_API_BASE_URL}/${SOCKET_IO_TRACKING_NAMESPACE}`, {
+	io(`TODO:BASE:URL/${SOCKET_IO_TRACKING_NAMESPACE}`, {
 		auth: { token },
 		reconnectionDelayMax: 10_000
 	});

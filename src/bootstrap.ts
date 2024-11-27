@@ -1,7 +1,7 @@
 import { initCronJobs } from '$lib/server/cronjobs';
 import { initDb } from '$lib/server/db/db';
 import { initRabbitMq } from '$lib/server/rabbitmq/rabbitmq';
-import { initS3 } from '$lib/services/s3';
+import { initS3 } from '$lib/server/services/s3';
 
 /**
  * TODO: after migrating and fixing all errors, we need to

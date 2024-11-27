@@ -1,4 +1,4 @@
-import { env } from '$lib/public-env';
+import { env } from '$lib/env/public-env';
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 

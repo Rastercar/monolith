@@ -124,3 +124,12 @@ export async function updateUser(id: number, body: UpdateUserBody) {
 	const [updatedUser] = await db.update(user).set(body).where(eq(user.id, id)).returning();
 	return updatedUser;
 }
+
+export async function updateUserProfilePicture(id: number, s3Key: string | null) {
+	const [updatedUser] = await db
+		.update(user)
+		.set({ profilePicture: s3Key })
+		.where(eq(user.id, id))
+		.returning();
+	return updatedUser;
+}

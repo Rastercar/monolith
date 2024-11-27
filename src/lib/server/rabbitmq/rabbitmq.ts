@@ -1,4 +1,4 @@
-import { env } from '$lib/private-env';
+import { env } from '$lib/env/private-env';
 import type { Options } from 'amqplib';
 import { RabbitMQConnection } from './connection';
 import { DEFAULT_EXCHANGE, MAILER_QUEUE, type TRACKER_EVENTS_QUEUE } from './constants';

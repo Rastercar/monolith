@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { showErrorToast } from '$lib/toast';
+	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';

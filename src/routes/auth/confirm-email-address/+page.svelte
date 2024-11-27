@@ -2,7 +2,7 @@
 	import { apiConfirmEmailAddress } from '$lib/api/auth.js';
 	import { route } from '$lib/ROUTES.js';
 	import { getAuthContext } from '$lib/store/auth.svelte.js';
-	import { showErrorToast } from '$lib/toast.js';
+	import { showErrorToast } from '$lib/store/toast.js';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises.js';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';

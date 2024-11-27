@@ -1,6 +1,6 @@
+import { isAppError } from '$lib/api/utils';
 import { toast } from '@zerodevx/svelte-toast';
 import { WretchError } from 'wretch/resolver';
-import { isAppError } from './api/utils';
 
 // [IMPROVEMENT] while svelte-toast is pretty cool, we want it to use skeleton themes
 // if skeleton UI makes a toast component that applies the theme we shall use it,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { env } from '$lib/public-env';
+	import { env } from '$lib/env/public-env';
 
 	interface Props {
 		children?: import('svelte').Snippet;

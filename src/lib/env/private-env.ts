@@ -1,6 +1,6 @@
 import { env as privateEnv } from '$env/dynamic/private';
 import z from 'zod';
-import { castStringToBool } from './utils/zod-validators';
+import { castStringToBool } from '../utils/zod-validators';
 
 const schema = z.object({
 	JAEGER_URL: z.string(),

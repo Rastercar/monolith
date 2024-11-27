@@ -2,7 +2,7 @@
 	import { removeUserProfilePicture, updateUserProfilePicture } from '$lib/api/user';
 	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
 	import { getAuthContext } from '$lib/store/auth.svelte';
-	import { showSuccessToast } from '$lib/toast';
+	import { showSuccessToast } from '$lib/store/toast';
 	import { cloudFrontUrl } from '$lib/utils/url';
 
 	const auth = getAuthContext();

@@ -1,7 +1,7 @@
 import { recoverPasswordSchema } from '$lib/api/auth.schema';
 import { route } from '$lib/ROUTES';
 import { findUserByEmail, setUserResetPasswordToken } from '$lib/server/db/repo/user';
-import { sendRecoverPasswordEmail } from '$lib/services/mailer';
+import { sendRecoverPasswordEmail } from '$lib/server/services/mailer';
 import { fail } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 import { message, setError, superValidate } from 'sveltekit-superforms';

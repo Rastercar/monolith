@@ -1,15 +1,13 @@
 <script lang="ts">
-	import type { Position } from '../map';
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import Icon from '@iconify/svelte';
-	import { toDate } from '$lib/utils/date';
-	import { createQuery } from '@tanstack/svelte-query';
 	import { apiGetVehicleById } from '$lib/api/vehicle';
 	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
-	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
-	import { isDateOlderThanXMilliseconds } from '$lib/utils/date';
+	import { isDateOlderThanXMilliseconds, toLocaleDateString } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
-
+	import Icon from '@iconify/svelte';
+	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
+	import { createQuery } from '@tanstack/svelte-query';
+	import type { Position } from '../map';
 
 	interface Props {
 		tracker: Tracker;
@@ -30,10 +28,13 @@
 
 	let { data: vehicleTracker } = $derived($query);
 
-	let isOnline =
-		$derived(!!position.timestamp && isDateOlderThanXMilliseconds(position.timestamp, fiveMinutes));
+	let isOnline = $derived(
+		!!position.timestamp && isDateOlderThanXMilliseconds(position.timestamp, fiveMinutes)
+	);
 
-	let iconColor = $derived(isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300');
+	let iconColor = $derived(
+		isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300'
+	);
 </script>
 
 <ArrowUpTooltip dataPopup="trackerOverlayStatusPopup">
@@ -71,7 +72,7 @@
 			<Icon icon="mdi:calendar" class="mr-2" />
 			<span class="mr-2">created at:</span>
 
-			{toDate(tracker.createdAt)}
+			{toLocaleDateString(tracker.createdAt)}
 		</div>
 
 		<div class="flex items-center">

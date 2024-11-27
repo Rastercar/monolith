@@ -7,7 +7,7 @@
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { toDate } from '$lib/utils/date';
+	import { toLocaleDateString } from '$lib/utils/date';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
@@ -53,7 +53,7 @@
 		{
 			accessorKey: 'createdAt',
 			header: () => 'Created At',
-			cell: ({ row }) => toDate(row.original.createdAt)
+			cell: ({ row }) => toLocaleDateString(row.original.createdAt)
 		},
 		{
 			id: 'actions',

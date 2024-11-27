@@ -1,4 +1,4 @@
-import { env } from '$lib/public-env';
+import { env } from '$lib/env/public-env';
 
 /**
  * Creates the correct cloudfront URL for objects stored

@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { env } from '$lib/public-env';
+import { env } from '$lib/env/public-env';
 
 /**
  * loads the google maps and marker library

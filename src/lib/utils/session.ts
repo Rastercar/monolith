@@ -1,5 +1,5 @@
 import { SESSION_DAYS_DURATION, SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
-import { env } from '$lib/public-env';
+import { env } from '$lib/env/public-env';
 import type { Cookies } from '@sveltejs/kit';
 import { createDateXDaysFromNow, getDatesDiffInSeconds } from './date';
 

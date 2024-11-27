@@ -1,6 +1,8 @@
 type DateOrTimestamp = Date | string;
 
-const castToDate = (d: DateOrTimestamp) => (typeof d === 'string' ? new Date(d) : d);
+function castToDate(d: DateOrTimestamp): Date {
+	return typeof d === 'string' ? new Date(d) : d;
+}
 
 /**
  * Returns true if a date has occoured in the last X milliseconds
@@ -18,12 +20,12 @@ export function isDateOlderThanXMilliseconds(date: DateOrTimestamp, ms: number) 
 	return nowToDateMsDiff < ms;
 }
 
-export function toDate(d: DateOrTimestamp) {
+export function toLocaleDateString(d: DateOrTimestamp) {
 	return castToDate(d).toLocaleDateString();
 }
 
-export const toDateTime = (d: DateOrTimestamp, withTimezone = false) =>
-	castToDate(d).toLocaleTimeString(undefined, {
+export function toDateTime(d: DateOrTimestamp, withTimezone = false) {
+	return castToDate(d).toLocaleTimeString(undefined, {
 		year: 'numeric',
 		month: 'numeric',
 		day: 'numeric',
@@ -32,17 +34,40 @@ export const toDateTime = (d: DateOrTimestamp, withTimezone = false) =>
 		second: 'numeric',
 		timeZoneName: withTimezone ? 'short' : undefined
 	});
+}
 
-export const getDatesDiffInSeconds = (a: DateOrTimestamp, b: DateOrTimestamp) => {
+export function getDatesDiffInSeconds(a: DateOrTimestamp, b: DateOrTimestamp) {
 	const diffMilliseconds = castToDate(a).getTime() - castToDate(b).getTime();
 	return Math.abs(Math.floor(diffMilliseconds / 1000));
-};
+}
 
-export const createDateXDaysFromNow = (days: number) => {
+export function createDateXDaysFromNow(days: number) {
 	const now = new Date();
 
 	const futureDate = new Date();
 	futureDate.setDate(now.getDate() + days);
 
 	return futureDate;
-};
+}
+
+/**
+ * @example
+ * ```ts
+ * const fiveMinutes = 5 * 60 * 1000
+ *
+ * // 2024-11-27_15-30-45
+ * getYYYY_MM_DD_HH_MM_SS(new Date("2024-11-27T15:30:45Z"))
+ * ```
+ */
+export function getYYYY_MM_DD_HH_MM_SS(date: DateOrTimestamp = new Date()): string {
+	return new Intl.DateTimeFormat('en-CA', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit'
+	})
+		.format(castToDate(date))
+		.replace(/[^0-9]/g, '-');
+}

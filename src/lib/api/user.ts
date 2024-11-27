@@ -130,4 +130,4 @@ export const updateUserProfilePicture = (image: File): Promise<string> =>
  * deletes the current user profile picture
  */
 export const removeUserProfilePicture = (): Promise<string> =>
-	rastercarApi.delete('/user/me/profile-picture').json<string>();
+	rastercarApi.delete(route('DELETE /client/settings/profile/picture')).json<string>();

@@ -6,7 +6,7 @@
 	import TextField from '$lib/components/form/TextField.svelte';
 	import { route } from '$lib/ROUTES.js';
 	import { getAuthContext } from '$lib/store/auth.svelte';
-	import { showSuccessToast } from '$lib/toast.js';
+	import { showSuccessToast } from '$lib/store/toast.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import ProfilePictureDropzone from './components/ProfilePictureDropzone.svelte';

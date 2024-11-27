@@ -1,4 +1,4 @@
-import { env } from '$lib/private-env';
+import { env } from '$lib/env/private-env';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';

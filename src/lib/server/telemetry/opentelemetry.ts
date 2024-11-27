@@ -1,4 +1,4 @@
-import { env } from '$lib/private-env';
+import { env } from '$lib/env/private-env';
 import { diag, DiagConsoleLogger, DiagLogLevel, trace } from '@opentelemetry/api';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';

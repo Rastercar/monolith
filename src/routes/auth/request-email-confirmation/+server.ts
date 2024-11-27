@@ -1,6 +1,6 @@
 import { route } from '$lib/ROUTES';
 import { setConfirmEmailToken } from '$lib/server/db/repo/user';
-import { sendConfirmEmailAddressEmail } from '$lib/services/mailer';
+import { sendConfirmEmailAddressEmail } from '$lib/server/services/mailer';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 

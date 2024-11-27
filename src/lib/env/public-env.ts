@@ -1,6 +1,6 @@
 import { env as publicEnv } from '$env/dynamic/public';
 import z from 'zod';
-import { castStringToBool } from './utils/zod-validators';
+import { castStringToBool } from '../utils/zod-validators';
 
 const schema = z.object({
 	PUBLIC_IS_DEV: castStringToBool,

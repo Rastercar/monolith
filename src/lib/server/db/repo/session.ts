@@ -2,6 +2,12 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { session } from '../schema';
 
+export async function findSessionsByUserId(userId: number) {
+	return db.query.session.findMany({
+		where: (session, { eq }) => eq(session.userId, userId)
+	});
+}
+
 export async function createSession(sessionData: {
 	ip: string;
 	userId: number;

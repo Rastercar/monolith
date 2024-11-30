@@ -1,8 +1,8 @@
 import { recoverPasswordSchema } from '$lib/api/auth.schema';
 import { route } from '$lib/ROUTES';
 import { findUserByEmail, setUserResetPasswordToken } from '$lib/server/db/repo/user';
+import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { sendRecoverPasswordEmail } from '$lib/server/services/mailer';
-import { fail } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 import { message, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -14,8 +14,7 @@ export const load: PageServerLoad = async () => ({
 
 export const actions: Actions = {
 	recoverPassword: async ({ request, url }) => {
-		const form = await superValidate(request, zod(recoverPasswordSchema));
-		if (!form.valid) return fail(400, { form });
+		const form = await validateFormWithFailOnError(request, recoverPasswordSchema);
 
 		const user = await findUserByEmail(form.data.email);
 		if (!user) return setError(form, 'email', 'user not found with this email');

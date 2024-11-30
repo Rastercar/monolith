@@ -1,4 +1,7 @@
-import { getRouteMetaFromPath, redirectToStartingPage } from '$lib/routes-meta';
+import {
+	getRouteMetaFromPath as getPageMetaFromPath,
+	redirectToStartingPage
+} from '$lib/routes-meta';
 import {
 	setUserLocalsFromSessionCookie,
 	verifyUserCanAccessAuthenticatedRoute
@@ -20,20 +23,24 @@ bootstrapApplication();
 // such as a HTTP request.
 export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
-	const routeMeta = getRouteMetaFromPath(path);
+	const pageMeta = getPageMetaFromPath(path);
 
 	if (path === '/') return redirectToStartingPage(event);
 
-	event.locals.routeMeta = routeMeta;
+	event.locals.routeMeta = pageMeta;
 	await setUserLocalsFromSessionCookie(event);
 
 	const isLoggedIn = !!event.locals.user;
 
-	if (routeMeta?.requiredAuth === 'logged-in') {
-		verifyUserCanAccessAuthenticatedRoute(event, routeMeta);
+	// if the request is a request for the HTML of a page
+	// and that page has associated metadata
+	const isLoadingPageWithMeta = !!pageMeta && event.request.method === 'GET';
+
+	if (isLoadingPageWithMeta && pageMeta?.requiredAuth === 'logged-in') {
+		verifyUserCanAccessAuthenticatedRoute(event, pageMeta);
 	}
 
-	if (routeMeta?.requiredAuth === 'logged-off' && isLoggedIn) {
+	if (pageMeta?.requiredAuth === 'logged-off' && isLoggedIn) {
 		return redirectToStartingPage(event);
 	}
 

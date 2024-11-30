@@ -21,7 +21,7 @@ class LayoutStore {
 	selectedTheme = $state('');
 
 	constructor() {
-		this.darkMode = loadFromLocalStorage(THEME_KEY, false);
+		this.darkMode = loadFromLocalStorage(DARK_MODE_KEY, true);
 
 		const themeDefaultValue = browser
 			? (document.body.getAttribute('data-theme') ?? 'rastercar')
@@ -29,23 +29,34 @@ class LayoutStore {
 
 		this.selectedTheme = loadFromLocalStorage(THEME_KEY, themeDefaultValue);
 
-		if (browser) document.body.setAttribute('data-theme', this.selectedTheme);
+		if (browser) {
+			this.setThemeOnHtml();
+			this.setDarkModeClassesOnHtml();
+		}
 
 		$effect(() => {
 			setLocalStorage(THEME_KEY, this.selectedTheme);
 			setLocalStorage(DARK_MODE_KEY, this.darkMode);
 
 			if (!browser) return;
-			document.body.setAttribute('data-theme', this.selectedTheme);
 
-			if (this.darkMode) {
-				document.documentElement.classList.add('dark');
-				document.documentElement.classList.remove('light');
-			} else {
-				document.documentElement.classList.remove('dark');
-				document.documentElement.classList.add('light');
-			}
+			this.setThemeOnHtml();
+			this.setDarkModeClassesOnHtml();
 		});
+	}
+
+	private setDarkModeClassesOnHtml() {
+		if (this.darkMode) {
+			document.documentElement.classList.add('dark');
+			document.documentElement.classList.remove('light');
+		} else {
+			document.documentElement.classList.remove('dark');
+			document.documentElement.classList.add('light');
+		}
+	}
+
+	private setThemeOnHtml() {
+		document.body.setAttribute('data-theme', this.selectedTheme);
 	}
 
 	changeTheme(theme: string) {

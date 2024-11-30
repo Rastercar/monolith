@@ -1,17 +1,13 @@
 import { imageSchema } from '$lib/api/common.schema';
 import { updateUserProfilePicture } from '$lib/server/db/repo/user';
+import { withAuth } from '$lib/server/middlewares/auth';
+import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { s3 } from '$lib/server/services/s3';
-import { json } from '@sveltejs/kit';
+import { fail, json } from '@sveltejs/kit';
 import path from 'path';
-import { fail, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
 
-export const PUT = async ({ request, locals }) => {
-	const { user } = locals;
-	if (!user) throw fail(403);
-
-	const form = await superValidate(request, zod(imageSchema));
-	if (!form.valid) fail(400, { form });
+export const PUT = withAuth(async ({ request, locals: { user } }) => {
+	const form = await validateFormWithFailOnError(request, imageSchema);
 
 	const { image } = form.data;
 
@@ -31,7 +27,7 @@ export const PUT = async ({ request, locals }) => {
 	if (oldUserProfilePicture) await s3.deleteFile(oldUserProfilePicture);
 
 	return json(fileKey);
-};
+});
 
 export const DELETE = async ({ request, locals }) => {
 	const { user } = locals;
@@ -46,3 +42,8 @@ export const DELETE = async ({ request, locals }) => {
 
 	return json('profile picture deleted');
 };
+
+function xd() {
+	const a = PUT(1 as any);
+	const b = DELETE(1 as any);
+}

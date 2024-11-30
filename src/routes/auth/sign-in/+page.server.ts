@@ -3,8 +3,9 @@ import { route } from '$lib/ROUTES';
 import { compareSync } from '$lib/server/crypto';
 import { createSession } from '$lib/server/db/repo/session';
 import { findUserByEmail } from '$lib/server/db/repo/user';
+import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { createSessionExpirationDateFromNow, setSessionCookie } from '$lib/utils/session';
-import { fail, redirect, type Actions } from '@sveltejs/kit';
+import { redirect, type Actions } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { PageServerLoad } from './$types';
@@ -15,8 +16,7 @@ export const load: PageServerLoad = async () => ({
 
 export const actions: Actions = {
 	signIn: async ({ cookies, request, getClientAddress, url }) => {
-		const form = await superValidate(request, zod(signInSchema));
-		if (!form.valid) return fail(400, { form });
+		const form = await validateFormWithFailOnError(request, signInSchema);
 
 		const user = await findUserByEmail(form.data.email);
 		if (!user) return setError(form, 'email', 'user not found');

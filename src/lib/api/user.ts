@@ -17,7 +17,7 @@ import {
 	type User,
 	type UserSession
 } from './user.schema';
-import { rastercarApi, stripUndefined } from './utils';
+import { api, stripUndefined } from './utils';
 
 export interface GetUserFilters {
 	email?: string;
@@ -29,7 +29,7 @@ export interface GetUserFilters {
 export const apiGetUsers = (
 	query?: PaginationWithFilters<GetUserFilters>
 ): Promise<Paginated<SimpleUser>> =>
-	rastercarApi
+	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
 		.get('/user')
 		.json<Paginated<SimpleUser>>()
@@ -39,46 +39,37 @@ export const apiGetUsers = (
  * create a new user
  */
 export const apiCreateUser = (body: CreateUserBody) =>
-	rastercarApi.post(body, '/user').json<SimpleUser>().then(simpleUserSchema.parse);
+	api.post(body, '/user').json<SimpleUser>().then(simpleUserSchema.parse);
 
 /**
  * get a user by ID
  */
 export const apiGetUserById = (id: number): Promise<SimpleUser> =>
-	rastercarApi.get(`/user/${id}`).json<SimpleUser>().then(simpleUserSchema.parse);
+	api.get(`/user/${id}`).json<SimpleUser>().then(simpleUserSchema.parse);
 
 /**
  * delete a user by id
  */
 export const apiDeleteUserById = (id: number): Promise<string> =>
-	rastercarApi.delete(`/user/${id}`).json<string>();
-
-/**
- * list all sessions that belong to the currently logged in user
- */
-export const apiGetCurrentUserSessions = (): Promise<UserSession[]> =>
-	rastercarApi.get('/user/me/session').json<UserSession[]>().then(z.array(userSessionSchema).parse);
+	api.delete(`/user/${id}`).json<string>();
 
 /**
  * gets a short lived token for the currently logged in user
  */
 export const apiGetJwtForCurrentUser = async (): Promise<string> =>
-	rastercarApi.get('/user/me/short-lived-token').json<string>();
+	api.get('/user/me/short-lived-token').json<string>();
 
 /**
  * get all sessions belonging to a user
  */
 export const apiGetUserSessions = (id: number): Promise<UserSession[]> =>
-	rastercarApi
-		.get(`/user/${id}/session`)
-		.json<UserSession[]>()
-		.then(z.array(userSessionSchema).parse);
+	api.get(`/user/${id}/session`).json<UserSession[]>().then(z.array(userSessionSchema).parse);
 
 /**
  * get a user access level
  */
 export const apiGetUserAccessLevel = (id: number): Promise<AccessLevel> =>
-	rastercarApi.get(`/user/${id}/access-level`).json<AccessLevel>().then(accessLevelSchema.parse);
+	api.get(`/user/${id}/access-level`).json<AccessLevel>().then(accessLevelSchema.parse);
 
 /**
  * change a user access level
@@ -87,33 +78,31 @@ export const apiChangeUserAccessLevel = (ids: {
 	userId: number;
 	accessLevelId: number;
 }): Promise<string> =>
-	rastercarApi
-		.put({ accessLevelId: ids.accessLevelId }, `/user/${ids.userId}/access-level`)
-		.json<string>();
+	api.put({ accessLevelId: ids.accessLevelId }, `/user/${ids.userId}/access-level`).json<string>();
 
 /**
  * gets the current user within the session id on the session ID cookie
  */
 export const apiGetCurrentUser = (): Promise<User> =>
-	rastercarApi.get('/user/me').json<User>().then(userSchema.parse);
+	api.get('/user/me').json<User>().then(userSchema.parse);
 
 /**
  * requests a email address confirmation email to be sent to the logged in user email address
  */
 export const apiRequestUserEmailAddressConfirmationEmail = (): Promise<string> =>
-	rastercarApi.post({}, '/user/me/request-email-address-confirmation').json<string>();
+	api.post({}, '/user/me/request-email-address-confirmation').json<string>();
 
 /**
  * updates and returns the updated current user
  */
 export const apiUpdateUser = (body: UpdateUserBody): Promise<User> =>
-	rastercarApi.patch(body, '/user/me').json<User>().then(userSchema.parse);
+	api.patch(body, '/user/me').json<User>().then(userSchema.parse);
 
 /**
  * updates the current user password
  */
 export const apiChangePassword = (body: ChangePasswordBody): Promise<string> =>
-	rastercarApi
+	api
 		.put({ newPassword: body.newPassword, oldPassword: body.oldPassword }, '/user/me/password')
 		.json<string>();
 
@@ -121,7 +110,7 @@ export const apiChangePassword = (body: ChangePasswordBody): Promise<string> =>
  * changes the current user profile picture
  */
 export const updateUserProfilePicture = (image: File): Promise<string> =>
-	rastercarApi
+	api
 		.formData({ image })
 		.put(undefined, route('PUT /client/settings/profile/picture'))
 		.json<string>();
@@ -130,4 +119,4 @@ export const updateUserProfilePicture = (image: File): Promise<string> =>
  * deletes the current user profile picture
  */
 export const removeUserProfilePicture = (): Promise<string> =>
-	rastercarApi.delete(route('DELETE /client/settings/profile/picture')).json<string>();
+	api.delete(route('DELETE /client/settings/profile/picture')).json<string>();

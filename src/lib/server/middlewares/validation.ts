@@ -1,4 +1,6 @@
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import type { ZodSchema } from 'zod';
 
 export async function validateRequestBody<T>(req: Request, schema: ZodSchema<T>) {
@@ -17,4 +19,11 @@ export async function validateRequestBody<T>(req: Request, schema: ZodSchema<T>)
 	}
 
 	return data;
+}
+
+export async function validateFormWithFailOnError<T extends ZodSchema>(req: Request, schema: T) {
+	const form = await superValidate(req, zod(schema));
+	if (!form.valid) fail(400, { form });
+
+	return form;
 }

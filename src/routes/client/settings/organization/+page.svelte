@@ -1,89 +1,58 @@
 <script lang="ts">
-	import { apiUpdateOrganization } from '$lib/api/organization';
-	import {
-		updateOrganizationSchema,
-		type UpdateOrganizationBody
-	} from '$lib/api/organization.schema';
+	import { updateOrganizationSchema } from '$lib/api/organization.schema';
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
-	import { authStore } from '$lib/store/auth.svelte.js';
-	import { getToaster } from '$lib/store/toaster';
-	import { createMutation } from '@tanstack/svelte-query';
-	import { onMount } from 'svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
+	import { route } from '$lib/ROUTES.js';
+	import { getAuthContext } from '$lib/store/auth.svelte.js';
+	import { showSuccessToast } from '$lib/store/toast.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	let { data } = $props();
 
-	const toaster = getToaster();
+	const auth = getAuthContext();
 
-	const form = superForm(data.form, { validators: zodClient(updateOrganizationSchema) });
+	const form = superForm(data.form, {
+		validators: zodClient(updateOrganizationSchema),
+		onUpdated({ form: { data, valid } }) {
+			if (!valid) return;
 
-	const mutation = createMutation({
-		mutationFn: (body: UpdateOrganizationBody) => apiUpdateOrganization(body),
+			auth.updateUserOrg(data);
+			form.form.set(data);
 
-		onSuccess: (updatedOrg) => {
-			authStore.updateUserOrg(updatedOrg);
-			toaster.success('organization updated successfully');
-		},
-
-		onError: () => toaster.error()
-	});
-
-	const updateOrg = async () => {
-		const validated = await form.validateForm();
-
-		if (!validated.valid) {
-			form.restore({ ...validated, tainted: undefined });
-			return;
+			showSuccessToast('organization updated');
 		}
-
-		$mutation.mutate(validated.data);
-	};
-
-	onMount(() => {
-		if (!user) return;
-
-		const { name, billingEmail } = user.organization;
-
-		form.form.set({ name, billingEmail });
 	});
 
-	let { user } = $derived($authStore);
+	const { submitting: isLoading } = form;
 </script>
 
-<h1 class="text-2xl mb-3">My Organization</h1>
+<h1 class="h1 mb-3">My Organization</h1>
 
-<div class="grid grid-cols-2 gap-4 my-4">
-	<TextInput
-		{form}
-		class="label sm:col-span-1 col-span-2"
-		field="billingEmail"
-		label="Billing Email"
-	/>
+<form
+	class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4"
+	method="POST"
+	action={route('updateOrganization /client/settings/organization')}
+	use:form.enhance
+>
+	<TextField {form} classes="sm:col-span-1 col-span-2" name="billingEmail" label="Billing Email" />
 
-	<TextInput
-		{form}
-		class="label sm:col-span-1 col-span-2"
-		maxlength="32"
-		field="name"
-		label="Name"
-	/>
+	<TextField {form} classes="sm:col-span-1 col-span-2" maxlength={32} name="name" label="Name" />
 
-	{#if user && !user.organization.billingEmailVerified}
+	{#if auth.user && !auth.user.organization.billingEmailVerified}
 		<div class="mt-2 col-span-2">
 			<EmailNotConfirmedWarning sendConfirmationEmailTo="organization" />
 		</div>
 	{/if}
-</div>
 
-<div class="flex justify-end">
-	<LoadableButton
-		class="btn variant-filled-primary"
-		isLoading={$mutation.isPending}
-		on:click={updateOrg}
-	>
-		update
-	</LoadableButton>
-</div>
+	<div class="col-span-2 flex justify-end">
+		<LoadableButton
+			classes="btn preset-filled-primary-300-700"
+			disabled={$isLoading}
+			isLoading={$isLoading}
+		>
+			update
+		</LoadableButton>
+	</div>
+</form>

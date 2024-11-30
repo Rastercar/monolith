@@ -7,13 +7,13 @@ import type { apiPermission } from './constants/permissions';
  * - logged-off: the user MUST NOT be logged in to access the route
  * - any: the user can access the route regardless of being logged in
  */
-export type RouteMeta = LoggedInRouteMeta | NonLoggedInRouteMeta;
+export type PageMeta = LoggedInPageMeta | NonLoggedInPageMeta;
 
-interface NonLoggedInRouteMeta {
+interface NonLoggedInPageMeta {
 	requiredAuth: 'logged-off' | 'any';
 }
 
-export interface LoggedInRouteMeta {
+export interface LoggedInPageMeta {
 	requiredAuth: 'logged-in';
 
 	/**
@@ -38,7 +38,7 @@ export interface LoggedInRouteMeta {
  * important: this only refers to routes generated from +page.svelte
  * files, API endpoints and form actions are not considered here
  */
-export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {
+export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 	'/auth/sign-in': {
 		requiredAuth: 'logged-off'
 	},
@@ -78,7 +78,8 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {
 		requiredAuth: 'logged-in'
 	},
 	'/client/settings/organization': {
-		requiredAuth: 'logged-in'
+		requiredAuth: 'logged-in',
+		requiredPermissions: ['UPDATE_ORGANIZATION']
 	},
 	'/client/settings/profile': {
 		requiredAuth: 'logged-in'
@@ -137,7 +138,7 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], RouteMeta> = {
 	}
 };
 
-export function getRouteMetaFromPath(path: string): RouteMeta | undefined {
+export function getRouteMetaFromPath(path: string): PageMeta | undefined {
 	return routesMeta[path as keyof typeof routesMeta];
 }
 

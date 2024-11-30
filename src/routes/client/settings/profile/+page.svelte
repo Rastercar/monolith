@@ -18,10 +18,9 @@
 	const form = superForm(data.form, {
 		validators: zodClient(updateUserSchema),
 		onUpdated({ form: { data, valid } }) {
-			if (valid) auth.updateUser(data);
+			if (!valid) return;
 
-			// superforms keeps the old defaults of the forms (the previous user values)
-			// so we need to update the form ourselves on the clientside after a sucessfull submit
+			auth.updateUser(data);
 			form.form.set(data);
 
 			showSuccessToast('profile updated');

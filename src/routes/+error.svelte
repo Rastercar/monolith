@@ -7,6 +7,15 @@
 	const errorCode = $page.error?.code || '';
 </script>
 
+{#snippet linkBtn(href: string, icon: string, text: string)}
+	<a {href}>
+		<button type="button" class="btn preset-filled">
+			<span>{text}</span>
+			<Icon {icon} />
+		</button>
+	</a>
+{/snippet}
+
 <div class="h-screen flex items-center justify-center flex-col">
 	<h1 class="h1">An error has occoured:</h1>
 
@@ -15,18 +24,8 @@
 	</h2>
 
 	{#if errorCode === INVALID_SESSION}
-		<a href={route('/auth/sign-out')}>
-			<button type="button" class="btn preset-filled">
-				<span>click here to sign out</span>
-				<Icon icon="mdi:sign-out" />
-			</button>
-		</a>
+		{@render linkBtn(route('/auth/sign-out'), 'mdi:sign-out', 'click here to sign out')}
 	{:else if errorCode === NO_SID_COOKIE}
-		<a href={route('/auth/sign-in')}>
-			<button type="button" class="btn preset-filled">
-				<span>click here to sign in</span>
-				<Icon icon="mdi:sign-in" />
-			</button>
-		</a>
+		{@render linkBtn(route('/auth/sign-in'), 'mdi:sign-in', 'click here to sign in')}
 	{/if}
 </div>

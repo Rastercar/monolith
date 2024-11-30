@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { route } from '$lib/ROUTES';
+	import { apiRequestEmailAddressConfirmation } from '$lib/api/auth';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
@@ -24,10 +24,9 @@
 
 	const mutation = createMutation({
 		mutationFn: () => {
-			// TODO: add a body or something to inform its for a user or org
-			//
-			// confirmingFor
-			const promise = fetch(route('POST /auth/request-email-confirmation'), { method: 'POST' });
+			const promise = apiRequestEmailAddressConfirmation({
+				confirmingForOrg: sendConfirmationEmailTo === 'organization'
+			});
 
 			return awaitPromiseWithMinimumTimeOf(promise, 1_500);
 		}

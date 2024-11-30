@@ -50,3 +50,9 @@ export const confirmEmailAddressSchema = z.object({
 });
 
 export type ConfirmEmailAddressBody = z.infer<typeof confirmEmailAddressSchema>;
+
+export const requestEmailConfirmationSchema = z.object({
+	confirmingForOrg: z.boolean().default(false)
+});
+
+export type RequestEmailConfirmationBody = z.infer<typeof requestEmailConfirmationSchema>;

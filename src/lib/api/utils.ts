@@ -3,7 +3,7 @@ import FormDataAddon from 'wretch/addons/formData';
 import QueryStringAddon from 'wretch/addons/queryString';
 import { WretchError } from 'wretch/resolver';
 
-export const rastercarApi = wretch()
+export const api = wretch()
 	.addon(FormDataAddon)
 	.addon(QueryStringAddon)
 	.options({ credentials: 'include' });

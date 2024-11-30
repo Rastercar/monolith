@@ -3,13 +3,13 @@ import {
 	type Organization,
 	type UpdateOrganizationBody
 } from './organization.schema';
-import { rastercarApi } from './utils';
+import { api } from './utils';
 
 /**
  * updates the user organization, returning the updated values
  */
 export const apiUpdateOrganization = (body: UpdateOrganizationBody): Promise<Organization> =>
-	rastercarApi.patch(body, '/organization').json<Organization>().then(organizationSchema.parse);
+	api.patch(body, '/organization').json<Organization>().then(organizationSchema.parse);
 
 /**
  * requests a email address confirmation email to be sent to the user organization billing email address
@@ -19,7 +19,7 @@ export const apiUpdateOrganization = (body: UpdateOrganizationBody): Promise<Org
  * - `UPDATE_ORGANIZATION`
  */
 export const apiRequestOrganizationBillingEmailAddressConfirmationEmail = (): Promise<string> =>
-	rastercarApi.post({}, '/organization/request-email-address-confirmation').json<string>();
+	api.post({}, '/organization/request-email-address-confirmation').json<string>();
 
 /**
  * confirms the email address of a the organization the user belongs to
@@ -32,4 +32,4 @@ export const apiRequestOrganizationBillingEmailAddressConfirmationEmail = (): Pr
  * - `UPDATE_ORGANIZATION`
  */
 export const apiConfirmOrgEmailAddressByToken = (token: string): Promise<string> =>
-	rastercarApi.post({ token }, '/organization/confirm-email-address-by-token').json<string>();
+	api.post({ token }, '/organization/confirm-email-address-by-token').json<string>();

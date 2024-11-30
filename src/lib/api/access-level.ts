@@ -9,7 +9,7 @@ import {
 	type Paginated,
 	type PaginationWithFilters
 } from './common';
-import { rastercarApi, stripUndefined } from './utils';
+import { api, stripUndefined } from './utils';
 
 export interface GetAccessLevelsFilters {
 	name?: string;
@@ -21,7 +21,7 @@ export interface GetAccessLevelsFilters {
 export const apiGetAccessLevels = (
 	query?: PaginationWithFilters<GetAccessLevelsFilters>
 ): Promise<Paginated<AccessLevel>> =>
-	rastercarApi
+	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
 		.get('/access-level')
 		.json<Paginated<AccessLevel>>()
@@ -31,19 +31,19 @@ export const apiGetAccessLevels = (
  * create a acess level
  */
 export const apiCreateAccessLevel = (body: CreateAccessLevelBody): Promise<AccessLevel> =>
-	rastercarApi.post(body, '/access-level').json<AccessLevel>().then(accessLevelSchema.parse);
+	api.post(body, '/access-level').json<AccessLevel>().then(accessLevelSchema.parse);
 
 /**
  * get a access level by id
  */
 export const apiGetAccessLevelById = (id: number): Promise<AccessLevel> =>
-	rastercarApi.get(`/access-level/${id}`).json<AccessLevel>().then(accessLevelSchema.parse);
+	api.get(`/access-level/${id}`).json<AccessLevel>().then(accessLevelSchema.parse);
 
 /**
  * delete a access level by id
  */
 export const apiDeleteAccessLevel = (id: number): Promise<string> =>
-	rastercarApi.delete(`/access-level/${id}`).json<string>();
+	api.delete(`/access-level/${id}`).json<string>();
 
 /**
  * update a acess level
@@ -52,4 +52,4 @@ export const apiUpdateAccessLevel = (
 	id: number,
 	body: UpdateAccessLevelBody
 ): Promise<AccessLevel> =>
-	rastercarApi.put(body, `/access-level/${id}`).json<AccessLevel>().then(accessLevelSchema.parse);
+	api.put(body, `/access-level/${id}`).json<AccessLevel>().then(accessLevelSchema.parse);

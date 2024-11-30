@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	 * if the confirm email token refers to a organization billing email confirmation token
 	 * rather than a user email confirmation token
 	 */
-	const confirmingForOrg = url.searchParams.get('confirmingFor') === 'organization';
+	const confirmingForOrg = url.searchParams.get('confirmingForOrg') === 'true';
 
 	if (!token) {
 		return error(500, { message: 'no confirm email token found' });

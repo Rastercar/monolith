@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiDeleteSession, apiSignOutSpecificSession } from '$lib/api/auth';
 	import type { UserSession } from '$lib/api/user.schema';
-	import { hasPermission } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -16,12 +16,12 @@
 		 * and therefore, can be revoked.
 		 */
 		belongsToLoggedInUser?: boolean;
+		onDeleted: () => void;
 	}
 
-	let { session, belongsToLoggedInUser = false }: Props = $props();
+	let { session, onDeleted, belongsToLoggedInUser = false }: Props = $props();
 
 	const uap = new UAParser(session.userAgent);
-
 	const { type } = uap.getDevice();
 
 	const typeToIcon: Record<deviceType, string> = {
@@ -35,11 +35,9 @@
 
 	const icon = typeToIcon[type as deviceType] ?? 'mdi:computer';
 
-	const toDateStr = (d: string) => {
-		return new Date(d).toLocaleDateString(undefined, { hour: '2-digit', minute: 'numeric' });
+	const toDateStr = (d: Date) => {
+		return d.toLocaleDateString(undefined, { hour: '2-digit', minute: 'numeric' });
 	};
-
-	const dispatch = createEventDispatcher();
 
 	const mutation = createMutation({
 		mutationFn: () => {
@@ -49,35 +47,38 @@
 
 			return awaitPromiseWithMinimumTimeOf(promise, 1_000);
 		},
-		onSuccess: () => dispatch('deleted')
+		onSuccess: () => onDeleted()
 	});
 
-	let canRemoveSessions = $derived(belongsToLoggedInUser || $hasPermission('LOGOFF_USER'));
+	const auth = getAuthContext();
+
+	let canRemoveSessions = $derived(belongsToLoggedInUser || auth.hasPermission('LOGOFF_USER'));
 </script>
 
 <div class="flex flex-wrap items-center p-4 gap-4">
 	<div class="flex items-center">
 		<Icon {icon} height="32" />
+
 		<div class="flex flex-col ml-4">
 			<span>{uap.getOS().name ?? ''} {uap.getBrowser().name ?? ''} {session.ip}</span>
-			<span class="text-surface-700-200-token text-sm">
+			<span class="text-surface-800-200 text-sm">
 				created: {toDateStr(session.createdAt)}
 			</span>
-			<span class="text-surface-700-200-token text-sm">
+			<span class="text-surface-800-200 text-sm">
 				expires: {toDateStr(session.expiresAt)}
 			</span>
 		</div>
 	</div>
 
 	{#if session.sameAsFromRequest}
-		<span class="chip variant-filled-primary ml-auto">your current session</span>
+		<span class="chip preset-filled-primary-500 ml-auto py-1">your current session</span>
 	{:else if $mutation.isError}
-		<span class="chip variant-filled-error ml-auto">failed to delete session</span>
+		<span class="chip preset-filled-error-500 ml-auto py-1">failed to delete session</span>
 	{:else if canRemoveSessions}
 		<button
 			disabled={$mutation.isPending}
 			type="button"
-			class="btn btn-sm variant-filled-warning ml-auto"
+			class="btn preset-filled-warning-500 ml-auto"
 			onclick={() => $mutation.mutate()}
 		>
 			<Icon icon="mdi:trash" />

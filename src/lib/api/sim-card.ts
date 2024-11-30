@@ -9,7 +9,7 @@ import {
 	type SimCard,
 	type UpdateSimCardBody
 } from './sim-card.schema';
-import { rastercarApi, stripUndefined } from './utils';
+import { api, stripUndefined } from './utils';
 
 export interface GetSimCardsFilters {
 	phoneNumber?: string;
@@ -22,7 +22,7 @@ export interface GetSimCardsFilters {
 export const apiGetSimCards = (
 	query?: PaginationWithFilters<GetSimCardsFilters>
 ): Promise<Paginated<SimCard>> =>
-	rastercarApi
+	api
 		.query(stripUndefined({ ...query?.filters, ...query?.pagination }))
 		.get('/sim-card')
 		.json<Paginated<SimCard>>()
@@ -36,13 +36,13 @@ export const apiGetSimCards = (
  * - `CREATE_SIM_CARD`
  */
 export const apiCreateSimCard = (body: CreateSimCardBody): Promise<SimCard> =>
-	rastercarApi.post(body, '/sim-card').json<SimCard>().then(simCardSchema.parse);
+	api.post(body, '/sim-card').json<SimCard>().then(simCardSchema.parse);
 
 /**
  * get a SIM card by ID
  */
 export const apiGetSimCard = (id: number): Promise<SimCard> =>
-	rastercarApi.get(`/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
+	api.get(`/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
 
 /**
  * update a sim card
@@ -52,13 +52,13 @@ export const apiGetSimCard = (id: number): Promise<SimCard> =>
  * - `UPDATE_SIM_CARD`
  */
 export const apiUpdateSimCard = (id: number, body: UpdateSimCardBody): Promise<SimCard> =>
-	rastercarApi.put(body, `/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
+	api.put(body, `/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
 
 /**
  * permanently deletes a SIM card
  */
 export const apiDeleteSimCard = (id: number): Promise<string> =>
-	rastercarApi.delete(`/sim-card/${id}`).json<string>();
+	api.delete(`/sim-card/${id}`).json<string>();
 
 /**
  * changes the tracker a SIM card is associated to
@@ -67,6 +67,6 @@ export const apiSetSimCardTracker = (ids: {
 	simCardId: number;
 	newTrackerId: number | null;
 }): Promise<string> =>
-	rastercarApi
+	api
 		.put({ vehicleTrackerId: ids.newTrackerId }, `/sim-card/${ids.simCardId}/tracker`)
 		.json<string>();

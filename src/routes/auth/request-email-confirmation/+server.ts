@@ -1,23 +1,44 @@
+import { requestEmailConfirmationSchema } from '$lib/api/auth.schema';
 import { route } from '$lib/ROUTES';
+import { setConfirmBillingEmailToken } from '$lib/server/db/repo/organization';
 import { setConfirmEmailToken } from '$lib/server/db/repo/user';
+import { withAuth } from '$lib/server/middlewares/auth';
+import { validateRequestBody } from '$lib/server/middlewares/validation';
 import { sendConfirmEmailAddressEmail } from '$lib/server/services/mailer';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 
-export const POST: RequestHandler = async ({ url, locals }) => {
-	if (!locals.user) error(400);
+export const POST = withAuth(async ({ request, url, locals }) => {
+	const { email, id, emailVerified, username, organization } = locals.user;
 
-	const { email, id, emailVerified, username } = locals.user;
-
-	if (emailVerified) return json('email already verified');
+	const { confirmingForOrg = false } = await validateRequestBody(
+		request,
+		requestEmailConfirmationSchema
+	);
 
 	const token = randomUUID();
 
-	await setConfirmEmailToken(id, token);
+	const confirmationLink = `${url.origin}${route('/auth/confirm-email-address')}?token=${token}&confirmingForOrg=${confirmingForOrg}`;
 
-	const confirmationLink = `${url.origin}${route('/auth/confirm-email-address')}?token=${token}`;
+	if (confirmingForOrg) {
+		if (organization.billingEmailVerified) return json('email already verified');
 
-	await sendConfirmEmailAddressEmail(email, { title: `Hello ${username}`, confirmationLink });
+		await setConfirmBillingEmailToken(organization.id, token);
+
+		await sendConfirmEmailAddressEmail(email, 'Rastercar - confirm organization email address', {
+			title: `Hello ${username}`,
+			confirmationLink
+		});
+	} else {
+		if (emailVerified) return json('email already verified');
+
+		await setConfirmEmailToken(id, token);
+
+		await sendConfirmEmailAddressEmail(email, 'Rastercar - confirm your email address', {
+			title: `Hello ${username}`,
+			confirmationLink
+		});
+	}
 
 	return json('confirmation email sent');
-};
+});

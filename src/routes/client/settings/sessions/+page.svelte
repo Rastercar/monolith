@@ -1,12 +1,8 @@
 <script lang="ts">
-	import { apiGetCurrentUserSessions } from '$lib/api/user';
 	import SessionList from '$lib/components/non-generic/session/SessionList.svelte';
-	import { createQuery } from '@tanstack/svelte-query';
 
-	const query = createQuery({
-		queryKey: ['my-sessions'],
-		queryFn: apiGetCurrentUserSessions
-	});
+	const { data } = $props();
+	const { sessions } = data;
 </script>
 
 <div class="space-y-6">
@@ -16,15 +12,9 @@
 		not recognize.
 	</h2>
 
-	{#if $query.isLoading}
-		<p>loading...</p>
-	{:else if $query.isError}
-		<p class="text-error-500">failed to load your sessions</p>
-	{:else}
-		<SessionList
-			isSessionsFromCurrentlyLoggedUser
-			class="sm:card sm:rounded-md"
-			sessions={$query.data ?? []}
-		/>
-	{/if}
+	<SessionList
+		{sessions}
+		isSessionsFromCurrentlyLoggedUser
+		classes="rounded preset-filled-surface-100-900"
+	/>
 </div>

@@ -87,12 +87,13 @@ export async function sendRecoverPasswordEmail(
 
 export async function sendConfirmEmailAddressEmail(
 	email: string,
+	subject: string,
 	replacements: { title: string; confirmationLink: string }
 ) {
 	return sendEmail({
 		uuid: randomUUID(),
 		to: [{ email, replacements }],
-		subject: 'Rastercar - confirm your email address',
+		subject,
 		bodyHtml: loadTemplate('confirm-email')
 	});
 }

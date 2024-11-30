@@ -11,7 +11,7 @@ import {
 	type Tracker,
 	type UpdateTrackerBody
 } from './tracker.schema';
-import { rastercarApi, stripUndefined } from './utils';
+import { api, stripUndefined } from './utils';
 
 export interface GetTrackersFilters {
 	imei?: string;
@@ -26,7 +26,7 @@ export interface GetTrackersFilters {
  * - `CREATE_TRACKER`
  */
 export const apiCreateTracker = (body: CreateTrackerBody): Promise<Tracker> =>
-	rastercarApi.post(body, '/tracker').json<Tracker>().then(trackerSchema.parse);
+	api.post(body, '/tracker').json<Tracker>().then(trackerSchema.parse);
 
 /**
  * list paginated trackers that belong to the same organization as the request user
@@ -34,7 +34,7 @@ export const apiCreateTracker = (body: CreateTrackerBody): Promise<Tracker> =>
 export const apiGetTrackers = (
 	query?: PaginationWithFilters<GetTrackersFilters>
 ): Promise<Paginated<Tracker>> =>
-	rastercarApi
+	api
 		.query(stripUndefined({ ...query?.filters, ...query?.pagination }))
 		.get('/tracker')
 		.json<Paginated<Tracker>>()
@@ -48,13 +48,13 @@ export const apiGetTrackers = (
  * - `UPDATE_TRACKER`
  */
 export const apiUpdateTracker = (id: number, body: UpdateTrackerBody): Promise<Tracker> =>
-	rastercarApi.put(body, `/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
+	api.put(body, `/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
 
 /**
  * Fetch a tracker by ID
  */
 export const apiGetTrackerById = (id: number): Promise<Tracker> =>
-	rastercarApi.get(`/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
+	api.get(`/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
 
 /**
  * Delete a tracker by id
@@ -67,7 +67,7 @@ export const apiDeleteTracker = (
 	vehicleTrackerId: number,
 	opts?: { deleteAssociatedSimCards: boolean }
 ) =>
-	rastercarApi
+	api
 		.query({ deleteAssociatedSimCards: opts?.deleteAssociatedSimCards || false })
 		.delete(`/tracker/${vehicleTrackerId}`)
 		.json<string>();
@@ -83,15 +83,13 @@ export const apiSetTrackerVehicle = (ids: {
 	vehicleId: number | null;
 	vehicleTrackerId: number;
 }): Promise<string> =>
-	rastercarApi
-		.put({ vehicleId: ids.vehicleId }, `/tracker/${ids.vehicleTrackerId}/vehicle`)
-		.json<string>();
+	api.put({ vehicleId: ids.vehicleId }, `/tracker/${ids.vehicleTrackerId}/vehicle`).json<string>();
 
 /**
  * get SIM cards that belong to a tracker
  */
 export const apiGetTrackerSimCards = (vehicleTrackerId: number) =>
-	rastercarApi
+	api
 		.get(`/tracker/${vehicleTrackerId}/sim-cards`)
 		.json<Tracker[]>()
 		.then(z.array(simCardSchema).parse);
@@ -100,7 +98,7 @@ export const apiGetTrackerSimCards = (vehicleTrackerId: number) =>
  * get the last known tracker location
  */
 export const apiGetTrackerLastLocation = (vehicleTrackerId: number) =>
-	rastercarApi
+	api
 		.get(`/tracker/${vehicleTrackerId}/last-location`)
 		.json<Tracker[]>()
 		.then(trackerLocationSchema.nullable().parse);
@@ -126,7 +124,7 @@ export interface GetTrackerLocationsDto {
  * get a list of tracker locations after a start date and a limit
  */
 export const apiGetTrackerLocations = (id: number, filters?: GetTrackerLocationsDto) =>
-	rastercarApi
+	api
 		.post(filters ?? {}, `/tracker/${id}/get-location-list`)
 		.json<TrackerLocation>()
 		.then(z.array(trackerLocationSchema).parse);

@@ -4,35 +4,29 @@
 	import TableBody from './TableBody.svelte';
 	import TableHeader from './TableHeader.svelte';
 
-
-
-
 	interface Props {
 		table: Readable<Table<T>>;
-		colspan: number;
 		isLoading: boolean;
+		classes?: string;
 		width?: string;
-		borderColor?: string;
 		overflowX?: string;
-		class?: string;
+		borderColor?: string;
 	}
 
 	let {
 		table,
-		colspan,
 		isLoading,
 		width = 'w-full',
-		borderColor = 'border-surface-400-500-token',
-		overflowX = 'overflow-x-scroll',
-		class: clazz = ''
+		classes = '',
+		overflowX = 'overflow-x-auto',
+		borderColor = 'border-surface-400-600'
 	}: Props = $props();
-	
 </script>
 
-<div class={`${clazz} ${overflowX}`}>
+<div class={`${classes} ${overflowX}`}>
 	<table class={`${borderColor} ${width}`}>
-		<TableHeader {isLoading} {table} {colspan} {borderColor} />
+		<TableHeader {isLoading} {table} {borderColor} />
 
-		<TableBody {isLoading} {table} {colspan} {borderColor} />
+		<TableBody {isLoading} {table} {borderColor} />
 	</table>
 </div>

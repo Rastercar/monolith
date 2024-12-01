@@ -10,10 +10,10 @@
 
 {#if auth.user}
 	<div class={classes}>
-		<div class="flex space-x-4 items-center h-16">
+		<div class="flex items-center h-16">
 			<UserAvatar wrapperClass="w-16" />
 
-			<div class="max-w-24">
+			<div class="max-w-48 pl-4">
 				welcome
 				<p class="text-ellipsis overflow-hidden line-clamp-2">
 					{auth?.user.username}

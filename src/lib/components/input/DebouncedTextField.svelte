@@ -1,42 +1,34 @@
-<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
-<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { type Snippet } from 'svelte';
+	import SnippetOrString from '../svelte-specific/SnippetOrString.svelte';
 
 	let debounceTimer: ReturnType<typeof setTimeout>;
 
-	export let label: string = '';
-	export let title: string;
-	export let placeholder = '';
+	interface Props {
+		label?: string | Snippet;
+		classes: string;
+		placeholder?: string;
+		debounceMilliseconds?: number;
+		onChange: (_: string) => void;
+	}
 
-	export let debounceMilliseconds = 250;
-
-	let clazz = 'label';
-	export { clazz as class };
+	const { classes, onChange, label, placeholder, debounceMilliseconds = 250 }: Props = $props();
 
 	const debounce = (v: string) => {
 		clearTimeout(debounceTimer);
-
-		debounceTimer = setTimeout(() => {
-			dispatch('change', v);
-		}, debounceMilliseconds);
+		debounceTimer = setTimeout(() => onChange(v), debounceMilliseconds);
 	};
-
-	const dispatch = createEventDispatcher<{ change: string }>();
 </script>
 
-<label class={clazz}>
+<label class={classes}>
 	{#if label}
-		<span>{label}</span>
-	{:else}
-		<slot name="label" />
+		<SnippetOrString children={label} />
 	{/if}
 
 	<input
-		class="input"
-		{title}
+		class={`input ${label && 'mt-2'}`}
 		{placeholder}
 		type="text"
-		on:keyup={(e) => debounce(e.currentTarget.value)}
+		onkeyup={(e) => debounce(e.currentTarget.value)}
 	/>
 </label>

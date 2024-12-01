@@ -6,21 +6,21 @@
 		href?: string;
 		icon?: string;
 		textColor?: string;
+		linkTextColor?: string;
 	}
 
 	let {
 		text = '',
 		href = '',
 		icon = '',
-		textColor = 'text-primary-700-200-token'
+		textColor = 'text-secondary-300-700',
+		linkTextColor = 'text-secondary-400-600'
 	}: Props = $props();
-
-	let linkClasses = $derived(`flex items-center anchor no-underline ${textColor}`);
 </script>
 
-<li class="type-scale-2">
+<li class="type-scale-4">
 	{#if href}
-		<a class={linkClasses} {href}>
+		<a class={`flex items-center anchor no-underline ${linkTextColor}`} {href}>
 			{#if icon}
 				<Icon {icon} class="mr-2" />
 			{/if}

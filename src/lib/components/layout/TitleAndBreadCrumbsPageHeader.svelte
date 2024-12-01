@@ -4,13 +4,12 @@
 	interface Props {
 		title: string;
 		breadCrumbs: BreadCrumb[];
-		margin?: string;
 	}
 
-	let { title, breadCrumbs, margin = 'mb-4' }: Props = $props();
+	let { title, breadCrumbs }: Props = $props();
 </script>
 
-<div class={`flex ${margin} items-center justify-between`}>
+<div class={`flex items-center justify-between`}>
 	<h1 class="h1">{title}</h1>
 
 	<Breadcrumbs {breadCrumbs} />

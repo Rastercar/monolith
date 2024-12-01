@@ -3,20 +3,15 @@
 	import type { Readable } from 'svelte/store';
 	import EmptyTableBodyPlaceholder from './EmptyTableBodyPlaceholder.svelte';
 
-
 	interface Props {
 		table: Readable<Table<T>>;
-		colspan: number;
 		isLoading: boolean;
 		borderColor?: string;
 	}
 
-	let {
-		table,
-		colspan,
-		isLoading,
-		borderColor = 'border-surface-400-500-token'
-	}: Props = $props();
+	let { table, isLoading, borderColor = 'border-surface-400-500-token' }: Props = $props();
+
+	const colspan = $table.getVisibleFlatColumns().length;
 </script>
 
 <tbody class={`border-x-2 border-b-2 ${borderColor}`}>

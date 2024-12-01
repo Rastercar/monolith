@@ -6,25 +6,24 @@
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
-	import { getToaster } from '$lib/store/toaster';
+	import { route } from '$lib/ROUTES.js';
+	import { showErrorToast } from '$lib/store/toast.js';
 	import Icon from '@iconify/svelte';
 	import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
 
 	let { data } = $props();
 
-	const toaster = getToaster();
-
 	let simDeleted = $state(false);
 
-	const query = createQuery({
+	const query = createQuery(() => ({
 		queryKey: ['sim-card', data.simCardId],
 		placeholderData: keepPreviousData,
 		queryFn: () => apiGetSimCard(data.simCardId)
-	});
+	}));
 
 	const deleteSimCardMutation = createMutation({
 		mutationFn: () => apiDeleteSimCard(data.simCardId),
-		onError: () => toaster.error()
+		onError: showErrorToast
 	});
 
 	const deleteSimCard = async () => {
@@ -45,7 +44,7 @@
 	<TitleAndBreadCrumbsPageHeader
 		title="sim card info"
 		breadCrumbs={[
-			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
 			{ href: '/client/tracking/sim-cards', icon: 'mdi:sim', text: 'sim cards' },
 			{

@@ -4,12 +4,12 @@ export type PaginationParameters = {
 	/**
 	 * 1 indexed page number
 	 */
-	page?: number;
+	page: number;
 
 	/**
-	 * Total records available for the given query
+	 * Records to fetch per page
 	 */
-	pageSize?: number;
+	pageSize: number;
 };
 
 /**
@@ -17,14 +17,14 @@ export type PaginationParameters = {
  */
 export type PaginationWithFilters<T> = {
 	/**
-	 * filters to apply to the query
+	 * Filters to apply to the query
 	 */
 	filters?: T;
 
 	/**
 	 * Pagination to apply to the query
 	 */
-	pagination?: PaginationParameters;
+	pagination: PaginationParameters;
 };
 
 export type Paginated<T> = {

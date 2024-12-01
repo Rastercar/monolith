@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { ProgressBar } from '@skeletonlabs/skeleton';
-
-
+	import { Progress } from '@skeletonlabs/skeleton-svelte';
 
 	interface Props {
-		colspan?: number;
+		colspan: number;
 		isLoading?: boolean;
 		borderX?: string;
 		borderTop?: string;
@@ -12,7 +10,7 @@
 	}
 
 	let {
-		colspan = 1,
+		colspan,
 		isLoading = false,
 		borderX = 'border-x-2',
 		borderTop = 'border-t-2',
@@ -24,6 +22,6 @@
 
 <tr class={clazz}>
 	<th {colspan} class="p-0">
-		<ProgressBar value={isLoading ? undefined : 0} rounded="rounded-none" height="h-1" />
+		<Progress value={isLoading ? null : 0} rounded="rounded-none" height="h-1" />
 	</th>
 </tr>

@@ -6,16 +6,16 @@
 	interface Props {
 		text: string;
 		href: string;
-		requiredPermission: apiPermission;
+		requiredPermissions: apiPermission;
 	}
 
-	let { text, href, requiredPermission }: Props = $props();
+	let { text, href, requiredPermissions }: Props = $props();
 </script>
 
-<PermissionGuard requiredPermissions={[requiredPermission]}>
-	<a {href} class="ml-auto">
-		<button class="btn variant-filled-primary">
-			<Icon icon="mdi:plus" class="mr-1" />
+<PermissionGuard {requiredPermissions}>
+	<a {href}>
+		<button class="btn preset-filled-primary-500">
+			<Icon icon="mdi:plus" />
 			{text}
 		</button>
 	</a>

@@ -1,3 +1,4 @@
+import { route } from '$lib/ROUTES';
 import {
 	createPaginatedResponseSchema,
 	type Paginated,
@@ -24,7 +25,7 @@ export const apiGetSimCards = (
 ): Promise<Paginated<SimCard>> =>
 	api
 		.query(stripUndefined({ ...query?.filters, ...query?.pagination }))
-		.get('/sim-card')
+		.get(route('/client/tracking/sim-cards'))
 		.json<Paginated<SimCard>>()
 		.then(createPaginatedResponseSchema(simCardSchema).parse);
 

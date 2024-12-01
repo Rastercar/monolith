@@ -1,9 +1,8 @@
 import { userSessionSchema } from '$lib/api/user.schema';
 import { findSessionsByUserId } from '$lib/server/db/repo/session';
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load = async ({ locals }) => {
 	if (!locals.user || !locals.session) return error(400);
 
 	const sessionsFromDb = await findSessionsByUserId(locals.user.id);

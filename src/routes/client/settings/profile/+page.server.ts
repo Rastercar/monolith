@@ -4,16 +4,15 @@ import { validateFormWithFailOnError } from '$lib/server/middlewares/validation'
 import { error } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load = async ({ locals }) => {
 	if (!locals.user) return error(400);
 
 	const form = await superValidate(zod(updateUserSchema), { defaults: locals.user });
 	return { form };
 };
 
-export const actions: Actions = {
+export const actions = {
 	updateProfile: async ({ request, locals }) => {
 		if (!locals.user) return error(400);
 

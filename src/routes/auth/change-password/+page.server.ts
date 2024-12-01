@@ -5,12 +5,11 @@ import {
 	setPasswordAndClearResetPasswordToken
 } from '$lib/server/db/repo/user';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
-import { error, type Actions } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load = async ({ url }) => {
 	const form = await superValidate(zod(recoverPasswordByTokenSchema));
 	const passwordRecoveryToken = url.searchParams.get('token');
 
@@ -23,7 +22,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	return { form, passwordRecoveryToken };
 };
 
-export const actions: Actions = {
+export const actions = {
 	changePassword: async ({ request }) => {
 		const form = await validateFormWithFailOnError(request, recoverPasswordByTokenSchema);
 
@@ -40,6 +39,6 @@ export const actions: Actions = {
 
 		await setPasswordAndClearResetPasswordToken(hashedPassword, form.data.token);
 
-		return message(form, { text: 'Password changed successfully', type: 'success' });
+		return message(form, { text: 'password changed', type: 'success' });
 	}
 };

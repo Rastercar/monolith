@@ -1,12 +1,11 @@
 import { updateOrganizationSchema } from '$lib/api/organization.schema';
+import { updateOrganization } from '$lib/server/db/repo/organization';
+import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
+import { error } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { PageServerLoad } from './$types';
-import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
-import { error, type Actions } from '@sveltejs/kit';
-import { updateOrganization } from '$lib/server/db/repo/organization';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load = async ({ locals }) => {
 	if (!locals.user) return error(400);
 
 	const form = await superValidate(zod(updateOrganizationSchema), {
@@ -16,7 +15,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return { form };
 };
 
-export const actions: Actions = {
+export const actions = {
 	updateOrganization: async ({ request, locals }) => {
 		if (!locals.user) return error(400);
 

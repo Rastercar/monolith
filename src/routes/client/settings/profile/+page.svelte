@@ -9,6 +9,7 @@
 	import { showSuccessToast } from '$lib/store/toast.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import SettingsPageTitle from '../components/SettingsPageTitle.svelte';
 	import ProfilePictureDropzone from './components/ProfilePictureDropzone.svelte';
 
 	let { data } = $props();
@@ -30,7 +31,7 @@
 </script>
 
 {#if auth.user}
-	<h1 class="h1 mb-3">My Profile</h1>
+	<SettingsPageTitle>My Profile</SettingsPageTitle>
 
 	<ProfilePictureDropzone />
 

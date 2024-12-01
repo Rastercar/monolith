@@ -59,6 +59,9 @@ const SERVERS = {
   "POST /auth/confirm-email-address": `/auth/confirm-email-address`,
   "POST /auth/request-email-confirmation": `/auth/request-email-confirmation`,
   "POST /auth/sign-out": `/auth/sign-out`,
+  "DELETE /auth/sign-out/[session_id=integer]": (params: { session_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
+    return `/auth/sign-out/${params.session_id}`
+  },
   "PUT /client/settings/profile/picture": `/client/settings/profile/picture`,
   "DELETE /client/settings/profile/picture": `/client/settings/profile/picture`
 }
@@ -73,7 +76,8 @@ const ACTIONS = {
   "signUp /auth/sign-up": `/auth/sign-up?/signUp`,
   "updateOrganization /client/settings/organization": `/client/settings/organization?/updateOrganization`,
   "updateProfile /client/settings/profile": `/client/settings/profile?/updateProfile`,
-  "updateProfilePicture /client/settings/profile": `/client/settings/profile?/updateProfilePicture`
+  "updateProfilePicture /client/settings/profile": `/client/settings/profile?/updateProfilePicture`,
+  "changePassword /client/settings/security": `/client/settings/security?/changePassword`
 }
 
 /**
@@ -181,8 +185,8 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 */
 export type KIT_ROUTES = {
   PAGES: { '/auth/change-password': never, '/auth/confirm-email-address': never, '/auth/recover-password': never, '/auth/sign-in': never, '/auth/sign-out': never, '/auth/sign-up': never, '/client': never, '/client/access-levels': never, '/client/access-levels/[access_level_id]': 'access_level_id', '/client/access-levels/new': never, '/client/my-profile': never, '/client/settings/organization': never, '/client/settings/profile': never, '/client/settings/security': never, '/client/settings/sessions': never, '/client/tracking/map': never, '/client/tracking/quick-track': never, '/client/tracking/sim-cards': never, '/client/tracking/sim-cards/[sim_card_id]': 'sim_card_id', '/client/tracking/sim-cards/new': never, '/client/tracking/trackers': never, '/client/tracking/trackers/[tracker_id]': 'tracker_id', '/client/tracking/trackers/new': never, '/client/tracking/vehicles': never, '/client/tracking/vehicles/[vehicle_id]': 'vehicle_id', '/client/tracking/vehicles/new': never, '/client/users': never, '/client/users/[user_id]': 'user_id', '/client/users/new': never }
-  SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never }
-  ACTIONS: { 'changePassword /auth/change-password': never, 'recoverPassword /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never, 'updateOrganization /client/settings/organization': never, 'updateProfile /client/settings/profile': never, 'updateProfilePicture /client/settings/profile': never }
+  SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'DELETE /auth/sign-out/[session_id=integer]': 'session_id', 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never }
+  ACTIONS: { 'changePassword /auth/change-password': never, 'recoverPassword /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never, 'updateOrganization /client/settings/organization': never, 'updateProfile /client/settings/profile': never, 'updateProfilePicture /client/settings/profile': never, 'changePassword /client/settings/security': never }
   LINKS: Record<string, never>
-  Params: { redirect: never, access_level_id: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never }
+  Params: { redirect: never, access_level_id: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never, session_id: never }
 }

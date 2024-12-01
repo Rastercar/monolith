@@ -1,8 +1,7 @@
 import { createVehicleSchema } from '$lib/api/vehicle.schema';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => ({
+export const load = async () => ({
 	createVehicleForm: await superValidate(zod(createVehicleSchema))
 });

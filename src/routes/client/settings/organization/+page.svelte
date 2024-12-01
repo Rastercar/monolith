@@ -8,6 +8,7 @@
 	import { showSuccessToast } from '$lib/store/toast.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import SettingsPageTitle from '../components/SettingsPageTitle.svelte';
 
 	let { data } = $props();
 
@@ -28,7 +29,7 @@
 	const { submitting: isLoading } = form;
 </script>
 
-<h1 class="h1 mb-3">My Organization</h1>
+<SettingsPageTitle>My Organization</SettingsPageTitle>
 
 <form
 	class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4"

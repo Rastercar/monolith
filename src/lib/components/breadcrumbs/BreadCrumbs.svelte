@@ -11,14 +11,13 @@
 	import BreadCrumbSeparator from './BreadCrumbSeparator.svelte';
 
 	interface Props {
-		additionalClasses?: string;
 		breadCrumbs: BreadCrumb[];
 	}
 
-	let { additionalClasses = '', breadCrumbs }: Props = $props();
+	let { breadCrumbs }: Props = $props();
 </script>
 
-<ol class={`breadcrumb ${additionalClasses}`}>
+<ol class="flex space-x-4">
 	{#each breadCrumbs as crumb, i}
 		<BreadCrumbComponent {...crumb} />
 

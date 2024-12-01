@@ -5,10 +5,16 @@ import { api } from './utils';
 /**
  * Deletes (signs out) of the current user session by its public id
  */
-export const apiSignOutSpecificSession = (sessionPublicId: number): Promise<string> =>
-	api.delete(`/auth/sign-out/${sessionPublicId}`).text();
+export const apiSignOutSpecificSession = (publicId: number): Promise<string> =>
+	api
+		.delete(
+			route('DELETE /auth/sign-out/[session_id=integer]', { session_id: publicId.toString() })
+		)
+		.text();
 
 /**
+ * TODO: remove if unused
+ *
  * Deletes a session by its public id, unlike the `/auth/sign-out/:sid` endpoint
  * this endpoint can be used to remove sessions owned by other users
  */

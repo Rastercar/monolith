@@ -2,9 +2,9 @@
 	import Icon from '@iconify/svelte';
 
 	interface Props {
-		text?: string | undefined;
-		href?: string | undefined;
-		icon?: string | undefined;
+		text?: string;
+		href?: string;
+		icon?: string;
 		textColor?: string;
 	}
 
@@ -18,7 +18,7 @@
 	let linkClasses = $derived(`flex items-center anchor no-underline ${textColor}`);
 </script>
 
-<li class="crumb text-lg">
+<li class="type-scale-2">
 	{#if href}
 		<a class={linkClasses} {href}>
 			{#if icon}

@@ -76,7 +76,7 @@
 			</aside>
 		{:else if formStatus === 'success'}
 			<div class="flex flex-col">
-				<h1 class="mb-4 text-center h2 mt-12">password changed successfully !</h1>
+				<h1 class="mb-4 text-center h2 mt-12">password changed !</h1>
 
 				<button
 					class="btn preset-filled-primary-300-700 mt-4 mx-auto flex items-center"

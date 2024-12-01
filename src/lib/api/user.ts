@@ -10,7 +10,6 @@ import {
 	simpleUserSchema,
 	userSchema,
 	userSessionSchema,
-	type ChangePasswordBody,
 	type CreateUserBody,
 	type SimpleUser,
 	type UpdateUserBody,
@@ -97,14 +96,6 @@ export const apiRequestUserEmailAddressConfirmationEmail = (): Promise<string> =
  */
 export const apiUpdateUser = (body: UpdateUserBody): Promise<User> =>
 	api.patch(body, '/user/me').json<User>().then(userSchema.parse);
-
-/**
- * updates the current user password
- */
-export const apiChangePassword = (body: ChangePasswordBody): Promise<string> =>
-	api
-		.put({ newPassword: body.newPassword, oldPassword: body.oldPassword }, '/user/me/password')
-		.json<string>();
 
 /**
  * changes the current user profile picture

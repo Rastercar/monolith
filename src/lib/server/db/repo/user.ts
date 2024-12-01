@@ -14,38 +14,42 @@ export function findUserBy(
 	});
 }
 
-export async function findUserByUsername(username: string) {
+export function findUserById(id: number) {
+	return db.query.user.findFirst({ where: (user, { eq }) => eq(user.id, id) });
+}
+
+export function findUserByUsername(username: string) {
 	return findUserBy('username', username);
 }
 
-export async function findUserByEmail(email: string) {
+export function findUserByEmail(email: string) {
 	return findUserBy('email', email);
 }
 
-export async function findUserByConfirmEmailToken(token: string) {
+export function findUserByConfirmEmailToken(token: string) {
 	return findUserBy('confirmEmailToken', token);
 }
 
-export async function findUserByResetPasswordToken(token: string) {
+export function findUserByResetPasswordToken(token: string) {
 	return findUserBy('resetPasswordToken', token);
 }
 
-export async function setUserResetPasswordToken(userId: number, token: string) {
+export function setUserResetPasswordToken(userId: number, token: string) {
 	return db.update(user).set({ resetPasswordToken: token }).where(eq(user.id, userId));
 }
 
-export async function setPasswordAndClearResetPasswordToken(password: string, token: string) {
+export function setPasswordAndClearResetPasswordToken(password: string, token: string) {
 	return db
 		.update(user)
 		.set({ password: password, resetPasswordToken: null })
 		.where(eq(user.resetPasswordToken, token));
 }
 
-export async function setConfirmEmailToken(userId: number, token: string) {
+export function setConfirmEmailToken(userId: number, token: string) {
 	return db.update(user).set({ confirmEmailToken: token }).where(eq(user.id, userId));
 }
 
-export async function setEmailVerifiedAndClearConfirmEmailToken(token: string) {
+export function setEmailVerifiedAndClearConfirmEmailToken(token: string) {
 	return db
 		.update(user)
 		.set({ emailVerified: true, confirmEmailToken: null })
@@ -74,7 +78,7 @@ export async function checkEmailIsInUse(email: string) {
  * Signs up a new rastercar user, creating the user
  * their organization and the org root access level
  */
-export async function signUpUser(args: { username: string; email: string; password: string }) {
+export function signUpUser(args: { username: string; email: string; password: string }) {
 	const { username, email, password } = args;
 
 	return db.transaction(async (tx) => {
@@ -132,4 +136,8 @@ export async function updateUserProfilePicture(id: number, s3Key: string | null)
 		.where(eq(user.id, id))
 		.returning();
 	return updatedUser;
+}
+
+export function updateUserPassword(id: number, hashedPassword: string) {
+	return db.update(user).set({ password: hashedPassword }).where(eq(user.id, id)).returning();
 }

@@ -81,7 +81,7 @@ export function verifyUserCanAccessAuthenticatedRoute(evt: RequestEvent, meta: L
 /**
  * Overide of the App.Locals for when we know the user has been authenticated
  */
-type AuthedLocals = Omit<App.Locals, 'user'> & { user: User };
+type AuthedLocals = Omit<App.Locals, 'user' | 'session'> & { user: User; session: UserSession };
 
 type ReqParams = RequestEvent['params'];
 type ReqRouteId = RequestEvent['route']['id'];

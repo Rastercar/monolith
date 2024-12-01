@@ -1,7 +1,6 @@
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load = async ({ url }) => {
 	const token = url.searchParams.get('token');
 
 	/**

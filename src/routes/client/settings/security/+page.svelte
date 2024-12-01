@@ -1,73 +1,47 @@
 <script lang="ts">
-	import { apiChangePassword } from '$lib/api/user';
-	import { changePasswordSchema, type ChangePasswordBody } from '$lib/api/user.schema';
-	import { isAppError } from '$lib/api/utils';
+	import { changePasswordSchema } from '$lib/api/user.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
-	import { getToaster } from '$lib/store/toaster';
-	import { createMutation } from '@tanstack/svelte-query';
+	import PasswordField from '$lib/components/form/PasswordField.svelte';
+	import { route } from '$lib/ROUTES';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { WretchError } from 'wretch/resolver';
+	import SettingsPageTitle from '../components/SettingsPageTitle.svelte';
 
 	let { data } = $props();
 
-	const toaster = getToaster();
-
-	const form = superForm(data.form, { validators: zodClient(changePasswordSchema) });
-
-	const mutation = createMutation({
-		mutationFn: (body: ChangePasswordBody) => apiChangePassword(body),
-
-		onSuccess: () => {
-			toaster.success('password changed successfully');
-			form.reset();
+	const form = superForm(data.form, {
+		validators: zodClient(changePasswordSchema),
+		onUpdated({ form: { valid } }) {
+			if (!valid) return;
+			showSuccessToast('password updated');
 		},
-
-		onError: (err) => {
-			if (!(err instanceof WretchError) || !isAppError(err.json)) {
-				return toaster.error();
-			}
-
-			if (err.response.status === 401) {
-				form.validate('oldPassword', { value: '', errors: 'invalid password', update: 'errors' });
-			}
-		}
+		onError: showErrorToast
 	});
-
-	const changePassword = async () => {
-		const validated = await form.validateForm();
-
-		if (!validated.valid) {
-			form.restore({ ...validated, tainted: undefined });
-			return;
-		}
-
-		$mutation.mutate(validated.data);
-	};
+	const { submitting: isLoading } = form;
 </script>
 
-<h1 class="text-2xl mb-3">Change Password</h1>
+<SettingsPageTitle>Change Password</SettingsPageTitle>
 
-<PasswordInput {form} field="oldPassword" label="Old Password" placeholder="" />
+<form method="POST" action={route('changePassword /client/settings/security')} use:form.enhance>
+	<div class="space-y-4">
+		<PasswordField {form} name="oldPassword" label="Old Password" />
 
-<PasswordInput {form} field="newPassword" label="New Password" placeholder="" />
+		<PasswordField {form} name="newPassword" label="New Password" />
 
-<PasswordInput {form} field="newPasswordConfirmation" label="Confirm new Password" placeholder="" />
+		<PasswordField {form} name="newPasswordConfirmation" label="Confirm new Password" />
+	</div>
 
-<div class="flex justify-between items-center mt-8">
-	<LoadableButton
-		class="btn variant-filled-primary"
-		isLoading={$mutation.isPending}
-		on:click={changePassword}
-	>
-		change password
-	</LoadableButton>
+	<div class="flex justify-between items-center mt-8">
+		<a
+			href={route('/auth/recover-password')}
+			class="text-sm text-primary-800-200 underline-offset-4 hover:underline"
+		>
+			forgot your password?
+		</a>
 
-	<a
-		href="/auth/recover-password"
-		class="text-sm text-primary-700-200-token underline-offset-4 hover:underline"
-	>
-		forgot your password?
-	</a>
-</div>
+		<LoadableButton classes="btn preset-filled-primary-400-600" isLoading={$isLoading}>
+			change password
+		</LoadableButton>
+	</div>
+</form>

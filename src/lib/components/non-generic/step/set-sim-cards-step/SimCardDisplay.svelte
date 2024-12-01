@@ -9,7 +9,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import SimDeletionOrRemovalWarning from './SimDeletionOrRemovalWarning.svelte';
 
-
 	interface Props {
 		simCard: SimCard;
 		additionalClasses?: string;
@@ -23,12 +22,12 @@
 
 	const deleteSimMutation = createMutation({
 		mutationFn: () => apiDeleteSimCard(simCard.id),
-		onSuccess: () => toaster.success('SIM card deleted successfully')
+		onSuccess: () => toaster.success('SIM card deleted')
 	});
 
 	const removeSimCardMutation = createMutation({
 		mutationFn: () => apiSetSimCardTracker({ simCardId: simCard.id, newTrackerId: null }),
-		onSuccess: () => toaster.success('SIM card removed from slot successfully')
+		onSuccess: () => toaster.success('SIM card removed from slot')
 	});
 
 	const deleteSimCard = () => {

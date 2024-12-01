@@ -6,6 +6,7 @@
 	interface Props {
 		classes?: string;
 		sessions: UserSession[];
+		onSessionDeleted: (_id: number) => void;
 
 		/**
 		 * If the sessions being show with this component
@@ -15,16 +16,12 @@
 		isSessionsFromCurrentlyLoggedUser?: boolean;
 	}
 
-	let { classes = '', sessions, isSessionsFromCurrentlyLoggedUser = false }: Props = $props();
-
-	const removeSession = (sessionPublicId: number) => {
-		const idx = sessions.findIndex((s) => s.publicId === sessionPublicId);
-
-		if (idx >= 0) {
-			sessions.splice(idx, 1);
-			sessions = sessions;
-		}
-	};
+	let {
+		classes = '',
+		sessions,
+		isSessionsFromCurrentlyLoggedUser = false,
+		onSessionDeleted
+	}: Props = $props();
 </script>
 
 <div class={classes}>
@@ -32,11 +29,11 @@
 		<SessionCard
 			belongsToLoggedInUser={isSessionsFromCurrentlyLoggedUser}
 			{session}
-			onDeleted={() => removeSession(session.publicId)}
+			onDeleted={() => onSessionDeleted(session.publicId)}
 		/>
 
 		{#if i < sessions.length - 1}
-			<hr class="my-4 sm:my-0" />
+			<hr class="hr my-4 sm:my-0" />
 		{/if}
 	{:else}
 		<span class="flex items-center p-4">

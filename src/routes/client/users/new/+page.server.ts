@@ -1,8 +1,7 @@
-import { superValidate } from 'sveltekit-superforms';
-import type { PageServerLoad } from './$types';
-import { zod } from 'sveltekit-superforms/adapters';
 import { createUserSchema } from '$lib/api/user.schema';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 
-export const load: PageServerLoad = async () => ({
-  createUserForm: await superValidate(zod(createUserSchema))
+export const load = async () => ({
+	createUserForm: await superValidate(zod(createUserSchema))
 });

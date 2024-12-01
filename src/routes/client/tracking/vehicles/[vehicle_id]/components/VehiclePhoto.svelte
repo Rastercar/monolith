@@ -17,7 +17,7 @@
 
 	const onUploadSuccess = (newPhoto: string) => {
 		photo = newPhoto;
-		toaster.success('photo changed successfully');
+		toaster.success('photo changed');
 		dispatch('photo-changed', newPhoto);
 	};
 

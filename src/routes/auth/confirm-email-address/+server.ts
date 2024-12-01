@@ -27,5 +27,5 @@ export const POST: RequestHandler = async ({ request }) => {
 		await setEmailVerifiedAndClearConfirmEmailToken(token);
 	}
 
-	return json('email address confirmed successfully');
+	return json('email address confirmed');
 };

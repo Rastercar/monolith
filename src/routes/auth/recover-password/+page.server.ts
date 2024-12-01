@@ -6,13 +6,12 @@ import { sendRecoverPasswordEmail } from '$lib/server/services/mailer';
 import { randomUUID } from 'crypto';
 import { message, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => ({
+export const load = async () => ({
 	form: await superValidate(zod(recoverPasswordSchema))
 });
 
-export const actions: Actions = {
+export const actions = {
 	recoverPassword: async ({ request, url }) => {
 		const form = await validateFormWithFailOnError(request, recoverPasswordSchema);
 

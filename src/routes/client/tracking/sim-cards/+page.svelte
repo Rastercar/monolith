@@ -1,77 +1,63 @@
 <script lang="ts">
-	import type { Paginated } from '$lib/api/common';
-	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
-	import type { SimCard } from '$lib/api/sim-card.schema';
-	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
+	import type { GetSimCardsFilters } from '$lib/api/sim-card';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
-	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
-	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
-	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { Paginator } from '@skeletonlabs/skeleton';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
-	import {
-		createSvelteTable,
-		getCoreRowModel,
-		renderComponent,
-		type ColumnDef,
-		type TableOptions
-	} from '@tanstack/svelte-table';
-	import { derived, writable } from 'svelte/store';
 
-	const pagination = writable({ page: 1, pageSize: 5 });
+	const pagination = $state({ page: 1, pageSize: 5 });
 
-	const filters = writable<GetSimCardsFilters>({});
+	const filters = $state<GetSimCardsFilters>({});
 
-	const query = createQuery(
-		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['sim-cards', $pagination, $filters],
-			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<SimCard>> => {
-				const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
+	// const query = createQuery(
+	// 	derived([pagination, filters], ([$pagination, $filters]) => ({
+	// 		queryKey: ['sim-cards', $pagination, $filters],
+	// 		placeholderData: keepPreviousData,
+	// 		queryFn: async (): Promise<Paginated<SimCard>> => {
+	// 			const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
 
-				$options.data = result.records;
+	// 			$options.data = result.records;
 
-				return result;
-			}
-		}))
-	);
+	// 			return result;
+	// 		}
+	// 	}))
+	// );
 
-	const columns: ColumnDef<SimCard>[] = [
-		{
-			accessorKey: 'phoneNumber',
-			header: () => 'Phone'
-		},
-		{
-			accessorKey: 'ssn',
-			header: () => 'SSN'
-		},
-		{
-			accessorKey: 'apnAddress',
-			header: () => 'APN Address'
-		},
-		{
-			id: 'actions',
-			cell: ({ row }) =>
-				renderComponent(InfoIconLink, { href: `/client/tracking/sim-cards/${row.original.id}` })
-		}
-	];
+	// const columns: ColumnDef<SimCard>[] = [
+	// 	{
+	// 		accessorKey: 'phoneNumber',
+	// 		header: () => 'Phone'
+	// 	},
+	// 	{
+	// 		accessorKey: 'ssn',
+	// 		header: () => 'SSN'
+	// 	},
+	// 	{
+	// 		accessorKey: 'apnAddress',
+	// 		header: () => 'APN Address'
+	// 	},
+	// 	{
+	// 		id: 'actions',
+	// 		cell: ({ row }) =>
+	// 			renderComponent(InfoIconLink, { href: `/client/tracking/sim-cards/${row.original.id}` })
+	// 	}
+	// ];
 
-	const colspan = columns.length;
+	// const colspan = columns.length;
 
-	const options = writable<TableOptions<SimCard>>({
-		data: $query.data?.records ?? [],
-		columns: columns,
-		manualPagination: true,
-		state: {
-			pagination: {
-				pageIndex: $pagination.page,
-				pageSize: $pagination.pageSize
-			}
-		},
-		getCoreRowModel: getCoreRowModel()
-	});
+	// const options = writable<TableOptions<SimCard>>({
+	// 	data: $query.data?.records ?? [],
+	// 	columns: columns,
+	// 	manualPagination: true,
+	// 	state: {
+	// 		pagination: {
+	// 			pageIndex: $pagination.page,
+	// 			pageSize: $pagination.pageSize
+	// 		}
+	// 	},
+	// 	getCoreRowModel: getCoreRowModel()
+	// });
 
-	const table = createSvelteTable(options);
+	// const table = createSvelteTable(options);
+
+	// TODO: breadcrumbs should NOT be manually typed, use route meta
 </script>
 
 <div class="p-6 max-w-4xl mx-auto">
@@ -86,7 +72,7 @@
 
 	<hr class="my-4" />
 
-	<div class="flex mb-4 items-center">
+	<!-- <div class="flex mb-4 items-center">
 		<DebouncedTextField
 			placeholder="search by phone number"
 			title="filter by phone number"
@@ -119,5 +105,5 @@
 		on:amount={({ detail: pageSize }) => {
 			$pagination.pageSize = pageSize;
 		}}
-	/>
+	/> -->
 </div>

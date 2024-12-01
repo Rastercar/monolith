@@ -4,9 +4,8 @@ import { updateVehicleSchema } from '$lib/api/vehicle.schema';
 import { getIntParameterFromRouteSlug } from '$lib/utils/routes';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params }) => ({
+export const load = async ({ params }) => ({
 	vehicleId: getIntParameterFromRouteSlug(params.vehicle_id, 'invalid vehicle ID'),
 	updateVehicleForm: await superValidate(zod(updateVehicleSchema)),
 	createTrackerForm: await superValidate(zod(createTrackerSchema)),

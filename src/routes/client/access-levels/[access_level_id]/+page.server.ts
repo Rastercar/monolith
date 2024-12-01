@@ -3,9 +3,8 @@ import { getIntParameterFromRouteSlug } from '$lib/utils/routes';
 import { getBooleanFromUrlQuery } from '$lib/utils/url';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params, url }) => ({
+export const load = async ({ params, url }) => ({
 	startInEditMode: getBooleanFromUrlQuery(url, 'edit'),
 	accessLevelId: getIntParameterFromRouteSlug(params.access_level_id, 'invalid access level ID'),
 	updateAccessLevelForm: await superValidate(zod(updateAccessLevelSchema))

@@ -43,7 +43,7 @@ export const changePasswordSchema = z
 	})
 	.refine((data) => data.newPassword === data.newPasswordConfirmation, {
 		message: "Passwords didn't match",
-		path: ['passwordConfirmation']
+		path: ['newPasswordConfirmation']
 	});
 
 export const userSessionSchema = z.object({

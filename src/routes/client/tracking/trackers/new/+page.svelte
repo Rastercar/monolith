@@ -15,7 +15,7 @@
 	let createdTracker: Tracker | null = $state(null);
 </script>
 
-<div class="p-6 max-w-4xl mx-auto">
+<div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		margin="mb-8"
 		title="create tracker"

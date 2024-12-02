@@ -7,11 +7,11 @@
 	} from '$lib/api/sim-card.schema';
 	import { isAppErrorWithCode } from '$lib/api/utils';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { PHONE_NUMBER_IN_USE, SSN_IN_USE } from '$lib/constants/error-codes';
-	import { getToaster } from '$lib/store/toaster';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -19,15 +19,14 @@
 	interface Props {
 		simCard: SimCard;
 		formSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
+		onUpdate: (_: SimCard) => void;
 	}
 
-	let { simCard = $bindable(), formSchema }: Props = $props();
+	let { simCard, formSchema, onUpdate }: Props = $props();
 
 	const form = superForm(formSchema, { validators: zodClient(updateSimCardSchema) });
 
-	const toaster = getToaster();
-
-	const mutation = createMutation({
+	const mutation = createMutation(() => ({
 		mutationFn: (b: UpdateSimCardBody) => apiUpdateSimCard(simCard.id, b),
 
 		onError: (e) => {
@@ -41,21 +40,18 @@
 				return;
 			}
 
-			toaster.error();
+			showErrorToast('TODO:');
 		}
-	});
-
-	const dispatch = createEventDispatcher<{ 'sim-card-updated': SimCard }>();
+	}));
 
 	const updateSimCard = async () => {
 		const validated = await form.validateForm();
 
 		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
 
-		$mutation.mutateAsync(validated.data).then((updatedSimCard) => {
-			toaster.success('sim card updated');
+		mutation.mutateAsync(validated.data).then((updatedSimCard) => {
+			showSuccessToast('sim card updated');
 			simCard = updatedSimCard;
-			dispatch('sim-card-updated', updatedSimCard);
 		});
 	};
 
@@ -81,94 +77,43 @@
 </script>
 
 <div class="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-	<TextInput
-		{form}
-		class="label mb-1"
-		field="ssn"
-		label="SSN *"
-		placeholder="A123BC678Z"
-		maxlength="50"
-	/>
+	<TextField {form} name="ssn" label="SSN *" placeholder="A123BC678Z" maxlength={50} />
 
-	<TextInput
+	<TextField
 		{form}
-		class="label mb-1"
-		field="phoneNumber"
+		name="phoneNumber"
 		label="Phone Number *"
 		placeholder="+5599999999"
-		maxlength="20"
+		maxlength={20}
 	/>
 
-	<TextInput
+	<TextField
 		{form}
-		class="label mb-1"
-		field="apnUser"
+		name="apnUser"
 		label="APN User *"
 		placeholder="isp.docomoiot.net"
-		maxlength="50"
+		maxlength={50}
 	/>
 
-	<TextInput
-		{form}
-		class="label mb-1"
-		field="apnPassword"
-		label="APN Password *"
-		placeholder="web"
-		maxlength="50"
-	/>
+	<TextField {form} name="apnPassword" label="APN Password *" placeholder="web" maxlength={50} />
 
-	<TextInput
-		{form}
-		class="label mb-1"
-		field="apnAddress"
-		label="APN Address *"
-		placeholder="web"
-		maxlength="50"
-	/>
+	<TextField {form} name="apnAddress" label="APN Address *" placeholder="web" maxlength={50} />
 
-	<TextInput
-		{form}
-		class="label mb-1"
-		field="pin"
-		label="PIN 1"
-		placeholder="0000"
-		maxlength="20"
-	/>
+	<TextField {form} name="pin" label="PIN 1" placeholder="0000" maxlength={20} />
 
-	<TextInput
-		{form}
-		class="label mb-1"
-		field="pin2"
-		label="PIN 2"
-		placeholder="0000"
-		maxlength="20"
-	/>
+	<TextField {form} name="pin2" label="PIN 2" placeholder="0000" maxlength={20} />
 
-	<TextInput
-		{form}
-		class="label mb-1"
-		field="puk"
-		label="PUK 1"
-		placeholder="00000000"
-		maxlength="20"
-	/>
+	<TextField {form} name="puk" label="PUK 1" placeholder="00000000" maxlength={20} />
 
-	<TextInput
-		{form}
-		class="label mb-1"
-		field="puk2"
-		label="PUK 2"
-		placeholder="00000000"
-		maxlength="20"
-	/>
+	<TextField {form} name="puk2" label="PUK 2" placeholder="00000000" maxlength={20} />
 </div>
 
 <div class="flex justify-end">
 	<LoadableButton
 		isLoading={false}
 		disabled={!canSubmit}
-		class="btn variant-filled-primary ml-auto mt-auto"
-		on:click={updateSimCard}
+		classes="btn preset-filled-primary-500 ml-auto mt-auto"
+		onclick={updateSimCard}
 	>
 		update sim card
 	</LoadableButton>

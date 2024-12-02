@@ -14,7 +14,6 @@
 		<Icon icon="mdi:check" class="mr-3" />
 		{title}
 	</div>
-	<a {href} class="ml-auto font-medium text-blue-600 dark:text-blue-500 hover:underline">
-		go back
-	</a>
+
+	<a {href} class="ml-auto font-medium text-primary-800-200 hover:underline"> go back </a>
 </div>

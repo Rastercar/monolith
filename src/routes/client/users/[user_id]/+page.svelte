@@ -19,7 +19,7 @@
 	let user = $derived($userQuery.data);
 </script>
 
-<div class="p-6 max-w-4xl mx-auto space-y-6">
+<div class="p-6 max-w-5xl mx-auto space-y-6">
 	{#if userDeleted}
 		<DeletionSuccessMessage title="User deleted successfully" href="/client/users" />
 	{:else if user}

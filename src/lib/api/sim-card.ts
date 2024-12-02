@@ -53,7 +53,13 @@ export const apiUpdateSimCard = (id: number, body: UpdateSimCardBody): Promise<S
  * permanently deletes a SIM card
  */
 export const apiDeleteSimCard = (id: number): Promise<string> =>
-	api.delete(`/sim-card/${id}`).json<string>();
+	api
+		.delete(
+			route('DELETE /client/tracking/sim-cards/[sim_card_id=integer]', {
+				sim_card_id: id.toString()
+			})
+		)
+		.json<string>();
 
 /**
  * changes the tracker a SIM card is associated to

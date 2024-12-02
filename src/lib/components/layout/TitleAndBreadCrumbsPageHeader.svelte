@@ -9,8 +9,8 @@
 	let { title, breadCrumbs }: Props = $props();
 </script>
 
-<div class={`flex items-center justify-between`}>
+<div class="flex items-center justify-between">
 	<h1 class="h1">{title}</h1>
 
-	<Breadcrumbs {breadCrumbs} />
+	<Breadcrumbs {breadCrumbs} extraClasses="hidden sm:flex" />
 </div>

@@ -1,74 +1,71 @@
 <script lang="ts">
+	import { apiDeleteSimCard } from '$lib/api/sim-card';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { route } from '$lib/ROUTES.js';
+	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
+	import { createMutation } from '@tanstack/svelte-query';
 
 	const { data } = $props();
-	const { simCard } = $derived(data);
+	let simCard = $state(data.simCard);
 
 	let simDeleted = $state(false);
 	let editMode = $state(false);
 
-	const deleteSimCard = () => {};
+	const deleteSimCardMutation = createMutation(() => ({
+		mutationFn: () => apiDeleteSimCard(simCard.id),
+		onError: showErrorToast
+	}));
 
-	// const deleteSimCardMutation = createMutation({
-	// 	mutationFn: () => apiDeleteSimCard(data.simCardId),
-	// 	onError: showErrorToast
-	// });
+	const deleteSimCard = async () => {
+		if (!confirm('Permanently delete this SIM card ?')) return;
 
-	// const deleteSimCard = async () => {
-	// 	if (!confirm('Permanently delete this SIM card ?')) return;
-	// 	await $deleteSimCardMutation.mutateAsync();
-	// 	simDeleted = true;
-	// };
+		await deleteSimCardMutation.mutateAsync();
+		simDeleted = true;
+	};
 </script>
 
-<div class="p-6 max-w-4xl mx-auto">
+{#snippet field(title: string, value: string | null)}
+	<div>
+		<div class="text-surface-700-300">{title}</div>
+		{value}
+	</div>
+{/snippet}
+
+<div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		title="sim card info"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
 			{ href: route('/client/tracking/sim-cards'), icon: 'mdi:sim', text: 'sim cards' },
-			{
-				href: route(`/client/tracking/sim-cards/[sim_card_id=integer]`, {
-					sim_card_id: data.simCard.id.toString()
-				}),
-				text: data.simCard.id.toString()
-			}
+			{ text: data.simCard.ssn }
 		]}
 	/>
 
-	<hr class="hr my-8" />
+	<hr class="hr my-4" />
 
 	{#if simDeleted}
-		<DeletionSuccessMessage
-			title="SIM card deleted successfully"
-			href={route('/client/tracking/sim-cards')}
-		/>
+		<DeletionSuccessMessage title="SIM card deleted" href={route('/client/tracking/sim-cards')} />
 	{:else if !editMode}
-		<!-- TODO: this is ugly as fuck -->
 		<div class="card py-4">
-			<div class="grid grid-cols-2 md:grid-cols-4 gap-2 px-4">
-				<span class="block">SSN: {simCard.ssn}</span>
-				<span class="block">APN User: {simCard.apnUser}</span>
-				<span class="block">APN password: {simCard.apnPassword}</span>
-				<span class="block">PIN 1: {simCard.pin}</span>
-				<span class="block">PIN 2: {simCard.pin2}</span>
-				<span class="block">PUK 1: {simCard.puk}</span>
-				<span class="block">PUK 2: {simCard.puk2}</span>
-				<span class="block">
-					Created At: {new Date(simCard.createdAt).toLocaleDateString()}
-				</span>
+			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+				{@render field('SSN', simCard.ssn)}
+				{@render field('APN user', simCard.apnUser)}
+				{@render field('APN password', simCard.apnPassword)}
+				{@render field('PIN 1', simCard.pin)}
+				{@render field('PIN 2', simCard.pin2)}
+				{@render field('PUK 1', simCard.puk)}
+				{@render field('PUK 2', simCard.puk2)}
+				{@render field('Created At', new Date(simCard.createdAt).toLocaleDateString())}
 			</div>
 
-			<hr class="hr my-8" />
-
-			<div class="flex space-x-4 justify-end">
+			<div class="flex space-x-4 justify-end mt-8">
 				<PermissionGuard requiredPermissions={'DELETE_SIM_CARD'}>
-					<button class="btn preset-filled-error-500" onclick={deleteSimCard}>
+					<button class="btn preset-filled-error-200-800" onclick={deleteSimCard}>
 						<Icon icon="mdi:trash" />
 						delete
 					</button>
@@ -88,15 +85,10 @@
 			</div>
 		</div>
 	{:else}
-		<!-- <div class="card px-4 py-4">
+		<div class="card px-4 py-4">
 			<div class="flex mb-4 justify-end">
-				<button
-					class="btn btn-sm variant-filled-primary"
-					onclick={() => {
-						editMode = false;
-					}}
-				>
-					<Icon icon="mdi:pencil-off" class="mr-2" />
+				<button class="btn preset-filled-warning-200-800" onclick={() => (editMode = false)}>
+					<Icon icon="mdi:pencil-off" />
 					cancel edit
 				</button>
 			</div>
@@ -104,11 +96,11 @@
 			<UpdateSimCardForm
 				{simCard}
 				formSchema={data.updateSimCardForm}
-				on:sim-card-updated={({ detail }) => {
+				onUpdate={(updatedSimCard) => {
 					editMode = false;
-					simCard = detail;
+					simCard = updatedSimCard;
 				}}
 			/>
-		</div> -->
+		</div>
 	{/if}
 </div>

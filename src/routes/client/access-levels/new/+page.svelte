@@ -63,7 +63,7 @@
 	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
-<div class="p-6 max-w-4xl mx-auto">
+<div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		title="create access level"
 		breadCrumbs={[

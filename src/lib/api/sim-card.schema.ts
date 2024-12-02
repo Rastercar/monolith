@@ -4,7 +4,7 @@ const e164phoneRegExp = /^\+?\d{10,14}$/;
 
 export const simCardSchema = z.object({
 	id: z.number(),
-	createdAt: z.string().datetime(),
+	createdAt: z.date({ coerce: true }),
 
 	ssn: z.string(),
 	phoneNumber: z.string(),

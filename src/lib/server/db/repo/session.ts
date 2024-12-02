@@ -24,10 +24,10 @@ export async function createSession(sessionData: {
 	return createdSession;
 }
 
-export async function deleteSessionByToken(token: string) {
+export function deleteSessionByToken(token: string) {
 	return db.delete(session).where(eq(session.sessionToken, token));
 }
 
-export async function deleteSessionByPublicId(id: number) {
+export function deleteSessionByPublicId(id: number) {
 	return db.delete(session).where(eq(session.publicId, id));
 }

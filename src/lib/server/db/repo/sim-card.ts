@@ -37,3 +37,7 @@ export async function findOrgSimCardsWithPagination(
 		itemCount: records.length
 	};
 }
+
+export function findSimCardByID(id: number) {
+	return db.query.simCard.findFirst({ where: (simCard, { eq }) => eq(simCard.id, id) });
+}

@@ -24,12 +24,7 @@
 	const query = createQuery(() => ({
 		queryKey: ['sim-cards', pagination, filters],
 		placeholderData: keepPreviousData,
-		queryFn: async () => {
-			const xd = await apiGetSimCards({ pagination: pagination, filters: filters });
-			console.log(xd);
-
-			return xd;
-		}
+		queryFn: () => apiGetSimCards({ pagination: pagination, filters: filters })
 	}));
 
 	const columns: ColumnDef<SimCard>[] = [
@@ -49,7 +44,9 @@
 			id: 'actions',
 			cell: ({ row }) =>
 				renderComponent(InfoIconLink, {
-					href: route('/client/tracking/sim-cards/[sim_card_id]', { sim_card_id: row.original.id })
+					href: route('/client/tracking/sim-cards/[sim_card_id=integer]', {
+						sim_card_id: row.original.id.toString()
+					})
 				})
 		}
 	];
@@ -108,6 +105,7 @@
 				{/each}
 			</select>
 
+			<!-- TODO: check for console logs on page change or if we should just bind to avoid callbacks -->
 			<Pagination
 				page={query.data.page}
 				pageSize={query.data.pageSize}

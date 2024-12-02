@@ -40,12 +40,6 @@ export const apiCreateSimCard = (body: CreateSimCardBody): Promise<SimCard> =>
 	api.post(body, '/sim-card').json<SimCard>().then(simCardSchema.parse);
 
 /**
- * get a SIM card by ID
- */
-export const apiGetSimCard = (id: number): Promise<SimCard> =>
-	api.get(`/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
-
-/**
  * update a sim card
  *
  * ### required permissions

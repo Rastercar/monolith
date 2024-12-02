@@ -26,29 +26,3 @@ export const DELETE: RequestHandler<RouteParams> = withAuth(async ({ locals, par
 
 	return json('session deleted');
 });
-
-//     if let Some(session_to_delete) = maybe_session_to_delete {
-//         let request_user = req_user.0;
-
-//         let session_to_delete_id = SessionId::from(session_to_delete);
-
-//         state
-//             .auth_service
-//             .delete_session(&session_to_delete_id)
-//             .await
-//             .or(Err((
-//                 StatusCode::INTERNAL_SERVER_ERROR,
-//                 SimpleError::from("failed to delete session"),
-//             )))?;
-
-//         let mut headers = HeaderMap::new();
-
-//         if req_user_session.get_id() == session_to_delete_id.get_id() {
-//             headers.insert(
-//                 "Set-Cookie",
-//                 session_to_delete_id.into_delete_cookie_header(),
-//             );
-//         }
-
-//         return Ok((StatusCode::OK, headers));
-//     }

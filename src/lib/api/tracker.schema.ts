@@ -1,9 +1,9 @@
-import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
+import { TRACKER_MODEL_H02, trackerModels } from '$lib/constants/tracker-models';
 import { z } from 'zod';
 
 export const createTrackerSchema = z.object({
 	imei: z.string().min(1),
-	model: z.string().min(1),
+	model: z.enum(trackerModels),
 	vehicleId: z.number().optional()
 });
 
@@ -20,7 +20,7 @@ export const trackerSchema = z.object({
 	model: z.literal(TRACKER_MODEL_H02),
 	vehicleId: z.number().nullable(),
 	organizationId: z.number(),
-	createdAt: z.string().datetime()
+	createdAt: z.date({ coerce: true })
 });
 
 export type Tracker = z.infer<typeof trackerSchema>;

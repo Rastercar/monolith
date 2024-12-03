@@ -89,6 +89,6 @@
 		bind:page={pagination.page}
 		bind:pageSize={pagination.pageSize}
 		data={query.data?.records ?? []}
-		count={query.data?.pageCount ?? 0}
+		count={query.data?.itemCount ?? 0}
 	/>
 </div>

@@ -5,9 +5,6 @@
 		classes?: string;
 	}
 
-
-
-
 	interface Props {
 		space?: string;
 		additionalClasses?: string;
@@ -17,16 +14,16 @@
 
 	let {
 		space = 'gap-4',
-		additionalClasses = '',
 		options,
+		additionalClasses = '',
 		selectedOption = $bindable()
 	}: Props = $props();
-
-	let classes = $derived(`flex sm:flex-row flex-col content-start justify-center ${space} ${additionalClasses}`);
 </script>
 
 {#if options.length}
-	<div class={classes}>
+	<div
+		class={`flex sm:flex-row flex-col content-start justify-center ${space} ${additionalClasses}`}
+	>
 		{#each options as option}
 			<button
 				class={option.classes}

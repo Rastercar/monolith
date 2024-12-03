@@ -1,9 +1,11 @@
+export const TRACKER_MODEL_H02 = 'H02';
+
+export const trackerModels = [TRACKER_MODEL_H02] as const;
+
 /**
  * all tracker models supported by the rastercar platform
  */
-export type trackerModel = 'H02';
-
-export const TRACKER_MODEL_H02: trackerModel = 'H02';
+export type trackerModel = (typeof trackerModels)[number];
 
 export interface trackerDetails {
 	/**

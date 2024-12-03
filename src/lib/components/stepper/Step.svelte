@@ -1,44 +1,33 @@
 <script lang="ts">
-	import { getContext, onDestroy } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { getContext, onDestroy, type Snippet } from 'svelte';
 	import type { StepperState } from './types.js';
 
-	
-
 	interface Props {
-		/** Provide arbitrary classes to the step header. */
-		headerAdditionalClasses?: string;
-		state?: Writable<StepperState>;
-		header?: import('svelte').Snippet;
-		children?: import('svelte').Snippet;
+		classes?: string;
+
+		header?: Snippet;
+
+		children?: Snippet;
 	}
 
-	let {
-		headerAdditionalClasses = '',
-		state = getContext('state'),
-		header,
-		children
-	}: Props = $props();
+	let { classes = 'type-scale-6 mb-2', header, children }: Props = $props();
+
+	const state = getContext<StepperState>('state');
 
 	// Register step on init (keep these paired)
-	const stepIndex = $state.total;
+	const stepIndex = state.total;
 
-	$state.total++;
-
-	const cHeader = 'text-2xl font-bold';
+	state.total++;
 
 	// Unregister step on destroy
 	onDestroy(() => {
-		$state.total--;
+		state.total--;
 	});
-
-	// Reactive
-	let classesHeader = $derived(`${cHeader} ${headerAdditionalClasses}`);
 </script>
 
-{#if stepIndex === $state.current}
+{#if stepIndex === state.current}
 	<!-- Slot: Header -->
-	<header class={classesHeader}>
+	<header class={classes}>
 		{#if header}{@render header()}{:else}step {stepIndex + 1}{/if}
 	</header>
 

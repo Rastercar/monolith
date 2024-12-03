@@ -11,32 +11,24 @@
 	lang="ts"
 	generics="TransitionIn extends Transition = FadeTransition, TransitionOut extends Transition = FadeTransition"
 >
-	import { createEventDispatcher, setContext } from 'svelte';
-	import { writable, type Writable } from 'svelte/store';
-	import type { StepperEvent, StepperState } from './types';
+	import { setContext } from 'svelte';
 
-	const dispatch = createEventDispatcher<StepperEvent>();
-
-	
-
-	
-
-	
-
-	
-
-	
 	interface Props {
 		/** Provide the initially selected step*/
 		start?: number;
+
 		/** Provide the transition to used on entry. */
 		transitionIn?: TransitionIn;
+
 		/** Transition params provided to `transitionIn`. */
 		transitionInParams?: TransitionParams<TransitionIn>;
+
 		/** Provide the transition to used on exit. */
 		transitionOut?: TransitionOut;
+
 		/** Transition params provided to `transitionOut`. */
 		transitionOutParams?: TransitionParams<TransitionOut>;
+
 		children?: import('svelte').Snippet;
 	}
 
@@ -49,11 +41,9 @@
 		children
 	}: Props = $props();
 
-	let state: Writable<StepperState> = writable({ current: start, total: 0 });
+	let state = $state({ current: start, total: 0 });
 
 	setContext('state', state);
-	setContext('stepperDispatch', dispatch);
-
 	setContext('transitionIn', transitionIn);
 	setContext('transitionOut', transitionOut);
 	setContext('transitionInParams', transitionInParams);

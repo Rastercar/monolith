@@ -1,44 +1,48 @@
-<!-- @migration-task Error while migrating Svelte code: slot attribute must be a static value -->
-<!-- @migration-task Error while migrating Svelte code: slot attribute must be a static value -->
 <script lang="ts">
-	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
-	import { apiGetTrackerSimCards } from '$lib/api/tracker';
+	import type { createSimCardSchema, SimCard } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import StepperNextStepBtn from '$lib/components/stepper/StepperNextStepBtn.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
 	import Icon from '@iconify/svelte';
-	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import SimCardChooser from './SimCardChooser.svelte';
-	import SimCardDisplay from './SimCardDisplay.svelte';
 
-	/**
-	 * Tracker to be associated with the sim card to be created or selected
-	 */
-	export let tracker: Tracker;
+	interface Props {
+		/**
+		 * Tracker to be associated with the sim card to be created or selected
+		 */
+		tracker: Tracker;
 
-	export let formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+		trackerSimCards: SimCard[];
+
+		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+	}
+
+	const { tracker, formSchema, trackerSimCards }: Props = $props();
 
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
-	const query = createQuery({
-		queryKey: ['tracker', tracker.id, 'sim-cards'],
-		queryFn: () => apiGetTrackerSimCards(tracker.id)
-	});
-
 	let deletedOrRemovedSimCardsIds: number[] = [];
 
-	let stepperState: Writable<StepperState> = getContext('state');
+	let stepperState = getContext<StepperState>('state');
 
 	const removeSimCardFromDisplay = (simId: number) => {
 		deletedOrRemovedSimCardsIds = [...deletedOrRemovedSimCardsIds, simId];
 	};
 
-	$: simCards = ($query.data ?? []).filter((sim) => !deletedOrRemovedSimCardsIds.includes(sim.id));
+	// TODO: will we query sim cards by trackers from a API or will we expect them in anotherway ?
+	//
+	// const query = createQuery(() => ({
+	// 	queryKey: ['tracker', tracker.id, 'sim-cards'],
+	// 	queryFn: () => apiGetTrackerSimCards(tracker.id)
+	// }));
+
+	// let simCards = $derived(
+	// 	(query.data ?? []).filter((sim) => !deletedOrRemovedSimCardsIds.includes(sim.id))
+	// );
 </script>
 
 <span class="text-sm">
@@ -47,61 +51,69 @@
 		: 'Choose the SIM card for your vehicle tracker'}
 </span>
 
-{#if $query.isLoading}
+<!-- {#if query.isLoading}
 	{#each Array(supportedSimCards) as _}
 		<section class="card w-full my-4">
 			<div class="p-4 space-y-4">
-				<div class="placeholder h-12" />
-				<div class="placeholder h-12" />
-				<div class="placeholder h-12" />
+				<div class="placeholder h-12"></div>
+				<div class="placeholder h-12"></div>
+				<div class="placeholder h-12"></div>
 			</div>
 		</section>
 	{/each}
-{:else}
-	<div class="card mt-4 p-4">
-		<Accordion padding="py-2" spacing="space-y-4">
-			{#each Array(supportedSimCards) as _, i}
-				{@const simForSlot = simCards[i]}
+{:else} -->
+<div class="card mt-4">
+	<Accordion collapsible multiple>
+		{#each Array(supportedSimCards) as _, i}
+			{@const simForSlot = trackerSimCards[i]}
 
-				<AccordionItem regionControl="bg-surface-200-700-token px-4" spacing="space-y-3">
-					<svelte:fragment slot="lead">
-						<Icon icon="mdi:sim" width={24} />
-					</svelte:fragment>
+			<Accordion.Item panelPadding="px-0 py-4" value={`slot-${i + 1}`}>
+				{#snippet lead()}
+					<Icon icon="mdi:sim" width={24} />
+				{/snippet}
 
-					<svelte:fragment slot="summary">
-						SLOT {i + 1}
-					</svelte:fragment>
+				{#snippet control()}
+					SLOT {i + 1}
+				{/snippet}
 
-					<svelte:fragment slot="content">
-						<div class="pt-2">
-							{#if simForSlot}
-								<SimCardDisplay
+				{#snippet panel()}
+					{#if simForSlot}
+						<!-- <SimCardDisplay
 									simCard={simForSlot}
 									on:sim-deleted={() => removeSimCardFromDisplay(simForSlot.id)}
 									on:sim-removed={() => removeSimCardFromDisplay(simForSlot.id)}
-								/>
-							{:else}
-								<SimCardChooser
-									slot={i + 1}
-									{tracker}
-									{formSchema}
-									on:sim-card-created={() => $query.refetch()}
-									on:sim-card-selected={() => $query.refetch()}
-								/>
-							{/if}
-						</div>
-					</svelte:fragment>
-				</AccordionItem>
-			{/each}
-		</Accordion>
+								/> -->
+					{:else}
+						<SimCardChooser
+							simSlot={i + 1}
+							{tracker}
+							{formSchema}
+							onSimCardCreated={(sim) => {
+								// TODO: append created sim card to list
+								// TODO:
+								// query.refetch()
+							}}
+							onSimCardSelected={() => {
+								// TODO:
+								// query.refetch()
+							}}
+						/>
+					{/if}
+				{/snippet}
+			</Accordion.Item>
+		{/each}
+	</Accordion>
 
-		<StepperNextStepBtn
-			class="mt-4"
-			canSubmit={!$query.isLoading}
-			isLoading={$query.isLoading}
-			on:click={() => {
-				$stepperState.current++;
-			}}
-		/>
-	</div>
-{/if}
+	<!-- 
+		TODO:
+		canSubmit={!$query.isLoading}
+		isLoading={$query.isLoading}
+	-->
+	<StepperNextStepBtn
+		extraClasses="mt-4"
+		onclick={() => {
+			stepperState.current++;
+		}}
+	/>
+</div>
+<!-- {/if} -->

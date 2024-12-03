@@ -158,7 +158,7 @@
 			{@render preview({ previewSrc: newPhoto?.preview ?? defaultSrc })}
 		{:else}
 			<Avatar
-				name="TODO"
+				name="A"
 				src={newPhoto?.preview ?? defaultSrc}
 				classes="mx-auto pointer-events-none h-48 w-48"
 			/>

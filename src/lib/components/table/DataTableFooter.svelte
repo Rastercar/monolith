@@ -27,6 +27,6 @@
 
 	<!-- hack until: https://github.com/skeletonlabs/skeleton/issues/2986 is fixed -->
 	{#key count}
-		<Pagination alternative bind:page bind:pageSize {data} {count} />
+		<Pagination bind:page bind:pageSize {data} {count} />
 	{/key}
 </div>

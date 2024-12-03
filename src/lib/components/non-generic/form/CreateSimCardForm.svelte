@@ -1,22 +1,17 @@
 <script lang="ts">
-	import { apiCreateSimCard } from '$lib/api/sim-card';
-	import {
-		createSimCardSchema,
-		type CreateSimCardBody,
-		type SimCard
-	} from '$lib/api/sim-card.schema';
-	import { isAppErrorWithCode } from '$lib/api/utils';
-	import TextInput from '$lib/components/form/TextInput.svelte';
-	import { PHONE_NUMBER_IN_USE, SSN_IN_USE } from '$lib/constants/error-codes';
-	import { getToaster } from '$lib/store/toaster';
-	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher } from 'svelte';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { createSimCardSchema, type SimCard } from '$lib/api/sim-card.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
+	import { route } from '$lib/ROUTES';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import type { ActionData } from '../../../../routes/client/tracking/sim-cards/new/$types';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+
 		/**
 		 * The slot of the tracker the sim card being created is going to occupy
 		 *
@@ -24,146 +19,72 @@
 		 * times on the same page
 		 */
 		slotNumber?: number;
+
 		/**
 		 * The ID of the tracker to associate with the SIM card being created
 		 */
 		trackerIdToAssociate?: number | undefined;
+
+		onCreate?: (_: SimCard) => void;
 	}
 
-	let { formSchema, slotNumber = 1, trackerIdToAssociate = undefined }: Props = $props();
+	let { formSchema, slotNumber = 1, onCreate }: Props = $props();
 
 	const form = superForm(formSchema, {
+		id: `sim-card-form-for-slot-${slotNumber}`,
 		validators: zodClient(createSimCardSchema),
-		id: `sim-card-form-for-slot-${slotNumber}`
+		onUpdate: ({ form, result }) => {
+			if (form.valid) {
+				const action = result.data as FormResult<ActionData>;
+				showSuccessToast('sim card created');
+				if (onCreate) onCreate(action.createdSim);
+			}
+		},
+		onError: showErrorToast
 	});
 
-	const toaster = getToaster();
-
-	const mutation = createMutation({
-		mutationFn: (b: CreateSimCardBody) => apiCreateSimCard(b),
-
-		onError: (e) => {
-			if (isAppErrorWithCode(e, SSN_IN_USE)) {
-				form.validate('ssn', { value: '', errors: 'ssn in use', update: 'errors' });
-				return;
-			}
-
-			if (isAppErrorWithCode(e, PHONE_NUMBER_IN_USE)) {
-				form.validate('phoneNumber', { value: '', errors: 'phone number', update: 'errors' });
-				return;
-			}
-
-			toaster.error();
-		}
-	});
-
-	const dispatch = createEventDispatcher<{ 'sim-card-created': SimCard }>();
-
-	const createSimCard = async () => {
-		const validated = await form.validateForm();
-
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
-
-		if (trackerIdToAssociate) validated.data.vehicleTrackerId = trackerIdToAssociate;
-
-		$mutation.mutateAsync(validated.data).then((createdTracker) => {
-			form.reset();
-			dispatch('sim-card-created', createdTracker);
-		});
-	};
-
-	let { tainted, allErrors } = $derived(form);
-
-	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
+	const { submitting: isLoading } = form;
 </script>
 
-<div>
-	<div class="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="ssn"
-			label="SSN *"
-			placeholder="A123BC678Z"
-			maxlength="50"
-		/>
+<form
+	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+	method="POST"
+	action={route('createSimCard /client/tracking/sim-cards/new')}
+	use:form.enhance
+>
+	<TextField {form} name="ssn" label="SSN *" placeholder="A123BC678Z" maxlength={50} />
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="phoneNumber"
-			label="Phone Number *"
-			placeholder="+5599999999"
-			maxlength="20"
-		/>
+	<TextField
+		{form}
+		name="phoneNumber"
+		label="Phone Number *"
+		placeholder="+5599999999"
+		maxlength={20}
+	/>
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="apnUser"
-			label="APN User *"
-			placeholder="isp.docomoiot.net"
-			maxlength="50"
-		/>
+	<TextField
+		{form}
+		name="apnUser"
+		label="APN User *"
+		placeholder="isp.docomoiot.net"
+		maxlength={50}
+	/>
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="apnPassword"
-			label="APN Password *"
-			placeholder="web"
-			maxlength="50"
-		/>
+	<TextField {form} name="apnPassword" label="APN Password *" placeholder="web" maxlength={50} />
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="apnAddress"
-			label="APN Address *"
-			placeholder="web"
-			maxlength="50"
-		/>
+	<TextField {form} name="apnAddress" label="APN Address *" placeholder="web" maxlength={50} />
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="pin"
-			label="PIN 1"
-			placeholder="0000"
-			maxlength="20"
-		/>
+	<TextField {form} name="pin" label="PIN 1" placeholder="0000" maxlength={8} />
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="pin2"
-			label="PIN 2"
-			placeholder="0000"
-			maxlength="20"
-		/>
+	<TextField {form} name="pin2" label="PIN 2" placeholder="0000" maxlength={8} />
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="puk"
-			label="PUK 1"
-			placeholder="00000000"
-			maxlength="20"
-		/>
+	<TextField {form} name="puk" label="PUK 1" placeholder="00000000" maxlength={8} />
 
-		<TextInput
-			{form}
-			class="label mb-1"
-			field="puk2"
-			label="PUK 2"
-			placeholder="00000000"
-			maxlength="20"
-		/>
-	</div>
+	<TextField {form} name="puk2" label="PUK 2" placeholder="00000000" maxlength={8} />
 
-	<div class="flex mt-4 justify-end">
-		<button class="btn variant-filled-primary" disabled={!canSubmit} onclick={createSimCard}>
+	<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
+		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500 ml-auto mt-auto">
 			create SIM card
-		</button>
+		</LoadableButton>
 	</div>
-</div>
+</form>

@@ -1,75 +1,51 @@
 <script lang="ts">
-	import { apiCreateTracker } from '$lib/api/tracker';
-	import {
-		createTrackerSchema,
-		type CreateTrackerBody,
-		type Tracker
-	} from '$lib/api/tracker.schema';
-	import { isAppErrorWithCode } from '$lib/api/utils';
-	import SelectInput from '$lib/components/form/SelectInput.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
-	import { IMEI_IN_USE } from '$lib/constants/error-codes';
+	import { createTrackerSchema, type Tracker } from '$lib/api/tracker.schema';
+	import SelectField from '$lib/components/form/SelectField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
-	import { getToaster } from '$lib/store/toaster';
-	import { createMutation } from '@tanstack/svelte-query';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { route } from '$lib/ROUTES';
+	import type { Snippet } from 'svelte';
+	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import type { ActionData } from '../../../../routes/client/tracking/trackers/new/$types';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
-		/**
-		 * The ID of the vehicle to associate to the tracker
-		 */
-		vehicleIdToAssociate?: number | undefined;
-		children?: import('svelte').Snippet<[any]>;
+
+		children?: Snippet<[{ isLoading: boolean }]>;
+
+		onCreated: (_: Tracker) => void;
 	}
 
-	let { formSchema, vehicleIdToAssociate = undefined, children }: Props = $props();
+	let { formSchema, children, onCreated }: Props = $props();
 
-	const form = superForm(formSchema, { validators: zodClient(createTrackerSchema) });
-
-	const toaster = getToaster();
-
-	const mutation = createMutation({
-		mutationFn: (b: CreateTrackerBody) => apiCreateTracker(b),
-
-		onError: (e) => {
-			isAppErrorWithCode(e, IMEI_IN_USE)
-				? form.validate('imei', { value: '', errors: 'imei in use', update: 'errors' })
-				: toaster.error();
+	const form = superForm(formSchema, {
+		validators: zodClient(createTrackerSchema),
+		onUpdate: ({ form, result }) => {
+			const action = result.data as FormResult<ActionData>;
+			if (form.valid) onCreated(action.createdTracker);
 		}
 	});
-
-	const dispatch = createEventDispatcher<{ 'tracker-created': Tracker }>();
-
-	const createTracker = async () => {
-		const validated = await form.validateForm();
-
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
-
-		if (vehicleIdToAssociate) validated.data.vehicleId = vehicleIdToAssociate;
-
-		$mutation.mutateAsync(validated.data).then((createdTracker) => {
-			dispatch('tracker-created', createdTracker);
-			form.reset();
-		});
-	};
-
-	let { tainted, allErrors } = $derived(form);
-
-	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
+	const { submitting: isLoading } = form;
 </script>
 
-<div class="mb-4">
-	<TextInput {form} field="imei" label="IMEI *" maxlength="50" />
+<form
+	class="grid grid-cols-2 gap-4"
+	method="POST"
+	action={route('createTracker /client/tracking/trackers/new')}
+	use:form.enhance
+>
+	<TextField {form} name="imei" label="IMEI *" maxlength={50} />
 
-	<SelectInput
+	<SelectField
 		{form}
 		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
-		field="model"
+		name="model"
 		label="Model *"
 	/>
-</div>
 
-{@render children?.({ isLoading: $mutation.isPending, canSubmit, createTracker })}
+	{#if children}
+		{@render children({ isLoading: $isLoading })}
+	{/if}
+</form>

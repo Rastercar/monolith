@@ -5,19 +5,23 @@
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
-	import { hasPermission } from '$lib/store/auth.svelte';
-	import Icon from '@iconify/svelte';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import CreateTrackerStep from './components/CreateTrackerStep.svelte';
-	import TrackerCreatedStep from './components/TrackerCreatedStep.svelte';
 
 	let { data } = $props();
 
-	let createdTracker: Tracker | null = $state(null);
+	const auth = getAuthContext();
+
+	// TODO: start as null
+	let createdTracker: Tracker | null = $state({
+		id: 1,
+		organizationId: 1,
+		model: 'H02'
+	} as any);
 </script>
 
 <div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
-		margin="mb-8"
 		title="create tracker"
 		breadCrumbs={[
 			{ href: '/client', icon: 'mdi:home', text: 'home' },
@@ -27,31 +31,38 @@
 		]}
 	/>
 
-	<Stepper>
-		<StepperHeader additionalClasses="mb-4" />
+	<!-- TODO: rm start -->
+	<Stepper start={1}>
+		<StepperHeader extraClasses="my-6" />
 
 		<Step>
 			{#snippet header()}
 				Tracker Information
 			{/snippet}
+
 			<CreateTrackerStep
-				createTrackerForm={data.createTrackerForm}
-				on:tracker-created={(e) => (createdTracker = e.detail)}
+				formSchema={data.createTrackerForm}
+				onCreated={(t) => (createdTracker = t)}
 			/>
 		</Step>
 
-		{#if $hasPermission(['UPDATE_TRACKER', 'CREATE_SIM_CARD'])}
+		{#if auth.hasPermission(['UPDATE_TRACKER', 'CREATE_SIM_CARD'])}
 			<Step>
 				{#snippet header()}
 					Tracker SIM cards
 				{/snippet}
+
 				{#if createdTracker}
-					<SetSimCardsStep formSchema={data.createSimCardForm} tracker={createdTracker} />
+					<SetSimCardsStep
+						formSchema={data.createSimCardForm}
+						tracker={createdTracker}
+						trackerSimCards={[]}
+					/>
 				{/if}
 			</Step>
 		{/if}
 
-		<Step>
+		<!-- <Step>
 			{#snippet header()}
 				<div class="flex items-center">
 					<Icon icon="mdi:check" class="mr-2 text-success-400-500-token" height={24} />
@@ -64,6 +75,6 @@
 					createdTracker = null;
 				}}
 			/>
-		</Step>
+		</Step> -->
 	</Stepper>
 </div>

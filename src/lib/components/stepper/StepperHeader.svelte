@@ -13,41 +13,35 @@
 	generics="TransitionIn extends Transition = FadeTransition, TransitionOut extends Transition = FadeTransition"
 >
 	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 	import { dynamicTransition } from './transition';
 	import type { StepperState } from './types';
 
-
-	
-
-	
-
-	
-
-	
-
-	
 	interface Props {
-		state?: Writable<StepperState>;
 		/** Provide classes to style the stepper header gap. */
 		gap?: string;
+
 		/** Provide classes to style the stepper header badges. */
 		badge?: string;
+
 		/** Provide classes to style the stepper header active step badge. */
 		active?: string;
+
 		/** Provide classes to style the stepper header border. */
 		border?: string;
+
 		/** Provide additional classes. */
-		additionalClasses?: string;
+		extraClasses?: string;
 	}
 
+	//
+	let state = getContext<StepperState>('state');
+
 	let {
-		state = getContext('state'),
 		gap = 'gap-4',
-		badge = 'variant-filled-surface',
-		active = 'variant-filled',
-		border = 'border-surface-400-500-token',
-		additionalClasses = ''
+		badge = 'bg-surface-100-900',
+		active = 'bg-surface-400-600',
+		border = 'border-surface-200-800',
+		extraClasses = ''
 	}: Props = $props();
 
 	/** Provide the transition to used on entry. */
@@ -62,15 +56,15 @@
 	/** Transition params provided to `transitionOut`. */
 	let transitionOutParams: TransitionParams<TransitionOut> = getContext('transitionOutParams');
 
-	const cHeader = 'flex items-center border-t mt-[15px]';
+	const cHeader = 'flex items-center border-t-2';
 
-	let isActive = $derived((step: number) => step === $state.current);
+	let isActive = $derived((step: number) => step === state.current);
 	let classesBadge = $derived((step: number) => (isActive(step) ? active : badge));
 
-	let classesHeader = $derived(`${cHeader} ${border} ${gap} ${additionalClasses}`);
+	let classesHeader = $derived(`${cHeader} ${border} ${gap} ${extraClasses}`);
 </script>
 
-{#if $state.total}
+{#if state.total}
 	<header
 		class={classesHeader}
 		in:dynamicTransition|local={{
@@ -84,7 +78,7 @@
 			params: transitionOutParams
 		}}
 	>
-		{#each Array.from(Array($state.total).keys()) as step}
+		{#each Array.from(Array(state.total).keys()) as step}
 			<div class="-mt-[15px] transition-all duration-300" class:flex-1={isActive(step)}>
 				<span class="badge {classesBadge(step)}">
 					{isActive(step) ? `step ${step + 1}` : step + 1}

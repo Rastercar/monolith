@@ -9,13 +9,6 @@
 	type TransitionIn = $$Generic<Transition>;
 	type TransitionOut = $$Generic<Transition>;
 
-
-	
-
-
-
-
-
 	interface Props {
 		locked?: boolean;
 		/** Arbitrary classes to the step navigation region. */

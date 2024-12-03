@@ -1,5 +1,5 @@
 import { updateSimCardSchema } from '$lib/api/sim-card.schema';
-import { isUniqueConstraintError } from '$lib/server/db/error.js';
+import { isErrorFromUniqueConstraint } from '$lib/server/db/error.js';
 import {
 	findOrgSimCardById as findOrgSimCardByID,
 	updateOrgSimCard
@@ -32,11 +32,11 @@ export const actions = {
 		const form = await validateFormWithFailOnError(request, updateSimCardSchema);
 
 		await updateOrgSimCard(simCardId, locals.user.organization.id, form.data).catch((e) => {
-			if (isUniqueConstraintError(e) && e.constraint_name === 'sim_card_ssn_unique') {
+			if (isErrorFromUniqueConstraint(e, 'sim_card_ssn_unique')) {
 				return setError(form, 'ssn', 'SSN in use by another SIM card');
 			}
 
-			if (isUniqueConstraintError(e) && e.constraint_name === 'sim_card_phone_number_unique') {
+			if (isErrorFromUniqueConstraint(e, 'sim_card_phone_number_unique')) {
 				return setError(form, 'phoneNumber', 'Phone number in use by another SIM card');
 			}
 

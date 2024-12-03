@@ -18,7 +18,7 @@
 </script>
 
 <Stepper>
-	<StepperHeader additionalClasses="mb-4" />
+	<StepperHeader extraClasses="mb-4" />
 
 	<Step>
 		{#snippet header()}

@@ -1,3 +1,4 @@
+import { route } from '$lib/ROUTES';
 import { z } from 'zod';
 import {
 	createPaginatedResponseSchema,
@@ -36,7 +37,7 @@ export const apiGetTrackers = (
 ): Promise<Paginated<Tracker>> =>
 	api
 		.query(stripUndefined({ ...query?.filters, ...query?.pagination }))
-		.get('/tracker')
+		.get(route('/client/tracking/trackers'))
 		.json<Paginated<Tracker>>()
 		.then(createPaginatedResponseSchema(trackerSchema).parse);
 

@@ -1,6 +1,6 @@
 import type { PaginationWithFilters } from '$lib/api/common';
 import type { GetSimCardsFilters } from '$lib/api/sim-card';
-import type { UpdateSimCardBody } from '$lib/api/sim-card.schema';
+import type { CreateSimCardBody, UpdateSimCardBody } from '$lib/api/sim-card.schema';
 import { and, eq, ilike, SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { paginate } from '../pagination';
@@ -34,4 +34,13 @@ export function updateOrgSimCard(id: number, orgId: number, body: UpdateSimCardB
 		.update(simCard)
 		.set(body)
 		.where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));
+}
+
+export async function createOrgSimCard(orgId: number, body: CreateSimCardBody) {
+	const [createdSimCard] = await db
+		.insert(simCard)
+		.values({ ...body, organizationId: orgId })
+		.returning();
+
+	return createdSimCard;
 }

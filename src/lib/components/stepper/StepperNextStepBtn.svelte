@@ -1,32 +1,29 @@
 <script lang="ts">
-	import { createBubbler } from 'svelte/legacy';
-
-	const bubble = createBubbler();
 	import Icon from '@iconify/svelte';
 
-
 	interface Props {
+		onclick: () => void;
 		isLoading?: boolean;
 		canSubmit?: boolean;
 		nextLabel?: string;
-		class?: string;
+		extraClasses?: string;
 	}
 
 	let {
+		onclick,
 		isLoading = false,
 		canSubmit = false,
 		nextLabel = 'Next',
-		class: clazz = ''
+		extraClasses = ''
 	}: Props = $props();
-	
 </script>
 
-<div class={`flex justify-end ${clazz}`}>
-	<button class="btn variant-filled" disabled={!canSubmit || isLoading} onclick={bubble('click')}>
+<div class={`flex justify-end ${extraClasses}`}>
+	<button class="btn preset-filled-primary-500" disabled={!canSubmit || isLoading} {onclick}>
 		{#if !canSubmit}
-			<Icon icon="mdi:lock" class="mr-2" />
+			<Icon icon="mdi:lock" />
 		{:else if isLoading}
-			<Icon icon="mdi:loading" class="mr-2 animate-spin" />
+			<Icon icon="mdi:loading" class="animate-spin" />
 		{/if}
 
 		{nextLabel}

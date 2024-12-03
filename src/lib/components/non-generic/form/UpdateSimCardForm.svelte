@@ -17,19 +17,20 @@
 	let { simCard, formSchema, onUpdate }: Props = $props();
 
 	const form = superForm(formSchema, {
+		validators: zodClient(updateSimCardSchema),
 		onUpdate: ({ form }) => {
 			if (form.valid) {
 				showSuccessToast('sim card updated');
 				onUpdate();
 			}
 		},
-		onError: showErrorToast,
-		validators: zodClient(updateSimCardSchema)
+		onError: showErrorToast
 	});
+	const { submitting: isLoading } = form;
 </script>
 
 <form
-	class="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
 	method="POST"
 	action={route('updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]', {
 		sim_card_id: simCard.id.toString()
@@ -67,7 +68,7 @@
 	<TextField {form} name="puk2" label="PUK 2" placeholder="00000000" maxlength={8} />
 
 	<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
-		<LoadableButton isLoading={false} classes="btn preset-filled-primary-500 ml-auto mt-auto">
+		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500 ml-auto mt-auto">
 			update sim card
 		</LoadableButton>
 	</div>

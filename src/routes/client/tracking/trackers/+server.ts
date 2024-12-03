@@ -1,4 +1,4 @@
-import { findOrgSimCardsWithPagination } from '$lib/server/db/repo/sim-card';
+import { findOrgTrackersWithPagination } from '$lib/server/db/repo/tracker';
 import { withAuth } from '$lib/server/middlewares/auth';
 import { getPaginationParamsFromSearchParams } from '$lib/utils/pagination';
 import { json } from '@sveltejs/kit';
@@ -6,14 +6,13 @@ import { json } from '@sveltejs/kit';
 export const GET = withAuth(async ({ url, locals }) => {
 	const pagination = getPaginationParamsFromSearchParams(url.searchParams);
 
-	const simCards = await findOrgSimCardsWithPagination(locals.user.organization.id, {
+	const trackers = await findOrgTrackersWithPagination(locals.user.organization.id, {
 		pagination,
 		filters: {
 			// TODO: move query parsing to utils
-			// TODO: handle withAssociatedTracker card
-			phoneNumber: url.searchParams.get('phoneNumber') ?? undefined
+			imei: url.searchParams.get('imei') ?? undefined
 		}
 	});
 
-	return json(simCards);
+	return json(trackers);
 });

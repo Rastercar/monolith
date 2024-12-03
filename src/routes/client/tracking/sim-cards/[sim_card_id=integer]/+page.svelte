@@ -10,13 +10,12 @@
 	import { createMutation } from '@tanstack/svelte-query';
 
 	const { data } = $props();
-	let simCard = $state(data.simCard);
 
 	let simDeleted = $state(false);
 	let editMode = $state(false);
 
 	const deleteSimCardMutation = createMutation(() => ({
-		mutationFn: () => apiDeleteSimCard(simCard.id),
+		mutationFn: () => apiDeleteSimCard(data.simCard.id),
 		onError: showErrorToast
 	}));
 
@@ -53,14 +52,14 @@
 	{:else if !editMode}
 		<div class="card py-4">
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-				{@render field('SSN', simCard.ssn)}
-				{@render field('APN user', simCard.apnUser)}
-				{@render field('APN password', simCard.apnPassword)}
-				{@render field('PIN 1', simCard.pin)}
-				{@render field('PIN 2', simCard.pin2)}
-				{@render field('PUK 1', simCard.puk)}
-				{@render field('PUK 2', simCard.puk2)}
-				{@render field('Created At', new Date(simCard.createdAt).toLocaleDateString())}
+				{@render field('SSN', data.simCard.ssn)}
+				{@render field('APN user', data.simCard.apnUser)}
+				{@render field('APN password', data.simCard.apnPassword)}
+				{@render field('PIN 1', data.simCard.pin)}
+				{@render field('PIN 2', data.simCard.pin2)}
+				{@render field('PUK 1', data.simCard.puk)}
+				{@render field('PUK 2', data.simCard.puk2)}
+				{@render field('Created At', new Date(data.simCard.createdAt).toLocaleDateString())}
 			</div>
 
 			<div class="flex space-x-4 justify-end mt-8">
@@ -94,12 +93,9 @@
 			</div>
 
 			<UpdateSimCardForm
-				{simCard}
+				simCard={data.simCard}
 				formSchema={data.updateSimCardForm}
-				onUpdate={(updatedSimCard) => {
-					editMode = false;
-					simCard = updatedSimCard;
-				}}
+				onUpdate={() => (editMode = false)}
 			/>
 		</div>
 	{/if}

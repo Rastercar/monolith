@@ -17,13 +17,12 @@
 	const auth = getAuthContext();
 
 	const form = superForm(data.form, {
+		resetForm: false,
 		validators: zodClient(updateUserSchema),
 		onUpdated({ form: { data, valid } }) {
 			if (!valid) return;
 
 			auth.updateUser(data);
-			form.form.set(data);
-
 			showSuccessToast('profile updated');
 		}
 	});

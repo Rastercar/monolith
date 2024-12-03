@@ -34,8 +34,8 @@
 		onDeleteSuccess = () => undefined
 	}: Props = $props();
 
-	const uploadMutation = createMutation({ mutationFn: uploadMutationFn });
-	const deleteMutation = createMutation({ mutationFn: deleteMutationFn });
+	const uploadMutation = createMutation(() => ({ mutationFn: uploadMutationFn }));
+	const deleteMutation = createMutation(() => ({ mutationFn: deleteMutationFn }));
 
 	let newPhoto = $state<null | { preview: string; file: File }>(null);
 
@@ -104,7 +104,7 @@
 	const uploadFile = () => {
 		if (!newPhoto?.file) return;
 
-		$uploadMutation
+		uploadMutation
 			.mutateAsync(newPhoto.file)
 			.then((uploadResult) => onUploadSuccess(uploadResult))
 			.catch(() => showErrorToast('failed to upload picture'))
@@ -116,7 +116,7 @@
 	const deleteFile = () => {
 		if (!confirm(deleteConfirmPrompt)) return;
 
-		$deleteMutation
+		deleteMutation
 			.mutateAsync()
 			.then((deletionResult) => onDeleteSuccess(deletionResult))
 			.catch(() => showErrorToast('failed to remove picture'))
@@ -180,19 +180,19 @@
 	<div class="w-sm absolute top-3 right-3 rounded-lg">
 		<div class:hidden={newPhoto === null} class="flex flex-col space-y-4">
 			<button
-				disabled={$uploadMutation.isPending}
+				disabled={uploadMutation.isPending}
 				class="btn-icon preset-filled-success-300-700"
 				onclick={uploadFile}
 			>
 				<Icon
-					icon={$uploadMutation.isPending ? 'mdi:loading' : 'mdi:check'}
-					class={$uploadMutation.isPending ? 'animate-spin' : ''}
+					icon={uploadMutation.isPending ? 'mdi:loading' : 'mdi:check'}
+					class={uploadMutation.isPending ? 'animate-spin' : ''}
 				/>
 			</button>
 
 			<button
 				class="btn-icon preset-filled-error-300-700"
-				disabled={$uploadMutation.isPending}
+				disabled={uploadMutation.isPending}
 				onclick={clearPreview}
 			>
 				<Icon icon="mdi:close" />
@@ -206,7 +206,7 @@
 		>
 			<button
 				class="btn-icon preset-filled-primary-300-700"
-				disabled={$uploadMutation.isPending}
+				disabled={uploadMutation.isPending}
 				onclick={() => filePicker?.click()}
 			>
 				<Icon icon={hasPictureToShow ? 'mdi:pencil' : 'mdi:plus'} />
@@ -215,7 +215,7 @@
 			{#if hasPictureToShow}
 				<button
 					class="btn-icon preset-filled-error-300-700"
-					disabled={$uploadMutation.isPending}
+					disabled={uploadMutation.isPending}
 					onclick={() => deleteFile()}
 				>
 					<Icon icon="mdi:trash" />

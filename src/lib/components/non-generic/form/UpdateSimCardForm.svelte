@@ -1,17 +1,9 @@
 <script lang="ts">
-	import { apiUpdateSimCard } from '$lib/api/sim-card';
-	import {
-		updateSimCardSchema,
-		type SimCard,
-		type UpdateSimCardBody
-	} from '$lib/api/sim-card.schema';
-	import { isAppErrorWithCode } from '$lib/api/utils';
+	import { updateSimCardSchema, type SimCard } from '$lib/api/sim-card.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
-	import { PHONE_NUMBER_IN_USE, SSN_IN_USE } from '$lib/constants/error-codes';
+	import { route } from '$lib/ROUTES';
 	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
-	import { createMutation } from '@tanstack/svelte-query';
-	import { onMount } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -19,64 +11,31 @@
 	interface Props {
 		simCard: SimCard;
 		formSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
-		onUpdate: (_: SimCard) => void;
+		onUpdate: () => void;
 	}
 
 	let { simCard, formSchema, onUpdate }: Props = $props();
 
-	const form = superForm(formSchema, { validators: zodClient(updateSimCardSchema) });
-
-	const mutation = createMutation(() => ({
-		mutationFn: (b: UpdateSimCardBody) => apiUpdateSimCard(simCard.id, b),
-
-		onError: (e) => {
-			if (isAppErrorWithCode(e, SSN_IN_USE)) {
-				form.validate('ssn', { value: '', errors: 'ssn in use', update: 'errors' });
-				return;
+	const form = superForm(formSchema, {
+		onUpdate: ({ form }) => {
+			if (form.valid) {
+				showSuccessToast('sim card updated');
+				onUpdate();
 			}
-
-			if (isAppErrorWithCode(e, PHONE_NUMBER_IN_USE)) {
-				form.validate('phoneNumber', { value: '', errors: 'phone number', update: 'errors' });
-				return;
-			}
-
-			showErrorToast('TODO:');
-		}
-	}));
-
-	const updateSimCard = async () => {
-		const validated = await form.validateForm();
-
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
-
-		mutation.mutateAsync(validated.data).then((updatedSimCard) => {
-			showSuccessToast('sim card updated');
-			simCard = updatedSimCard;
-		});
-	};
-
-	onMount(() => {
-		form.reset({
-			data: {
-				ssn: simCard.ssn,
-				phoneNumber: simCard.phoneNumber,
-				apnUser: simCard.apnUser,
-				apnAddress: simCard.apnAddress,
-				apnPassword: simCard.apnPassword,
-				pin: simCard.pin,
-				pin2: simCard.pin2,
-				puk: simCard.puk,
-				puk2: simCard.puk2
-			}
-		});
+		},
+		onError: showErrorToast,
+		validators: zodClient(updateSimCardSchema)
 	});
-
-	let { allErrors } = $derived(form);
-
-	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
-<div class="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+<form
+	class="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+	method="POST"
+	action={route('updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]', {
+		sim_card_id: simCard.id.toString()
+	})}
+	use:form.enhance
+>
 	<TextField {form} name="ssn" label="SSN *" placeholder="A123BC678Z" maxlength={50} />
 
 	<TextField
@@ -99,22 +58,17 @@
 
 	<TextField {form} name="apnAddress" label="APN Address *" placeholder="web" maxlength={50} />
 
-	<TextField {form} name="pin" label="PIN 1" placeholder="0000" maxlength={20} />
+	<TextField {form} name="pin" label="PIN 1" placeholder="0000" maxlength={8} />
 
-	<TextField {form} name="pin2" label="PIN 2" placeholder="0000" maxlength={20} />
+	<TextField {form} name="pin2" label="PIN 2" placeholder="0000" maxlength={8} />
 
-	<TextField {form} name="puk" label="PUK 1" placeholder="00000000" maxlength={20} />
+	<TextField {form} name="puk" label="PUK 1" placeholder="00000000" maxlength={8} />
 
-	<TextField {form} name="puk2" label="PUK 2" placeholder="00000000" maxlength={20} />
-</div>
+	<TextField {form} name="puk2" label="PUK 2" placeholder="00000000" maxlength={8} />
 
-<div class="flex justify-end">
-	<LoadableButton
-		isLoading={false}
-		disabled={!canSubmit}
-		classes="btn preset-filled-primary-500 ml-auto mt-auto"
-		onclick={updateSimCard}
-	>
-		update sim card
-	</LoadableButton>
-</div>
+	<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
+		<LoadableButton isLoading={false} classes="btn preset-filled-primary-500 ml-auto mt-auto">
+			update sim card
+		</LoadableButton>
+	</div>
+</form>

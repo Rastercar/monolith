@@ -15,13 +15,12 @@
 	const auth = getAuthContext();
 
 	const form = superForm(data.form, {
+		resetForm: false,
 		validators: zodClient(updateOrganizationSchema),
 		onUpdated({ form: { data, valid } }) {
 			if (!valid) return;
 
 			auth.updateUserOrg(data);
-			form.form.set(data);
-
 			showSuccessToast('organization updated');
 		}
 	});

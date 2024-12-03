@@ -34,13 +34,3 @@ export const PLATE_IN_USE = 'PLATE_IN_USE';
  * a tracker could not be created / updated because the imei is in use
  */
 export const IMEI_IN_USE = 'IMEI_IN_USE';
-
-/**
- * a sim card could not be created / updated because the ssn is in use
- */
-export const SSN_IN_USE = 'SSN_IN_USE';
-
-/**
- * a sim card could not be created / updated because the phone number is in use
- */
-export const PHONE_NUMBER_IN_USE = 'PHONE_NUMBER_IN_USE';

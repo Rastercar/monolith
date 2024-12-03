@@ -1,61 +1,49 @@
 <script lang="ts">
-	import { apiDeleteSimCard, apiSetSimCardTracker } from '$lib/api/sim-card';
 	import type { SimCard } from '$lib/api/sim-card.schema';
-	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
-	import { getToaster } from '$lib/store/toaster';
-	import Icon from '@iconify/svelte';
-	import { ProgressRadial, popup } from '@skeletonlabs/skeleton';
-	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher } from 'svelte';
-	import SimDeletionOrRemovalWarning from './SimDeletionOrRemovalWarning.svelte';
 
 	interface Props {
 		simCard: SimCard;
 		additionalClasses?: string;
+
+		onSimDeleted: () => void;
+		onSimRemoved: () => void;
 	}
 
 	let { simCard, additionalClasses = '' }: Props = $props();
 
 	let warningToShow: 'deletion' | 'removal' | null = $state(null);
 
-	const toaster = getToaster();
+	// const deleteSimMutation = createMutation({
+	// 	mutationFn: () => apiDeleteSimCard(simCard.id),
+	// 	onSuccess: () => toaster.success('SIM card deleted')
+	// });
 
-	const deleteSimMutation = createMutation({
-		mutationFn: () => apiDeleteSimCard(simCard.id),
-		onSuccess: () => toaster.success('SIM card deleted')
-	});
+	// const removeSimCardMutation = createMutation({
+	// 	mutationFn: () => apiSetSimCardTracker({ simCardId: simCard.id, newTrackerId: null }),
+	// 	onSuccess: () => toaster.success('SIM card removed from slot')
+	// });
 
-	const removeSimCardMutation = createMutation({
-		mutationFn: () => apiSetSimCardTracker({ simCardId: simCard.id, newTrackerId: null }),
-		onSuccess: () => toaster.success('SIM card removed from slot')
-	});
+	// const deleteSimCard = () => {
+	// 	$deleteSimMutation
+	// 		.mutateAsync()
+	// 		.then(() => dispatch('sim-deleted'))
+	// 		.catch(() => toaster.error('failed to delete sim card'));
+	// };
 
-	const deleteSimCard = () => {
-		$deleteSimMutation
-			.mutateAsync()
-			.then(() => dispatch('sim-deleted'))
-			.catch(() => toaster.error('failed to delete sim card'));
-	};
-
-	const removeSimCard = () => {
-		$removeSimCardMutation
-			.mutateAsync()
-			.then(() => dispatch('sim-removed'))
-			.catch(() => toaster.error('failed to remove sim card'));
-	};
-
-	const dispatch = createEventDispatcher<{
-		'sim-deleted': void;
-		'sim-removed': void;
-	}>();
+	// const removeSimCard = () => {
+	// 	$removeSimCardMutation
+	// 		.mutateAsync()
+	// 		.then(() => dispatch('sim-removed'))
+	// 		.catch(() => toaster.error('failed to remove sim card'));
+	// };
 </script>
 
-<div class={`card p-4 ${additionalClasses}`}>
+<div class={`card preset-filled-surface-100-900 p-4 ${additionalClasses}`}>
 	<div class="flex items-center mb-2">
 		<span class="text-md">phone number: {simCard.phoneNumber}</span>
 
 		<!-- Remove SIM button -->
-		<button
+		<!-- <button
 			class="ml-auto btn-icon btn-icon-sm variant-filled p-0 [&>*]:pointer-events-none"
 			disabled={!!warningToShow || $removeSimCardMutation.isPending}
 			use:popup={{ event: 'hover', target: 'removeSimPopup', placement: 'top' }}
@@ -70,10 +58,10 @@
 
 		<ArrowUpTooltip dataPopup="removeSimPopup">
 			{$removeSimCardMutation.isPending ? 'removing SIM card' : 'remove SIM card'}
-		</ArrowUpTooltip>
+		</ArrowUpTooltip> -->
 
 		<!-- Delete SIM button -->
-		<button
+		<!-- <button
 			class="ml-4 btn-icon btn-icon-sm variant-filled p-0 [&>*]:pointer-events-none"
 			disabled={!!warningToShow || $deleteSimMutation.isPending}
 			use:popup={{ event: 'hover', target: 'deleteSimPopup', placement: 'top' }}
@@ -88,11 +76,11 @@
 
 		<ArrowUpTooltip dataPopup="deleteSimPopup">
 			{$deleteSimMutation.isPending ? 'deleting sim card' : 'delete SIM card'}
-		</ArrowUpTooltip>
+		</ArrowUpTooltip> -->
 	</div>
 
 	{#if warningToShow !== null}
-		<SimDeletionOrRemovalWarning
+		<!-- <SimDeletionOrRemovalWarning
 			type={warningToShow}
 			on:cancel-click={() => {
 				warningToShow = null;
@@ -101,7 +89,7 @@
 				warningToShow === 'deletion' ? deleteSimCard() : removeSimCard();
 				warningToShow = null;
 			}}
-		/>
+		/> -->
 	{/if}
 
 	<hr class="my-4" />

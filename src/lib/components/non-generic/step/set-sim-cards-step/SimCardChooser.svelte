@@ -4,6 +4,7 @@
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import CreateSimCardForm from '../../form/CreateSimCardForm.svelte';
+	import SelectSimCardDataTable from '../../table/SelectSimCardDataTable.svelte';
 
 	interface Props {
 		/**
@@ -11,6 +12,9 @@
 		 */
 		tracker: Tracker;
 
+		/**
+		 * Slot the tracker is being inserted into
+		 */
 		simSlot: number;
 
 		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
@@ -45,7 +49,7 @@
 />
 
 {#if selectedOption === 'existing-sim-card'}
-	<!-- <SelectSimCardDataTable trackerIdToAssociate={tracker.id} on:sim-card-selected /> -->
+	<SelectSimCardDataTable trackerIdToAssociate={tracker.id} onSelected={onSimCardSelected} />
 {:else}
 	<CreateSimCardForm
 		slotNumber={simSlot}

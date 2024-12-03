@@ -9,6 +9,7 @@
 	import { getContext } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import SimCardChooser from './SimCardChooser.svelte';
+	import SimCardDisplay from './SimCardDisplay.svelte';
 
 	interface Props {
 		/**
@@ -23,6 +24,8 @@
 
 	const { tracker, formSchema, trackerSimCards }: Props = $props();
 
+	let simCards = $state(trackerSimCards);
+
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
 	let deletedOrRemovedSimCardsIds: number[] = [];
@@ -32,17 +35,6 @@
 	const removeSimCardFromDisplay = (simId: number) => {
 		deletedOrRemovedSimCardsIds = [...deletedOrRemovedSimCardsIds, simId];
 	};
-
-	// TODO: will we query sim cards by trackers from a API or will we expect them in anotherway ?
-	//
-	// const query = createQuery(() => ({
-	// 	queryKey: ['tracker', tracker.id, 'sim-cards'],
-	// 	queryFn: () => apiGetTrackerSimCards(tracker.id)
-	// }));
-
-	// let simCards = $derived(
-	// 	(query.data ?? []).filter((sim) => !deletedOrRemovedSimCardsIds.includes(sim.id))
-	// );
 </script>
 
 <span class="text-sm">
@@ -62,58 +54,53 @@
 		</section>
 	{/each}
 {:else} -->
-<div class="card mt-4">
-	<Accordion collapsible multiple>
-		{#each Array(supportedSimCards) as _, i}
-			{@const simForSlot = trackerSimCards[i]}
+<Accordion collapsible multiple>
+	{#each Array(supportedSimCards) as _, i}
+		{@const simForSlot = simCards[i]}
 
-			<Accordion.Item panelPadding="px-0 py-4" value={`slot-${i + 1}`}>
-				{#snippet lead()}
-					<Icon icon="mdi:sim" width={24} />
-				{/snippet}
+		<Accordion.Item
+			panelPadding="px-0 pt-4"
+			controlClasses="my-2 bg-surface-200-800"
+			value={`slot-${i + 1}`}
+		>
+			{#snippet lead()}
+				<Icon icon="mdi:sim" width={24} />
+			{/snippet}
 
-				{#snippet control()}
-					SLOT {i + 1}
-				{/snippet}
+			{#snippet control()}
+				SLOT {i + 1}
+			{/snippet}
 
-				{#snippet panel()}
-					{#if simForSlot}
-						<!-- <SimCardDisplay
-									simCard={simForSlot}
-									on:sim-deleted={() => removeSimCardFromDisplay(simForSlot.id)}
-									on:sim-removed={() => removeSimCardFromDisplay(simForSlot.id)}
-								/> -->
-					{:else}
-						<SimCardChooser
-							simSlot={i + 1}
-							{tracker}
-							{formSchema}
-							onSimCardCreated={(sim) => {
-								// TODO: append created sim card to list
-								// TODO:
-								// query.refetch()
-							}}
-							onSimCardSelected={() => {
-								// TODO:
-								// query.refetch()
-							}}
-						/>
-					{/if}
-				{/snippet}
-			</Accordion.Item>
-		{/each}
-	</Accordion>
+			{#snippet panel()}
+				{#if simForSlot}
+					<SimCardDisplay
+						simCard={simForSlot}
+						onSimDeleted={() => removeSimCardFromDisplay(simForSlot.id)}
+						onSimRemoved={() => removeSimCardFromDisplay(simForSlot.id)}
+					/>
+				{:else}
+					<SimCardChooser
+						simSlot={i + 1}
+						{tracker}
+						{formSchema}
+						onSimCardCreated={(sim) => simCards.push(sim)}
+						onSimCardSelected={(sim) => simCards.push(sim)}
+					/>
+				{/if}
+			{/snippet}
+		</Accordion.Item>
+	{/each}
+</Accordion>
 
-	<!-- 
+<!-- 
 		TODO:
 		canSubmit={!$query.isLoading}
 		isLoading={$query.isLoading}
 	-->
-	<StepperNextStepBtn
-		extraClasses="mt-4"
-		onclick={() => {
-			stepperState.current++;
-		}}
-	/>
-</div>
+<StepperNextStepBtn
+	extraClasses="py-4"
+	onclick={() => {
+		stepperState.current++;
+	}}
+/>
 <!-- {/if} -->

@@ -1,19 +1,12 @@
 <script lang="ts">
-	import type { ChangeEventHandler } from 'svelte/elements';
-
 	interface Props {
 		checked: boolean;
 		disabled: boolean;
 		indeterminate: boolean;
-		onChange: ChangeEventHandler<HTMLInputElement>;
+		onChange: (_: boolean) => void;
 	}
 
-	let {
-		checked,
-		disabled,
-		indeterminate = $bindable(),
-		onChange
-	}: Props = $props();
+	let { checked, disabled, indeterminate = $bindable(), onChange }: Props = $props();
 </script>
 
 <input
@@ -22,5 +15,5 @@
 	{checked}
 	class="checkbox disabled:bg-surface-300-600-token disabled:cursor-not-allowed"
 	type="checkbox"
-	onchange={onChange}
+	onchange={(e) => onChange(e.currentTarget.checked)}
 />

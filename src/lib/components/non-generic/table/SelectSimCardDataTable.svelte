@@ -3,68 +3,64 @@
   Simple data table for selecting a SIM card that is not associated with a tracker
 -->
 <script lang="ts">
-	import type { Paginated } from '$lib/api/common';
-	import { apiGetSimCards, apiSetSimCardTracker, type GetSimCardsFilters } from '$lib/api/sim-card';
+	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
 	import type { SimCard } from '$lib/api/sim-card.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { getToaster } from '$lib/store/toaster';
-	import { Paginator } from '@skeletonlabs/skeleton';
-	import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
+	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
 		renderComponent,
 		type ColumnDef,
-		type TableOptions
+		type RowSelectionState
 	} from '@tanstack/svelte-table';
-	import { createEventDispatcher } from 'svelte';
-	import { derived, writable } from 'svelte/store';
 
 	interface Props {
 		/**
 		 * The ID of the tracker to associate the selected SIM card to
 		 */
 		trackerIdToAssociate: number;
+
+		onSelected: (_: SimCard) => void;
 	}
 
-	let { trackerIdToAssociate }: Props = $props();
+	let { trackerIdToAssociate, onSelected }: Props = $props();
 
-	const pagination = writable({ page: 1, pageSize: 3 });
-	const filters = writable<GetSimCardsFilters>({ withAssociatedTracker: false });
+	// TODO: it seems tanstack table for svelte 5 is quite buggy
+	//
+	// and we need to declare and manage row selection state ourselves
+	let rowSelection = $state<RowSelectionState>({});
 
-	const query = createQuery(
-		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['sim-cards', $pagination, $filters],
-			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<SimCard>> => {
-				const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
+	const pagination = $state({ page: 1, pageSize: 5 });
 
-				// since we are doing server side pagination, we need to
-				// clear the row selection since the dataset changes bellow
-				$table.resetRowSelection();
+	const filters = $state<GetSimCardsFilters>({ withAssociatedTracker: false });
 
-				$options.data = result.records;
+	const query = createQuery(() => ({
+		queryKey: ['sim-cards', pagination, filters],
+		queryFn: async () => {
+			const result = await apiGetSimCards({ pagination: pagination, filters: filters });
+			rowSelection = {};
 
-				return result;
-			}
-		}))
-	);
+			return result;
+		}
+	}));
+
+	// queryFn: async (): Promise<Paginated<SimCard>> => {
+	// 		const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
+	// 		// since we are doing server side pagination, we need to
+	// 		// clear the row selection since the dataset changes bellow
+	// 		$table.resetRowSelection();
+	// 		$options.data = result.records;
+	// 		return result;
+	// }
 
 	const columns: ColumnDef<SimCard>[] = [
-		{
-			accessorKey: 'phoneNumber',
-			header: () => 'Phone'
-		},
-		{
-			accessorKey: 'ssn',
-			header: () => 'SSN'
-		},
-		{
-			accessorKey: 'apnAddress',
-			header: () => 'APN'
-		},
+		{ accessorKey: 'phoneNumber', header: () => 'Phone' },
+		{ accessorKey: 'ssn', header: () => 'SSN' },
+		{ accessorKey: 'apnAddress', header: () => 'APN' },
 		{
 			accessorKey: 'createdAt',
 			header: () => 'Created at',
@@ -77,104 +73,90 @@
 					checked: cell.row.getIsSelected(),
 					disabled: !cell.row.getCanSelect(),
 					indeterminate: cell.row.getIsSomeSelected(),
-					onChange: cell.row.getToggleSelectedHandler()
+					onChange: (a) => (rowSelection = { [cell.row.id]: a })
 				})
 		}
 	];
 
-	const colspan = columns.length;
+	const table = $derived(
+		createSvelteTable({
+			data: query.data?.records ?? [],
+			columns: columns,
+			manualPagination: true,
+			enableRowSelection: true,
+			enableMultiRowSelection: false,
+			state: {
+				rowSelection,
+				pagination: {
+					pageIndex: pagination.page,
+					pageSize: pagination.pageSize
+				}
+			},
+			getCoreRowModel: getCoreRowModel()
+		})
+	);
 
-	const options = writable<TableOptions<SimCard>>({
-		data: $query.data?.records ?? [],
-		columns: columns,
-		manualPagination: true,
-		enableRowSelection: true,
-		enableMultiRowSelection: false,
-		state: {
-			pagination: {
-				pageIndex: $pagination.page,
-				pageSize: $pagination.pageSize
-			}
-		},
-		getCoreRowModel: getCoreRowModel()
-	});
+	// const mutation = createMutation({
+	// 	mutationFn: (simCardId: number) =>
+	// 		apiSetSimCardTracker({ simCardId, newTrackerId: trackerIdToAssociate }),
 
-	const toaster = getToaster();
+	// 	onError: () => toaster.error('failed to add SIM card to tracker')
+	// });
 
-	const table = createSvelteTable(options);
+	// const addSimToTracker = () => {
+	// 	const selectedRowId = Object.keys($table.getState().rowSelection)[0];
+	// 	const simCard = $table.getRow(selectedRowId).original;
 
-	const mutation = createMutation({
-		mutationFn: (simCardId: number) =>
-			apiSetSimCardTracker({ simCardId, newTrackerId: trackerIdToAssociate }),
+	// 	$mutation.mutateAsync(simCard.id).then(() => {
+	// 		dispatch('sim-card-selected', simCard);
+	// 	});
+	// };
 
-		onError: () => toaster.error('failed to add SIM card to tracker')
-	});
-
-	const dispatch = createEventDispatcher<{ 'sim-card-selected': SimCard }>();
-
-	const addSimToTracker = () => {
-		const selectedRowId = Object.keys($table.getState().rowSelection)[0];
-		const simCard = $table.getRow(selectedRowId).original;
-
-		$mutation.mutateAsync(simCard.id).then(() => {
-			dispatch('sim-card-selected', simCard);
-		});
-	};
-
-	const showSimInfoModal = () => {
-		modalStore.trigger({
-			type: 'alert',
-			title: 'About available SIM cards',
-			body: 'Only SIM cards that are not associated with a tracker can be selected, if you wish to use a SIM card that is already installed in a tracker, please uninstall the SIM card.',
-			buttonTextCancel: 'ok'
-		});
-	};
-
-	let isLoading = $derived($query.isLoading || $query.isFetching);
+	// const showSimInfoModal = () => {
+	// 	modalStore.trigger({
+	// 		type: 'alert',
+	// 		title: 'About available SIM cards',
+	// 		body: 'Only SIM cards that are not associated with a tracker can be selected, if you wish to use a SIM card that is already installed in a tracker, please uninstall the SIM card.',
+	// 		buttonTextCancel: 'ok'
+	// 	});
+	// };
 
 	let hasSelectedItem = $derived(Object.keys($table.getState().rowSelection).length > 0);
 </script>
 
+<pre>{JSON.stringify(rowSelection, null, 2)}</pre>
+<pre>{JSON.stringify($table.getState().rowSelection, null, 2)}</pre>
+
 <DebouncedTextField
-	class="label my-4"
-	title="Filter by phone number"
-	on:change={(e) => ($filters.phoneNumber = e.detail)}
+	classes="label my-4"
+	placeholder="Filter by phone number"
+	onChange={(v) => (filters.phoneNumber = v)}
 >
 	{#snippet label()}
 		<div class="flex">
 			<span>Filter by phone number</span>
-			<button
-				type="button"
-				class="btn p-0 text-primary-700-200-token ml-auto"
-				onclick={showSimInfoModal}
-			>
+			<button type="button" class="btn p-0 text-primary-800-200 ml-auto">
+				<!-- TODO: -->
+				<!-- onclick={showSimInfoModal} -->
 				not finding your sim card ?
 			</button>
 		</div>
 	{/snippet}
 </DebouncedTextField>
 
-<DataTable {table} {colspan} {isLoading} class="mb-4" />
+<DataTable {table} isLoading={query.isFetching} />
 
-<Paginator
-	select="select min-w-[150px] py-1"
-	settings={{
-		page: $pagination.page - 1,
-		limit: $pagination.pageSize,
-		size: $query.data?.itemCount ?? 0,
-		amounts: [1, 3, 5, 10, 15]
-	}}
-	maxNumerals={1}
-	on:page={({ detail: zeroIndexedPage }) => {
-		$pagination.page = zeroIndexedPage + 1;
-	}}
-	on:amount={({ detail: pageSize }) => {
-		$pagination.pageSize = pageSize;
-	}}
+<DataTableFooter
+	extraClasses="mt-4"
+	bind:page={pagination.page}
+	bind:pageSize={pagination.pageSize}
+	data={query.data?.records ?? []}
+	count={query.data?.itemCount ?? 0}
 />
 
 {#if hasSelectedItem}
 	<div class="flex justify-end mt-4">
-		<button class="btn variant-filled-primary" onclick={addSimToTracker}>Select SIM card</button>
+		<!-- onclick={addSimToTracker} -->
+		<button class="btn preset-filled-primary-500">Select SIM card</button>
 	</div>
 {/if}

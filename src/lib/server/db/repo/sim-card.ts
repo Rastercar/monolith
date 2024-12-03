@@ -1,7 +1,7 @@
 import type { PaginationWithFilters } from '$lib/api/common';
 import type { GetSimCardsFilters } from '$lib/api/sim-card';
 import type { CreateSimCardBody, UpdateSimCardBody } from '$lib/api/sim-card.schema';
-import { and, eq, ilike, SQL } from 'drizzle-orm';
+import { and, eq, ilike, isNotNull, isNull, SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { paginate } from '../pagination';
 import { simCard } from '../schema';
@@ -14,7 +14,17 @@ export async function findOrgSimCardsWithPagination(
 
 	const sqlFilters: SQL[] = [eq(simCard.organizationId, orgId)];
 
-	if (filters?.phoneNumber) sqlFilters.push(ilike(simCard.phoneNumber, `%${filters.phoneNumber}%`));
+	if (filters?.phoneNumber) {
+		sqlFilters.push(ilike(simCard.phoneNumber, `%${filters.phoneNumber}%`));
+	}
+
+	if (filters?.withAssociatedTracker !== undefined) {
+		const filter = filters.withAssociatedTracker
+			? isNotNull(simCard.vehicleTrackerId)
+			: isNull(simCard.vehicleTrackerId);
+
+		sqlFilters.push(filter);
+	}
 
 	return paginate(pagination, simCard, sqlFilters);
 }

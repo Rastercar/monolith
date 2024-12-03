@@ -15,7 +15,7 @@ interface CreateCronArgs {
 	cb: () => void;
 }
 
-function formatDuration(seconds: number): string {
+function fmt(seconds: number): string {
 	if (seconds < 60) {
 		return `${seconds} second${seconds !== 1 ? 's' : ''}`;
 	}
@@ -35,9 +35,7 @@ function formatDuration(seconds: number): string {
 }
 
 function createCron({ key, description, intervalSeconds, cb }: CreateCronArgs) {
-	console.log(
-		`[CRON] registering cronjob: ${key} with interval of ${formatDuration(intervalSeconds)}`
-	);
+	console.log(`[CRON] registering cronjob: ${key} with interval of ${fmt(intervalSeconds)}`);
 
 	// If a cron with this key already exists, then clear the previous interval
 	if (runningCrons[key]) {

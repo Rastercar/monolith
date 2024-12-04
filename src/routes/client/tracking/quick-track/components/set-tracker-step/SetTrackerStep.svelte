@@ -4,7 +4,7 @@
 	import type { Tracker, createTrackerSchema } from '$lib/api/tracker.schema';
 	import CreateTrackerForm from '$lib/components/non-generic/form/CreateTrackerForm.svelte';
 	import SelectTrackerDataTable from '$lib/components/non-generic/table/SelectTrackerDataTable.svelte';
-	import StepperNextStepBtn from '$lib/components/stepper/StepperNextStepBtn.svelte';
+	import StepperNextStepBtn from '$lib/components/stepper/StepperNavigationBtn.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import { getToaster } from '$lib/store/toaster';

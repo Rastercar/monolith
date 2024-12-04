@@ -3,7 +3,8 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
 	import { route } from '$lib/ROUTES';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import { showErrorToast } from '$lib/store/toast';
+	import type { Snippet } from 'svelte';
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -25,19 +26,21 @@
 		 */
 		trackerIdToAssociate?: number | undefined;
 
+		children?: Snippet;
+
 		onCreate?: (_: SimCard) => void;
 	}
 
-	let { formSchema, slotNumber = 1, onCreate }: Props = $props();
+	let { formSchema, slotNumber = 1, onCreate, children }: Props = $props();
 
 	const form = superForm(formSchema, {
-		id: `sim-card-form-for-slot-${slotNumber}`,
+		id: `sim-card-form-for-slot-${slotNumber ?? 0}`,
 		validators: zodClient(createSimCardSchema),
 		onUpdate: ({ form, result }) => {
 			if (form.valid) {
 				const action = result.data as FormResult<ActionData>;
-				showSuccessToast('sim card created');
-				if (onCreate) onCreate(action.createdSim);
+
+				if (onCreate && action.createdSim) onCreate(action.createdSim);
 			}
 		},
 		onError: showErrorToast
@@ -82,9 +85,16 @@
 
 	<TextField {form} name="puk2" label="PUK 2" placeholder="00000000" maxlength={8} />
 
-	<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
-		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500 ml-auto mt-auto">
-			create SIM card
-		</LoadableButton>
-	</div>
+	{#if children}
+		{@render children()}
+	{:else}
+		<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
+			<LoadableButton
+				isLoading={$isLoading}
+				classes="btn preset-filled-primary-500 ml-auto mt-auto"
+			>
+				create SIM card
+			</LoadableButton>
+		</div>
+	{/if}
 </form>

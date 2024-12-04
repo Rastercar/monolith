@@ -34,6 +34,7 @@
 		"amqplib": "^0.10.4",
 		"bcrypt": "5.1.1",
 		"bits-ui": "1.0.0-next.63",
+		"consola": "^3.2.3",
 		"drizzle-orm": "0.36.3",
 		"formsnap": "^1.0.1",
 		"postgres": "3.4.4",

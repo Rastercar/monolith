@@ -1,26 +1,30 @@
 <script lang="ts">
 	import type { StepperState } from '$lib/components/stepper/types';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { route } from '$lib/ROUTES';
+	import { getContext } from 'svelte';
 
-	let dispatch = createEventDispatcher<{ 'create-another-clicked': void }>();
+	interface Props {
+		onCreateAnotherClick: () => void;
+	}
 
-	let stepperState: Writable<StepperState> = getContext('state');
+	const { onCreateAnotherClick }: Props = $props();
+
+	let stepperState = getContext<StepperState>('state');
 </script>
 
 <div class="mt-4">
-	<p class="mb-4">Your tracker was created successfully</p>
+	<p class="mb-4">Your tracker was created</p>
 	<button
-		class="btn variant-filled-primary mr-4"
+		class="btn preset-filled-primary-500 mr-4"
 		onclick={() => {
-			$stepperState.current = 0;
-			dispatch('create-another-clicked');
+			stepperState.current = 0;
+			onCreateAnotherClick();
 		}}
 	>
 		create another
 	</button>
 
-	<a href="/client/tracking/trackers/">
-		<button class="btn variant-filled-secondary">see your trackers</button>
+	<a href={route('/client/tracking/trackers')}>
+		<button class="btn preset-filled-secondary-500">see your trackers</button>
 	</a>
 </div>

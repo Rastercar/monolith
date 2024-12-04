@@ -1,33 +1,30 @@
 <script lang="ts">
-	import type { createTrackerSchema, Tracker } from '$lib/api/tracker.schema';
-	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
+	import type { createTrackerSchema, Tracker, updateTrackerSchema } from '$lib/api/tracker.schema';
 	import CreateTrackerForm from '$lib/components/non-generic/form/CreateTrackerForm.svelte';
+	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { getContext } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	interface Props {
-		formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
+		createTrackerFormSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
+		updateTrackerFormSchema: SuperValidated<Infer<typeof updateTrackerSchema>>;
+
 		onCreated: (tracker: Tracker) => void;
 	}
 
-	let { formSchema, onCreated }: Props = $props();
+	let { createTrackerFormSchema, updateTrackerFormSchema, onCreated }: Props = $props();
 
 	let stepperState: StepperState = getContext('state');
 </script>
 
+<!-- TODO: IF TRACKER WAS CREATED SHOW UPDATE FORM WITH TRACKER DATA -->
 <CreateTrackerForm
-	{formSchema}
+	formSchema={createTrackerFormSchema}
 	onCreated={(tracker) => {
 		stepperState.current++;
 		onCreated(tracker);
 	}}
->
-	{#snippet children({ isLoading })}
-		<div class="flex justify-end col-span-2">
-			<LoadableButton {isLoading} classes="btn preset-filled-primary-500">
-				create tracker
-			</LoadableButton>
-		</div>
-	{/snippet}
-</CreateTrackerForm>
+/>
+
+<UpdateTrackerForm formSchema={updateTrackerFormSchema} onUpdated={() => {}} />

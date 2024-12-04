@@ -1,4 +1,5 @@
 import amqp, { type Channel, type Connection, type Options } from 'amqplib';
+import consola from 'consola';
 import {
 	DEFAULT_EXCHANGE,
 	MAILER_QUEUE,
@@ -55,9 +56,9 @@ export class RabbitMQConnection {
 
 		if (isReconectionAttempt) {
 			const ts = new Date().toLocaleString();
-			console.log(`[RMQ] ${ts} reconnecting to RabbitMQ, attempt: ${this.reconectionAttempt}`);
+			consola.info(`[RMQ] ${ts} reconnecting to RabbitMQ, attempt: ${this.reconectionAttempt}`);
 		} else {
-			console.log(`[RMQ] connecting to RabbitMQ`);
+			consola.info(`[RMQ] connecting to RabbitMQ`);
 		}
 
 		try {
@@ -69,7 +70,7 @@ export class RabbitMQConnection {
 			this.consumeChannel = await this.connection.createChannel();
 
 			this.reconectionAttempt = 0;
-			console.log(`[RMQ] connected`);
+			consola.info(`[RMQ] connected`);
 
 			// create needed queues, exchanges and bindings
 			await this.declareQueues().catch(this.handleFatalError);
@@ -91,14 +92,14 @@ export class RabbitMQConnection {
 	async bindQueuesAndExchanges() {
 		if (!this.publishChannel) return;
 
-		console.log('[RMQ] tracker events queue binded to tracker events exchange');
+		consola.info('[RMQ] tracker events queue binded to tracker events exchange');
 		await this.publishChannel.bindQueue(TRACKER_EVENTS_QUEUE, TRACKER_EVENTS_EXCHANGE, '#');
 	}
 
 	async declareExchanges() {
 		if (!this.publishChannel) return;
 
-		console.log('[RMQ] declaring TRACKER_EVENTS_EXCHANGE');
+		consola.info('[RMQ] declaring TRACKER_EVENTS_EXCHANGE');
 		await this.publishChannel.assertExchange(TRACKER_EVENTS_EXCHANGE, 'topic', {
 			durable: true,
 			internal: false,
@@ -109,14 +110,14 @@ export class RabbitMQConnection {
 	async declareQueues() {
 		if (!this.publishChannel) return;
 
-		console.log('[RMQ] declaring TRACKER_EVENTS_QUEUE');
+		consola.info('[RMQ] declaring TRACKER_EVENTS_QUEUE');
 		await this.publishChannel.assertQueue(TRACKER_EVENTS_QUEUE, {
 			exclusive: false,
 			durable: false,
 			autoDelete: true
 		});
 
-		console.log('[RMQ] declaring MAILER_QUEUE');
+		consola.info('[RMQ] declaring MAILER_QUEUE');
 		await this.publishChannel.assertQueue(MAILER_QUEUE, {
 			durable: true,
 			exclusive: false,
@@ -156,7 +157,7 @@ export class RabbitMQConnection {
 
 		// Queue the reconnection attemp
 		this.reconnectTimeout = setTimeout(() => {
-			console.log(`[RMQ] connection failed with code: ${code}`);
+			consola.error(`[RMQ] connection failed with code: ${code}`);
 			this.connect();
 			this.reconectionAttempt++;
 		}, timeout);
@@ -168,7 +169,7 @@ export class RabbitMQConnection {
 	 * sms or whatever to check this error
 	 */
 	async handleFatalError(error: unknown) {
-		console.error('[RMQ] unknown FATAL error', error);
+		consola.error('[RMQ] unknown FATAL error', error);
 	}
 
 	/**

@@ -1,5 +1,5 @@
-import { createSimCardSchema } from '$lib/api/sim-card.schema';
-import { createTrackerSchema, trackerSchema } from '$lib/api/tracker.schema';
+import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
+import { createTrackerSchema, trackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { createOrgTracker } from '$lib/server/db/repo/tracker.js';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
@@ -9,7 +9,9 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async () => ({
 	createSimCardForm: await superValidate(zod(createSimCardSchema)),
-	createTrackerForm: await superValidate(zod(createTrackerSchema))
+	updateSimCardForm: await superValidate(zod(updateSimCardSchema)),
+	createTrackerForm: await superValidate(zod(createTrackerSchema)),
+	updateTrackerForm: await superValidate(zod(updateTrackerSchema))
 });
 
 export const actions = {
@@ -18,16 +20,16 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, createTrackerSchema);
 
-		const tracker = await createOrgTracker(locals.user.organization.id, form.data).catch((e) => {
+		try {
+			const tracker = await createOrgTracker(locals.user.organization.id, form.data);
+			const createdTracker = trackerSchema.parse(tracker);
+			return { form, createdTracker };
+		} catch (e) {
 			if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
 				return setError(form, 'imei', 'IMEI in use by another tracker');
 			}
 
 			throw e;
-		});
-
-		const createdTracker = trackerSchema.parse(tracker);
-
-		return { form, createdTracker };
+		}
 	}
 };

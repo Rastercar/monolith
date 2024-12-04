@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createTrackerSchema, type Tracker } from '$lib/api/tracker.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import SelectField from '$lib/components/form/SelectField.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
 	import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
@@ -24,7 +25,8 @@
 		validators: zodClient(createTrackerSchema),
 		onUpdate: ({ form, result }) => {
 			const action = result.data as FormResult<ActionData>;
-			if (form.valid) onCreated(action.createdTracker);
+
+			if (form.valid && action.createdTracker) onCreated(action.createdTracker);
 		}
 	});
 	const { submitting: isLoading } = form;
@@ -47,5 +49,11 @@
 
 	{#if children}
 		{@render children({ isLoading: $isLoading })}
+	{:else}
+		<div class="col-span-2 flex justify-end">
+			<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500">
+				create tracker
+			</LoadableButton>
+		</div>
 	{/if}
 </form>

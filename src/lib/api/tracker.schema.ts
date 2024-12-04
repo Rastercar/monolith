@@ -9,7 +9,7 @@ export const createTrackerSchema = z.object({
 
 export const updateTrackerSchema = z.object({
 	imei: z.string().min(1),
-	model: z.string()
+	model: z.enum(trackerModels)
 });
 
 export const trackerSchema = z.object({

@@ -1,4 +1,5 @@
 import { env } from '$lib/env/private-env';
+import consola from 'consola';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
@@ -15,7 +16,7 @@ export const db = drizzle<typeof schema>({
 	logger: env.DATABASE_QUERY_LOGGING
 });
 
-console.log('[DB] running migrations');
+consola.info('[DB] running migrations');
 migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
 
 /** noop to load the db connection */

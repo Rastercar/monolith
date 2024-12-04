@@ -39,7 +39,7 @@
 		return d.toLocaleDateString(undefined, { hour: '2-digit', minute: 'numeric' });
 	};
 
-	const mutation = createMutation({
+	const mutation = createMutation(() => ({
 		mutationFn: () => {
 			const promise = belongsToLoggedInUser
 				? apiSignOutSpecificSession(session.publicId)
@@ -48,7 +48,7 @@
 			return awaitPromiseWithMinimumTimeOf(promise, 1_000);
 		},
 		onSuccess: () => onDeleted()
-	});
+	}));
 
 	const auth = getAuthContext();
 
@@ -72,16 +72,16 @@
 
 	{#if session.sameAsFromRequest}
 		<span class="chip preset-filled-primary-500 ml-auto py-1">your current session</span>
-	{:else if $mutation.isError}
+	{:else if mutation.isError}
 		<span class="chip preset-filled-error-400-600 ml-auto py-1">failed to delete session</span>
 	{:else if canRemoveSessions}
 		<button
-			disabled={$mutation.isPending}
+			disabled={mutation.isPending}
 			type="button"
 			class="btn preset-filled-warning-400-600 ml-auto"
-			onclick={() => $mutation.mutate()}
+			onclick={() => mutation.mutate()}
 		>
-			<span>{$mutation.isPending ? 'removing session' : 'revoke session'}</span>
+			<span>{mutation.isPending ? 'removing session' : 'revoke session'}</span>
 			<Icon icon="mdi:trash" />
 		</button>
 	{/if}

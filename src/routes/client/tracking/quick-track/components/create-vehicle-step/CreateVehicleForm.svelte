@@ -163,4 +163,4 @@
 	/>
 </div>
 
-<StepperNextStepBtn {canSubmit} isLoading={$mutation.isPending} on:click={createVehicle} />
+<StepperNextStepBtn disabled={canSubmit} isLoading={$mutation.isPending} on:click={createVehicle} />

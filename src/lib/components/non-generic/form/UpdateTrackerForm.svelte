@@ -1,84 +1,52 @@
 <script lang="ts">
-	import { apiUpdateTracker } from '$lib/api/tracker';
-	import {
-		updateTrackerSchema,
-		type Tracker,
-		type UpdateTrackerBody
-	} from '$lib/api/tracker.schema';
-	import { isAppErrorWithCode } from '$lib/api/utils';
+	import { updateTrackerSchema, type Tracker } from '$lib/api/tracker.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import SelectInput from '$lib/components/form/SelectInput.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
-	import { IMEI_IN_USE } from '$lib/constants/error-codes';
+	import SelectField from '$lib/components/form/SelectField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
-	import { getToaster } from '$lib/store/toaster';
-	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { type Snippet } from 'svelte';
+	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import type { ActionData } from '../../../../routes/client/tracking/trackers/[tracker_id=integer]/$types';
 
 	interface Props {
-		tracker: Tracker;
 		formSchema: SuperValidated<Infer<typeof updateTrackerSchema>>;
+
+		children?: Snippet<[{ isLoading: boolean }]>;
+
+		onUpdated: (_: Tracker) => void;
 	}
 
-	let { tracker = $bindable(), formSchema }: Props = $props();
+	let { formSchema, children, onUpdated }: Props = $props();
 
-	const form = superForm(formSchema, { validators: zodClient(updateTrackerSchema) });
-
-	const toaster = getToaster();
-
-	const mutation = createMutation({
-		mutationFn: (b: UpdateTrackerBody) => apiUpdateTracker(tracker.id, b),
-
-		onError: (e) => {
-			isAppErrorWithCode(e, IMEI_IN_USE)
-				? form.validate('imei', { value: '', errors: 'imei in use', update: 'errors' })
-				: toaster.error();
+	const form = superForm(formSchema, {
+		validators: zodClient(updateTrackerSchema),
+		onUpdate: ({ form, result }) => {
+			const action = result.data as FormResult<ActionData>;
+			if (form.valid && action.updatedTracker) onUpdated(action.updatedTracker);
 		}
 	});
-
-	const dispatch = createEventDispatcher<{ 'tracker-updated': Tracker }>();
-
-	const updateTracker = async () => {
-		const validated = await form.validateForm();
-
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
-
-		$mutation.mutateAsync(validated.data).then((updatedTracker) => {
-			toaster.success('tracker updated');
-			tracker = updatedTracker;
-			dispatch('tracker-updated', updatedTracker);
-		});
-	};
-
-	onMount(() => {
-		form.reset({ data: { model: tracker.model, imei: tracker.imei } });
-	});
-
-	let { allErrors } = $derived(form);
-
-	let canSubmit = $derived($allErrors.length === 0);
+	const { submitting: isLoading } = form;
 </script>
 
-<div class="flex flex-col md:flex-row gap-4">
-	<TextInput class="label" {form} field="imei" label="IMEI *" maxlength="50" />
+<div class="grid grid-cols-2 gap-4">
+	<TextField {form} name="imei" label="IMEI *" maxlength={50} />
 
-	<SelectInput
+	<SelectField
 		{form}
-		class="label"
-		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
-		field="model"
+		name="model"
 		label="Model *"
+		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
 	/>
 
-	<LoadableButton
-		isLoading={false}
-		disabled={!canSubmit}
-		class="btn variant-filled-primary ml-auto mt-auto"
-		on:click={updateTracker}
-	>
-		update tracker
-	</LoadableButton>
+	{#if children}
+		{@render children({ isLoading: $isLoading })}
+	{:else}
+		<div class="col-span-2 flex justify-end">
+			<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500">
+				create tracker
+			</LoadableButton>
+		</div>
+	{/if}
 </div>

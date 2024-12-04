@@ -52,22 +52,10 @@ export const apiUpdateSimCard = (id: number, body: UpdateSimCardBody): Promise<S
 /**
  * permanently deletes a SIM card
  */
-export const apiDeleteSimCard = (id: number): Promise<string> =>
-	api
-		.delete(
-			route('DELETE /client/tracking/sim-cards/[sim_card_id=integer]', {
-				sim_card_id: id.toString()
-			})
-		)
-		.json<string>();
+export function apiDeleteSimCard(id: number): Promise<string> {
+	const url = route('DELETE /client/tracking/sim-cards/[sim_card_id=integer]', {
+		sim_card_id: id.toString()
+	});
 
-/**
- * changes the tracker a SIM card is associated to
- */
-export const apiSetSimCardTracker = (ids: {
-	simCardId: number;
-	newTrackerId: number | null;
-}): Promise<string> =>
-	api
-		.put({ vehicleTrackerId: ids.newTrackerId }, `/sim-card/${ids.simCardId}/tracker`)
-		.json<string>();
+	return api.delete(url).json<string>();
+}

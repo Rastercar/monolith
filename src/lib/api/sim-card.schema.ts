@@ -42,21 +42,21 @@ export const createSimCardSchema = z.object({
 });
 
 export const updateSimCardSchema = z.object({
-	ssn: z.string().min(1),
+	ssn: z.string().min(1).optional(),
 
-	phoneNumber: z.string().regex(e164phoneRegExp, 'invalid phone number'),
+	phoneNumber: z.string().regex(e164phoneRegExp, 'invalid phone number').optional(),
 
-	apnUser: z.string().min(1),
-	apnAddress: z.string().min(1),
-	apnPassword: z.string().min(1),
+	apnUser: z.string().min(1).optional(),
+	apnAddress: z.string().min(1).optional(),
+	apnPassword: z.string().min(1).optional(),
 
-	pin: z.string().nullable(),
-	pin2: z.string().nullable(),
+	pin: z.string().nullish(),
+	pin2: z.string().nullish(),
 
-	puk: z.string().nullable(),
-	puk2: z.string().nullable(),
+	puk: z.string().nullish(),
+	puk2: z.string().nullish(),
 
-	vehicleTrackerId: z.number().nullable()
+	vehicleTrackerId: z.number().nullish()
 });
 
 export const trackerLocationSchema = z.object({

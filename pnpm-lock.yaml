@@ -56,6 +56,9 @@ importers:
       bits-ui:
         specifier: 1.0.0-next.63
         version: 1.0.0-next.63(svelte@5.0.0)
+      consola:
+        specifier: ^3.2.3
+        version: 3.2.3
       drizzle-orm:
         specifier: 0.36.3
         version: 0.36.3(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(postgres@3.4.4)
@@ -2193,6 +2196,10 @@ packages:
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+
+  consola@3.2.3:
+    resolution: {integrity: sha512-I5qxpzLv+sJhTVEoLYNcTW+bThDCPsit0vLNKShZx6rLtpilNpmmeTPaeqJb9ZE9dV3DGaeby6Vuhrw38WjeyQ==}
+    engines: {node: ^14.18.0 || >=16.10.0}
 
   console-control-strings@1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
@@ -6223,6 +6230,8 @@ snapshots:
   commander@4.1.1: {}
 
   concat-map@0.0.1: {}
+
+  consola@3.2.3: {}
 
   console-control-strings@1.1.0: {}
 

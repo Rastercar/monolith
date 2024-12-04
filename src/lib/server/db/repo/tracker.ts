@@ -1,7 +1,7 @@
 import type { PaginationWithFilters } from '$lib/api/common';
 import type { GetTrackersFilters } from '$lib/api/tracker';
-import type { CreateTrackerBody } from '$lib/api/tracker.schema';
-import { eq, ilike, type SQL } from 'drizzle-orm';
+import type { CreateTrackerBody, UpdateTrackerBody } from '$lib/api/tracker.schema';
+import { and, eq, ilike, type SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { paginate } from '../pagination';
 import { vehicleTracker } from '../schema';
@@ -26,4 +26,11 @@ export async function createOrgTracker(orgId: number, body: CreateTrackerBody) {
 		.returning();
 
 	return createdTracker;
+}
+
+export function updateOrgTracker(id: number, orgId: number, body: UpdateTrackerBody) {
+	return db
+		.update(vehicleTracker)
+		.set(body)
+		.where(and(eq(vehicleTracker.id, id), eq(vehicleTracker.organizationId, orgId)));
 }

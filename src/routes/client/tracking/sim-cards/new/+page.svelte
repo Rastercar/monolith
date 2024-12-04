@@ -2,6 +2,7 @@
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import CreateSimCardForm from '$lib/components/non-generic/form/CreateSimCardForm.svelte';
 	import { route } from '$lib/ROUTES.js';
+	import { showSuccessToast } from '$lib/store/toast.js';
 
 	let { data } = $props();
 </script>
@@ -19,5 +20,8 @@
 
 	<hr class="hr mt-4 mb-8" />
 
-	<CreateSimCardForm formSchema={data.createSimCardForm} />
+	<CreateSimCardForm
+		formSchema={data.createSimCardForm}
+		onCreate={() => showSuccessToast('sim card created')}
+	/>
 </div>

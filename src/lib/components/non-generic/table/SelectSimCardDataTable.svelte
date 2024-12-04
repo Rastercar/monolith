@@ -1,14 +1,13 @@
-<!-- 
-  @component
-  Simple data table for selecting a SIM card that is not associated with a tracker
--->
 <script lang="ts">
 	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
-	import type { SimCard } from '$lib/api/sim-card.schema';
+	import { updateSimCardSchema, type SimCard } from '$lib/api/sim-card.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
+	import { route } from '$lib/ROUTES';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -17,6 +16,9 @@
 		type ColumnDef,
 		type RowSelectionState
 	} from '@tanstack/svelte-table';
+	import { Popover } from 'bits-ui';
+	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	interface Props {
 		/**
@@ -24,17 +26,32 @@
 		 */
 		trackerIdToAssociate: number;
 
+		/**
+		 * Form to update a sim card
+		 */
+		formSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
+
 		onSelected: (_: SimCard) => void;
 	}
 
-	let { trackerIdToAssociate, onSelected }: Props = $props();
+	let { trackerIdToAssociate, formSchema, onSelected }: Props = $props();
 
-	// TODO: it seems tanstack table for svelte 5 is quite buggy
-	//
-	// and we need to declare and manage row selection state ourselves
+	const sForm = superForm(formSchema, {
+		id: `selected-sim-card-form`,
+		validators: zodClient(updateSimCardSchema),
+		onUpdate: ({ form }) => {
+			if (form.valid) {
+				showSuccessToast('sim card updated');
+				if (selectedSimCard) onSelected(selectedSimCard);
+			}
+		},
+		onError: showErrorToast
+	});
+	const { submitting: isLoading, form, errors } = sForm;
+
 	let rowSelection = $state<RowSelectionState>({});
 
-	const pagination = $state({ page: 1, pageSize: 5 });
+	const pagination = $state({ page: 1, pageSize: 3 });
 
 	const filters = $state<GetSimCardsFilters>({ withAssociatedTracker: false });
 
@@ -42,20 +59,13 @@
 		queryKey: ['sim-cards', pagination, filters],
 		queryFn: async () => {
 			const result = await apiGetSimCards({ pagination: pagination, filters: filters });
+
+			// reset row selection since the dataset changed
 			rowSelection = {};
 
 			return result;
 		}
 	}));
-
-	// queryFn: async (): Promise<Paginated<SimCard>> => {
-	// 		const result = await apiGetSimCards({ pagination: $pagination, filters: $filters });
-	// 		// since we are doing server side pagination, we need to
-	// 		// clear the row selection since the dataset changes bellow
-	// 		$table.resetRowSelection();
-	// 		$options.data = result.records;
-	// 		return result;
-	// }
 
 	const columns: ColumnDef<SimCard>[] = [
 		{ accessorKey: 'phoneNumber', header: () => 'Phone' },
@@ -96,53 +106,21 @@
 		})
 	);
 
-	// const mutation = createMutation({
-	// 	mutationFn: (simCardId: number) =>
-	// 		apiSetSimCardTracker({ simCardId, newTrackerId: trackerIdToAssociate }),
+	let selectedSimCard = $derived.by(() => {
+		const selectedRow = Object.entries(rowSelection).find(([_, isSelected]) => isSelected);
 
-	// 	onError: () => toaster.error('failed to add SIM card to tracker')
-	// });
+		if (!selectedRow) return null;
 
-	// const addSimToTracker = () => {
-	// 	const selectedRowId = Object.keys($table.getState().rowSelection)[0];
-	// 	const simCard = $table.getRow(selectedRowId).original;
-
-	// 	$mutation.mutateAsync(simCard.id).then(() => {
-	// 		dispatch('sim-card-selected', simCard);
-	// 	});
-	// };
-
-	// const showSimInfoModal = () => {
-	// 	modalStore.trigger({
-	// 		type: 'alert',
-	// 		title: 'About available SIM cards',
-	// 		body: 'Only SIM cards that are not associated with a tracker can be selected, if you wish to use a SIM card that is already installed in a tracker, please uninstall the SIM card.',
-	// 		buttonTextCancel: 'ok'
-	// 	});
-	// };
-
-	let hasSelectedItem = $derived(Object.keys($table.getState().rowSelection).length > 0);
+		const rowId = selectedRow[0];
+		return $table.getRow(rowId).original;
+	});
 </script>
-
-<pre>{JSON.stringify(rowSelection, null, 2)}</pre>
-<pre>{JSON.stringify($table.getState().rowSelection, null, 2)}</pre>
 
 <DebouncedTextField
 	classes="label my-4"
 	placeholder="Filter by phone number"
 	onChange={(v) => (filters.phoneNumber = v)}
->
-	{#snippet label()}
-		<div class="flex">
-			<span>Filter by phone number</span>
-			<button type="button" class="btn p-0 text-primary-800-200 ml-auto">
-				<!-- TODO: -->
-				<!-- onclick={showSimInfoModal} -->
-				not finding your sim card ?
-			</button>
-		</div>
-	{/snippet}
-</DebouncedTextField>
+/>
 
 <DataTable {table} isLoading={query.isFetching} />
 
@@ -154,9 +132,40 @@
 	count={query.data?.itemCount ?? 0}
 />
 
-{#if hasSelectedItem}
-	<div class="flex justify-end mt-4">
-		<!-- onclick={addSimToTracker} -->
-		<button class="btn preset-filled-primary-500">Select SIM card</button>
-	</div>
+<Popover.Root>
+	<Popover.Trigger class="flex items-center mt-2 justify-end w-full">
+		<button type="button" class="btn p-0 text-primary-800-200 ml-auto">
+			not finding your sim card ?
+		</button>
+	</Popover.Trigger>
+
+	<Popover.Portal>
+		<Popover.Content
+			class="z-30 max-w-96 rounded-lg bg-surface-200-800 p-4 shadow-lg"
+			align="end"
+			sideOffset={8}
+		>
+			<p>
+				Only SIM cards that are not associated with a tracker can be selected, if you wish to use a
+				SIM card that is already installed on a tracker, please uninstall the SIM card.
+			</p>
+		</Popover.Content>
+	</Popover.Portal>
+</Popover.Root>
+
+{#if selectedSimCard}
+	<form
+		class="flex justify-end mt-4"
+		method="POST"
+		action={route('updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]', {
+			sim_card_id: selectedSimCard.id.toString()
+		})}
+		use:sForm.enhance
+	>
+		<input type="hidden" name="vehicleTrackerId" value={trackerIdToAssociate} />
+
+		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500 ml-auto mt-auto">
+			select SIM card
+		</LoadableButton>
+	</form>
 {/if}

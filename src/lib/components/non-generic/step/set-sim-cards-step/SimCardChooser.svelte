@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { createSimCardSchema, SimCard } from '$lib/api/sim-card.schema';
+	import type { createSimCardSchema, SimCard, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
@@ -17,14 +17,23 @@
 		 */
 		simSlot: number;
 
-		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+		updateSimCardFormSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
+
+		createSimCardFormSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 
 		onSimCardCreated: (_: SimCard) => void;
 
 		onSimCardSelected: (_: SimCard) => void;
 	}
 
-	let { tracker, simSlot, formSchema, onSimCardCreated, onSimCardSelected }: Props = $props();
+	let {
+		tracker,
+		simSlot,
+		createSimCardFormSchema,
+		updateSimCardFormSchema,
+		onSimCardCreated,
+		onSimCardSelected
+	}: Props = $props();
 
 	type action = 'new-sim-card' | 'existing-sim-card';
 
@@ -49,12 +58,16 @@
 />
 
 {#if selectedOption === 'existing-sim-card'}
-	<SelectSimCardDataTable trackerIdToAssociate={tracker.id} onSelected={onSimCardSelected} />
+	<SelectSimCardDataTable
+		formSchema={updateSimCardFormSchema}
+		trackerIdToAssociate={tracker.id}
+		onSelected={onSimCardSelected}
+	/>
 {:else}
 	<CreateSimCardForm
 		slotNumber={simSlot}
+		formSchema={createSimCardFormSchema}
 		trackerIdToAssociate={tracker.id}
-		{formSchema}
 		onCreate={onSimCardCreated}
 	/>
 {/if}

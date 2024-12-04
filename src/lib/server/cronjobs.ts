@@ -1,3 +1,4 @@
+import { consola } from 'consola';
 import { lt, sql } from 'drizzle-orm';
 import { db } from './db/db';
 import { session } from './db/schema';
@@ -35,7 +36,7 @@ function fmt(seconds: number): string {
 }
 
 function createCron({ key, description, intervalSeconds, cb }: CreateCronArgs) {
-	console.log(`[CRON] registering cronjob: ${key} with interval of ${fmt(intervalSeconds)}`);
+	consola.info(`[CRON] registering cronjob: ${key} with interval of ${fmt(intervalSeconds)}`);
 
 	// If a cron with this key already exists, then clear the previous interval
 	if (runningCrons[key]) {
@@ -47,9 +48,7 @@ function createCron({ key, description, intervalSeconds, cb }: CreateCronArgs) {
 		description,
 		intervalSeconds,
 		timeout: setInterval(() => {
-			const timestamp = new Date().toLocaleString();
-			console.log(`[CRON] ${timestamp} running cron job: ${key} - ${description}`);
-
+			consola.info(`[CRON] running cron job: ${key} - ${description}`);
 			cb();
 		}, intervalSeconds * 1_000)
 	};

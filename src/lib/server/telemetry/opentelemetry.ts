@@ -4,6 +4,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
 import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import consola from 'consola';
 
 // set the opentelemetry diagnostics to log errors to the console, this is very usefull for
 // debugging bad connections to jaeger and other unexpected errors
@@ -30,8 +31,7 @@ const sdk = new NodeSDK({
 		new AmqplibInstrumentation({
 			publishHook: (_, { exchange, routingKey }) => {
 				const exchangeText = exchange === '' ? `default exchange` : `exchange: "${exchange}"`;
-
-				console.log(`[RMQ] published to ${exchangeText} with routing key: "${routingKey}"`);
+				consola.info(`[RMQ] published to ${exchangeText} with routing key: "${routingKey}"`);
 			}
 		})
 	]
@@ -39,7 +39,7 @@ const sdk = new NodeSDK({
 
 // if tracing has not start start it (this is a hack to avoid duplicate registrations when using HMR)
 if (Object.keys(trace.getTracerProvider()).length !== 0) {
-	console.log('[OTEL] starting telemetry');
+	consola.log('[OTEL] starting telemetry');
 	sdk.start();
 }
 

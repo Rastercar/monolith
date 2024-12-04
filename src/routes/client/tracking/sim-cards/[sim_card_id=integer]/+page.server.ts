@@ -31,7 +31,9 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, updateSimCardSchema);
 
-		await updateOrgSimCard(simCardId, locals.user.organization.id, form.data).catch((e) => {
+		try {
+			await updateOrgSimCard(simCardId, locals.user.organization.id, form.data);
+		} catch (e) {
 			if (isErrorFromUniqueConstraint(e, 'sim_card_ssn_unique')) {
 				return setError(form, 'ssn', 'SSN in use by another SIM card');
 			}
@@ -41,7 +43,7 @@ export const actions = {
 			}
 
 			throw e;
-		});
+		}
 
 		return message(form, { type: 'success', text: 'sim card updated' });
 	}

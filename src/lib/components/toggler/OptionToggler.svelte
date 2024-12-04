@@ -13,7 +13,7 @@
 	}
 
 	let {
-		space = 'gap-4',
+		space = 'gap-2',
 		options,
 		additionalClasses = '',
 		selectedOption = $bindable()

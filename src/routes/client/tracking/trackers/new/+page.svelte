@@ -5,34 +5,31 @@
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
+	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/auth.svelte';
+	import Icon from '@iconify/svelte';
 	import CreateTrackerStep from './components/CreateTrackerStep.svelte';
+	import TrackerCreatedStep from './components/TrackerCreatedStep.svelte';
 
 	let { data } = $props();
 
 	const auth = getAuthContext();
 
-	// TODO: start as null
-	let createdTracker: Tracker | null = $state({
-		id: 1,
-		organizationId: 1,
-		model: 'H02'
-	} as any);
+	let createdTracker: Tracker | null = $state(null);
 </script>
 
 <div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		title="create tracker"
 		breadCrumbs={[
-			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
-			{ href: '/client/tracking/trackers', icon: 'mdi:cellphone', text: 'trackers' },
-			{ href: '/client/tracking/trackers/new', text: 'new' }
+			{ href: route('/client/tracking/trackers'), icon: 'mdi:cellphone', text: 'trackers' },
+			{ href: route('/client/tracking/trackers/new'), text: 'new' }
 		]}
 	/>
 
-	<!-- TODO: rm start -->
-	<Stepper start={1}>
+	<Stepper>
 		<StepperHeader extraClasses="my-6" />
 
 		<Step>
@@ -41,7 +38,8 @@
 			{/snippet}
 
 			<CreateTrackerStep
-				formSchema={data.createTrackerForm}
+				updateTrackerFormSchema={data.updateTrackerForm}
+				createTrackerFormSchema={data.createTrackerForm}
 				onCreated={(t) => (createdTracker = t)}
 			/>
 		</Step>
@@ -54,27 +52,24 @@
 
 				{#if createdTracker}
 					<SetSimCardsStep
-						formSchema={data.createSimCardForm}
 						tracker={createdTracker}
 						trackerSimCards={[]}
+						updateSimCardFormSchema={data.updateSimCardForm}
+						createSimCardFormSchema={data.createSimCardForm}
 					/>
 				{/if}
 			</Step>
 		{/if}
 
-		<!-- <Step>
+		<Step>
 			{#snippet header()}
 				<div class="flex items-center">
-					<Icon icon="mdi:check" class="mr-2 text-success-400-500-token" height={24} />
+					<Icon icon="mdi:check" class="mr-2 text-success-400-600" height={24} />
 					Success
 				</div>
 			{/snippet}
 
-			<TrackerCreatedStep
-				on:create-another-clicked={() => {
-					createdTracker = null;
-				}}
-			/>
-		</Step> -->
+			<TrackerCreatedStep onCreateAnotherClick={() => (createdTracker = null)} />
+		</Step>
 	</Stepper>
 </div>

@@ -1,7 +1,11 @@
 <script lang="ts">
-	import type { createSimCardSchema, SimCard } from '$lib/api/sim-card.schema';
+	import {
+		updateSimCardSchema,
+		type createSimCardSchema,
+		type SimCard
+	} from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import StepperNextStepBtn from '$lib/components/stepper/StepperNextStepBtn.svelte';
+	import StepperNavigationBtn from '$lib/components/stepper/StepperNavigationBtn.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
 	import Icon from '@iconify/svelte';
@@ -19,10 +23,12 @@
 
 		trackerSimCards: SimCard[];
 
-		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+		createSimCardFormSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+		updateSimCardFormSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
 	}
 
-	const { tracker, formSchema, trackerSimCards }: Props = $props();
+	const { tracker, createSimCardFormSchema, updateSimCardFormSchema, trackerSimCards }: Props =
+		$props();
 
 	let simCards = $state(trackerSimCards);
 
@@ -43,23 +49,12 @@
 		: 'Choose the SIM card for your vehicle tracker'}
 </span>
 
-<!-- {#if query.isLoading}
-	{#each Array(supportedSimCards) as _}
-		<section class="card w-full my-4">
-			<div class="p-4 space-y-4">
-				<div class="placeholder h-12"></div>
-				<div class="placeholder h-12"></div>
-				<div class="placeholder h-12"></div>
-			</div>
-		</section>
-	{/each}
-{:else} -->
 <Accordion collapsible multiple>
 	{#each Array(supportedSimCards) as _, i}
 		{@const simForSlot = simCards[i]}
 
 		<Accordion.Item
-			panelPadding="px-0 pt-4"
+			panelPadding="px-0"
 			controlClasses="my-2 bg-surface-200-800"
 			value={`slot-${i + 1}`}
 		>
@@ -82,7 +77,8 @@
 					<SimCardChooser
 						simSlot={i + 1}
 						{tracker}
-						{formSchema}
+						{updateSimCardFormSchema}
+						{createSimCardFormSchema}
 						onSimCardCreated={(sim) => simCards.push(sim)}
 						onSimCardSelected={(sim) => simCards.push(sim)}
 					/>
@@ -92,15 +88,18 @@
 	{/each}
 </Accordion>
 
-<!-- 
-		TODO:
-		canSubmit={!$query.isLoading}
-		isLoading={$query.isLoading}
-	-->
-<StepperNextStepBtn
-	extraClasses="py-4"
-	onclick={() => {
-		stepperState.current++;
-	}}
-/>
-<!-- {/if} -->
+<div class="mt-4 flex justify-between">
+	<StepperNavigationBtn
+		isStepNextBtn={false}
+		onclick={() => {
+			stepperState.current--;
+		}}
+	/>
+
+	<StepperNavigationBtn
+		disabled
+		onclick={() => {
+			stepperState.current++;
+		}}
+	/>
+</div>

@@ -1,3 +1,4 @@
+import { route } from '$lib/ROUTES';
 import {
 	createPaginatedResponseSchema,
 	type Paginated,
@@ -8,6 +9,7 @@ import { api, stripUndefined } from './utils';
 import {
 	vehicleSchema,
 	type CreateVehicleBody,
+	type GetVehiclesFilters,
 	type UpdateVehicleBody,
 	type Vehicle
 } from './vehicle.schema';
@@ -29,10 +31,6 @@ export const apiCreateVehicle = (body: CreateVehicleBody): Promise<Vehicle> =>
 		.json<Vehicle>()
 		.then(vehicleSchema.parse);
 
-export interface GetVehiclesFilters {
-	plate?: string;
-}
-
 /**
  * list paginated vehicles that belong to the same organization as the request user
  */
@@ -41,7 +39,7 @@ export const apiGetVehicles = (
 ): Promise<Paginated<Vehicle>> =>
 	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get('/vehicle')
+		.get(route('/client/tracking/vehicles'))
 		.json<Paginated<Vehicle>>()
 		.then(createPaginatedResponseSchema(vehicleSchema).parse);
 

@@ -25,3 +25,15 @@ export const castStringToBool = z.preprocess((val) => {
 	}
 	return val;
 }, z.coerce.boolean());
+
+/**
+ * casts a string to boolean | undefined
+ */
+export const castStringToOptionalBool = z.preprocess((val) => {
+	if (typeof val === 'string' && val) {
+		if (['1', 'true'].includes(val.toLowerCase())) return true;
+		if (['0', 'false'].includes(val.toLowerCase())) return false;
+	}
+
+	return undefined;
+}, z.boolean().optional());

@@ -11,9 +11,9 @@
 
 <div class="text-center mb-2 flex items-center">
 	<div class="text-2xl flex items-center">
-		<Icon icon="mdi:check" class="mr-3" />
+		<Icon icon="mdi:check" />
 		{title}
 	</div>
 
-	<a {href} class="ml-auto font-medium text-primary-800-200 hover:underline"> go back </a>
+	<a {href} class="ml-auto font-medium text-primary-800-200 hover:underline">go back</a>
 </div>

@@ -6,28 +6,13 @@ import {
 	type PaginationWithFilters
 } from './common';
 import { simCardSchema, trackerLocationSchema, type TrackerLocation } from './sim-card.schema';
-import {
-	trackerSchema,
-	type CreateTrackerBody,
-	type Tracker,
-	type UpdateTrackerBody
-} from './tracker.schema';
+import { trackerSchema, type Tracker } from './tracker.schema';
 import { api, stripUndefined } from './utils';
 
 export interface GetTrackersFilters {
 	imei?: string;
 	withAssociatedVehicle?: boolean;
 }
-
-/**
- * creates a new tracker
- *
- * ### required permissions
- *
- * - `CREATE_TRACKER`
- */
-export const apiCreateTracker = (body: CreateTrackerBody): Promise<Tracker> =>
-	api.post(body, '/tracker').json<Tracker>().then(trackerSchema.parse);
 
 /**
  * list paginated trackers that belong to the same organization as the request user
@@ -40,16 +25,6 @@ export const apiGetTrackers = (
 		.get(route('/client/tracking/trackers'))
 		.json<Paginated<Tracker>>()
 		.then(createPaginatedResponseSchema(trackerSchema).parse);
-
-/**
- * update a tracker
- *
- * ### required permissions
- *
- * - `UPDATE_TRACKER`
- */
-export const apiUpdateTracker = (id: number, body: UpdateTrackerBody): Promise<Tracker> =>
-	api.put(body, `/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
 
 /**
  * Fetch a tracker by ID

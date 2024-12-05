@@ -63,3 +63,8 @@ export function createPaginatedResponseSchema<ItemType extends z.ZodTypeAny>(ite
 		records: z.array(itemSchema)
 	});
 }
+
+export const paginationFromSearchParamsSchema = z.object({
+	page: z.coerce.number().default(1),
+	pageSize: z.coerce.number().default(5)
+});

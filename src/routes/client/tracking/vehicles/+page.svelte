@@ -1,40 +1,29 @@
 <script lang="ts">
-	import type { Paginated } from '$lib/api/common';
-	import { apiGetVehicles, type GetVehiclesFilters } from '$lib/api/vehicle';
-	import type { Vehicle } from '$lib/api/vehicle.schema';
+	import { apiGetVehicles } from '$lib/api/vehicle';
+	import type { GetVehiclesFilters, Vehicle } from '$lib/api/vehicle.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { Paginator } from '@skeletonlabs/skeleton';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
+	import { route } from '$lib/ROUTES';
+	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
 		renderComponent,
-		type ColumnDef,
-		type TableOptions
+		type ColumnDef
 	} from '@tanstack/svelte-table';
-	import { derived, writable } from 'svelte/store';
 
-	const pagination = writable({ page: 1, pageSize: 5 });
+	const pagination = $state({ page: 1, pageSize: 5 });
 
-	const filters = writable<GetVehiclesFilters>({});
+	const filters = $state<GetVehiclesFilters>({});
 
-	const query = createQuery(
-		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['vehicles', $pagination, $filters],
-			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<Vehicle>> => {
-				const result = await apiGetVehicles({ pagination: $pagination, filters: $filters });
-
-				$options.data = result.records;
-
-				return result;
-			}
-		}))
-	);
+	const query = createQuery(() => ({
+		queryKey: ['vehicles', pagination, filters],
+		queryFn: () => apiGetVehicles({ pagination: pagination, filters: filters })
+	}));
 
 	const columns: ColumnDef<Vehicle>[] = [
 		{
@@ -70,68 +59,55 @@
 		}
 	];
 
-	const colspan = columns.length;
-
-	const options = writable<TableOptions<Vehicle>>({
-		data: $query.data?.records ?? [],
-		columns: columns,
-		manualPagination: true,
-		state: {
-			pagination: {
-				pageIndex: $pagination.page,
-				pageSize: $pagination.pageSize
-			}
-		},
-		getCoreRowModel: getCoreRowModel()
-	});
-
-	const table = createSvelteTable(options);
+	const table = $derived(
+		createSvelteTable({
+			data: query.data?.records ?? [],
+			columns: columns,
+			manualPagination: true,
+			state: {
+				pagination: {
+					pageIndex: pagination.page,
+					pageSize: pagination.pageSize
+				}
+			},
+			getCoreRowModel: getCoreRowModel()
+		})
+	);
 </script>
 
 <div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		title="vehicles"
 		breadCrumbs={[
-			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
-			{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' }
+			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'vehicles' }
 		]}
 	/>
 
-	<hr class="my-4" />
+	<hr class="hr mt-4 mb-8" />
 
-	<div class="flex mb-4 items-center">
+	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
 			placeholder="search by plate"
-			title="filter by plate"
-			class="label w-full max-w-lg mr-4"
-			on:change={(e) => ($filters.plate = e.detail)}
+			classes="w-full"
+			onChange={(v) => (filters.plate = v)}
 		/>
 
 		<CreateEntityButton
-			href="/client/tracking/vehicles/new"
+			href={route('/client/tracking/vehicles/new')}
 			text="new vehicle"
-			requiredPermission="CREATE_VEHICLE"
+			requiredPermissions="CREATE_VEHICLE"
 		/>
 	</div>
 
-	<DataTable {table} {colspan} isLoading={$query.isLoading} class="mb-2" />
+	<DataTable {table} isLoading={query.isFetching} />
 
-	<Paginator
-		select="select min-w-[150px] py-1"
-		settings={{
-			page: $pagination.page - 1,
-			limit: $pagination.pageSize,
-			size: $query.data?.itemCount ?? 0,
-			amounts: [1, 5, 10, 15]
-		}}
-		maxNumerals={1}
-		showFirstLastButtons
-		on:page={({ detail: zeroIndexedPage }) => {
-			$pagination.page = zeroIndexedPage + 1;
-		}}
-		on:amount={({ detail: pageSize }) => {
-			$pagination.pageSize = pageSize;
-		}}
+	<DataTableFooter
+		extraClasses="mt-4"
+		bind:page={pagination.page}
+		bind:pageSize={pagination.pageSize}
+		data={query.data?.records ?? []}
+		count={query.data?.itemCount ?? 0}
 	/>
 </div>

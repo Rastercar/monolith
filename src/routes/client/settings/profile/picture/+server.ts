@@ -29,7 +29,7 @@ export const PUT = withAuth(async ({ request, locals: { user } }) => {
 	return json(fileKey);
 });
 
-export const DELETE = withAuth(async ({ request, locals }) => {
+export const DELETE = withAuth(async ({ locals }) => {
 	if (!locals.user.profilePicture) {
 		return json('user does not have a profile picture to delete');
 	}

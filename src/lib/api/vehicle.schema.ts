@@ -22,6 +22,10 @@ const isOptionalDateBetween = (min: number, max: number) => (v?: string | number
 	return !Number.isNaN(n) && n >= min && n <= max;
 };
 
+export const getVehiclesSearchParamsSchema = z.object({
+	plate: z.string().optional()
+});
+
 export const createVehicleSchema = z.object({
 	plate: z.string().refine(isMercosulOrBrPlate, 'invalid vehicle plate'),
 
@@ -108,6 +112,8 @@ export const vehicleSchema = z.object({
 	chassisNumber: z.string().nullable(),
 	additionalInfo: z.string().nullable()
 });
+
+export type GetVehiclesFilters = z.infer<typeof getVehiclesSearchParamsSchema>;
 
 export type CreateVehicleBody = z.infer<typeof createVehicleSchema>;
 

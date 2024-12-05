@@ -1,5 +1,11 @@
 import { TRACKER_MODEL_H02, trackerModels } from '$lib/constants/tracker-models';
+import { castStringToOptionalBool } from '$lib/utils/zod-validators';
 import { z } from 'zod';
+
+export const getTrackersSearchParamsSchema = z.object({
+	imei: z.string().optional(),
+	withAssociatedVehicle: castStringToOptionalBool
+});
 
 export const createTrackerSchema = z.object({
 	imei: z.string().min(1),
@@ -24,6 +30,8 @@ export const trackerSchema = z.object({
 });
 
 export type Tracker = z.infer<typeof trackerSchema>;
+
+export type GetTrackerFilters = z.infer<typeof getTrackersSearchParamsSchema>;
 
 export type CreateTrackerBody = z.infer<typeof createTrackerSchema>;
 

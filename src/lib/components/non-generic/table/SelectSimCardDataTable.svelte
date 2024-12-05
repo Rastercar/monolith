@@ -1,6 +1,10 @@
 <script lang="ts">
-	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
-	import { updateSimCardSchema, type SimCard } from '$lib/api/sim-card.schema';
+	import { apiGetSimCards } from '$lib/api/sim-card';
+	import {
+		updateSimCardSchema,
+		type GetSimCardsFilters,
+		type SimCard
+	} from '$lib/api/sim-card.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';

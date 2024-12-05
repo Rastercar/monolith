@@ -36,8 +36,6 @@
 
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
-	let deletedOrRemovedSimCardsIds = $state<number[]>([]);
-
 	let stepperState = getContext<StepperState>('state');
 </script>
 
@@ -99,7 +97,6 @@
 	/>
 
 	<StepperNavigationBtn
-		disabled
 		onclick={() => {
 			stepperState.current++;
 		}}

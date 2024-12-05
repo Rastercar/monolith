@@ -1,3 +1,4 @@
+import { castStringToOptionalBool } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 
 const e164phoneRegExp = /^\+?\d{10,14}$/;
@@ -21,6 +22,11 @@ export const simCardSchema = z.object({
 
 	vehicleTrackerId: z.number().nullable(),
 	organizationId: z.number()
+});
+
+export const getSimCardsSearchParamsSchema = z.object({
+	phoneNumber: z.string().optional(),
+	withAssociatedTracker: castStringToOptionalBool
 });
 
 export const createSimCardSchema = z.object({
@@ -69,10 +75,12 @@ export const trackerLocationSchema = z.object({
 
 export type SimCard = z.infer<typeof simCardSchema>;
 
-export type TrackerLocation = z.infer<typeof trackerLocationSchema>;
+export type GetSimCardsFilters = z.infer<typeof getSimCardsSearchParamsSchema>;
 
 export type CreateSimCardBody = z.infer<typeof createSimCardSchema>;
 
 export type UpdateSimCardBody = z.infer<typeof updateSimCardSchema>;
 
 export type UpdateSimCardRes = SimCard | { error: 'SSN_IN_USE' | 'PHONE_IN_USE' };
+
+export type TrackerLocation = z.infer<typeof trackerLocationSchema>;

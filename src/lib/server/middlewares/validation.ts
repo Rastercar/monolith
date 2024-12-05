@@ -1,9 +1,12 @@
 import { error, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { ZodSchema } from 'zod';
+import type { z, ZodSchema } from 'zod';
 
-export async function validateRequestBody<T>(req: Request, schema: ZodSchema<T>) {
+export async function validateRequestBody<T extends z.ZodTypeAny>(
+	req: Request,
+	schema: T
+): Promise<z.infer<T>> {
 	let body: unknown;
 
 	try {
@@ -16,6 +19,19 @@ export async function validateRequestBody<T>(req: Request, schema: ZodSchema<T>)
 
 	if (!success) {
 		error(400, { message: 'invalid request body', issues: valError.issues });
+	}
+
+	return data;
+}
+
+export function validateRequestSearchParams<T extends z.ZodTypeAny>(
+	params: URLSearchParams,
+	schema: T
+): z.infer<T> {
+	const { success, data, error: valError } = schema.safeParse(Object.fromEntries(params));
+
+	if (!success) {
+		error(400, { message: 'invalid search params', issues: valError.issues });
 	}
 
 	return data;

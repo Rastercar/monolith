@@ -1,19 +1,27 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { trackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error.js';
-import { updateOrgTracker } from '$lib/server/db/repo/tracker.js';
+import { findOrgTrackerById, updateOrgTracker } from '$lib/server/db/repo/tracker.js';
 import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params }) => ({
-	vehicleTrackerId: parseInt(params.tracker_id),
-	updateTrackerForm: await superValidate(zod(updateTrackerSchema)),
-	createSimCardForm: await superValidate(zod(createSimCardSchema)),
-	updateSimCardForm: await superValidate(zod(updateSimCardSchema))
-});
+export const load = async ({ params, locals }) => {
+	if (!locals.user) return error(403);
+
+	const trackerId = parseInt(params.tracker_id);
+	const tracker = await findOrgTrackerById(trackerId, locals.user.organization.id);
+
+	if (!tracker) return error(404);
+
+	const updateTrackerForm = await superValidate(zod(updateTrackerSchema));
+	const createSimCardForm = await superValidate(zod(createSimCardSchema));
+	const updateSimCardForm = await superValidate(zod(updateSimCardSchema));
+
+	return { tracker, updateSimCardForm, updateTrackerForm, createSimCardForm };
+};
 
 export const actions = {
 	updateTracker: async ({ request, locals, params }) => {

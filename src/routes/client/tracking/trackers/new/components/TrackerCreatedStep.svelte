@@ -1,4 +1,5 @@
 <script lang="ts">
+	import StepperNavigationBtn from '$lib/components/stepper/StepperNavigationBtn.svelte';
 	import type { StepperState } from '$lib/components/stepper/types';
 	import { route } from '$lib/ROUTES';
 	import { getContext } from 'svelte';
@@ -13,18 +14,27 @@
 </script>
 
 <div class="mt-4">
-	<p class="mb-4">Your tracker was created</p>
-	<button
-		class="btn preset-filled-primary-500 mr-4"
-		onclick={() => {
-			stepperState.current = 0;
-			onCreateAnotherClick();
-		}}
-	>
-		create another
-	</button>
+	<div class="flex">
+		<StepperNavigationBtn
+			isStepNextBtn={false}
+			label="adjust SIM cards"
+			onclick={() => {
+				stepperState.current--;
+			}}
+		/>
 
-	<a href={route('/client/tracking/trackers')}>
-		<button class="btn preset-filled-secondary-500">see your trackers</button>
-	</a>
+		<button
+			class="btn preset-filled-primary-500 ml-auto mr-4"
+			onclick={() => {
+				stepperState.current = 0;
+				onCreateAnotherClick();
+			}}
+		>
+			create another
+		</button>
+
+		<a href={route('/client/tracking/trackers')}>
+			<button class="btn preset-filled-secondary-500">see your trackers</button>
+		</a>
+	</div>
 </div>

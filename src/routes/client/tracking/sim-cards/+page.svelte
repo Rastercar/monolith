@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { apiGetSimCards, type GetSimCardsFilters } from '$lib/api/sim-card';
-	import type { SimCard } from '$lib/api/sim-card.schema';
+	import { apiGetSimCards } from '$lib/api/sim-card';
+	import type { GetSimCardsFilters, SimCard } from '$lib/api/sim-card.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';

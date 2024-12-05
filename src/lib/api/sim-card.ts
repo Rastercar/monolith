@@ -6,17 +6,12 @@ import {
 } from './common';
 import {
 	simCardSchema,
-	type CreateSimCardBody,
+	type GetSimCardsFilters,
 	type SimCard,
 	type UpdateSimCardBody,
 	type UpdateSimCardRes
 } from './sim-card.schema';
 import { api, stripUndefined } from './utils';
-
-export interface GetSimCardsFilters {
-	phoneNumber?: string;
-	withAssociatedTracker?: boolean;
-}
 
 /**
  * list paginated sim cards that belong to the same organization as the request user
@@ -29,16 +24,6 @@ export const apiGetSimCards = (
 		.get(route('/client/tracking/sim-cards'))
 		.json<Paginated<SimCard>>()
 		.then(createPaginatedResponseSchema(simCardSchema).parse);
-
-/**
- * creates a new SIM card
- *
- * ### required permissions
- *
- * - `CREATE_SIM_CARD`
- */
-export const apiCreateSimCard = (body: CreateSimCardBody): Promise<SimCard> =>
-	api.post(body, '/sim-card').json<SimCard>().then(simCardSchema.parse);
 
 /**
  * update a sim card

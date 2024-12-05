@@ -2,6 +2,7 @@ import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.sche
 import { createTrackerSchema, trackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { createOrgTracker } from '$lib/server/db/repo/tracker.js';
+import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
@@ -17,6 +18,7 @@ export const load = async () => ({
 export const actions = {
 	createTracker: async ({ request, locals }) => {
 		if (!locals.user) return error(400);
+		verifyUserHasPermissions(locals.user, 'CREATE_TRACKER');
 
 		const form = await validateFormWithFailOnError(request, createTrackerSchema);
 

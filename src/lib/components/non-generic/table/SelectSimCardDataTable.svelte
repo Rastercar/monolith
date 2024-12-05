@@ -47,7 +47,7 @@
 		},
 		onError: showErrorToast
 	});
-	const { submitting: isLoading, form, errors } = sForm;
+	const { submitting: isLoading } = sForm;
 
 	let rowSelection = $state<RowSelectionState>({});
 

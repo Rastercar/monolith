@@ -1,43 +1,33 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
 		type: 'deletion' | 'removal';
+		onCancel: () => void;
+		onConfirm: () => void;
 	}
 
-	let { type }: Props = $props();
-
-	const dispatch = createEventDispatcher<{
-		'cancel-click': void;
-		'confirm-click': void;
-	}>();
+	let { type, onCancel, onConfirm }: Props = $props();
 </script>
 
-<aside class="alert variant-filled-warning my-4">
-	<Icon icon="mdi:alert" width="36" height="36" />
-
-	<p class="alert-message text-sm">
-		{type === 'deletion'
-			? 'Do you wish to delete this SIM card permanently'
-			: 'Do you wish to remove this SIM card from the tracker'}
-	</p>
-
-	<div class="alert-actions">
-		<button
-			type="button"
-			class="btn btn-sm variant-filled"
-			onclick={() => dispatch('cancel-click')}
-		>
+<div
+	class="card preset-outlined-warning-500 grid grid-cols-1 items-center gap-4 p-3 lg:grid-cols-[auto_1fr_auto]"
+>
+	<Icon icon="mdi:alert" width="24" height="24" />
+	<div>
+		<p class="type-scale-2">
+			{type === 'deletion'
+				? 'Do you wish to delete this SIM card permanently ?'
+				: 'Do you wish to remove this SIM card from the tracker ?'}
+		</p>
+	</div>
+	<div class="flex gap-1">
+		<button type="button" class="btn btn-sm preset-tonal hover:preset-filled" onclick={onCancel}>
 			No
 		</button>
 
-		<button
-			type="button"
-			class="btn btn-sm variant-filled"
-			onclick={() => dispatch('confirm-click')}
-		>
+		<button type="button" class="btn btn-sm preset-tonal hover:preset-filled" onclick={onConfirm}>
 			Yes
 		</button>
 	</div>
-</aside>
+</div>

@@ -3,9 +3,9 @@
 	import {
 		groupPermissionsByCategory,
 		permissionCategoryIcons,
-		type PermissionDetailsAndKey,
-		type apiPermission,
-		type apiPermissionCategory
+		type permission,
+		type permissionCategory,
+		type PermissionDetailsAndKey
 	} from '$lib/constants/permissions';
 	import Icon from '@iconify/svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
@@ -18,16 +18,18 @@
 
 	let showDetails = $state(true);
 
-	let permissionsByCategory = $derived(Object.entries(
-		groupPermissionsByCategory(accessLevel.permissions as apiPermission[])
-	) as [[apiPermissionCategory, PermissionDetailsAndKey[]]]);
+	let permissionsByCategory = $derived(
+		Object.entries(groupPermissionsByCategory(accessLevel.permissions as permission[])) as [
+			[permissionCategory, PermissionDetailsAndKey[]]
+		]
+	);
 </script>
 
 <div class="mb-1 flex justify-between">
 	<span>Permissions: </span>
 
 	<span class="flex items-center">
-		<span class="mr-3 text-sm">show details</span>
+		<span>show details</span>
 		<SlideToggle name="showDetailsInput" bind:checked={showDetails} size="sm" />
 	</span>
 </div>

@@ -1,6 +1,6 @@
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { route, type KIT_ROUTES } from './ROUTES';
-import type { apiPermission } from './constants/permissions';
+import type { permission } from './constants/permissions';
 
 /**
  * - logged-in: the user MUST be logged in to access the route
@@ -19,7 +19,7 @@ export interface LoggedInPageMeta {
 	/**
 	 * the user required permissions to access the route
 	 */
-	requiredPermissions?: apiPermission | apiPermission[];
+	requiredPermissions?: permission | permission[];
 
 	/**
 	 * if the layout header should be visible

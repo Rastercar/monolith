@@ -1,6 +1,7 @@
 import { userSchema, userSessionSchema } from '$lib/api/user.schema.js';
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
 import { INVALID_SESSION } from '$lib/constants/error-codes';
+import type { permission } from '$lib/constants/permissions';
 import { route } from '$lib/ROUTES';
 import type { LoggedInPageMeta } from '$lib/routes-meta';
 import { db } from '$lib/server/db/db';
@@ -56,6 +57,11 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 	});
 }
 
+export function verifyUserHasPermissions(user: User, reqPerms: permission | permission[]) {
+	const hasPerms = wrapToArray(reqPerms).every((p) => user.accessLevel.permissions.includes(p));
+	if (!hasPerms) return error(401, 'missing permissions');
+}
+
 /**
  * checks if there is a user on the request and he has all the required permissions to access a page
  *
@@ -71,10 +77,7 @@ export function verifyUserCanAccessAuthenticatedRoute(evt: RequestEvent, meta: L
 	}
 
 	if (meta.requiredPermissions) {
-		const requiredPerms = wrapToArray(meta.requiredPermissions);
-		const hasPerms = requiredPerms.every((p) => user.accessLevel.permissions.includes(p));
-
-		if (!hasPerms) return error(400, 'missing permissions');
+		verifyUserHasPermissions(user, meta.requiredPermissions);
 	}
 }
 
@@ -112,10 +115,16 @@ type AuthedRequestHandler<Params extends ReqParams, RouteId extends ReqRouteId> 
  * @param handler - the authenticated request handler
  */
 export function withAuth<T extends ReqParams, U extends ReqRouteId>(
-	handler: AuthedRequestHandler<T, U>
+	handler: AuthedRequestHandler<T, U>,
+	requiredPermissions?: permission | permission[]
 ): RequestHandler<T, U> {
 	const inner: RequestHandler<T, U> = (req) => {
 		if (!req.locals.user) error(403);
+
+		if (requiredPermissions) {
+			verifyUserHasPermissions(req.locals.user, requiredPermissions);
+		}
+
 		return handler(req as AuthedRequestEvent<T, U>);
 	};
 

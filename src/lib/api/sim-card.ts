@@ -8,7 +8,8 @@ import {
 	simCardSchema,
 	type CreateSimCardBody,
 	type SimCard,
-	type UpdateSimCardBody
+	type UpdateSimCardBody,
+	type UpdateSimCardRes
 } from './sim-card.schema';
 import { api, stripUndefined } from './utils';
 
@@ -46,8 +47,13 @@ export const apiCreateSimCard = (body: CreateSimCardBody): Promise<SimCard> =>
  *
  * - `UPDATE_SIM_CARD`
  */
-export const apiUpdateSimCard = (id: number, body: UpdateSimCardBody): Promise<SimCard> =>
-	api.put(body, `/sim-card/${id}`).json<SimCard>().then(simCardSchema.parse);
+export function apiUpdateSimCard(id: number, body: UpdateSimCardBody): Promise<UpdateSimCardRes> {
+	const url = route('PUT /client/tracking/sim-cards/[sim_card_id=integer]', {
+		sim_card_id: id.toString()
+	});
+
+	return api.put(body, url).json<UpdateSimCardRes>();
+}
 
 /**
  * permanently deletes a SIM card

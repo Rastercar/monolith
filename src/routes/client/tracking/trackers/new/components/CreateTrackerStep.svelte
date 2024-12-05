@@ -7,24 +7,40 @@
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	interface Props {
+		/**
+		 * The tracker that was created by this step and
+		 * might be update if the user navigates back
+		 */
+		createdTracker?: Tracker | null;
+
 		createTrackerFormSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
 		updateTrackerFormSchema: SuperValidated<Infer<typeof updateTrackerSchema>>;
 
 		onCreated: (tracker: Tracker) => void;
 	}
 
-	let { createTrackerFormSchema, updateTrackerFormSchema, onCreated }: Props = $props();
+	let { createTrackerFormSchema, updateTrackerFormSchema, createdTracker, onCreated }: Props =
+		$props();
 
 	let stepperState: StepperState = getContext('state');
 </script>
 
-<!-- TODO: IF TRACKER WAS CREATED SHOW UPDATE FORM WITH TRACKER DATA -->
-<CreateTrackerForm
-	formSchema={createTrackerFormSchema}
-	onCreated={(tracker) => {
-		stepperState.current++;
-		onCreated(tracker);
-	}}
-/>
-
-<UpdateTrackerForm formSchema={updateTrackerFormSchema} onUpdated={() => {}} />
+{#if createdTracker}
+	<UpdateTrackerForm
+		trackerId={createdTracker.id}
+		initialValues={createdTracker}
+		formSchema={updateTrackerFormSchema}
+		onUpdated={(tracker) => {
+			stepperState.current++;
+			onCreated(tracker);
+		}}
+	/>
+{:else}
+	<CreateTrackerForm
+		formSchema={createTrackerFormSchema}
+		onCreated={(tracker) => {
+			stepperState.current++;
+			onCreated(tracker);
+		}}
+	/>
+{/if}

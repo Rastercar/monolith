@@ -5,28 +5,31 @@
 		allPermissionsGroupedByCategory,
 		permissionCategoryIcons,
 		type PermissionDetailsAndKey,
-		type apiPermission,
-		type apiPermissionCategory
+		type permission,
+		type permissionCategory
 	} from '$lib/constants/permissions';
 	import Icon from '@iconify/svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	
-
 	interface Props {
 		/**
-	 * key: permission key (eg: CREATE_USER)
-	 * val: boolean indicating the permission is selected
-	 */
-		permissionToToggleStatus: Record<apiPermission, boolean>;
+		 * key: permission key (eg: CREATE_USER)
+		 * val: boolean indicating the permission is selected
+		 */
+		permissionToToggleStatus: Record<permission, boolean>;
 		showManageUserAccessLevelsWarningIfToggled?: boolean;
 	}
 
-	let { permissionToToggleStatus = $bindable(), showManageUserAccessLevelsWarningIfToggled = true }: Props = $props();
+	let {
+		permissionToToggleStatus = $bindable(),
+		showManageUserAccessLevelsWarningIfToggled = true
+	}: Props = $props();
 
-	let permissionsByCategory = $derived(Object.entries(allPermissionsGroupedByCategory) as [
-		[apiPermissionCategory, PermissionDetailsAndKey[]]
-	]);
+	let permissionsByCategory = $derived(
+		Object.entries(allPermissionsGroupedByCategory) as [
+			[permissionCategory, PermissionDetailsAndKey[]]
+		]
+	);
 </script>
 
 {#each permissionsByCategory as [category, permissions], i}

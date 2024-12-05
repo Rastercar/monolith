@@ -10,8 +10,8 @@
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import ManageAccessLevelsPermissionSelectedAlert from '$lib/components/non-generic/alert/ManageAccessLevelsPermissionSelectedAlert.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
-	import { permissionDetails, type apiPermission } from '$lib/constants/permissions';
-	import { type ModalSettings } from '@skeletonlabs/skeleton';
+	import { permissionDetails, type permission } from '$lib/constants/permissions';
+	import { type ModalSettinpermissionkeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
@@ -44,7 +44,7 @@
 
 	const setPermissionsToggleStatusToTrue = (permissions: string[]) => {
 		permissions.forEach((p) => {
-			permissionToToggleStatus[p as apiPermission] = true;
+			permissionToToggleStatus[p as permission] = true;
 		});
 	};
 
@@ -54,14 +54,14 @@
 	});
 
 	const dispatch = createEventDispatcher<{ 'access-level-updated': AccessLevel }>();
-
+permission
 	const openConfirmationModal = () => {
 		const modal: ModalSettings = {
 			type: 'confirm',
 			title: 'Confirm changes to access level',
 			body: 'All users within this access level will have their permissions changed, do you wish to proceed ?',
 			response: (confirmed: boolean) => {
-				if (confirmed) updateAccessLevel();
+				if (conpermissioneAccessLevel();
 			}
 		};
 

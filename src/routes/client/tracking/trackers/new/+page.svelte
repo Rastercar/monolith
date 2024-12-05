@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SimCard } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import SetSimCardsStep from '$lib/components/non-generic/step/set-sim-cards-step/SetSimCardsStep.svelte';
@@ -14,6 +15,8 @@
 	let { data } = $props();
 
 	const auth = getAuthContext();
+
+	let trackerSimCards = $state<SimCard[]>([]);
 
 	let createdTracker: Tracker | null = $state(null);
 </script>
@@ -38,6 +41,7 @@
 			{/snippet}
 
 			<CreateTrackerStep
+				{createdTracker}
 				updateTrackerFormSchema={data.updateTrackerForm}
 				createTrackerFormSchema={data.createTrackerForm}
 				onCreated={(t) => (createdTracker = t)}
@@ -53,7 +57,7 @@
 				{#if createdTracker}
 					<SetSimCardsStep
 						tracker={createdTracker}
-						trackerSimCards={[]}
+						bind:trackerSimCards
 						updateSimCardFormSchema={data.updateSimCardForm}
 						createSimCardFormSchema={data.createSimCardForm}
 					/>

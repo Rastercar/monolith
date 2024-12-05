@@ -28,9 +28,12 @@ export async function createOrgTracker(orgId: number, body: CreateTrackerBody) {
 	return createdTracker;
 }
 
-export function updateOrgTracker(id: number, orgId: number, body: UpdateTrackerBody) {
-	return db
+export async function updateOrgTracker(id: number, orgId: number, body: UpdateTrackerBody) {
+	const [updatedTracker] = await db
 		.update(vehicleTracker)
 		.set(body)
-		.where(and(eq(vehicleTracker.id, id), eq(vehicleTracker.organizationId, orgId)));
+		.where(and(eq(vehicleTracker.id, id), eq(vehicleTracker.organizationId, orgId)))
+		.returning();
+
+	return updatedTracker;
 }

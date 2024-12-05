@@ -39,11 +39,14 @@ export function deleteOrgSimCardById(id: number, orgId: number) {
 	return db.delete(simCard).where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));
 }
 
-export function updateOrgSimCard(id: number, orgId: number, body: UpdateSimCardBody) {
-	return db
+export async function updateOrgSimCard(id: number, orgId: number, body: UpdateSimCardBody) {
+	const [updatedSimCard] = await db
 		.update(simCard)
 		.set(body)
-		.where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));
+		.where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)))
+		.returning();
+
+	return updatedSimCard;
 }
 
 export async function createOrgSimCard(orgId: number, body: CreateSimCardBody) {

@@ -29,7 +29,7 @@
 
 {#snippet field(title: string, value: string | null)}
 	<div>
-		<div class="text-surface-700-300">{title}</div>
+		<div class="opacity-70">{title}</div>
 		{value}
 	</div>
 {/snippet}
@@ -50,7 +50,7 @@
 	{#if simDeleted}
 		<DeletionSuccessMessage title="SIM card deleted" href={route('/client/tracking/sim-cards')} />
 	{:else if !editMode}
-		<div class="card py-4">
+		<div class="sm:card sm:preset-filled-surface-100-900 sm:p-4">
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 				{@render field('SSN', data.simCard.ssn)}
 				{@render field('APN user', data.simCard.apnUser)}
@@ -62,7 +62,7 @@
 				{@render field('Created At', new Date(data.simCard.createdAt).toLocaleDateString())}
 			</div>
 
-			<div class="flex space-x-4 justify-end mt-8">
+			<div class="flex space-x-4 justify-end mt-6">
 				<PermissionGuard requiredPermissions={'DELETE_SIM_CARD'}>
 					<button class="btn preset-filled-error-200-800" onclick={deleteSimCard}>
 						<Icon icon="mdi:trash" />
@@ -84,8 +84,8 @@
 			</div>
 		</div>
 	{:else}
-		<div class="card px-4 py-4">
-			<div class="flex mb-4 justify-end">
+		<div class="sm:card sm:preset-filled-surface-100-900 sm:p-4">
+			<div class="flex mb-2 justify-end">
 				<button class="btn preset-filled-warning-200-800" onclick={() => (editMode = false)}>
 					<Icon icon="mdi:pencil-off" />
 					cancel edit

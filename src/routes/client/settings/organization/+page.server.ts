@@ -1,5 +1,6 @@
 import { updateOrganizationSchema } from '$lib/api/organization.schema';
 import { updateOrganization } from '$lib/server/db/repo/organization';
+import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
@@ -18,6 +19,7 @@ export const load = async ({ locals }) => {
 export const actions = {
 	updateOrganization: async ({ request, locals }) => {
 		if (!locals.user) return error(400);
+		verifyUserHasPermissions(locals.user, 'UPDATE_ORGANIZATION');
 
 		const form = await validateFormWithFailOnError(request, updateOrganizationSchema);
 		await updateOrganization(form.data);

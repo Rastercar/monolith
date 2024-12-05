@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { apiPermission } from '$lib/constants/permissions';
+	import type { permission } from '$lib/constants/permissions';
 	import { getAuthContext } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 	import { type Snippet } from 'svelte';
@@ -8,7 +8,7 @@
 		/**
 		 * The permissions needed to show the main slot
 		 */
-		requiredPermissions?: apiPermission | apiPermission[];
+		requiredPermissions?: permission | permission[];
 
 		/**
 		 * If the user doesnt have the permissions nothing should be rendered

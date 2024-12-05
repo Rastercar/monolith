@@ -74,3 +74,5 @@ export type TrackerLocation = z.infer<typeof trackerLocationSchema>;
 export type CreateSimCardBody = z.infer<typeof createSimCardSchema>;
 
 export type UpdateSimCardBody = z.infer<typeof updateSimCardSchema>;
+
+export type UpdateSimCardRes = SimCard | { error: 'SSN_IN_USE' | 'PHONE_IN_USE' };

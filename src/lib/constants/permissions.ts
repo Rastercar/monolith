@@ -1,9 +1,9 @@
 /**
- * all posible rastercar API permissions
+ * all posible rastercar permissions
  *
- * this gives or denies access to certain api endpoints
+ * this gives or denies access to certain api endpoints / pages / components
  */
-export type apiPermission =
+export type permission =
 	| 'CREATE_USER'
 	| 'DELETE_USER'
 	| 'LOGOFF_USER'
@@ -24,7 +24,7 @@ export type apiPermission =
 	//
 	| 'UPDATE_ORGANIZATION';
 
-export type apiPermissionCategory =
+export type permissionCategory =
 	| 'user'
 	| 'access levels'
 	| 'tracker'
@@ -36,15 +36,15 @@ export type apiPermissionCategory =
 export interface PermissionDetails {
 	title: string;
 	summary: string;
-	category: apiPermissionCategory;
+	category: permissionCategory;
 	description: string;
 }
 
-export type PermissionDetailsAndKey = PermissionDetails & { key: apiPermission };
+export type PermissionDetailsAndKey = PermissionDetails & { key: permission };
 
-type PermissionByCategory = Record<apiPermissionCategory, PermissionDetailsAndKey[]>;
+type PermissionByCategory = Record<permissionCategory, PermissionDetailsAndKey[]>;
 
-export const permissionCategoryIcons: Record<apiPermissionCategory, string> = {
+export const permissionCategoryIcons: Record<permissionCategory, string> = {
 	user: 'mdi:user',
 	authentication: 'mdi:lock',
 	'access levels': 'mdi:shield',
@@ -54,7 +54,7 @@ export const permissionCategoryIcons: Record<apiPermissionCategory, string> = {
 	organization: 'mdi:building'
 };
 
-export const permissionDetails: Record<apiPermission, PermissionDetails> = {
+export const permissionDetails: Record<permission, PermissionDetails> = {
 	MANAGE_USER_ACCESS_LEVELS: {
 		title: 'Manage User Access Levels',
 		summary: 'Manage User Access Levels',
@@ -155,13 +155,13 @@ export const permissionDetails: Record<apiPermission, PermissionDetails> = {
 };
 
 export const getPermissionDetails = (permission: string): PermissionDetails | null => {
-	return permissionDetails[permission as apiPermission] ?? null;
+	return permissionDetails[permission as permission] ?? null;
 };
 
 /**
  * Group a list of permissions by their category
  */
-export const groupPermissionsByCategory = (permissions: apiPermission[]): PermissionByCategory => {
+export const groupPermissionsByCategory = (permissions: permission[]): PermissionByCategory => {
 	const group = {} as PermissionByCategory;
 
 	permissions.forEach((permission) => {
@@ -179,7 +179,7 @@ export const groupPermissionsByCategory = (permissions: apiPermission[]): Permis
 };
 
 export const allPermissionsGroupedByCategory = groupPermissionsByCategory(
-	Object.keys(permissionDetails) as apiPermission[]
+	Object.keys(permissionDetails) as permission[]
 );
 
 export const allPermissions = Object.keys(permissionDetails);

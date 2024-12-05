@@ -27,20 +27,18 @@
 		updateSimCardFormSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
 	}
 
-	const { tracker, createSimCardFormSchema, updateSimCardFormSchema, trackerSimCards }: Props =
-		$props();
-
-	let simCards = $state(trackerSimCards);
+	let {
+		tracker,
+		createSimCardFormSchema,
+		updateSimCardFormSchema,
+		trackerSimCards = $bindable()
+	}: Props = $props();
 
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
-	let deletedOrRemovedSimCardsIds: number[] = [];
+	let deletedOrRemovedSimCardsIds = $state<number[]>([]);
 
 	let stepperState = getContext<StepperState>('state');
-
-	const removeSimCardFromDisplay = (simId: number) => {
-		deletedOrRemovedSimCardsIds = [...deletedOrRemovedSimCardsIds, simId];
-	};
 </script>
 
 <span class="text-sm">
@@ -51,7 +49,7 @@
 
 <Accordion collapsible multiple>
 	{#each Array(supportedSimCards) as _, i}
-		{@const simForSlot = simCards[i]}
+		{@const simForSlot = trackerSimCards[i]}
 
 		<Accordion.Item
 			panelPadding="px-0"
@@ -70,8 +68,12 @@
 				{#if simForSlot}
 					<SimCardDisplay
 						simCard={simForSlot}
-						onSimDeleted={() => removeSimCardFromDisplay(simForSlot.id)}
-						onSimRemoved={() => removeSimCardFromDisplay(simForSlot.id)}
+						onSimDeleted={() => {
+							trackerSimCards = trackerSimCards.filter((t) => t.id != simForSlot.id);
+						}}
+						onSimRemoved={() => {
+							trackerSimCards = trackerSimCards.filter((t) => t.id != simForSlot.id);
+						}}
 					/>
 				{:else}
 					<SimCardChooser
@@ -79,8 +81,8 @@
 						{tracker}
 						{updateSimCardFormSchema}
 						{createSimCardFormSchema}
-						onSimCardCreated={(sim) => simCards.push(sim)}
-						onSimCardSelected={(sim) => simCards.push(sim)}
+						onSimCardCreated={(sim) => trackerSimCards.push(sim)}
+						onSimCardSelected={(sim) => trackerSimCards.push(sim)}
 					/>
 				{/if}
 			{/snippet}

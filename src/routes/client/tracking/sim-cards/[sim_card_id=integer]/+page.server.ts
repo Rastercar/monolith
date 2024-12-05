@@ -1,14 +1,12 @@
 import { updateSimCardSchema } from '$lib/api/sim-card.schema';
-import { isErrorFromUniqueConstraint } from '$lib/server/db/error.js';
-import {
-	findOrgSimCardById as findOrgSimCardByID,
-	updateOrgSimCard
-} from '$lib/server/db/repo/sim-card.js';
+import { findOrgSimCardById as findOrgSimCardByID } from '$lib/server/db/repo/sim-card.js';
+import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { message } from 'sveltekit-superforms/server';
+import { _updateSimCard } from './+server';
 
 export const load = async ({ params, locals }) => {
 	if (!locals.user) return error(403);
@@ -26,23 +24,21 @@ export const load = async ({ params, locals }) => {
 export const actions = {
 	updateSimCard: async ({ request, locals, params }) => {
 		if (!locals.user) return error(400);
+		verifyUserHasPermissions(locals.user, 'UPDATE_SIM_CARD');
 
 		const simCardId = parseInt(params.sim_card_id);
 
 		const form = await validateFormWithFailOnError(request, updateSimCardSchema);
+		const res = await _updateSimCard(simCardId, locals.user.organization.id, form.data);
 
-		try {
-			await updateOrgSimCard(simCardId, locals.user.organization.id, form.data);
-		} catch (e) {
-			if (isErrorFromUniqueConstraint(e, 'sim_card_ssn_unique')) {
+		if ('error' in res) {
+			if (res.error === 'SSN_IN_USE') {
 				return setError(form, 'ssn', 'SSN in use by another SIM card');
 			}
 
-			if (isErrorFromUniqueConstraint(e, 'sim_card_phone_number_unique')) {
+			if (res.error === 'PHONE_IN_USE') {
 				return setError(form, 'phoneNumber', 'Phone number in use by another SIM card');
 			}
-
-			throw e;
 		}
 
 		return message(form, { type: 'success', text: 'sim card updated' });

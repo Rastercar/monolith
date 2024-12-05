@@ -6,8 +6,8 @@
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
-	import type { apiPermission } from '$lib/constants/permissions';
-	import { hasPermission } from '$lib/store/auth.svelte';
+	import type { permission } from '$lib/constants/permissions';
+	importpermissionion } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 	import { popup, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -86,7 +86,7 @@
 			id: 'delete',
 			icon: 'mdi:trash',
 			text: 'Permanently delete',
-			requiredPermission: 'DELETE_TRACKER' as const
+permissionrmission: 'DELETE_TRACKER' as const
 		},
 		{
 			id: 'remove',

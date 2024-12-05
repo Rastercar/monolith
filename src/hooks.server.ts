@@ -32,8 +32,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const isLoggedIn = !!event.locals.user;
 
-	// if the request is a request for the HTML of a page
-	// and that page has associated metadata
+	// if the request is a request for the HTML of a page and that page has associated metadata
 	const isLoadingPageWithMeta = !!pageMeta && event.request.method === 'GET';
 
 	if (isLoadingPageWithMeta && pageMeta?.requiredAuth === 'logged-in') {

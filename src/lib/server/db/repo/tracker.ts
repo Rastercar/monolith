@@ -1,11 +1,13 @@
 import type { PaginationWithFilters } from '$lib/api/common';
 import type {
 	CreateTrackerBody,
+	GetTrackerLocationsFilters,
 	GetTrackersFilters,
 	UpdateTrackerBody
 } from '$lib/api/tracker.schema';
-import { and, eq, ilike, isNotNull, isNull, type SQL } from 'drizzle-orm';
+import { and, eq, gt, ilike, isNotNull, isNull, lt, type SQL } from 'drizzle-orm';
 import { db } from '../db';
+import { getISOFormatDateQuery } from '../helpers';
 import { paginate } from '../pagination';
 import { simCard, vehicleTracker, vehicleTrackerLocation } from '../schema';
 
@@ -28,6 +30,75 @@ export async function findOrgTrackersWithPagination(
 	}
 
 	return paginate(pagination, vehicleTracker, sqlFilters);
+}
+
+export async function findTrackerLocationList(id: number, options: GetTrackerLocationsFilters) {
+	const sqlFilters: SQL[] = [eq(vehicleTrackerLocation.vehicleTrackerId, id)];
+
+	if (options.before) {
+		sqlFilters.push(lt(vehicleTrackerLocation.time, options.before));
+	}
+
+	if (options.after) {
+		sqlFilters.push(gt(vehicleTrackerLocation.time, options.after));
+	}
+
+	return db
+		.select({
+			time: getISOFormatDateQuery(vehicleTrackerLocation.time),
+			point: vehicleTrackerLocation.point
+		})
+		.from(vehicleTrackerLocation)
+		.where(and(...sqlFilters))
+		.limit(options.limit);
+
+	// TODO: rm me !
+	// let (q, args) = SeaQuery::select()
+	//     .column(vehicle_tracker_location::Column::Time)
+	//     .column(vehicle_tracker_location::Column::Point)
+	//     .from(vehicle_tracker_location::Entity)
+	//     .cond_where(
+	//         Cond::all()
+	//             .add(Expr::col(vehicle_tracker_location::Column::VehicleTrackerId).eq(tracker.id))
+	//             .add_option(
+	//                 search_query
+	//                     .after
+	//                     .map(|a| Expr::col(vehicle_tracker_location::Column::Time).gt(a)),
+	//             )
+	//             .add_option(
+	//                 search_query
+	//                     .before
+	//                     .map(|b| Expr::col(vehicle_tracker_location::Column::Time).lt(b)),
+	//             ),
+	//     )
+	//     .order_by(
+	//         vehicle_tracker_location::Column::Time,
+	//         search_query.order.into(),
+	//     )
+	//     .limit(search_query.limit.unwrap_or(15))
+	//     .to_owned()
+	//     .build_sqlx(PostgresQueryBuilder);
+	// let rows: Vec<(
+	//     DateTime<Utc>,
+	//     geozero::wkb::Decode<geo_types::Geometry<f64>>,
+	// )> = sqlx::query_as_with(&q, args)
+	//     .fetch_all(db.get_postgres_connection_pool())
+	//     .await
+	//     .map_err(|_| internal_error_res())?;
+	// let positions: Vec<dto::TrackerLocationDto> = rows
+	//     .iter()
+	//     .filter_map(|row| {
+	//         if let Some(geo_types::Geometry::Point(point)) = row.1.geometry {
+	//             let loc = dto::TrackerLocationDto {
+	//                 point: point.into(),
+	//                 time: row.0,
+	//             };
+	//             return Some(loc);
+	//         }
+	//         None
+	//     })
+	//     .collect();
+	// Ok(Json(positions))
 }
 
 export function findOrgTrackerById(id: number, orgId: number) {

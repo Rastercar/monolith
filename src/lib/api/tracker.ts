@@ -5,12 +5,15 @@ import {
 	type Paginated,
 	type PaginationWithFilters
 } from './common';
-import { simCardSchema, trackerLocationSchema, type TrackerLocation } from './sim-card.schema';
+import { simCardSchema } from './sim-card.schema';
 import {
+	trackerLocationSchema,
 	trackerSchema,
 	type DeleteTrackerBody,
+	type GetTrackerLocationsFilters,
 	type GetTrackersFilters,
-	type Tracker
+	type Tracker,
+	type TrackerLocation
 } from './tracker.schema';
 import { api, stripUndefined } from './utils';
 
@@ -80,28 +83,18 @@ export const apiGetTrackerLastLocation = (vehicleTrackerId: number) =>
 		.json<Tracker[]>()
 		.then(trackerLocationSchema.nullable().parse);
 
-export interface GetTrackerLocationsDto {
-	/**
-	 * query positions that appear only after a timestamp
-	 */
-	after?: string;
-
-	/**
-	 * query positions that abear only before a timestamp
-	 */
-	before?: string;
-
-	/**
-	 * the amount of positions to be fetched
-	 */
-	limit?: number;
-}
-
 /**
  * get a list of tracker locations after a start date and a limit
  */
-export const apiGetTrackerLocations = (id: number, filters?: GetTrackerLocationsDto) =>
-	api
-		.post(filters ?? {}, `/tracker/${id}/get-location-list`)
-		.json<TrackerLocation>()
-		.then(z.array(trackerLocationSchema).parse);
+export const apiGetTrackerLocations = async (id: number, filters?: GetTrackerLocationsFilters) => {
+	const url = route('GET /client/tracking/trackers/[tracker_id=integer]/locations', {
+		tracker_id: id.toString()
+	});
+
+	const data = await api
+		.query(stripUndefined({ ...filters }))
+		.get(url)
+		.json<TrackerLocation>();
+
+	return z.array(trackerLocationSchema).parse(data);
+};

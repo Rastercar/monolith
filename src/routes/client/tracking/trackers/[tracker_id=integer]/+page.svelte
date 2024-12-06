@@ -37,7 +37,7 @@
 	{:else if !editMode}
 		<div class="card preset-filled-surface-100-900">
 			<TrackerInfo
-				tracker={data.tracker}
+				bind:tracker
 				createSimCardForm={data.createSimCardForm}
 				updateSimCardForm={data.updateSimCardForm}
 				onEditModeClick={() => (editMode = true)}

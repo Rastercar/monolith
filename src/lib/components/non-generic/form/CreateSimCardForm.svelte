@@ -73,9 +73,9 @@
 		maxlength={50}
 	/>
 
-	<TextField {form} name="apnPassword" label="APN Password *" placeholder="web" maxlength={50} />
+	<TextField {form} name="apnPassword" label="APN Password *" maxlength={50} />
 
-	<TextField {form} name="apnAddress" label="APN Address *" placeholder="web" maxlength={50} />
+	<TextField {form} name="apnAddress" label="APN Address *" maxlength={50} />
 
 	<TextField {form} name="pin" label="PIN 1" placeholder="0000" maxlength={8} />
 

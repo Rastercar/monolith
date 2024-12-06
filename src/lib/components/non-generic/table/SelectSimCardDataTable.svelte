@@ -11,7 +11,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import { showErrorToast } from '$lib/store/toast';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -44,10 +44,7 @@
 		id: `selected-sim-card-form`,
 		validators: zodClient(updateSimCardSchema),
 		onUpdate: ({ form }) => {
-			if (form.valid) {
-				showSuccessToast('sim card updated');
-				if (selectedSimCard) onSelected(selectedSimCard);
-			}
+			if (form.valid && selectedSimCard) onSelected(selectedSimCard);
 		},
 		onError: showErrorToast
 	});

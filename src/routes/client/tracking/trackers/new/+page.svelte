@@ -69,7 +69,7 @@
 			{#snippet header()}
 				<div class="flex items-center">
 					<Icon icon="mdi:check" class="mr-2 text-success-400-600" height={24} />
-					Your tracker was created
+					Tracker created
 				</div>
 			{/snippet}
 

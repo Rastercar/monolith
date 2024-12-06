@@ -40,7 +40,7 @@ that are in the guard or check the authorization yourself
 -->
 {#if hasPermissions}
 	{@render children()}
-{:else if denied && !hideOnDenied}
+{:else if denied}
 	{@render denied()}
 {:else if !hideOnDenied}
 	<div

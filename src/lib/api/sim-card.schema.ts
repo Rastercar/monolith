@@ -65,14 +65,6 @@ export const updateSimCardSchema = z.object({
 	vehicleTrackerId: z.number().nullish()
 });
 
-export const trackerLocationSchema = z.object({
-	time: z.string().datetime(),
-	point: z.object({
-		y: z.number().min(-90).max(90),
-		x: z.number().min(-180).max(180)
-	})
-});
-
 export type SimCard = z.infer<typeof simCardSchema>;
 
 export type GetSimCardsFilters = z.infer<typeof getSimCardsSearchParamsSchema>;
@@ -82,5 +74,3 @@ export type CreateSimCardBody = z.infer<typeof createSimCardSchema>;
 export type UpdateSimCardBody = z.infer<typeof updateSimCardSchema>;
 
 export type UpdateSimCardRes = SimCard | { error: 'SSN_IN_USE' | 'PHONE_IN_USE' };
-
-export type TrackerLocation = z.infer<typeof trackerLocationSchema>;

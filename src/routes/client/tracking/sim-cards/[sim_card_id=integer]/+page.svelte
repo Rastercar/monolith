@@ -5,7 +5,7 @@
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { route } from '$lib/ROUTES.js';
-	import { showErrorToast } from '$lib/store/toast';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 
@@ -54,6 +54,7 @@
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 				{@render field('SSN', data.simCard.ssn)}
 				{@render field('APN user', data.simCard.apnUser)}
+				{@render field('APN address', data.simCard.apnAddress)}
 				{@render field('APN password', data.simCard.apnPassword)}
 				{@render field('PIN 1', data.simCard.pin)}
 				{@render field('PIN 2', data.simCard.pin2)}
@@ -93,9 +94,12 @@
 			</div>
 
 			<UpdateSimCardForm
-				simCard={data.simCard}
+				simCardId={data.simCard.id}
 				formSchema={data.updateSimCardForm}
-				onUpdate={() => (editMode = false)}
+				onUpdate={() => {
+					showSuccessToast('SIM card updated');
+					editMode = false;
+				}}
 			/>
 		</div>
 	{/if}

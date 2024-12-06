@@ -1,11 +1,10 @@
-import { updateSimCardSchema } from '$lib/api/sim-card.schema';
+import { updateSimCardSchema, type SimCard } from '$lib/api/sim-card.schema';
 import { findOrgSimCardById as findOrgSimCardByID } from '$lib/server/db/repo/sim-card.js';
 import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { message } from 'sveltekit-superforms/server';
 import { _updateSimCard } from './+server';
 
 export const load = async ({ params, locals }) => {
@@ -29,6 +28,7 @@ export const actions = {
 		const simCardId = parseInt(params.sim_card_id);
 
 		const form = await validateFormWithFailOnError(request, updateSimCardSchema);
+
 		const res = await _updateSimCard(simCardId, locals.user.organization.id, form.data);
 
 		if ('error' in res) {
@@ -41,6 +41,6 @@ export const actions = {
 			}
 		}
 
-		return message(form, { type: 'success', text: 'sim card updated' });
+		return { form, updatedSimCard: res as SimCard };
 	}
 };

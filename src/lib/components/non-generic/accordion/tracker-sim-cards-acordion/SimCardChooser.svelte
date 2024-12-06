@@ -1,8 +1,10 @@
 <script lang="ts">
-	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
+	import type { createSimCardSchema, SimCard, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import CreateSimCardForm from '../../form/CreateSimCardForm.svelte';
+	import SelectSimCardDataTable from '../../table/SelectSimCardDataTable.svelte';
 
 	interface Props {
 		/**
@@ -10,12 +12,28 @@
 		 */
 		tracker: Tracker;
 
-		slotNumber: number;
+		/**
+		 * Slot the tracker is being inserted into
+		 */
+		simSlot: number;
 
-		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+		updateSimCardFormSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
+
+		createSimCardFormSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
+
+		onSimCardCreated: (_: SimCard) => void;
+
+		onSimCardSelected: (_: SimCard) => void;
 	}
 
-	let { tracker, slotNumber, formSchema }: Props = $props();
+	let {
+		tracker,
+		simSlot,
+		updateSimCardFormSchema,
+		createSimCardFormSchema,
+		onSimCardCreated,
+		onSimCardSelected
+	}: Props = $props();
 
 	type action = 'new-sim-card' | 'existing-sim-card';
 
@@ -29,24 +47,27 @@
 		{
 			value: 'new-sim-card',
 			label: 'create a new SIM',
-			classes: 'btn btn-sm w-full variant-filled-primary'
+			classes: 'btn w-full preset-filled-primary-200-800'
 		},
 		{
 			value: 'existing-sim-card',
 			label: 'use a existing SIM',
-			classes: 'btn btn-sm w-full variant-filled-secondary'
+			classes: 'btn w-full preset-filled-secondary-200-800'
 		}
 	]}
 />
 
-<!-- TODO: -->
-<!-- {#if selectedOption === 'existing-sim-card'}
-	<SelectSimCardDataTable trackerIdToAssociate={tracker.id} on:sim-card-selected />
+{#if selectedOption === 'existing-sim-card'}
+	<SelectSimCardDataTable
+		formSchema={updateSimCardFormSchema}
+		trackerIdToAssociate={tracker.id}
+		onSelected={onSimCardSelected}
+	/>
 {:else}
 	<CreateSimCardForm
-		{slotNumber}
-		{formSchema}
+		slotNumber={simSlot}
+		formSchema={createSimCardFormSchema}
 		trackerIdToAssociate={tracker.id}
-		onCreate
+		onCreate={onSimCardCreated}
 	/>
-{/if} -->
+{/if}

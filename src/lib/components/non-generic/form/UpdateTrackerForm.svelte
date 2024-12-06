@@ -35,12 +35,12 @@
 	const { submitting: isLoading } = form;
 
 	onMount(() => {
-		form.reset({ data: { ...initialValues } });
+		if (initialValues) form.reset({ data: { ...initialValues } });
 	});
 </script>
 
 <form
-	class="grid grid-cols-2 gap-4"
+	class="grid grid-cols-1 md:grid-cols-2 gap-4"
 	method="POST"
 	action={route('updateTracker /client/tracking/trackers/[tracker_id=integer]', {
 		tracker_id: trackerId.toString()
@@ -59,7 +59,7 @@
 	{#if children}
 		{@render children({ isLoading: $isLoading })}
 	{:else}
-		<div class="col-span-2 flex justify-end">
+		<div class="col-span-1 md:col-span-2 flex justify-end">
 			<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500">
 				update tracker
 			</LoadableButton>

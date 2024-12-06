@@ -7,6 +7,23 @@ export const deleteTrackerSchema = z.object({
 	deleteAssociatedSimCards: z.boolean().optional()
 });
 
+export const getTrackerLocationsSearchParamsSchema = z.object({
+	/**
+	 * query positions that appear only after a timestamp
+	 */
+	after: z.string().datetime().optional(),
+
+	/**
+	 * query positions that appear only before a timestamp
+	 */
+	before: z.string().datetime().optional(),
+
+	/**
+	 * the amount of positions to be fetched
+	 */
+	limit: z.coerce.number().min(1).max(20).default(10)
+});
+
 export const getTrackersSearchParamsSchema = z.object({
 	imei: z.string().optional(),
 	withAssociatedVehicle: castStringToOptionalBool
@@ -36,6 +53,14 @@ export const trackerSchema = z.object({
 	simCards: z.array(simCardSchema).optional()
 });
 
+export const trackerLocationSchema = z.object({
+	time: z.string().datetime(),
+	point: z.object({
+		lat: z.number().min(-90).max(90),
+		lng: z.number().min(-180).max(180)
+	})
+});
+
 export type Tracker = z.infer<typeof trackerSchema>;
 
 export type GetTrackersFilters = z.infer<typeof getTrackersSearchParamsSchema>;
@@ -45,3 +70,7 @@ export type CreateTrackerBody = z.infer<typeof createTrackerSchema>;
 export type UpdateTrackerBody = z.infer<typeof updateTrackerSchema>;
 
 export type DeleteTrackerBody = z.infer<typeof deleteTrackerSchema>;
+
+export type GetTrackerLocationsFilters = z.infer<typeof getTrackerLocationsSearchParamsSchema>;
+
+export type TrackerLocation = z.infer<typeof trackerLocationSchema>;

@@ -19,8 +19,13 @@
 		onTrackerDeleted: () => void;
 	}
 
-	let { tracker, createSimCardForm, updateSimCardForm, onTrackerDeleted, onEditModeClick }: Props =
-		$props();
+	let {
+		tracker = $bindable(),
+		createSimCardForm,
+		updateSimCardForm,
+		onTrackerDeleted,
+		onEditModeClick
+	}: Props = $props();
 
 	const deleteTrackerMutation = createMutation(() => ({
 		mutationFn: (r: boolean) => apiDeleteTracker(tracker.id, { deleteAssociatedSimCards: r }),
@@ -47,27 +52,31 @@
 </h2>
 
 <div class="px-4">
-	<div class="flex items-center">
-		<span class="mr-4">model: {tracker.model}</span>
-		<span class="mr-auto">imei: {tracker.imei}</span>
+	<div class="md:flex md:items-center">
+		<div class="flex items-center md:mr-auto">
+			<span class="mr-4">model: {tracker.model}</span>
+			<span class="mr-auto">imei: {tracker.imei}</span>
+		</div>
 
-		<PermissionGuard requiredPermissions={'DELETE_TRACKER'}>
-			<DeleteTrackerModal onDeleteConfirmed={(withSimCards) => deleteTracker(withSimCards)}>
-				<button class="btn preset-filled-warning-200-800">
-					<Icon icon="mdi:trash" />delete
+		<div class="flex items-center mt-4 md:mt-0">
+			<PermissionGuard requiredPermissions={'DELETE_TRACKER'}>
+				<DeleteTrackerModal onDeleteConfirmed={(withSimCards) => deleteTracker(withSimCards)}>
+					<button class="btn preset-filled-warning-200-800">
+						<Icon icon="mdi:trash" />delete
+					</button>
+				</DeleteTrackerModal>
+			</PermissionGuard>
+
+			<PermissionGuard requiredPermissions={'UPDATE_TRACKER'}>
+				<button class="btn preset-filled-primary-200-800 ml-3" onclick={onEditModeClick}>
+					<Icon icon="mdi:pencil" />
+					edit
 				</button>
-			</DeleteTrackerModal>
-		</PermissionGuard>
-
-		<PermissionGuard requiredPermissions={'UPDATE_TRACKER'}>
-			<button class="btn preset-filled-primary-200-800 ml-3" onclick={onEditModeClick}>
-				<Icon icon="mdi:pencil" />
-				edit
-			</button>
-		</PermissionGuard>
+			</PermissionGuard>
+		</div>
 	</div>
 </div>
 
 <hr class="hr my-4" />
 
-<TrackerSimCardsAccordion {tracker} {createSimCardForm} {updateSimCardForm} />
+<TrackerSimCardsAccordion bind:tracker {createSimCardForm} {updateSimCardForm} />

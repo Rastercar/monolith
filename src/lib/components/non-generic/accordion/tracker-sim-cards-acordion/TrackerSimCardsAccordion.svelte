@@ -5,11 +5,12 @@
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
-	import { showErrorToast } from '$lib/store/toast';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import SimCardChooser from './SimCardChooser.svelte';
 
 	interface Props {
 		tracker: Tracker;
@@ -34,35 +35,24 @@
 		onError: showErrorToast
 	}));
 
-	// TODO:
-	// const removeSimCardFromDisplay = (id: number) => {
-	// 	simCards = (simCards ?? []).filter((sim) => sim.id !== id);
-	// };
+	const removeSimFromTracker = (id: number) => {
+		tracker.simCards = (tracker.simCards ?? []).filter((s) => s.id !== id);
+	};
 
-	const removeSimCard = async (id: number) => {
+	const removeSimCard = (id: number) => {
 		if (!confirm('Remove the SIM card from the tracker ?')) return;
-
-		await removeSimCardMutation.mutateAsync(id);
-		// removeSimCardFromDisplay(id);
+		removeSimCardMutation.mutateAsync(id).then(() => removeSimFromTracker(id));
 	};
 
-	const deleteSimCard = async (id: number) => {
+	const deleteSimCard = (id: number) => {
 		if (!confirm('Permanently delete this SIM card ?')) return;
-
-		await deleteSimCardMutation.mutateAsync(id);
-		// removeSimCardFromDisplay(id);
+		deleteSimCardMutation.mutateAsync(id).then(() => removeSimFromTracker(id));
 	};
-
-	// const appendSimCard = (e: CustomEvent<SimCard>) => {
-	// 	simCards = [...(simCards ?? []), e.detail];
-	// };
-
-	const max = (a: number, b: number) => (a < b ? b : a);
 
 	let simCardAmount = $derived(tracker.simCards?.length || 0);
 
 	// if somehow the tracker has more SIM cards than allowed, show it anyway so it can be removed
-	let slotsToShow = $derived(max(simCardAmount, supportedSimCards));
+	let slotsToShow = $derived(Math.max(simCardAmount, supportedSimCards));
 </script>
 
 {#snippet field(label: string, value: string | null)}
@@ -121,17 +111,7 @@
 									{@render field('Created At', new Date(simForSlot.createdAt).toLocaleDateString())}
 								</div>
 
-								<div class="flex">
-									<PermissionGuard requiredPermissions={'UPDATE_TRACKER'}>
-										<button
-											class="btn preset-filled-warning-200-800 mr-3"
-											onclick={() => removeSimCard(simForSlot.id)}
-										>
-											<Icon icon="mdi:close" />
-											remove
-										</button>
-									</PermissionGuard>
-
+								<div class="flex flex-col-reverse md:flex-row gap-4">
 									<PermissionGuard requiredPermissions={'DELETE_SIM_CARD'}>
 										<button
 											class="btn preset-filled-warning-200-800"
@@ -144,9 +124,19 @@
 										</button>
 									</PermissionGuard>
 
+									<PermissionGuard requiredPermissions={'UPDATE_TRACKER'}>
+										<button
+											class="btn preset-filled-warning-200-800"
+											onclick={() => removeSimCard(simForSlot.id)}
+										>
+											<Icon icon="mdi:close" />
+											remove
+										</button>
+									</PermissionGuard>
+
 									<PermissionGuard requiredPermissions={'UPDATE_SIM_CARD'}>
 										<button
-											class="btn preset-filled-primary-200-800 ml-auto"
+											class="btn preset-filled-primary-200-800 md:ml-auto"
 											onclick={() => {
 												editMode = true;
 											}}
@@ -172,29 +162,40 @@
 
 							<UpdateSimCardForm
 								extraClasses="p-4"
-								simCard={simForSlot}
+								simCardId={simForSlot.id}
+								initialValues={simForSlot}
 								formSchema={updateSimCardForm}
-								onUpdate={() => {
+								onUpdate={(updatedSimCard) => {
 									editMode = false;
-									// TODO:
-									// if (simCards) simCards[i] = updatedCard;
+									if (tracker.simCards) {
+										// hack to avoid firing invalid ownership warning
+										const sims = [...tracker.simCards];
+										sims[i] = updatedSimCard;
+										tracker.simCards = sims;
+									}
 								}}
 							/>
 						{/if}
 					{:else}
 						<div class="p-4">
-							<PermissionGuard requiredPermissions={['CREATE_SIM_CARD', 'UPDATE_SIM_CARD']}>
-								<!-- <SimCardChooser
+							<PermissionGuard requiredPermissions={['CREATE_SIM_CARD', 'UPDATE_TRACKER']}>
+								<SimCardChooser
 									{tracker}
-									slotNumber={i + 1}
-									formSchema={createSimCardForm}
-									on:sim-card-created={appendSimCard}
-									on:sim-card-selected={appendSimCard}
-								/> -->
+									simSlot={i + 1}
+									createSimCardFormSchema={createSimCardForm}
+									updateSimCardFormSchema={updateSimCardForm}
+									onSimCardCreated={(s) => {
+										showSuccessToast('new SIM card added to tracker');
+										tracker.simCards?.push(s);
+									}}
+									onSimCardSelected={(s) => {
+										showSuccessToast('SIM card added to tracker');
+										tracker.simCards?.push(s);
+									}}
+								/>
 
-								TODO?
 								{#snippet denied()}
-									<span class="text-error-400-500-token">
+									<span class="text-error-300-700">
 										you lack the permissions to set or create a tracker sim card
 									</span>
 								{/snippet}

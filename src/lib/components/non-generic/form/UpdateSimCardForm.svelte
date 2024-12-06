@@ -11,10 +11,11 @@
 	interface Props {
 		simCard: SimCard;
 		formSchema: SuperValidated<Infer<typeof updateSimCardSchema>>;
+		extraClasses?: string;
 		onUpdate: () => void;
 	}
 
-	let { simCard, formSchema, onUpdate }: Props = $props();
+	let { simCard, formSchema, extraClasses = '', onUpdate }: Props = $props();
 
 	const form = superForm(formSchema, {
 		validators: zodClient(updateSimCardSchema),
@@ -30,7 +31,7 @@
 </script>
 
 <form
-	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+	class={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ${extraClasses}`}
 	method="POST"
 	action={route('updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]', {
 		sim_card_id: simCard.id.toString()

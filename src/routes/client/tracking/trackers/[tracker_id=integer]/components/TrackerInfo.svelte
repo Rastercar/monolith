@@ -3,6 +3,8 @@
 	import { apiDeleteTracker } from '$lib/api/tracker';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
+	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
 	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -29,29 +31,12 @@
 		await deleteTrackerMutation.mutateAsync(deleteSimCards);
 		onTrackerDeleted();
 	};
-
-	// const openDeleteTrackerConfirmModal = () => {
-	// 	const component: ModalComponent = { ref: DeleteTrackerModal };
-
-	// 	modalStore.trigger({
-	// 		component,
-	// 		type: 'component',
-	// 		response: (e: undefined | { deleteSimCards: boolean }) => {
-	// 			if (!e) return;
-	// 			deleteTracker(e.deleteSimCards);
-	// 		}
-	// 	});
-	// };
-
-	// const dispatch = createEventDispatcher<{
-	// 	'edit-mode-on': void;
-	// 	'tracker-deleted': void;
-	// }>();
 </script>
 
 <h2 class="p-4 text-lg flex items-center">
 	<span class="mr-auto">General Info</span>
 
+	<!-- TODO: -->
 	<!--<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
 	 <div class="ml-2">
 			{#snippet children({ isOnline })}
@@ -67,15 +52,15 @@
 		<span class="mr-auto">imei: {tracker.imei}</span>
 
 		<PermissionGuard requiredPermissions={'DELETE_TRACKER'}>
-			<button class="btn preset-filled-warning-200-800">
-				<!-- TODO: -->
-				<!-- onclick={openDeleteTrackerConfirmModal} -->
-				<Icon icon="mdi:trash" class="mr-2" />delete
-			</button>
+			<DeleteTrackerModal onDeleteConfirmed={(withSimCards) => deleteTracker(withSimCards)}>
+				<button class="btn preset-filled-warning-200-800">
+					<Icon icon="mdi:trash" />delete
+				</button>
+			</DeleteTrackerModal>
 		</PermissionGuard>
 
 		<PermissionGuard requiredPermissions={'UPDATE_TRACKER'}>
-			<button class="btn preset-filled-primary-200-800 ml-3" onclick={() => onEditModeClick()}>
+			<button class="btn preset-filled-primary-200-800 ml-3" onclick={onEditModeClick}>
 				<Icon icon="mdi:pencil" />
 				edit
 			</button>
@@ -85,4 +70,4 @@
 
 <hr class="hr my-4" />
 
-<!-- <TrackerSimCardsAccordion {tracker} {createSimCardForm} {updateSimCardForm} /> -->
+<TrackerSimCardsAccordion {tracker} {createSimCardForm} {updateSimCardForm} />

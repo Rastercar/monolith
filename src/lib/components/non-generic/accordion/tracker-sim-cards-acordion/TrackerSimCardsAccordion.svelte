@@ -1,98 +1,94 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import { apiDeleteSimCard, apiSetSimCardTracker } from '$lib/api/sim-card';
-	import type { SimCard, createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
-	import { apiGetTrackerSimCards } from '$lib/api/tracker';
+	import { apiDeleteSimCard, apiUpdateSimCard } from '$lib/api/sim-card';
+	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
-	import { getToaster } from '$lib/store/toaster';
+	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	import { createMutation, createQuery } from '@tanstack/svelte-query';
+	import { Accordion } from '@skeletonlabs/skeleton-svelte';
+	import { createMutation } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
-	import SimCardChooser from './SimCardChooser.svelte';
 
 	interface Props {
 		tracker: Tracker;
+
 		createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 		updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
 	}
 
-	let { tracker, createSimCardForm, updateSimCardForm }: Props = $props();
+	let { tracker = $bindable(), createSimCardForm, updateSimCardForm }: Props = $props();
 
 	let editMode = $state(false);
 
-	const toaster = getToaster();
-
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
-	const removeSimCardMutation = createMutation({
-		mutationFn: (simCardId: number) => apiSetSimCardTracker({ newTrackerId: null, simCardId }),
-		onError: () => toaster.error()
-	});
+	const removeSimCardMutation = createMutation(() => ({
+		mutationFn: (simCardId: number) => apiUpdateSimCard(simCardId, { vehicleTrackerId: null }),
+		onError: showErrorToast
+	}));
 
-	const deleteSimCardMutation = createMutation({
+	const deleteSimCardMutation = createMutation(() => ({
 		mutationFn: (simCardId: number) => apiDeleteSimCard(simCardId),
-		onError: () => toaster.error()
-	});
+		onError: showErrorToast
+	}));
 
-	const query = createQuery({
-		queryKey: ['tracker', tracker.id, 'sim-cards'],
-		queryFn: () => apiGetTrackerSimCards(tracker.id)
-	});
-
-	const removeSimCardFromDisplay = (id: number) => {
-		simCards = (simCards ?? []).filter((sim) => sim.id !== id);
-	};
+	// TODO:
+	// const removeSimCardFromDisplay = (id: number) => {
+	// 	simCards = (simCards ?? []).filter((sim) => sim.id !== id);
+	// };
 
 	const removeSimCard = async (id: number) => {
 		if (!confirm('Remove the SIM card from the tracker ?')) return;
 
-		await $removeSimCardMutation.mutateAsync(id);
-		removeSimCardFromDisplay(id);
+		await removeSimCardMutation.mutateAsync(id);
+		// removeSimCardFromDisplay(id);
 	};
 
 	const deleteSimCard = async (id: number) => {
 		if (!confirm('Permanently delete this SIM card ?')) return;
 
-		await $deleteSimCardMutation.mutateAsync(id);
-		removeSimCardFromDisplay(id);
+		await deleteSimCardMutation.mutateAsync(id);
+		// removeSimCardFromDisplay(id);
 	};
 
-	const appendSimCard = (e: CustomEvent<SimCard>) => {
-		simCards = [...(simCards ?? []), e.detail];
-	};
+	// const appendSimCard = (e: CustomEvent<SimCard>) => {
+	// 	simCards = [...(simCards ?? []), e.detail];
+	// };
 
 	const max = (a: number, b: number) => (a < b ? b : a);
 
-	let simCards;
-	run(() => {
-		({ data: simCards } = $query);
-	});
-
-	let simCardAmount = $derived(simCards?.length || 0);
+	let simCardAmount = $derived(tracker.simCards?.length || 0);
 
 	// if somehow the tracker has more SIM cards than allowed, show it anyway so it can be removed
 	let slotsToShow = $derived(max(simCardAmount, supportedSimCards));
 </script>
 
-<div class="flex mb-2 justify-between items-center px-4">
+{#snippet field(label: string, value: string | null)}
+	<div class="block"><span class="opacity-80">{label}:</span> {value}</div>
+{/snippet}
+
+<div class="flex mb-4 justify-between items-center px-4">
 	<span>SIM cards:</span>
-	<span class="text-sm opacity-70">{simCards?.length || 0} / {supportedSimCards} Slots</span>
+	<span class="type-scale-1 opacity-70">
+		{tracker.simCards?.length || 0} / {supportedSimCards} Slots
+	</span>
 </div>
 
-<Accordion padding="px-0" regionControl="px-4 py-4 !rounded-none" spacing="">
+<Accordion collapsible multiple>
 	{#each { length: slotsToShow } as _, i}
-		{@const simForSlot = simCards?.[i] ?? null}
+		{@const simForSlot = tracker.simCards?.[i] ?? null}
 
-		<AccordionItem>
-			{#snippet summary()}
+		<Accordion.Item
+			value={`sim-${simForSlot?.id ?? 0}-slot-${i + 1}`}
+			controlClasses="bg-surface-200-800"
+			panelPadding="p-0"
+		>
+			{#snippet control()}
 				<div class="flex items-center">
 					<div class="flex items-center">
-						<Icon icon={simForSlot ? 'mdi:sim' : 'mdi:sim-off'} height={32} class="mr-4" />
+						<Icon icon={simForSlot ? 'mdi:sim' : 'mdi:sim-off'} class="mr-4" />
 
 						{#if simForSlot}
 							<div class="text-sm">
@@ -104,101 +100,99 @@
 						{/if}
 					</div>
 
-					<span class="text-xs ml-auto opacity-75">SLOT {i + 1}</span>
+					<span class="type-scale-2 ml-auto opacity-75">SLOT {i + 1}</span>
 				</div>
 			{/snippet}
 
-			{#snippet content()}
+			{#snippet panel()}
 				<div>
 					{#if simForSlot}
 						{#if !editMode}
 							<div class="px-4 py-4">
 								<div class="grid grid-cols-2 md:grid-cols-4 mb-4 gap-2 text-sm">
-									<span class="block">SSN: {simForSlot.ssn}</span>
-									<span class="block">APN User: {simForSlot.apnUser}</span>
-									<span class="block">APN password: {simForSlot.apnPassword}</span>
-									<span class="block">PIN 1{simForSlot.pin}</span>
-									<span class="block">PIN 2{simForSlot.pin2}</span>
-									<span class="block">PUK 1{simForSlot.puk}</span>
-									<span class="block">PUK 2{simForSlot.puk2}</span>
-									<span class="block">
-										Created At:{new Date(simForSlot.createdAt).toLocaleDateString()}
-									</span>
+									{@render field('SSN', simForSlot.ssn)}
+									{@render field('APN User', simForSlot.apnUser)}
+									{@render field('APN Address', simForSlot.apnAddress)}
+									{@render field('APN Password', simForSlot.apnPassword)}
+									{@render field('PIN 1', simForSlot.pin)}
+									{@render field('PIN 2', simForSlot.pin2)}
+									{@render field('PUK 1', simForSlot.puk)}
+									{@render field('PUK 2', simForSlot.puk2)}
+									{@render field('Created At', new Date(simForSlot.createdAt).toLocaleDateString())}
 								</div>
 
 								<div class="flex">
-									<PermissionGuard requiredPermissions={['UPDATE_TRACKER']}>
+									<PermissionGuard requiredPermissions={'UPDATE_TRACKER'}>
 										<button
-											class="btn btn-sm variant-filled-warning mr-3"
-											onclick={() => {
-												removeSimCard(simForSlot.id);
-											}}
+											class="btn preset-filled-warning-200-800 mr-3"
+											onclick={() => removeSimCard(simForSlot.id)}
 										>
-											<Icon icon="mdi:close" class="mr-2" />
+											<Icon icon="mdi:close" />
 											remove
 										</button>
 									</PermissionGuard>
 
-									<PermissionGuard requiredPermissions={['DELETE_SIM_CARD']}>
+									<PermissionGuard requiredPermissions={'DELETE_SIM_CARD'}>
 										<button
-											class="btn btn-sm variant-filled-error"
+											class="btn preset-filled-warning-200-800"
 											onclick={() => {
 												deleteSimCard(simForSlot.id);
 											}}
 										>
-											<Icon icon="mdi:trash" class="mr-2" />
+											<Icon icon="mdi:trash" />
 											delete
 										</button>
 									</PermissionGuard>
 
-									<PermissionGuard requiredPermissions={['UPDATE_SIM_CARD']}>
+									<PermissionGuard requiredPermissions={'UPDATE_SIM_CARD'}>
 										<button
-											class="btn btn-sm variant-filled-primary ml-auto"
+											class="btn preset-filled-primary-200-800 ml-auto"
 											onclick={() => {
 												editMode = true;
 											}}
 										>
-											<Icon icon="mdi:pencil" class="mr-2" />
+											<Icon icon="mdi:pencil" />
 											edit
 										</button>
 									</PermissionGuard>
 								</div>
 							</div>
 						{:else}
-							<div class="px-4 py-4">
-								<div class="flex mb-4 justify-end">
-									<button
-										class="btn btn-sm variant-filled-primary"
-										onclick={() => {
-											editMode = false;
-										}}
-									>
-										<Icon icon="mdi:pencil-off" class="mr-2" />
-										cancel edit
-									</button>
-								</div>
-
-								<UpdateSimCardForm
-									simCard={simForSlot}
-									formSchema={updateSimCardForm}
-									on:sim-card-updated={({ detail }) => {
+							<div class="flex px-4 pt-4 justify-end">
+								<button
+									class="btn preset-filled-primary-200-800"
+									onclick={() => {
 										editMode = false;
-										if (simCards) simCards[i] = detail;
 									}}
-								/>
+								>
+									<Icon icon="mdi:pencil-off" />
+									cancel edit
+								</button>
 							</div>
+
+							<UpdateSimCardForm
+								extraClasses="p-4"
+								simCard={simForSlot}
+								formSchema={updateSimCardForm}
+								onUpdate={() => {
+									editMode = false;
+									// TODO:
+									// if (simCards) simCards[i] = updatedCard;
+								}}
+							/>
 						{/if}
 					{:else}
 						<div class="p-4">
 							<PermissionGuard requiredPermissions={['CREATE_SIM_CARD', 'UPDATE_SIM_CARD']}>
-								<SimCardChooser
+								<!-- <SimCardChooser
 									{tracker}
 									slotNumber={i + 1}
 									formSchema={createSimCardForm}
 									on:sim-card-created={appendSimCard}
 									on:sim-card-selected={appendSimCard}
-								/>
+								/> -->
 
+								TODO?
 								{#snippet denied()}
 									<span class="text-error-400-500-token">
 										you lack the permissions to set or create a tracker sim card
@@ -209,6 +203,6 @@
 					{/if}
 				</div>
 			{/snippet}
-		</AccordionItem>
+		</Accordion.Item>
 	{/each}
 </Accordion>

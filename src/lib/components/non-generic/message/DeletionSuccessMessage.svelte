@@ -11,7 +11,7 @@
 
 <div class="text-center mb-2 flex items-center">
 	<div class="text-2xl flex items-center">
-		<Icon icon="mdi:check" />
+		<Icon icon="mdi:check" class="mr-2" />
 		{title}
 	</div>
 

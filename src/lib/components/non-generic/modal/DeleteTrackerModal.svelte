@@ -1,64 +1,66 @@
-<!--
-@component
-Modal to confirm a tracker deletion
-
-Example:
-```ts
-const component: ModalComponent = { ref: DeleteTrackerModal };
-
-const showModal = () => {
-	modalStore.trigger({
-		component,
-		type: 'component',
-		response: (e: undefined | { deleteSimCards: boolean }) => {
-			if (!e) return;
-			// call the API to delete the tracker here, eg:
-			deleteTracker(e.deleteSimCards);
-		}
-	});
-}
-```
--->
 <script lang="ts">
+	import type { PropsWithChildren } from '$lib/utils/svelte';
 	import Icon from '@iconify/svelte';
+	import { Dialog } from 'bits-ui';
 
-	// Just to avoid this warning: {Component} was created with unknown prop 'parent'
-	interface Props {
-		parent?: unknown;
+	interface Props extends PropsWithChildren {
+		onDeleteConfirmed: (withSimCards: boolean) => void;
 	}
 
-	let { parent = $bindable(null) }: Props = $props();
-	if (2 + 2 === 5) parent = null;
+	const { children, onDeleteConfirmed }: Props = $props();
 
 	let deleteSimCards = $state(false);
 
-	const confirm = () => {
-		if ($modalStore[0].response) $modalStore[0].response({ deleteSimCards });
-		modalStore.close();
-	};
+	let open = $state(false);
+
+	// reset deleteSimCards to false when the dialog is re-opened
+	$effect(() => {
+		if (open) deleteSimCards = false;
+	});
 </script>
 
-<div class="card max-w-md">
-	<h5 class="h5 mb-4 flex items-center px-4 pt-4">
-		<Icon icon="mdi:info" class="mr-2" />
-		Delete tracker ?
-	</h5>
+<Dialog.Root bind:open>
+	<Dialog.Trigger>
+		{@render children()}
+	</Dialog.Trigger>
 
-	<p class="px-4">By deleting the tracker, new positions will not be recieved by the platform.</p>
+	<Dialog.Portal>
+		<Dialog.Overlay class="fixed inset-0 z-50 bg-black/60" />
 
-	<label class="flex items-center space-x-2 mx-4 mt-4 mb-2">
-		<input class="checkbox" type="checkbox" bind:checked={deleteSimCards} />
-		<p>delete tracker SIM cards aswell</p>
-	</label>
+		<Dialog.Content
+			interactOutsideBehavior="ignore"
+			class="card preset-filled-surface-200-800 fixed left-[50%] top-[50%] z-50 w-full max-w-[94%] translate-x-[-50%] translate-y-[-50%] outline-none sm:max-w-[490px] md:w-full"
+		>
+			<Dialog.Title class="h5 flex items-center p-4">
+				<Icon icon="mdi:info" class="mr-2" />
+				Delete tracker ?
+			</Dialog.Title>
 
-	<div class="p-4 flex">
-		<button class="btn btn-sm variant-filled-primary" onclick={() => modalStore.close()}>
-			cancel
-		</button>
+			<Dialog.Description class="type-scale-2 px-4">
+				By deleting the tracker, new positions will not be recieved by the platform.
+			</Dialog.Description>
 
-		<button class="btn btn-sm variant-filled-error ml-auto" onclick={confirm}>
-			<Icon icon="mdi:trash" class="mr-1" />
-			delete
-		</button>
-	</div>
-</div>
+			<label class="flex items-center px-4 my-4 space-x-2">
+				<input class="checkbox" type="checkbox" bind:checked={deleteSimCards} />
+				<p>also delete tracker SIM cards</p>
+			</label>
+
+			<div class="p-4 flex">
+				<Dialog.Close>
+					<button class="btn preset-filled-primary-200-800">cancel</button>
+				</Dialog.Close>
+
+				<button
+					class="btn preset-filled-warning-200-800 ml-auto"
+					onclick={() => {
+						onDeleteConfirmed(deleteSimCards);
+						open = false;
+					}}
+				>
+					<Icon icon="mdi:trash" />
+					delete
+				</button>
+			</div>
+		</Dialog.Content>
+	</Dialog.Portal>
+</Dialog.Root>

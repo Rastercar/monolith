@@ -1,10 +1,13 @@
 import type { PaginationWithFilters } from '$lib/api/common';
-import type { GetTrackersFilters } from '$lib/api/tracker';
-import type { CreateTrackerBody, UpdateTrackerBody } from '$lib/api/tracker.schema';
+import type {
+	CreateTrackerBody,
+	GetTrackersFilters,
+	UpdateTrackerBody
+} from '$lib/api/tracker.schema';
 import { and, eq, ilike, isNotNull, isNull, type SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { paginate } from '../pagination';
-import { vehicleTracker } from '../schema';
+import { simCard, vehicleTracker, vehicleTrackerLocation } from '../schema';
 
 export async function findOrgTrackersWithPagination(
 	orgId: number,
@@ -30,7 +33,11 @@ export async function findOrgTrackersWithPagination(
 export function findOrgTrackerById(id: number, orgId: number) {
 	return db.query.vehicleTracker.findFirst({
 		where: (vehicleTracker, { eq, and }) =>
-			and(eq(vehicleTracker.organizationId, orgId), eq(vehicleTracker.id, id))
+			and(eq(vehicleTracker.organizationId, orgId), eq(vehicleTracker.id, id)),
+		with: {
+			vehicle: true,
+			simCards: true
+		}
 	});
 }
 
@@ -51,4 +58,24 @@ export async function updateOrgTracker(id: number, orgId: number, body: UpdateTr
 		.returning();
 
 	return updatedTracker;
+}
+
+export function deleteOrgTrackerById(id: number, orgId: number, deleteAssociatedSimCards: boolean) {
+	return db.transaction(async (tx) => {
+		if (deleteAssociatedSimCards) {
+			await tx
+				.delete(simCard)
+				.where(and(eq(simCard.vehicleTrackerId, id), eq(simCard.organizationId, orgId)));
+		}
+
+		await tx
+			.delete(vehicleTracker)
+			.where(and(eq(vehicleTracker.id, id), eq(vehicleTracker.organizationId, orgId)));
+
+		// if there was a deleted tracker, we know it belongs to the user org so
+		// we delete from the vehicle tracker location manually since this
+		// table does not have a FK with ON DELETE CASCADE; to the vehicle_tracker
+		// table for performance reasons
+		await tx.delete(vehicleTrackerLocation).where(eq(vehicleTrackerLocation.vehicleTrackerId, id));
+	});
 }

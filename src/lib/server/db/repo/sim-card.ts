@@ -38,10 +38,6 @@ export function findOrgSimCardById(id: number, orgId: number) {
 	});
 }
 
-export function deleteOrgSimCardById(id: number, orgId: number) {
-	return db.delete(simCard).where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));
-}
-
 export async function updateOrgSimCard(id: number, orgId: number, body: UpdateSimCardBody) {
 	const [updatedSimCard] = await db
 		.update(simCard)
@@ -59,4 +55,8 @@ export async function createOrgSimCard(orgId: number, body: CreateSimCardBody) {
 		.returning();
 
 	return createdSimCard;
+}
+
+export function deleteOrgSimCardById(id: number, orgId: number) {
+	return db.delete(simCard).where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));
 }

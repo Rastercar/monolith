@@ -1,20 +1,17 @@
 <script lang="ts">
 	import type { createSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import CreateSimCardForm from '$lib/components/non-generic/form/CreateSimCardForm.svelte';
-	import SelectSimCardDataTable from '$lib/components/non-generic/table/SelectSimCardDataTable.svelte';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
-	
-
-
 	interface Props {
 		/**
-	 * Tracker to be associated with the sim card to be created or selected
-	 */
+		 * Tracker to be associated with the sim card to be created or selected
+		 */
 		tracker: Tracker;
+
 		slotNumber: number;
+
 		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
 	}
 
@@ -42,13 +39,14 @@
 	]}
 />
 
-{#if selectedOption === 'existing-sim-card'}
+<!-- TODO: -->
+<!-- {#if selectedOption === 'existing-sim-card'}
 	<SelectSimCardDataTable trackerIdToAssociate={tracker.id} on:sim-card-selected />
 {:else}
 	<CreateSimCardForm
 		{slotNumber}
 		{formSchema}
 		trackerIdToAssociate={tracker.id}
-		on:sim-card-created
+		onCreate
 	/>
-{/if}
+{/if} -->

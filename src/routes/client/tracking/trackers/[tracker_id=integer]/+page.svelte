@@ -1,29 +1,17 @@
 <script lang="ts">
-	import { apiDeleteTracker } from '$lib/api/tracker';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
+	import TrackerPositionList from '$lib/components/non-generic/list/TrackerPositionList.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { route } from '$lib/ROUTES';
-	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import TrackerInfo from './components/TrackerInfo.svelte';
 
 	const { data } = $props();
 
 	let trackerDeleted = $state(false);
+	let tracker = $state(data.tracker);
 	let editMode = $state(false);
-
-	const deleteSimCardMutation = createMutation(() => ({
-		mutationFn: () => apiDeleteTracker(data.tracker.id),
-		onError: showErrorToast
-	}));
-
-	const deleteTracker = async () => {
-		if (!confirm('Permanently delete this tracker ?')) return;
-
-		await deleteSimCardMutation.mutateAsync();
-		trackerDeleted = true;
-	};
 </script>
 
 <div class="p-6 max-w-5xl mx-auto">
@@ -45,12 +33,9 @@
 	<hr class="hr my-4" />
 
 	{#if trackerDeleted}
-		<DeletionSuccessMessage
-			title="Tracker deleted successfully"
-			href={route('/client/tracking/trackers')}
-		/>
+		<DeletionSuccessMessage title="Tracker deleted" href={route('/client/tracking/trackers')} />
 	{:else if !editMode}
-		<div class="card preset-surface-100-900">
+		<div class="card preset-filled-surface-100-900">
 			<TrackerInfo
 				tracker={data.tracker}
 				createSimCardForm={data.createSimCardForm}
@@ -60,32 +45,30 @@
 			/>
 		</div>
 
-		<!-- <div class="card mt-4">
+		<div class="card preset-filled-surface-100-900 mt-4">
 			<TrackerPositionList trackerId={data.tracker.id} />
-		</div> -->
+		</div>
 	{:else}
-		<div class="card p-4">
+		<div class="card preset-filled-surface-100-900 p-4">
 			<div class="flex justify-between items-center">
 				<span>Updating vehicle tracker</span>
 
-				<button
-					class="btn-icon btn-icon-sm variant-filled-primary"
-					onclick={() => (editMode = false)}
-				>
+				<button class="btn-icon preset-filled-primary-500" onclick={() => (editMode = false)}>
 					<Icon icon="mdi:pencil-off" />
 				</button>
 			</div>
 
-			<hr class="my-4" />
+			<hr class="hr my-4" />
 
-			<!-- <UpdateTrackerForm
-				tracker={data.tracker}
+			<UpdateTrackerForm
+				trackerId={data.tracker.id}
+				initialValues={data.tracker}
 				formSchema={data.updateTrackerForm}
-				on:tracker-updated={(e) => {
+				onUpdated={(v) => {
 					editMode = false;
-					tracker = e.detail;
+					tracker = v;
 				}}
-			/> -->
+			/>
 		</div>
 	{/if}
 </div>

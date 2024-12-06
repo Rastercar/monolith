@@ -12,9 +12,11 @@ export const load = async ({ params, locals }) => {
 	if (!locals.user) return error(403);
 
 	const trackerId = parseInt(params.tracker_id);
-	const tracker = await findOrgTrackerById(trackerId, locals.user.organization.id);
+	const dbTracker = await findOrgTrackerById(trackerId, locals.user.organization.id);
 
-	if (!tracker) return error(404);
+	if (!dbTracker) return error(404);
+
+	const tracker = trackerSchema.parse(dbTracker);
 
 	const updateTrackerForm = await superValidate(zod(updateTrackerSchema));
 	const createSimCardForm = await superValidate(zod(createSimCardSchema));

@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { TrackerLocation } from '$lib/api/sim-card.schema';
-	import { apiGetTrackerLocations, type GetTrackerLocationsDto } from '$lib/api/tracker';
+	import type { GetTrackerLocationsDto } from '$lib/api/tracker';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import Icon from '@iconify/svelte';
-	import { ProgressBar } from '@skeletonlabs/skeleton';
+	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { createInfiniteQuery, keepPreviousData, type InfiniteData } from '@tanstack/svelte-query';
-	import { derived, writable } from 'svelte/store';
 
 	interface Props {
 		trackerId: number;
@@ -18,7 +17,7 @@
 	/**
 	 * the input value of the starting date filter
 	 */
-	let startFilter = writable('');
+	let startFilter = $state('');
 
 	const query = createInfiniteQuery<
 		TrackerLocation[],
@@ -26,50 +25,51 @@
 		InfiniteData<TrackerLocation[]>,
 		unknown[],
 		GetTrackerLocationsDto
-	>(
-		derived([startFilter], ([$startFilter]) => ({
-			queryKey: ['tracker', trackerId, 'locations', $startFilter],
-			placeholderData: keepPreviousData,
-			retry: false,
-			initialPageParam: {
-				limit: pageSize,
-				before: $startFilter ? new Date($startFilter).toISOString() : undefined
-			},
-			getNextPageParam: (lastPositions: TrackerLocation[]) => ({
-				limit: pageSize,
-				before: lastPositions.at(-1)?.time
-			}),
-			queryFn: ({ pageParam }: { pageParam: GetTrackerLocationsDto }) =>
-				apiGetTrackerLocations(trackerId, pageParam)
-		}))
-	);
+	>(() => ({
+		queryKey: ['tracker', trackerId, 'locations', startFilter],
+		placeholderData: keepPreviousData,
+		retry: false,
+		initialPageParam: {
+			limit: pageSize,
+			before: startFilter ? new Date(startFilter).toISOString() : undefined
+		},
+		getNextPageParam: (lastPositions: TrackerLocation[]) => ({
+			limit: pageSize,
+			before: lastPositions.at(-1)?.time
+		}),
+		queryFn: async () => []
+		// TODO:
+		// queryFn: ({ pageParam }: { pageParam: GetTrackerLocationsDto }) =>
+		// apiGetTrackerLocations(trackerId, pageParam)
+	}));
 
-	let hasNoPages = $derived(!$query.data?.pages);
+	let hasNoPages = $derived(!query.data?.pages);
+
 	let hasOneEmptyPage = $derived(
-		$query.data && $query.data.pages.length === 1 && $query.data.pages[0].length === 0
+		query.data && query.data.pages.length === 1 && query.data.pages[0].length === 0
 	);
 </script>
 
-{#if $query.isPending}
+{#if query.isPending}
 	<div class="px-4 pb-4">
-		<ProgressBar value={undefined} />
+		<Progress value={null} />
 	</div>
 {:else}
 	<div class="p-4 flex items-center">
 		<span class="text-lg">Positions:</span>
 
 		<div class="ml-auto flex items-center max-w-sm">
-			<label for="positions-date-start-filter" class="text-sm">search after:</label>
+			<label for="positions-date-start-filter" class="type-scale-2">search after:</label>
 			<input
-				bind:value={$startFilter}
+				bind:value={startFilter}
+				class="input"
 				id="positions-date-start-filter"
-				class="input ml-1"
 				type="datetime-local"
 			/>
 		</div>
 	</div>
 
-	<hr />
+	<hr class="hr my-2" />
 
 	{#if hasNoPages || hasOneEmptyPage}
 		<div class="flex items-center p-4">
@@ -79,9 +79,9 @@
 				communicated with the rastercar platform.
 			</p>
 		</div>
-	{:else if $query.data}
+	{:else if query.data}
 		<ul class="max-h-80 overflow-y-scroll pb-4">
-			{#each $query.data.pages as positions, pageIndex}
+			{#each query.data.pages as positions, pageIndex}
 				{#each positions as position, itemIndex}
 					{@const itemNumber = pageIndex * pageSize + (itemIndex + 1)}
 
@@ -102,16 +102,16 @@
 					</li>
 				{/each}
 
-				{#if pageIndex === $query.data.pages.length - 1}
+				{#if pageIndex === query.data.pages.length - 1}
 					<li class="px-4 pt-4">
 						<LoadableButton
-							isLoading={$query.isFetching}
+							isLoading={query.isFetching}
 							contentWrapperClass="flex items-center"
-							class="btn btn-sm variant-filled-primary w-full"
-							on:click={() => $query.fetchNextPage()}
-							disabled={!$query.hasNextPage || $query.isFetchingNextPage}
+							classes="btn btn-sm preset-filled-primary-200-800 w-full"
+							onclick={() => query.fetchNextPage()}
+							disabled={!query.hasNextPage || query.isFetchingNextPage}
 						>
-							<Icon icon="mdi:plus" class="mr-2" />
+							<Icon icon="mdi:plus" />
 							load more
 						</LoadableButton>
 					</li>

@@ -6,13 +6,13 @@ import {
 	type PaginationWithFilters
 } from './common';
 import { simCardSchema, trackerLocationSchema, type TrackerLocation } from './sim-card.schema';
-import { trackerSchema, type Tracker } from './tracker.schema';
+import {
+	trackerSchema,
+	type DeleteTrackerBody,
+	type GetTrackersFilters,
+	type Tracker
+} from './tracker.schema';
 import { api, stripUndefined } from './utils';
-
-export interface GetTrackersFilters {
-	imei?: string;
-	withAssociatedVehicle?: boolean;
-}
 
 /**
  * list paginated trackers that belong to the same organization as the request user
@@ -39,13 +39,14 @@ export const apiGetTrackerById = (id: number): Promise<Tracker> =>
  *
  * - `DELETE_TRACKER`
  */
-export const apiDeleteTracker = (
-	vehicleTrackerId: number,
-	opts?: { deleteAssociatedSimCards: boolean }
-) =>
+export const apiDeleteTracker = (trackerId: number, opts?: DeleteTrackerBody) =>
 	api
-		.query({ deleteAssociatedSimCards: opts?.deleteAssociatedSimCards || false })
-		.delete(`/tracker/${vehicleTrackerId}`)
+		.json({ deleteAssociatedSimCards: opts?.deleteAssociatedSimCards || false })
+		.delete(
+			route('DELETE /client/tracking/trackers/[tracker_id=integer]', {
+				tracker_id: trackerId.toString()
+			})
+		)
 		.json<string>();
 
 /**

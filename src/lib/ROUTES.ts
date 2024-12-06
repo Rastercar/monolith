@@ -72,6 +72,9 @@ const SERVERS = {
     return `/client/tracking/sim-cards/${params.sim_card_id}`
   },
   "GET /client/tracking/trackers": `/client/tracking/trackers`,
+  "DELETE /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
+    return `/client/tracking/trackers/${params.tracker_id}`
+  },
   "GET /client/tracking/vehicles": `/client/tracking/vehicles`
 }
 
@@ -202,7 +205,7 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 */
 export type KIT_ROUTES = {
   PAGES: { '/auth/change-password': never, '/auth/confirm-email-address': never, '/auth/recover-password': never, '/auth/sign-in': never, '/auth/sign-out': never, '/auth/sign-up': never, '/client': never, '/client/access-levels': never, '/client/access-levels/[access_level_id]': 'access_level_id', '/client/access-levels/new': never, '/client/my-profile': never, '/client/settings/organization': never, '/client/settings/profile': never, '/client/settings/security': never, '/client/settings/sessions': never, '/client/tracking/map': never, '/client/tracking/quick-track': never, '/client/tracking/sim-cards': never, '/client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', '/client/tracking/sim-cards/new': never, '/client/tracking/trackers': never, '/client/tracking/trackers/[tracker_id=integer]': 'tracker_id', '/client/tracking/trackers/new': never, '/client/tracking/vehicles': never, '/client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', '/client/tracking/vehicles/new': never, '/client/users': never, '/client/users/[user_id]': 'user_id', '/client/users/new': never }
-  SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'DELETE /auth/sign-out/[session_id=integer]': 'session_id', 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never, 'GET /client/tracking/sim-cards': never, 'DELETE /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'PUT /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'GET /client/tracking/trackers': never, 'GET /client/tracking/vehicles': never }
+  SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'DELETE /auth/sign-out/[session_id=integer]': 'session_id', 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never, 'GET /client/tracking/sim-cards': never, 'DELETE /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'PUT /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'GET /client/tracking/trackers': never, 'DELETE /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'GET /client/tracking/vehicles': never }
   ACTIONS: { 'changePassword /auth/change-password': never, 'recoverPassword /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never, 'updateOrganization /client/settings/organization': never, 'updateProfile /client/settings/profile': never, 'updateProfilePicture /client/settings/profile': never, 'changePassword /client/settings/security': never, 'updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'createSimCard /client/tracking/sim-cards/new': never, 'updateTracker /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'createTracker /client/tracking/trackers/new': never }
   LINKS: Record<string, never>
   Params: { redirect: never, access_level_id: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never, session_id: never }

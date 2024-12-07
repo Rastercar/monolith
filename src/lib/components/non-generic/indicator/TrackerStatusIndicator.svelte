@@ -1,34 +1,29 @@
 <script lang="ts">
 	import { apiGetTrackerLastLocation } from '$lib/api/tracker';
-	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
 	import { isDateOlderThanXMilliseconds } from '$lib/utils/date';
-	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';
+	import { Tooltip } from 'bits-ui';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		/**
 		 * ID of the tracker to fetch the last known position
 		 */
 		vehicleTrackerId: number;
-		children?: import('svelte').Snippet<[any]>;
+
+		children?: Snippet<[{ isOnline: boolean; lastPositionDate: Date | null }]>;
 	}
 
 	let { vehicleTrackerId, children }: Props = $props();
 
-	const query = createQuery({
-		queryKey: ['tracker', vehicleTrackerId, 'location'],
+	const query = createQuery(() => ({
+		queryKey: ['tracker', vehicleTrackerId, 'last-location'],
 		queryFn: () => apiGetTrackerLastLocation(vehicleTrackerId)
-	});
-
-	const popupHover: PopupSettings = {
-		event: 'hover',
-		target: 'trackerStatusPopup',
-		placement: 'top'
-	};
+	}));
 
 	const fiveMinutes = 1000 * 60 * 5;
 
-	let lastPositionDate = $derived($query.data?.time ? new Date($query.data.time) : null);
+	let lastPositionDate = $derived(query.data?.time ? new Date(query.data.time) : null);
 
 	let isOnline = $derived(
 		!!lastPositionDate && isDateOlderThanXMilliseconds(lastPositionDate, fiveMinutes)
@@ -39,20 +34,17 @@
 	);
 </script>
 
-<!--
-@component
-A simple dot that displays if the tracker has been recently connected to the rastercar platform
-
-If a tracker has sent a position within the last 5 minutes then its considered as connected
--->
-<ArrowUpTooltip dataPopup="trackerStatusPopup">
-	<span class="text-xs">
-		{isOnline
-			? 'this tracker has communicated with the rastercar platform under the last 5 minutes'
-			: 'its been over 5 minutes since a position has been recieved from this tracker'}
-	</span>
-</ArrowUpTooltip>
-
-<div use:popup={popupHover} class={`h-2 w-2 ${iconColor} rounded-full`}></div>
-
 {@render children?.({ isOnline, lastPositionDate })}
+
+<Tooltip.Provider>
+	<Tooltip.Root delayDuration={100}>
+		<Tooltip.Trigger class="h-2 w-2 ${iconColor} rounded-full" />
+		<Tooltip.Content sideOffset={8} class="card py-1 px-3 bg-surface-200-800">
+			<span class="type-scale-1">
+				{isOnline
+					? 'this tracker has communicated with the rastercar platform under the last 5 minutes'
+					: 'its been over 5 minutes since a position has been recieved from this tracker'}
+			</span>
+		</Tooltip.Content>
+	</Tooltip.Root>
+</Tooltip.Provider>

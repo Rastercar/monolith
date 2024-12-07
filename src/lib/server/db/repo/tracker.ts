@@ -5,11 +5,16 @@ import type {
 	GetTrackersFilters,
 	UpdateTrackerBody
 } from '$lib/api/tracker.schema';
-import { and, eq, gt, ilike, isNotNull, isNull, lt, type SQL } from 'drizzle-orm';
+import { and, asc, eq, gt, ilike, isNotNull, isNull, lt, type SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { getISOFormatDateQuery } from '../helpers';
 import { paginate } from '../pagination';
-import { simCard, vehicleTracker, vehicleTrackerLocation } from '../schema';
+import {
+	simCard,
+	vehicleTracker,
+	vehicleTrackerLastLocation,
+	vehicleTrackerLocation
+} from '../schema';
 
 export async function findOrgTrackersWithPagination(
 	orgId: number,
@@ -50,55 +55,21 @@ export async function findTrackerLocationList(id: number, options: GetTrackerLoc
 		})
 		.from(vehicleTrackerLocation)
 		.where(and(...sqlFilters))
-		.limit(options.limit);
+		.limit(options.limit)
+		.orderBy(asc(vehicleTrackerLocation.time));
+}
 
-	// TODO: rm me !
-	// let (q, args) = SeaQuery::select()
-	//     .column(vehicle_tracker_location::Column::Time)
-	//     .column(vehicle_tracker_location::Column::Point)
-	//     .from(vehicle_tracker_location::Entity)
-	//     .cond_where(
-	//         Cond::all()
-	//             .add(Expr::col(vehicle_tracker_location::Column::VehicleTrackerId).eq(tracker.id))
-	//             .add_option(
-	//                 search_query
-	//                     .after
-	//                     .map(|a| Expr::col(vehicle_tracker_location::Column::Time).gt(a)),
-	//             )
-	//             .add_option(
-	//                 search_query
-	//                     .before
-	//                     .map(|b| Expr::col(vehicle_tracker_location::Column::Time).lt(b)),
-	//             ),
-	//     )
-	//     .order_by(
-	//         vehicle_tracker_location::Column::Time,
-	//         search_query.order.into(),
-	//     )
-	//     .limit(search_query.limit.unwrap_or(15))
-	//     .to_owned()
-	//     .build_sqlx(PostgresQueryBuilder);
-	// let rows: Vec<(
-	//     DateTime<Utc>,
-	//     geozero::wkb::Decode<geo_types::Geometry<f64>>,
-	// )> = sqlx::query_as_with(&q, args)
-	//     .fetch_all(db.get_postgres_connection_pool())
-	//     .await
-	//     .map_err(|_| internal_error_res())?;
-	// let positions: Vec<dto::TrackerLocationDto> = rows
-	//     .iter()
-	//     .filter_map(|row| {
-	//         if let Some(geo_types::Geometry::Point(point)) = row.1.geometry {
-	//             let loc = dto::TrackerLocationDto {
-	//                 point: point.into(),
-	//                 time: row.0,
-	//             };
-	//             return Some(loc);
-	//         }
-	//         None
-	//     })
-	//     .collect();
-	// Ok(Json(positions))
+export async function findTrackerLastLocation(id: number) {
+	const locations = await db
+		.select({
+			time: getISOFormatDateQuery(vehicleTrackerLastLocation.time),
+			point: vehicleTrackerLastLocation.point
+		})
+		.from(vehicleTrackerLastLocation)
+		.where(eq(vehicleTrackerLastLocation.vehicleTrackerId, id))
+		.limit(1);
+
+	return locations.length === 0 ? null : locations[0];
 }
 
 export function findOrgTrackerById(id: number, orgId: number) {

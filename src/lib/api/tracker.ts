@@ -77,11 +77,13 @@ export const apiGetTrackerSimCards = (vehicleTrackerId: number) =>
 /**
  * get the last known tracker location
  */
-export const apiGetTrackerLastLocation = (vehicleTrackerId: number) =>
-	api
-		.get(`/tracker/${vehicleTrackerId}/last-location`)
-		.json<Tracker[]>()
-		.then(trackerLocationSchema.nullable().parse);
+export const apiGetTrackerLastLocation = (id: number) => {
+	const url = route('GET /client/tracking/trackers/[tracker_id=integer]/last-location', {
+		tracker_id: id.toString()
+	});
+
+	return api.get(url).json<TrackerLocation | null>().then(trackerLocationSchema.nullable().parse);
+};
 
 /**
  * get a list of tracker locations after a start date and a limit

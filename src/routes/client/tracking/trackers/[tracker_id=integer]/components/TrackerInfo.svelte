@@ -4,6 +4,7 @@
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
+	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
 	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
@@ -38,17 +39,16 @@
 	};
 </script>
 
-<h2 class="p-4 text-lg flex items-center">
-	<span class="mr-auto">General Info</span>
+<h2 class="p-4 flex items-center">
+	<span class="type-scale-4 mr-auto">General Info</span>
 
-	<!-- TODO: -->
-	<!--<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
-	 <div class="ml-2">
-			{#snippet children({ isOnline })}
+	<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
+		{#snippet children({ isOnline })}
+			<div class="mr-2 opacity-80">
 				{isOnline ? 'online' : 'offline'}
-			{/snippet}
-		</div> 
-	</TrackerStatusIndicator>-->
+			</div>
+		{/snippet}
+	</TrackerStatusIndicator>
 </h2>
 
 <div class="px-4">

@@ -26,7 +26,6 @@
 		GetTrackerLocationsFilters
 	>(() => ({
 		queryKey: ['tracker', trackerId, 'locations', { after: startFilter }],
-		// TODO: parametro after esta bugado
 		queryFn: async ({ pageParam }: { pageParam: GetTrackerLocationsFilters }) =>
 			apiGetTrackerLocations(trackerId, pageParam),
 		placeholderData: keepPreviousData,

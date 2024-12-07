@@ -65,13 +65,7 @@
 		maxlength={20}
 	/>
 
-	<TextField
-		{form}
-		name="apnUser"
-		label="APN User *"
-		placeholder="isp.docomoiot.net"
-		maxlength={50}
-	/>
+	<TextField {form} name="apnUser" label="APN User *" maxlength={50} />
 
 	<TextField {form} name="apnPassword" label="APN Password *" maxlength={50} />
 

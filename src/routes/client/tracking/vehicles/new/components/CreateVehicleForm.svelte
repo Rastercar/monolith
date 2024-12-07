@@ -1,71 +1,62 @@
 <script lang="ts">
-	import { isAppErrorWithCode } from '$lib/api/utils';
-	import { apiCreateVehicle } from '$lib/api/vehicle';
-	import { createVehicleSchema, type CreateVehicleBody } from '$lib/api/vehicle.schema';
+	import { createVehicleSchema, type Vehicle } from '$lib/api/vehicle.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import FileInput from '$lib/components/form/FileInput.svelte';
-	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
-	import ComboBox from '$lib/components/form/old/ComboBox.svelte';
-	import TextArea from '$lib/components/form/TextArea.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
+	import ComboBoxField from '$lib/components/form/ComboBoxField.svelte';
+	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';
-	import { PLATE_IN_USE } from '$lib/constants/error-codes';
-	import { getToaster } from '$lib/store/toaster';
-	import { clearFileInputsUnderFormWithId } from '$lib/utils/file';
-	import { createMutation } from '@tanstack/svelte-query';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
-	import { superForm } from 'sveltekit-superforms';
+	import { route } from '$lib/ROUTES';
+	import { showErrorToast } from '$lib/store/toast';
+	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import type { ActionData } from '../$types';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createVehicleSchema>>;
+		onCreate?: (_: Vehicle) => void;
 	}
 
-	let { formSchema }: Props = $props();
+	let { formSchema, onCreate }: Props = $props();
 
-	const toaster = getToaster();
-
-	const form = superForm(formSchema, {
+	const sForm = superForm(formSchema, {
 		validators: zodClient(createVehicleSchema),
-		validationMethod: 'oninput'
+		onUpdate: ({ form, result }) => {
+			if (form.valid) {
+				const action = result.data as FormResult<ActionData>;
+				if (onCreate && action.createdVehicle) onCreate(action.createdVehicle);
+			}
+		},
+		onError: showErrorToast
 	});
-
-	const formId = 'create-vehicle-form';
 
 	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
 
-	const mutation = createMutation({
-		mutationFn: (b: CreateVehicleBody) => apiCreateVehicle(b),
-		onError: (e) => {
-			isAppErrorWithCode(e, PLATE_IN_USE)
-				? form.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
-				: toaster.error();
-		}
-	});
+	const { form } = $derived(sForm);
 
-	const createVehicle = async () => {
-		const validated = await form.validateForm();
+	// 	// TODO: nuke this function from orbit
+	// const createVehicle = async () => {
+	// 	const validated = await sForm.validateForm();
 
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
+	// 	if (!validated.valid) return sForm.restore({ ...validated, tainted: undefined });
 
-		await $mutation.mutateAsync(validated.data);
-
-		toaster.success('vehicle created successfully');
-		clearFileInputsUnderFormWithId(formId);
-		form.reset();
-	};
-
-	let { tainted, allErrors } = $derived(form);
-
-	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
+	// 	clearFileInputsUnderFormWithId('formId');
+	// 	sForm.reset();
+	// };
 </script>
 
-<span class="text-sm">Fields marked as * are required</span>
+<SuperDebug data={form} />
 
-<div id={formId} class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-4">
-	<MaskedTextInput
+<!-- TODO: change route to create vehicle -->
+<form
+	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+	method="POST"
+	action={route('createSimCard /client/tracking/sim-cards/new')}
+	use:sForm.enhance
+>
+	<!-- <MaskedTextInput
 		{form}
-		class="label col-span-1"
+		classes="col-span-1"
 		inputClass="input mb-1 uppercase"
 		maskOptions={{
 			mask: 'AAA0#00',
@@ -76,71 +67,75 @@
 				'#': { mask: /[0-9A-Za-z]/ }
 			}
 		}}
-		field="plate"
+		name="plate"
 		label="Plate *"
+	/> -->
+
+	<ComboBoxField
+		form={sForm}
+		classes="col-span-1"
+		options={brandOptions}
+		name="brand"
+		label="Brand *"
 	/>
 
-	<ComboBox {form} class="label col-span-1" options={brandOptions} field="brand" label="Brand *" />
+	<TextField form={sForm} classes="col-span-1" name="model" label="Model *" maxlength={30} />
 
-	<TextInput {form} class="label col-span-1" field="model" label="Model *" maxlength="30" />
-
-	<TextInput
-		{form}
-		class="label col-span-1"
-		field="chassisNumber"
+	<TextField
+		form={sForm}
+		classes="col-span-1"
+		name="chassisNumber"
 		label="Chassis Number"
-		maxlength="30"
+		maxlength={30}
 	/>
 
-	<TextInput
-		{form}
-		class="label col-span-1"
-		field="modelYear"
+	<TextField
+		form={sForm}
+		classes="col-span-1"
+		name="modelYear"
 		label="Model Year"
 		type="text"
-		maxlength="4"
+		maxlength={4}
 	/>
 
-	<TextInput
-		{form}
-		class="label col-span-1"
-		field="fabricationYear"
+	<TextField
+		form={sForm}
+		classes="col-span-1"
+		name="fabricationYear"
 		label="Fabrication Year"
 		type="text"
-		maxlength="4"
+		maxlength={4}
 	/>
 
-	<TextInput {form} class="label col-span-1" field="color" label="Color" maxlength="12" />
+	<TextField form={sForm} classes="col-span-1" name="color" label="Color" maxlength={12} />
 
-	<FileInput
+	<!-- <FileInput
 		{form}
-		class="label col-span-1"
+		classes="col-span-1"
 		label="Photo"
-		field="photoName"
+		name="photoName"
 		fileField="photo"
 		accept="image/png, image/gif, image/jpeg, image/webp"
 		on:file-selected={({ detail: file }) => {
 			form.validate('photo', { value: file, update: 'errors', taint: true });
 		}}
-	/>
+	/> -->
 
-	<TextArea
-		{form}
-		class="label col-span-1 sm:col-span-2 md:col-span-3"
-		field="additionalInfo"
+	<TextAreaField
+		form={sForm}
+		classes="col-span-1 sm:col-span-2 md:col-span-3"
+		name="additionalInfo"
 		label="Additional Info"
-		rows="6"
-		maxlength="500"
+		rows={3}
+		maxlength={500}
 	/>
-</div>
 
-<div class="flex justify-end">
-	<LoadableButton
-		class="btn variant-filled-primary"
-		isLoading={$mutation.isPending}
-		disabled={!canSubmit}
-		on:click={createVehicle}
-	>
-		create
-	</LoadableButton>
-</div>
+	<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
+		<LoadableButton classes="btn preset-filled-primary-200-800" isLoading={false}>
+			<!-- TODO: -->
+			<!-- 		onclick={createVehicle}
+			isLoading={$mutation.isPending} -->
+			create
+		</LoadableButton>
+	</div>
+</form>

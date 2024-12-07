@@ -8,28 +8,10 @@ import { trackerSchema, type Tracker } from './tracker.schema';
 import { api, stripUndefined } from './utils';
 import {
 	vehicleSchema,
-	type CreateVehicleBody,
 	type GetVehiclesFilters,
 	type UpdateVehicleBody,
 	type Vehicle
 } from './vehicle.schema';
-
-/**
- * creates a new vehicle
- *
- * ### required permissions
- *
- * - `CREATE_VEHICLE`
- */
-export const apiCreateVehicle = (body: CreateVehicleBody): Promise<Vehicle> =>
-	api
-		// here we strip undefine because when sending objects with a existing key with
-		// with a value of undefined it gets parsed to a form data with undefined as a
-		// string for the given key
-		.formData(stripUndefined({ ...body }))
-		.post(undefined, '/vehicle')
-		.json<Vehicle>()
-		.then(vehicleSchema.parse);
 
 /**
  * list paginated vehicles that belong to the same organization as the request user

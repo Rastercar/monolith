@@ -32,7 +32,7 @@ export const createVehicleSchema = z.object({
 	photoName: z.string(),
 	photo: z
 		.instanceof(File, { message: 'Please upload a file.' })
-		.nullish()
+		.nullable()
 		// max file size is 1MB, as that is the max value allowed by the backend
 		.refine((f?: File | null) => !f || f.size <= toMegabytes(1), `Max file size is 1MB.`)
 		.refine(
@@ -42,28 +42,28 @@ export const createVehicleSchema = z.object({
 
 	brand: z.string().min(1),
 	model: z.string().min(1),
-	color: z.string().optional(),
+	color: z.string().nullable(),
 
 	// idk how many X years into the future a car can be branded as but ive never
 	// seen more than 10 years above the current date, so lets use that lol.
-	modelYear: z
-		.string()
-		.optional()
+	modelYear: z.coerce
+		.number()
+		.nullable()
 		.refine(
 			isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW),
 			`model year must be between 1900 and ${TEN_YEARS_FROM_NOW}`
 		),
 
-	fabricationYear: z
-		.string()
-		.optional()
+	fabricationYear: z.coerce
+		.number()
+		.nullable()
 		.refine(
 			isOptionalDateBetween(1900, TEN_YEARS_FROM_NOW),
 			`fabrication year must be between 1900 and ${TEN_YEARS_FROM_NOW}`
 		),
 
-	chassisNumber: z.string().optional(),
-	additionalInfo: z.string().optional()
+	chassisNumber: z.string().nullable(),
+	additionalInfo: z.string().nullable()
 });
 
 export const updateVehicleSchema = z.object({

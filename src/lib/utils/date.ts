@@ -60,14 +60,14 @@ export function createDateXDaysFromNow(days: number) {
  * ```
  */
 export function getYYYY_MM_DD_HH_MM_SS(date: DateOrTimestamp = new Date()): string {
-	return new Intl.DateTimeFormat('en-CA', {
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-		hour: '2-digit',
-		minute: '2-digit',
-		second: '2-digit'
-	})
-		.format(castToDate(date))
-		.replace(/[^0-9]/g, '-');
+	const d = castToDate(date);
+
+	const year = d.getFullYear();
+	const month = (d.getMonth() + 1).toString().padStart(2, '0');
+	const day = d.getDate().toString().padStart(2, '0');
+	const hours = d.getHours().toString().padStart(2, '0');
+	const minutes = d.getMinutes().toString().padStart(2, '0');
+	const seconds = d.getSeconds().toString().padStart(2, '0');
+
+	return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
 }

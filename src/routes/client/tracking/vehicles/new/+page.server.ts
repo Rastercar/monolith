@@ -1,10 +1,13 @@
 import { createVehicleSchema, vehicleSchema } from '$lib/api/vehicle.schema';
+import { db } from '$lib/server/db/db.js';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
-import { createOrgVehicle } from '$lib/server/db/repo/vehicle';
+import { createOrgVehicle, updateOrgVehiclePhoto } from '$lib/server/db/repo/vehicle';
 import { verifyUserHasPermissions } from '$lib/server/middlewares/auth.js';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
+import { s3 } from '$lib/server/services/s3';
 import { error } from '@sveltejs/kit';
-import { setError, superValidate } from 'sveltekit-superforms';
+import path from 'path';
+import { setError, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async () => ({
@@ -12,26 +15,49 @@ export const load = async () => ({
 });
 
 export const actions = {
-	createVehicle: async ({ request, locals }) => {
-		if (!locals.user) return error(400);
-		verifyUserHasPermissions(locals.user, 'CREATE_VEHICLE');
+	createVehicle: async ({ request, locals: { user } }) => {
+		if (!user) return error(400);
+		verifyUserHasPermissions(user, 'CREATE_VEHICLE');
 
 		const form = await validateFormWithFailOnError(request, createVehicleSchema);
 
-		try {
-			const { photo, ...data } = form.data;
+		const { photo, ...data } = form.data;
 
-			// TODO: upload photo
+		const createdVehicleOrError = await db.transaction(async (tx) => {
+			const vehicleOrError = await createOrgVehicle(user.organization.id, data, tx).catch((e) => {
+				if (isErrorFromUniqueConstraint(e, 'vehicle_plate_unique')) {
+					return 'vehicle_plate_unique' as const;
+				}
 
-			const vehicle = await createOrgVehicle(locals.user.organization.id, data);
-			const createdVehicle = vehicleSchema.parse(vehicle);
-			return { form, createdVehicle };
-		} catch (e) {
-			if (isErrorFromUniqueConstraint(e, 'vehicle_plate_unique')) {
-				return setError(form, 'plate', 'Plate in use by another vehicle');
+				throw e;
+			});
+
+			if (typeof vehicleOrError === 'string') {
+				tx.rollback();
+				return vehicleOrError;
 			}
 
-			throw e;
+			if (photo) {
+				const key = {
+					date: new Date(),
+					organizationId: user.organization.id,
+					filenameWithExtension: `pic${path.extname(photo.name)}`,
+					organizationSubFolder: `vehicle/${vehicleOrError.id}`
+				};
+
+				const { fileKey } = await s3.uploadFile(key, photo);
+				await updateOrgVehiclePhoto(vehicleOrError.id, fileKey, tx);
+			}
+
+			return vehicleOrError;
+		});
+
+		if (createdVehicleOrError === 'vehicle_plate_unique') {
+			return setError(form, 'plate', 'Plate in use by another vehicle');
 		}
+
+		const createdVehicle = vehicleSchema.parse(createdVehicleOrError);
+
+		return withFiles({ form, createdVehicle });
 	}
 };

@@ -22,16 +22,21 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, createTrackerSchema);
 
-		try {
-			const tracker = await createOrgTracker(locals.user.organization.id, form.data);
-			const createdTracker = trackerSchema.parse(tracker);
-			return { form, createdTracker };
-		} catch (e) {
-			if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
-				return setError(form, 'imei', 'IMEI in use by another tracker');
-			}
+		const trackerOrError = await createOrgTracker(locals.user.organization.id, form.data).catch(
+			(e) => {
+				if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
+					return 'vehicle_tracker_imei_unique' as const;
+				}
 
-			throw e;
+				throw e;
+			}
+		);
+
+		if (trackerOrError === 'vehicle_tracker_imei_unique') {
+			return setError(form, 'imei', 'IMEI in use by another tracker');
 		}
+
+		const createdTracker = trackerSchema.parse(trackerOrError);
+		return { form, createdTracker };
 	}
 };

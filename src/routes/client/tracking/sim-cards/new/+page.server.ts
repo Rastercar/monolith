@@ -18,20 +18,27 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, createSimCardSchema);
 
-		try {
-			const sim = await createOrgSimCard(locals.user.organization.id, form.data);
-			const createdSim = simCardSchema.parse(sim);
-			return { form, createdSim };
-		} catch (e) {
+		const simOrError = await createOrgSimCard(locals.user.organization.id, form.data).catch((e) => {
 			if (isErrorFromUniqueConstraint(e, 'sim_card_ssn_unique')) {
-				return setError(form, 'ssn', 'SSN in use by another SIM card');
+				return 'sim_card_ssn_unique' as const;
 			}
 
 			if (isErrorFromUniqueConstraint(e, 'sim_card_phone_number_unique')) {
-				return setError(form, 'phoneNumber', 'Phone number in use by another SIM card');
+				return 'sim_card_phone_number_unique' as const;
 			}
 
 			throw e;
+		});
+
+		if (simOrError === 'sim_card_phone_number_unique') {
+			return setError(form, 'phoneNumber', 'Phone number in use by another SIM card');
 		}
+
+		if (simOrError === 'sim_card_ssn_unique') {
+			return setError(form, 'ssn', 'SSN in use by another SIM card');
+		}
+
+		const createdSim = simCardSchema.parse(simOrError);
+		return { form, createdSim };
 	}
 };

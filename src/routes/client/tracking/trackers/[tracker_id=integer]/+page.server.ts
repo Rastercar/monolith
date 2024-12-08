@@ -34,16 +34,21 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, updateTrackerSchema);
 
-		try {
-			const tracker = await updateOrgTracker(trackerId, locals.user.organization.id, form.data);
-			const updatedTracker = trackerSchema.parse(tracker);
-			return { form, updatedTracker };
-		} catch (e) {
+		const trackerOrError = await updateOrgTracker(
+			trackerId,
+			locals.user.organization.id,
+			form.data
+		).catch((e) => {
 			if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
-				return setError(form, 'imei', 'IMEI in use by another tracker');
+				return 'vehicle_tracker_imei_unique';
 			}
+		});
 
-			throw e;
+		if (trackerOrError === 'vehicle_tracker_imei_unique') {
+			return setError(form, 'imei', 'IMEI in use by another tracker');
 		}
+
+		const updatedTracker = trackerSchema.parse(trackerOrError);
+		return { form, updatedTracker };
 	}
 };

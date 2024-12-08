@@ -135,6 +135,7 @@ export async function updateUserProfilePicture(id: number, s3Key: string | null)
 		.set({ profilePicture: s3Key })
 		.where(eq(user.id, id))
 		.returning();
+
 	return updatedUser;
 }
 

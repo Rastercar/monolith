@@ -39,7 +39,7 @@
 		</header>
 	{/if}
 
-	<!-- TODO: fix sidebar -->
+	<!-- Sidebar -->
 	<div
 		class:lg:grid-cols-[1fr]={!sidebarVisibility}
 		class:lg:grid-cols-[auto_1fr]={sidebarVisibility}

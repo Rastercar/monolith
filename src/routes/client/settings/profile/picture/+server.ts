@@ -17,7 +17,7 @@ export const PUT = withAuth(async ({ request, locals: { user } }) => {
 		date: new Date(),
 		organizationId: user.organization.id,
 		filenameWithExtension: `profile-pic${path.extname(image.name)}`,
-		organizationSubFolder: 'user'
+		organizationSubFolder: `user/${user.id}`
 	};
 
 	const { fileKey } = await s3.uploadFile(key, image);

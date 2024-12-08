@@ -51,7 +51,7 @@ class S3Service {
 		// assert key is valid to avoid uploading unindentifiable crap
 		objectKeySchema.parse(key);
 
-		const filenameWithTimestamp = `date_${getYYYY_MM_DD_HH_MM_SS(key.date)}_${key.filenameWithExtension}`;
+		const filenameWithTimestamp = `${getYYYY_MM_DD_HH_MM_SS(key.date)}_${key.filenameWithExtension}`;
 		return `organization/${key.organizationId}/${key.organizationSubFolder}/${filenameWithTimestamp}`;
 	}
 

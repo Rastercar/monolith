@@ -2,13 +2,15 @@
 	import { createVehicleSchema, type Vehicle } from '$lib/api/vehicle.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import ComboBoxField from '$lib/components/form/ComboBoxField.svelte';
+	import FileInputField from '$lib/components/form/FileInputField.svelte';
+	import MaskedTextField from '$lib/components/form/MaskedTextField.svelte';
 	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';
 	import { route } from '$lib/ROUTES';
 	import { showErrorToast } from '$lib/store/toast';
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { ActionData } from '../$types';
 
@@ -32,30 +34,18 @@
 
 	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
 
-	const { form } = $derived(sForm);
-
-	// 	// TODO: nuke this function from orbit
-	// const createVehicle = async () => {
-	// 	const validated = await sForm.validateForm();
-
-	// 	if (!validated.valid) return sForm.restore({ ...validated, tainted: undefined });
-
-	// 	clearFileInputsUnderFormWithId('formId');
-	// 	sForm.reset();
-	// };
+	const { submitting: isLoading } = sForm;
 </script>
 
-<SuperDebug data={form} />
-
-<!-- TODO: change route to create vehicle -->
 <form
 	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
 	method="POST"
-	action={route('createSimCard /client/tracking/sim-cards/new')}
+	enctype="multipart/form-data"
+	action={route('createVehicle /client/tracking/vehicles/new')}
 	use:sForm.enhance
 >
-	<!-- <MaskedTextInput
-		{form}
+	<MaskedTextField
+		form={sForm}
 		classes="col-span-1"
 		inputClass="input mb-1 uppercase"
 		maskOptions={{
@@ -69,7 +59,7 @@
 		}}
 		name="plate"
 		label="Plate *"
-	/> -->
+	/>
 
 	<ComboBoxField
 		form={sForm}
@@ -109,17 +99,13 @@
 
 	<TextField form={sForm} classes="col-span-1" name="color" label="Color" maxlength={12} />
 
-	<!-- <FileInput
-		{form}
+	<FileInputField
+		form={sForm}
 		classes="col-span-1"
+		name="photo"
 		label="Photo"
-		name="photoName"
-		fileField="photo"
-		accept="image/png, image/gif, image/jpeg, image/webp"
-		on:file-selected={({ detail: file }) => {
-			form.validate('photo', { value: file, update: 'errors', taint: true });
-		}}
-	/> -->
+		accept="image/png, image/jpeg, image/webp"
+	/>
 
 	<TextAreaField
 		form={sForm}
@@ -131,10 +117,7 @@
 	/>
 
 	<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
-		<LoadableButton classes="btn preset-filled-primary-200-800" isLoading={false}>
-			<!-- TODO: -->
-			<!-- 		onclick={createVehicle}
-			isLoading={$mutation.isPending} -->
+		<LoadableButton classes="btn preset-filled-primary-200-800" isLoading={$isLoading}>
 			create
 		</LoadableButton>
 	</div>

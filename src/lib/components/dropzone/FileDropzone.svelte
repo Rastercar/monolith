@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="UploadReturn, DeleteReturn">
 	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton-svelte';
@@ -6,9 +6,6 @@
 	import { Dialog } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	import FileDropzoneCropper from './FileDropzoneCropper.svelte';
-
-	type UploadReturn = $$Generic;
-	type DeleteReturn = $$Generic;
 
 	interface Props {
 		defaultSrc?: string;

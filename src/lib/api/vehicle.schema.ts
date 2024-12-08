@@ -29,12 +29,10 @@ export const getVehiclesSearchParamsSchema = z.object({
 export const createVehicleSchema = z.object({
 	plate: z.string().refine(isMercosulOrBrPlate, 'invalid vehicle plate'),
 
-	photoName: z.string(),
 	photo: z
 		.instanceof(File, { message: 'Please upload a file.' })
 		.nullable()
-		// max file size is 1MB, as that is the max value allowed by the backend
-		.refine((f?: File | null) => !f || f.size <= toMegabytes(1), `Max file size is 1MB.`)
+		.refine((f?: File | null) => !f || f.size <= toMegabytes(5), `Max file size is 5MB.`)
 		.refine(
 			(f?: File | null) => !f || ACCEPTED_IMAGE_TYPES.includes(f.type),
 			'jpg, jpeg, png and webp files are accepted.'
@@ -101,7 +99,7 @@ export const updateVehicleSchema = z.object({
 export const vehicleSchema = z.object({
 	id: z.number(),
 	organizationId: z.number(),
-	createdAt: z.string().datetime(),
+	createdAt: z.date({ coerce: true }),
 	plate: z.string(),
 	photo: z.string().nullable(),
 	brand: z.string().nullable(),

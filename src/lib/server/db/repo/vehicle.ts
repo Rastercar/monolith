@@ -19,6 +19,12 @@ export async function findOrgVehiclesWithPagination(
 	return paginate(pagination, vehicle, sqlFilters);
 }
 
+export function findOrgVehicleById(id: number, orgId: number) {
+	return db.query.vehicle.findFirst({
+		where: (vehicle, { eq, and }) => and(eq(vehicle.organizationId, orgId), eq(vehicle.id, id))
+	});
+}
+
 export async function createOrgVehicle(
 	orgId: number,
 	body: Omit<CreateVehicleBody, 'photo'> & { photo?: string | null },

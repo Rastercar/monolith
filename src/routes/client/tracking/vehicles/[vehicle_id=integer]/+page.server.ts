@@ -1,15 +1,25 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { updateVehicleSchema } from '$lib/api/vehicle.schema';
-import { getIntParameterFromRouteSlug } from '$lib/utils/routes';
+import { findOrgVehicleById } from '$lib/server/db/repo/vehicle.js';
+import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params }) => ({
-	vehicleId: getIntParameterFromRouteSlug(params.vehicle_id, 'invalid vehicle ID'),
-	updateVehicleForm: await superValidate(zod(updateVehicleSchema)),
-	createTrackerForm: await superValidate(zod(createTrackerSchema)),
-	updateTrackerForm: await superValidate(zod(updateTrackerSchema)),
-	createSimCardForm: await superValidate(zod(createSimCardSchema)),
-	updateSimCardForm: await superValidate(zod(updateSimCardSchema))
-});
+export const load = async ({ params, locals }) => {
+	if (!locals.user) return error(403);
+
+	const vehicleId = parseInt(params.vehicle_id);
+	const vehicle = await findOrgVehicleById(vehicleId, locals.user.organization.id);
+
+	if (!vehicle) return error(404);
+
+	return {
+		vehicle,
+		updateVehicleForm: await superValidate(zod(updateVehicleSchema)),
+		createTrackerForm: await superValidate(zod(createTrackerSchema)),
+		updateTrackerForm: await superValidate(zod(updateTrackerSchema)),
+		createSimCardForm: await superValidate(zod(createSimCardSchema)),
+		updateSimCardForm: await superValidate(zod(updateSimCardSchema))
+	};
+};

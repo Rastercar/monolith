@@ -26,37 +26,41 @@ export const apiGetVehicles = (
 		.then(createPaginatedResponseSchema(vehicleSchema).parse);
 
 /**
- * Fetch vehicle by ID
- */
-export const apiGetVehicleById = (id: number): Promise<Vehicle> =>
-	api.get(`/vehicle/${id}`).json<Vehicle>().then(vehicleSchema.parse);
-
-/**
  * Delete vehicle by ID
+ *
+ * TODO: will we use ?
  */
 export const apiDeleteVehicle = (id: number): Promise<string> =>
 	api.delete(`/vehicle/${id}`).json<string>();
 
 /**
  * Updates a vehicle
+ *
+ * TODO: will we use ?
  */
 export const apiUpdateVehicle = (id: number, body: UpdateVehicleBody): Promise<Vehicle> =>
 	api.put(body, `/vehicle/${id}`).json<Vehicle>().then(vehicleSchema.parse);
 
 /**
  * change a vehicle photo
+ *
+ * TODO: will we use ?
  */
 export const updateVehiclePhoto = (id: number, image: File): Promise<string> =>
 	api.formData({ image }).put(undefined, `/vehicle/${id}/photo`).json<string>();
 
 /**
  * delete a vehicle photo
+ *
+ * TODO: will we use ?
  */
 export const removeVehiclePhoto = (id: number): Promise<string> =>
 	api.delete(`/vehicle/${id}/photo`).json<string>();
 
 /**
  * Fetch a vehicles tracker, might be NULL if the vehicle does not have a installed tracker
+ *
+ * TODO: will we use ?
  */
 export const apiGetTrackerByVehicleId = (id: number): Promise<Tracker | null> =>
 	api

@@ -11,7 +11,7 @@
 		name,
 		label,
 		classes = '',
-		inputClass = 'input',
+		inputClass = 'input type-scale-1',
 		labelClass = 'label mb-2 text-sm',
 		labelExtraClasses = '',
 		...fieldAttributes

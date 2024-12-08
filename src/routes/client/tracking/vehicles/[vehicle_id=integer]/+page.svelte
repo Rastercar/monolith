@@ -1,59 +1,53 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import { apiGetVehicleById } from '$lib/api/vehicle';
+	import { route } from '$lib/ROUTES';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
-	import { createQuery } from '@tanstack/svelte-query';
 	import VehicleLocationCard from './components/VehicleLocationCard.svelte';
 	import VehiclePhoto from './components/VehiclePhoto.svelte';
-	import VehicleTrackerCard from './components/tracker-card/VehicleTrackerCard.svelte';
-	import VehicleDisplayCard from './components/vehicle-card/VehicleDisplayCard.svelte';
 
 	let { data } = $props();
 
-	const query = createQuery({
-		queryKey: ['vehicle', data.vehicleId],
-		queryFn: () => apiGetVehicleById(data.vehicleId)
-	});
-
-	const onVehiclePhotoUpdated = (e: CustomEvent<string | null>) => {
-		if (vehicle) vehicle.photo = e.detail;
-	};
-
-	const onVehicleUpdated = (e: CustomEvent<Vehicle>) => {
-		vehicle = e.detail;
-	};
-
+	let vehicle = $state(data.vehicle);
 	let vehicleDeleted = $state(false);
 
-	let vehicle;
-	run(() => {
-		vehicle = $query.data;
-	});
+	const onVehiclePhotoUpdated = (photo: string | null) => {
+		vehicle.photo = photo;
+	};
+
+	const onVehicleUpdated = (v: Vehicle) => {
+		vehicle = v;
+	};
 </script>
 
 <div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
-		title={`vehicle: ${vehicle?.plate.toLocaleUpperCase() ?? ''}`}
+		title="vehicle info"
 		breadCrumbs={[
-			{ href: '/client', icon: 'mdi:home', text: 'home' },
+			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
-			{ href: '/client/tracking/vehicles', icon: 'mdi:car', text: 'vehicles' },
-			{ href: `/client/tracking/vehicles/${data.vehicleId}`, text: data.vehicleId.toString() }
+			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'vehicles' },
+			{
+				href: route('/client/tracking/vehicles/[vehicle_id=integer]', {
+					vehicle_id: vehicle.id.toString()
+				}),
+				text: `${vehicle.plate.toLocaleUpperCase() ?? vehicle.id}`
+			}
 		]}
 	/>
 
 	{#if vehicleDeleted}
-		<DeletionSuccessMessage title="Vehicle deleted successfully" href="/client/tracking/vehicles" />
+		<hr class="hr my-4" />
+
+		<DeletionSuccessMessage title="Vehicle deleted" href={route('/client/tracking/vehicles')} />
 	{:else if vehicle}
 		<VehiclePhoto
-			vehicleId={vehicle.id}
 			photo={vehicle.photo}
-			on:photo-changed={onVehiclePhotoUpdated}
+			vehicleId={vehicle.id}
+			onPhotoChange={onVehiclePhotoUpdated}
 		/>
 
+		<!-- 
 		<VehicleDisplayCard
 			{vehicle}
 			formSchema={data.updateVehicleForm}
@@ -67,7 +61,7 @@
 			createTrackerForm={data.createTrackerForm}
 			updateTrackerForm={data.updateTrackerForm}
 			createSimCardForm={data.createSimCardForm}
-		/>
+		/> -->
 
 		{#if false}
 			<!-- TODO:  -->

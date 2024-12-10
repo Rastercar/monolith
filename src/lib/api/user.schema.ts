@@ -3,6 +3,10 @@ import { z } from 'zod';
 import { accessLevelSchema } from './access-level.schema';
 import { organizationSchema } from './organization.schema';
 
+export const getUsersSearchParamsSchema = z.object({
+	email: z.string().optional()
+});
+
 export const userSchema = z.object({
 	id: z.number(),
 	createdAt: z.date({ coerce: true }),
@@ -89,6 +93,8 @@ export type SimpleUser = z.infer<typeof simpleUserSchema>;
 export type User = z.infer<typeof userSchema>;
 
 export type UserSession = z.infer<typeof userSessionSchema>;
+
+export type GetUsersFilters = z.infer<typeof getUsersSearchParamsSchema>;
 
 export type UpdateUserBody = z.infer<typeof updateUserSchema>;
 

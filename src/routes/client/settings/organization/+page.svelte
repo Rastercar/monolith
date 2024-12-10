@@ -14,7 +14,7 @@
 
 	const auth = getAuthContext();
 
-	const form = superForm(data.form, {
+	const sForm = superForm(data.form, {
 		resetForm: false,
 		validators: zodClient(updateOrganizationSchema),
 		onUpdated({ form: { data, valid } }) {
@@ -25,7 +25,7 @@
 		}
 	});
 
-	const { submitting: isLoading } = form;
+	const { submitting: isLoading } = sForm;
 </script>
 
 <SettingsPageTitle>My Organization</SettingsPageTitle>
@@ -34,11 +34,22 @@
 	class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4"
 	method="POST"
 	action={route('updateOrganization /client/settings/organization')}
-	use:form.enhance
+	use:sForm.enhance
 >
-	<TextField {form} classes="sm:col-span-1 col-span-2" name="billingEmail" label="Billing Email" />
+	<TextField
+		form={sForm}
+		classes="sm:col-span-1 col-span-2"
+		name="billingEmail"
+		label="Billing Email"
+	/>
 
-	<TextField {form} classes="sm:col-span-1 col-span-2" maxlength={32} name="name" label="Name" />
+	<TextField
+		form={sForm}
+		classes="sm:col-span-1 col-span-2"
+		maxlength={32}
+		name="name"
+		label="Name"
+	/>
 
 	{#if auth.user && !auth.user.organization.billingEmailVerified}
 		<div class="mt-2 col-span-2">

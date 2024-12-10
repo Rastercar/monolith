@@ -24,7 +24,7 @@
 
 	let selectedAccessLevel: null | AccessLevel = $state(null);
 
-	const form = superForm(formSchema, { validators: zodClient(createUserSchema) });
+	const sForm = superForm(formSchema, { validators: zodClient(createUserSchema) });
 
 	const toaster = getToaster();
 
@@ -38,12 +38,12 @@
 
 		onError: (e) => {
 			if (isAppErrorWithCode(e, EMAIL_IN_USE)) {
-				form.validate('email', { value: '', errors: 'email in use', update: 'errors' });
+				sForm.validate('email', { value: '', errors: 'email in use', update: 'errors' });
 				return;
 			}
 
 			if (isAppErrorWithCode(e, USERNAME_IN_USE)) {
-				form.validate('username', { value: '', errors: 'username in use', update: 'errors' });
+				sForm.validate('username', { value: '', errors: 'username in use', update: 'errors' });
 				return;
 			}
 
@@ -52,26 +52,26 @@
 	});
 
 	const createUser = async () => {
-		const validated = await form.validateForm();
+		const validated = await sForm.validateForm();
 
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
+		if (!validated.valid) return sForm.restore({ ...validated, tainted: undefined });
 
 		await $mutation.mutateAsync(validated.data);
-		form.reset();
+		sForm.reset();
 	};
 
-	let { form: f } = $derived(form);
+	let { form: f } = $derived(sForm);
 </script>
 
 <div class="grid grid-cols-2 gap-4 mb-4">
-	<TextInput {form} field="email" label="Email" placeholder="email address" class="label" />
+	<TextInput form={sForm} field="email" label="Email" placeholder="email address" class="label" />
 
-	<TextInput {form} field="username" label="Username" placeholder="username" class="label" />
+	<TextInput form={sForm} field="username" label="Username" placeholder="username" class="label" />
 
-	<PasswordInput {form} field="password" class="label" />
+	<PasswordInput form={sForm} field="password" class="label" />
 
 	<PasswordInput
-		{form}
+		form={sForm}
 		label="Confirm Password"
 		placeholder="Confirm Password"
 		field="passwordConfirmation"
@@ -79,7 +79,7 @@
 	/>
 
 	<TextArea
-		{form}
+		form={sForm}
 		field="description"
 		label="Description / Bio"
 		placeholder="description"

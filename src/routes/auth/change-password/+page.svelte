@@ -13,8 +13,8 @@
 
 	let { data } = $props();
 
-	const form = superForm(data.form, { validators: zodClient(recoverPasswordByTokenSchema) });
-	const { message, submitting: isLoading, form: f } = form;
+	const sForm = superForm(data.form, { validators: zodClient(recoverPasswordByTokenSchema) });
+	const { message, submitting: isLoading, form: f } = sForm;
 
 	const formStatus = $derived($message ? $message.type : 'not-sent');
 	const formErrorCode = $derived($message?.code);
@@ -30,13 +30,19 @@
 		{#if formStatus === 'not-sent'}
 			<h1 class="mb-4 text-center h2 mt-12">Change Password</h1>
 
-			<form action={route('changePassword /auth/change-password')} method="POST" use:form.enhance>
-				<TextField {form} label="token" name="token" labelExtraClasses="hidden" class="hidden" />
+			<form action={route('changePassword /auth/change-password')} method="POST" use:sForm.enhance>
+				<TextField
+					form={sForm}
+					label="token"
+					name="token"
+					labelExtraClasses="hidden"
+					class="hidden"
+				/>
 
-				<PasswordField {form} label="New Password" name="newPassword" />
+				<PasswordField form={sForm} label="New Password" name="newPassword" />
 
 				<PasswordField
-					{form}
+					form={sForm}
 					label="Confirm new password"
 					name="passwordConfirmation"
 					labelExtraClasses="mt-4"

@@ -11,14 +11,14 @@
 
 	const { data } = $props();
 
-	const form = superForm(data.form, { validators: zodClient(signInSchema) });
-	const { submitting: isLoading } = form;
+	const sForm = superForm(data.form, { validators: zodClient(signInSchema) });
+	const { submitting: isLoading } = sForm;
 </script>
 
 <AuthPagesLayout title="Welcome back." subtitle="Sign in to the best car tracking app!">
-	<form method="POST" action={route('signIn /auth/sign-in')} use:form.enhance>
+	<form method="POST" action={route('signIn /auth/sign-in')} use:sForm.enhance>
 		<TextField
-			{form}
+			form={sForm}
 			name="email"
 			type="email"
 			label="Email"
@@ -27,7 +27,7 @@
 		/>
 
 		<PasswordField
-			{form}
+			form={sForm}
 			name="password"
 			label="Password"
 			disabled={$isLoading}

@@ -38,7 +38,7 @@
 		fabricationYear: v.fabricationYear
 	});
 
-	const form = superForm(formSchema, {
+	const sForm = superForm(formSchema, {
 		validators: zodClient(updateVehicleSchema),
 		validationMethod: 'oninput'
 	});
@@ -51,19 +51,19 @@
 		mutationFn: (b: UpdateVehicleBody) => apiUpdateVehicle(vehicle.id, b),
 		onError: (e) => {
 			isAppErrorWithCode(e, PLATE_IN_USE)
-				? form.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
+				? sForm.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
 				: toaster.error();
 		}
 	});
 
 	const createVehicle = async () => {
-		const validated = await form.validateForm();
+		const validated = await sForm.validateForm();
 
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
+		if (!validated.valid) return sForm.restore({ ...validated, tainted: undefined });
 
 		$mutation.mutateAsync(validated.data).then((updatedVehicle) => {
 			toaster.success('vehicle updated successfully');
-			form.reset({ data: getValuesFromVehicle(updatedVehicle) });
+			sForm.reset({ data: getValuesFromVehicle(updatedVehicle) });
 			dispatch('vehicle-updated', updatedVehicle);
 		});
 	};
@@ -74,10 +74,10 @@
 	}>();
 
 	onMount(() => {
-		form.reset({ data: getValuesFromVehicle(vehicle) });
+		sForm.reset({ data: getValuesFromVehicle(vehicle) });
 	});
 
-	let { allErrors } = $derived(form);
+	let { allErrors } = $derived(sForm);
 
 	let canSubmit = $derived($allErrors.length === 0);
 </script>
@@ -95,7 +95,7 @@
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 px-4 pb-4">
 	<MaskedTextInput
-		{form}
+		form={sForm}
 		class="label col-span-1"
 		inputClass="input mb-1 uppercase"
 		maskOptions={{
@@ -111,26 +111,37 @@
 		label="Plate *"
 	/>
 
-	<ComboBox {form} class="label col-span-1" options={brandOptions} field="brand" label="Brand *" />
+	<ComboBox
+		form={sForm}
+		class="label col-span-1"
+		options={brandOptions}
+		field="brand"
+		label="Brand *"
+	/>
 
-	<TextInput {form} class="label col-span-1" field="model" label="Model *" maxlength="30" />
+	<TextInput form={sForm} class="label col-span-1" field="model" label="Model *" maxlength="30" />
 
 	<TextInput
-		{form}
+		form={sForm}
 		class="label col-span-1"
 		field="chassisNumber"
 		label="Chassis Number"
 		maxlength="30"
 	/>
 
-	<NumberInput {form} class="label col-span-1" field="fabricationYear" label="Fabrication Year" />
+	<NumberInput
+		form={sForm}
+		class="label col-span-1"
+		field="fabricationYear"
+		label="Fabrication Year"
+	/>
 
-	<NumberInput {form} class="label col-span-1" field="modelYear" label="Model Year" />
+	<NumberInput form={sForm} class="label col-span-1" field="modelYear" label="Model Year" />
 
-	<TextInput {form} class="label col-span-1" field="color" label="Color" maxlength="12" />
+	<TextInput form={sForm} class="label col-span-1" field="color" label="Color" maxlength="12" />
 
 	<TextArea
-		{form}
+		form={sForm}
 		class="label col-span-1 sm:col-span-2 md:col-span-4"
 		field="additionalInfo"
 		label="Additional Info"

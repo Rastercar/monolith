@@ -25,17 +25,17 @@
 
 	let { formSchema, trackerId, initialValues, children, onUpdated }: Props = $props();
 
-	const form = superForm(formSchema, {
+	const sForm = superForm(formSchema, {
 		validators: zodClient(updateTrackerSchema),
 		onUpdate: ({ form, result }) => {
 			const action = result.data as FormResult<ActionData>;
 			if (form.valid && action.updatedTracker) onUpdated(action.updatedTracker);
 		}
 	});
-	const { submitting: isLoading } = form;
+	const { submitting: isLoading } = sForm;
 
 	onMount(() => {
-		if (initialValues) form.reset({ data: { ...initialValues } });
+		if (initialValues) sForm.reset({ data: { ...initialValues } });
 	});
 </script>
 
@@ -45,12 +45,12 @@
 	action={route('updateTracker /client/tracking/trackers/[tracker_id=integer]', {
 		tracker_id: trackerId.toString()
 	})}
-	use:form.enhance
+	use:sForm.enhance
 >
-	<TextField {form} name="imei" label="IMEI *" maxlength={50} />
+	<TextField form={sForm} name="imei" label="IMEI *" maxlength={50} />
 
 	<SelectField
-		{form}
+		form={sForm}
 		name="model"
 		label="Model *"
 		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}

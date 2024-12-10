@@ -11,6 +11,7 @@ import {
 	userSchema,
 	userSessionSchema,
 	type CreateUserBody,
+	type GetUsersFilters,
 	type SimpleUser,
 	type UpdateUserBody,
 	type User,
@@ -18,19 +19,15 @@ import {
 } from './user.schema';
 import { api, stripUndefined } from './utils';
 
-export interface GetUserFilters {
-	email?: string;
-}
-
 /**
  * list paginated users that belong to the same organization as the request user
  */
 export const apiGetUsers = (
-	query?: PaginationWithFilters<GetUserFilters>
+	query?: PaginationWithFilters<GetUsersFilters>
 ): Promise<Paginated<SimpleUser>> =>
 	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get('/user')
+		.get(route('/client/users'))
 		.json<Paginated<SimpleUser>>()
 		.then(createPaginatedResponseSchema(simpleUserSchema).parse);
 

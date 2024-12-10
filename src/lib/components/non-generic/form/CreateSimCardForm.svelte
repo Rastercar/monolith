@@ -33,7 +33,7 @@
 
 	let { formSchema, slotNumber = 1, onCreate, children }: Props = $props();
 
-	const form = superForm(formSchema, {
+	const sForm = superForm(formSchema, {
 		id: `sim-card-form-for-slot-${slotNumber ?? 0}`,
 		validators: zodClient(createSimCardSchema),
 		onUpdate: ({ form, result }) => {
@@ -46,38 +46,38 @@
 		onError: showErrorToast
 	});
 
-	const { submitting: isLoading } = form;
+	const { submitting: isLoading } = sForm;
 </script>
 
 <form
 	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
 	method="POST"
 	action={route('createSimCard /client/tracking/sim-cards/new')}
-	use:form.enhance
+	use:sForm.enhance
 >
-	<TextField {form} name="ssn" label="SSN *" placeholder="A123BC678Z" maxlength={50} />
+	<TextField form={sForm} name="ssn" label="SSN *" placeholder="A123BC678Z" maxlength={50} />
 
 	<TextField
-		{form}
+		form={sForm}
 		name="phoneNumber"
 		label="Phone Number *"
 		placeholder="+5599999999"
 		maxlength={20}
 	/>
 
-	<TextField {form} name="apnUser" label="APN User *" maxlength={50} />
+	<TextField form={sForm} name="apnUser" label="APN User *" maxlength={50} />
 
-	<TextField {form} name="apnPassword" label="APN Password *" maxlength={50} />
+	<TextField form={sForm} name="apnPassword" label="APN Password *" maxlength={50} />
 
-	<TextField {form} name="apnAddress" label="APN Address *" maxlength={50} />
+	<TextField form={sForm} name="apnAddress" label="APN Address *" maxlength={50} />
 
-	<TextField {form} name="pin" label="PIN 1" placeholder="0000" maxlength={8} />
+	<TextField form={sForm} name="pin" label="PIN 1" placeholder="0000" maxlength={8} />
 
-	<TextField {form} name="pin2" label="PIN 2" placeholder="0000" maxlength={8} />
+	<TextField form={sForm} name="pin2" label="PIN 2" placeholder="0000" maxlength={8} />
 
-	<TextField {form} name="puk" label="PUK 1" placeholder="00000000" maxlength={8} />
+	<TextField form={sForm} name="puk" label="PUK 1" placeholder="00000000" maxlength={8} />
 
-	<TextField {form} name="puk2" label="PUK 2" placeholder="00000000" maxlength={8} />
+	<TextField form={sForm} name="puk2" label="PUK 2" placeholder="00000000" maxlength={8} />
 
 	{#if children}
 		{@render children()}

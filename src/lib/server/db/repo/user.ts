@@ -1,9 +1,24 @@
-import type { UpdateUserBody } from '$lib/api/user.schema';
+import type { PaginationWithFilters } from '$lib/api/common';
+import type { GetUsersFilters, UpdateUserBody } from '$lib/api/user.schema';
 import { allPermissions } from '$lib/constants/permissions';
 import { hashSync } from '$lib/server/crypto';
-import { eq } from 'drizzle-orm';
+import { eq, ilike, SQL } from 'drizzle-orm';
 import { db } from '../db';
+import { paginate } from '../pagination';
 import { accessLevel, organization, user } from '../schema';
+
+export async function findOrgUsersWithPagination(
+	orgId: number,
+	params: PaginationWithFilters<GetUsersFilters>
+) {
+	const { pagination, filters } = params;
+
+	const sqlFilters: SQL[] = [eq(user.organizationId, orgId)];
+
+	if (filters?.email) sqlFilters.push(ilike(user.email, `%${filters.email}%`));
+
+	return paginate(pagination, user, sqlFilters);
+}
 
 export function findUserBy(
 	col: 'resetPasswordToken' | 'email' | 'username' | 'confirmEmailToken',

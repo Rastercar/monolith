@@ -16,7 +16,7 @@
 
 	const auth = getAuthContext();
 
-	const form = superForm(data.form, {
+	const sForm = superForm(data.form, {
 		resetForm: false,
 		validators: zodClient(updateUserSchema),
 		onUpdated({ form: { data, valid } }) {
@@ -26,7 +26,7 @@
 			showSuccessToast('profile updated');
 		}
 	});
-	const { submitting: isLoading } = form;
+	const { submitting: isLoading } = sForm;
 </script>
 
 {#if auth.user}
@@ -38,11 +38,11 @@
 		class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4"
 		method="POST"
 		action={route('updateProfile /client/settings/profile')}
-		use:form.enhance
+		use:sForm.enhance
 	>
-		<TextField {form} name="email" label="Email" />
+		<TextField form={sForm} name="email" label="Email" />
 
-		<TextField {form} maxlength={32} name="username" label="Username" />
+		<TextField form={sForm} maxlength={32} name="username" label="Username" />
 
 		{#if !auth.user.emailVerified}
 			<EmailNotConfirmedWarning
@@ -52,7 +52,7 @@
 		{/if}
 
 		<TextAreaField
-			{form}
+			form={sForm}
 			name="description"
 			label="Description"
 			classes="col-span-1 md:col-span-2"

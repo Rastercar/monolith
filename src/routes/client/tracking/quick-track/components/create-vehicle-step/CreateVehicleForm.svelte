@@ -31,7 +31,7 @@
 
 	const toaster = getToaster();
 
-	const form = superForm(formSchema, {
+	const sForm = superForm(formSchema, {
 		validators: zodClient(createVehicleSchema),
 		validationMethod: 'oninput'
 	});
@@ -44,7 +44,7 @@
 		mutationFn: (b: CreateVehicleBody) => apiCreateVehicle(b),
 		onError: (e) => {
 			isAppErrorWithCode(e, PLATE_IN_USE)
-				? form.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
+				? sForm.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
 				: toaster.error();
 		}
 	});
@@ -52,9 +52,9 @@
 	const dispatch = createEventDispatcher<{ 'vehicle-created': Vehicle }>();
 
 	const createVehicle = async () => {
-		const validated = await form.validateForm();
+		const validated = await sForm.validateForm();
 
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
+		if (!validated.valid) return sForm.restore({ ...validated, tainted: undefined });
 
 		if (!validated.data.photo) {
 			delete validated.data.photo;
@@ -66,7 +66,7 @@
 		});
 	};
 
-	let { tainted, allErrors } = $derived(form);
+	let { tainted, allErrors } = $derived(sForm);
 
 	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
 </script>
@@ -75,7 +75,7 @@
 
 <div class="grid grid-cols-2 gap-4 my-4">
 	<MaskedTextInput
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2 "
 		inputClass="input mb-1 uppercase"
 		maskOptions={{
@@ -92,7 +92,7 @@
 	/>
 
 	<ComboBox
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2"
 		options={brandOptions}
 		field="brand"
@@ -100,7 +100,7 @@
 	/>
 
 	<TextInput
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2"
 		field="model"
 		label="Model *"
@@ -108,7 +108,7 @@
 	/>
 
 	<TextInput
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2"
 		field="chassisNumber"
 		label="Chassis Number"
@@ -116,7 +116,7 @@
 	/>
 
 	<TextInput
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2"
 		field="modelYear"
 		label="Model Year"
@@ -125,7 +125,7 @@
 	/>
 
 	<TextInput
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2"
 		field="fabricationYear"
 		label="Fabrication Year"
@@ -134,7 +134,7 @@
 	/>
 
 	<TextInput
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2"
 		field="color"
 		label="Color"
@@ -142,19 +142,19 @@
 	/>
 
 	<FileInput
-		{form}
+		form={sForm}
 		class="label sm:col-span-1 col-span-2"
 		label="Photo"
 		field="photoName"
 		fileField="photo"
 		accept="image/png, image/gif, image/jpeg, image/webp"
 		on:file-selected={({ detail: file }) => {
-			form.validate('photo', { value: file, update: 'errors', taint: true });
+			sForm.validate('photo', { value: file, update: 'errors', taint: true });
 		}}
 	/>
 
 	<TextArea
-		{form}
+		form={sForm}
 		class="label col-span-2"
 		field="additionalInfo"
 		label="Additional Info"

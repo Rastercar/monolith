@@ -1,31 +1,29 @@
 <script lang="ts">
-	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
 	import Icon from '@iconify/svelte';
-	import { popup } from '@skeletonlabs/skeleton';
+	import { Tooltip } from 'bits-ui';
 
 	interface Props {
-		idx: number;
 		email: string;
 		verified: boolean;
 	}
 
-	let { idx, email, verified }: Props = $props();
+	let { email, verified }: Props = $props();
 </script>
 
-<div class="flex items-center">
-	<div
-		use:popup={{ event: 'hover', target: `emailVerificationStatusPopup-${idx}`, placement: 'top' }}
-		class="mr-2"
-	>
-		<Icon
-			icon={verified ? 'mdi:check' : 'mdi:times'}
-			class={verified ? 'text-success-500' : 'text-error-500'}
-		/>
-	</div>
+<Tooltip.Provider>
+	<Tooltip.Root delayDuration={100}>
+		<Tooltip.Trigger class="flex items-center">
+			<div class="mr-2">
+				<Icon
+					icon={verified ? 'mdi:check' : 'mdi:times'}
+					class={verified ? 'text-success-500' : 'text-error-500'}
+				/>
+			</div>
 
-	{email}
-</div>
-
-<ArrowUpTooltip dataPopup={`emailVerificationStatusPopup-${idx}`}>
-	{verified ? 'email verified' : 'verification pending'}
-</ArrowUpTooltip>
+			{email}
+		</Tooltip.Trigger>
+		<Tooltip.Content class="card py-1 px-3 bg-surface-200-800">
+			{verified ? 'email verified' : 'verification pending'}
+		</Tooltip.Content>
+	</Tooltip.Root>
+</Tooltip.Provider>

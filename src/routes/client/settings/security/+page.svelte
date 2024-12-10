@@ -10,7 +10,7 @@
 
 	let { data } = $props();
 
-	const form = superForm(data.form, {
+	const sForm = superForm(data.form, {
 		validators: zodClient(changePasswordSchema),
 		onUpdated({ form: { valid } }) {
 			if (!valid) return;
@@ -18,18 +18,18 @@
 		},
 		onError: showErrorToast
 	});
-	const { submitting: isLoading } = form;
+	const { submitting: isLoading } = sForm;
 </script>
 
 <SettingsPageTitle>Change Password</SettingsPageTitle>
 
-<form method="POST" action={route('changePassword /client/settings/security')} use:form.enhance>
+<form method="POST" action={route('changePassword /client/settings/security')} use:sForm.enhance>
 	<div class="space-y-4">
-		<PasswordField {form} name="oldPassword" label="Old Password" />
+		<PasswordField form={sForm} name="oldPassword" label="Old Password" />
 
-		<PasswordField {form} name="newPassword" label="New Password" />
+		<PasswordField form={sForm} name="newPassword" label="New Password" />
 
-		<PasswordField {form} name="newPasswordConfirmation" label="Confirm new Password" />
+		<PasswordField form={sForm} name="newPasswordConfirmation" label="Confirm new Password" />
 	</div>
 
 	<div class="flex justify-between items-center mt-8">

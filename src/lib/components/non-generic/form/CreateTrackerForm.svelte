@@ -21,7 +21,7 @@
 
 	let { formSchema, children, onCreated }: Props = $props();
 
-	const form = superForm(formSchema, {
+	const sForm = superForm(formSchema, {
 		validators: zodClient(createTrackerSchema),
 		onUpdate: ({ form, result }) => {
 			const action = result.data as FormResult<ActionData>;
@@ -29,19 +29,19 @@
 			if (form.valid && action.createdTracker) onCreated(action.createdTracker);
 		}
 	});
-	const { submitting: isLoading } = form;
+	const { submitting: isLoading } = sForm;
 </script>
 
 <form
 	class="grid grid-cols-2 gap-4"
 	method="POST"
 	action={route('createTracker /client/tracking/trackers/new')}
-	use:form.enhance
+	use:sForm.enhance
 >
-	<TextField {form} name="imei" label="IMEI *" maxlength={50} />
+	<TextField form={sForm} name="imei" label="IMEI *" maxlength={50} />
 
 	<SelectField
-		{form}
+		form={sForm}
 		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
 		name="model"
 		label="Model *"

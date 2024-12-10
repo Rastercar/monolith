@@ -9,15 +9,15 @@
 
 	let { data } = $props();
 
-	const form = superForm(data.form, { validators: zodClient(recoverPasswordSchema) });
-	const { message } = form;
+	const sForm = superForm(data.form, { validators: zodClient(recoverPasswordSchema) });
+	const { message } = sForm;
 
 	const success = $derived(!!$message && $message.type === 'success');
 
 	onMount(() => {
 		// If the user is logged in, the email the account he wants to
 		// recover is most certainly the one he is currently logged as
-		if (data.user) form.form.set({ email: data.user.email });
+		if (data.user) sForm.form.set({ email: data.user.email });
 	});
 </script>
 
@@ -33,8 +33,17 @@
 		{#if success}
 			<a href="/" class="btn preset-filled-primary-200-800 mt-4 w-full">back to home</a>
 		{:else}
-			<form method="post" action={route('recoverPassword /auth/recover-password')} use:form.enhance>
-				<TextField {form} name="email" label="Your account email" placeholder="email address" />
+			<form
+				method="post"
+				action={route('recoverPassword /auth/recover-password')}
+				use:sForm.enhance
+			>
+				<TextField
+					form={sForm}
+					name="email"
+					label="Your account email"
+					placeholder="email address"
+				/>
 				<button class="btn preset-filled-primary-200-800 mt-4 w-full"> recover password </button>
 			</form>
 

@@ -11,20 +11,26 @@
 
 	let { data } = $props();
 
-	const form = superForm(data.form, { validators: zodClient(signUpSchema) });
-	const { submitting: isLoading } = form;
+	const sForm = superForm(data.form, { validators: zodClient(signUpSchema) });
+	const { submitting: isLoading } = sForm;
 </script>
 
 <AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">
-	<form method="POST" action={route('signUp /auth/sign-up')} use:form.enhance class="space-y-4">
-		<TextField {form} name="email" label="Email" labelExtraClasses="mt-4" disabled={$isLoading} />
+	<form method="POST" action={route('signUp /auth/sign-up')} use:sForm.enhance class="space-y-4">
+		<TextField
+			form={sForm}
+			name="email"
+			label="Email"
+			labelExtraClasses="mt-4"
+			disabled={$isLoading}
+		/>
 
-		<TextField {form} name="username" label="Username" disabled={$isLoading} />
+		<TextField form={sForm} name="username" label="Username" disabled={$isLoading} />
 
-		<PasswordField {form} name="password" label="Password" disabled={$isLoading} />
+		<PasswordField form={sForm} name="password" label="Password" disabled={$isLoading} />
 
 		<PasswordField
-			{form}
+			form={sForm}
 			name="passwordConfirmation"
 			label="Confirm Password"
 			disabled={$isLoading}

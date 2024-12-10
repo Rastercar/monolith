@@ -1,7 +1,9 @@
+import { route } from '$lib/ROUTES';
 import {
 	accessLevelSchema,
 	type AccessLevel,
 	type CreateAccessLevelBody,
+	type GetAccessLevelFilters,
 	type UpdateAccessLevelBody
 } from './access-level.schema';
 import {
@@ -11,19 +13,15 @@ import {
 } from './common';
 import { api, stripUndefined } from './utils';
 
-export interface GetAccessLevelsFilters {
-	name?: string;
-}
-
 /**
  * list paginated access levels that belong to the same organization as the request user
  */
 export const apiGetAccessLevels = (
-	query?: PaginationWithFilters<GetAccessLevelsFilters>
+	query?: PaginationWithFilters<GetAccessLevelFilters>
 ): Promise<Paginated<AccessLevel>> =>
 	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get('/access-level')
+		.get(route('/client/access-levels'))
 		.json<Paginated<AccessLevel>>()
 		.then(createPaginatedResponseSchema(accessLevelSchema).parse);
 

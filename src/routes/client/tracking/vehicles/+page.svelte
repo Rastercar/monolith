@@ -55,7 +55,11 @@
 		{
 			id: 'actions',
 			cell: ({ row }) =>
-				renderComponent(InfoIconLink, { href: `/client/tracking/vehicles/${row.original.id}` })
+				renderComponent(InfoIconLink, {
+					href: route(`/client/tracking/vehicles/[vehicle_id=integer]`, {
+						vehicle_id: row.original.id.toString()
+					})
+				})
 		}
 	];
 

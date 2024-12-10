@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const getAccessLevelSearchParamsSchema = z.object({
+	name: z.string().optional()
+});
+
 export const accessLevelSchema = z.object({
 	id: z.number(),
 	createdAt: z.date({ coerce: true }),
@@ -26,3 +30,5 @@ export type AccessLevel = z.infer<typeof accessLevelSchema>;
 export type UpdateAccessLevelBody = z.infer<typeof updateAccessLevelSchema>;
 
 export type CreateAccessLevelBody = z.infer<typeof createAccessLevelSchema>;
+
+export type GetAccessLevelFilters = z.infer<typeof getAccessLevelSearchParamsSchema>;

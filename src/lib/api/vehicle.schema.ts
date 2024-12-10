@@ -1,6 +1,7 @@
 import { toMegabytes } from '$lib/utils/number';
 import { emptyStringToNull } from '$lib/utils/string';
 import { z } from 'zod';
+import { trackerSchema } from './tracker.schema';
 
 const TEN_YEARS_FROM_NOW = new Date().getFullYear() + 10;
 
@@ -108,7 +109,8 @@ export const vehicleSchema = z.object({
 	modelYear: z.number().nullable(),
 	fabricationYear: z.number().nullable(),
 	chassisNumber: z.string().nullable(),
-	additionalInfo: z.string().nullable()
+	additionalInfo: z.string().nullable(),
+	tracker: trackerSchema.optional()
 });
 
 export type GetVehiclesFilters = z.infer<typeof getVehiclesSearchParamsSchema>;

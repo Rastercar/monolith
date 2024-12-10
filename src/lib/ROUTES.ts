@@ -19,7 +19,7 @@ const PAGES = {
   "/auth/sign-up": `/auth/sign-up`,
   "/client": `/client`,
   "/client/access-levels": `/client/access-levels`,
-  "/client/access-levels/[access_level_id]": (params: { access_level_id: (string | number) }) => {
+  "/client/access-levels/[access_level_id=integer]": (params: { access_level_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
     return `/client/access-levels/${params.access_level_id}`
   },
   "/client/access-levels/new": `/client/access-levels/new`,
@@ -46,7 +46,7 @@ const PAGES = {
   },
   "/client/tracking/vehicles/new": `/client/tracking/vehicles/new`,
   "/client/users": `/client/users`,
-  "/client/users/[user_id]": (params: { user_id: (string | number) }) => {
+  "/client/users/[user_id=integer]": (params: { user_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
     return `/client/users/${params.user_id}`
   },
   "/client/users/new": `/client/users/new`
@@ -62,6 +62,7 @@ const SERVERS = {
   "DELETE /auth/sign-out/[session_id=integer]": (params: { session_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
     return `/auth/sign-out/${params.session_id}`
   },
+  "GET /client/access-levels": `/client/access-levels`,
   "PUT /client/settings/profile/picture": `/client/settings/profile/picture`,
   "DELETE /client/settings/profile/picture": `/client/settings/profile/picture`,
   "GET /client/tracking/sim-cards": `/client/tracking/sim-cards`,
@@ -81,7 +82,16 @@ const SERVERS = {
   "GET /client/tracking/trackers/[tracker_id=integer]/locations": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
     return `/client/tracking/trackers/${params.tracker_id}/locations`
   },
-  "GET /client/tracking/vehicles": `/client/tracking/vehicles`
+  "GET /client/tracking/vehicles": `/client/tracking/vehicles`,
+  "DELETE /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
+    return `/client/tracking/vehicles/${params.vehicle_id}`
+  },
+  "PUT /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
+    return `/client/tracking/vehicles/${params.vehicle_id}/photo`
+  },
+  "DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
+    return `/client/tracking/vehicles/${params.vehicle_id}/photo`
+  }
 }
 
 /**
@@ -92,6 +102,7 @@ const ACTIONS = {
   "recoverPassword /auth/recover-password": `/auth/recover-password?/recoverPassword`,
   "signIn /auth/sign-in": `/auth/sign-in?/signIn`,
   "signUp /auth/sign-up": `/auth/sign-up?/signUp`,
+  "createAccessLevel /client/access-levels/new": `/client/access-levels/new?/createAccessLevel`,
   "updateOrganization /client/settings/organization": `/client/settings/organization?/updateOrganization`,
   "updateProfile /client/settings/profile": `/client/settings/profile?/updateProfile`,
   "updateProfilePicture /client/settings/profile": `/client/settings/profile?/updateProfilePicture`,
@@ -211,9 +222,9 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/auth/change-password': never, '/auth/confirm-email-address': never, '/auth/recover-password': never, '/auth/sign-in': never, '/auth/sign-out': never, '/auth/sign-up': never, '/client': never, '/client/access-levels': never, '/client/access-levels/[access_level_id]': 'access_level_id', '/client/access-levels/new': never, '/client/my-profile': never, '/client/settings/organization': never, '/client/settings/profile': never, '/client/settings/security': never, '/client/settings/sessions': never, '/client/tracking/map': never, '/client/tracking/quick-track': never, '/client/tracking/sim-cards': never, '/client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', '/client/tracking/sim-cards/new': never, '/client/tracking/trackers': never, '/client/tracking/trackers/[tracker_id=integer]': 'tracker_id', '/client/tracking/trackers/new': never, '/client/tracking/vehicles': never, '/client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', '/client/tracking/vehicles/new': never, '/client/users': never, '/client/users/[user_id]': 'user_id', '/client/users/new': never }
-  SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'DELETE /auth/sign-out/[session_id=integer]': 'session_id', 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never, 'GET /client/tracking/sim-cards': never, 'DELETE /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'PUT /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'GET /client/tracking/trackers': never, 'DELETE /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/last-location': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/locations': 'tracker_id', 'GET /client/tracking/vehicles': never }
-  ACTIONS: { 'changePassword /auth/change-password': never, 'recoverPassword /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never, 'updateOrganization /client/settings/organization': never, 'updateProfile /client/settings/profile': never, 'updateProfilePicture /client/settings/profile': never, 'changePassword /client/settings/security': never, 'updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'createSimCard /client/tracking/sim-cards/new': never, 'updateTracker /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'createTracker /client/tracking/trackers/new': never, 'createVehicle /client/tracking/vehicles/new': never }
+  PAGES: { '/auth/change-password': never, '/auth/confirm-email-address': never, '/auth/recover-password': never, '/auth/sign-in': never, '/auth/sign-out': never, '/auth/sign-up': never, '/client': never, '/client/access-levels': never, '/client/access-levels/[access_level_id=integer]': 'access_level_id', '/client/access-levels/new': never, '/client/my-profile': never, '/client/settings/organization': never, '/client/settings/profile': never, '/client/settings/security': never, '/client/settings/sessions': never, '/client/tracking/map': never, '/client/tracking/quick-track': never, '/client/tracking/sim-cards': never, '/client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', '/client/tracking/sim-cards/new': never, '/client/tracking/trackers': never, '/client/tracking/trackers/[tracker_id=integer]': 'tracker_id', '/client/tracking/trackers/new': never, '/client/tracking/vehicles': never, '/client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', '/client/tracking/vehicles/new': never, '/client/users': never, '/client/users/[user_id=integer]': 'user_id', '/client/users/new': never }
+  SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'DELETE /auth/sign-out/[session_id=integer]': 'session_id', 'GET /client/access-levels': never, 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never, 'GET /client/tracking/sim-cards': never, 'DELETE /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'PUT /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'GET /client/tracking/trackers': never, 'DELETE /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/last-location': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/locations': 'tracker_id', 'GET /client/tracking/vehicles': never, 'DELETE /client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', 'PUT /client/tracking/vehicles/[vehicle_id=integer]/photo': 'vehicle_id', 'DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo': 'vehicle_id' }
+  ACTIONS: { 'changePassword /auth/change-password': never, 'recoverPassword /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never, 'createAccessLevel /client/access-levels/new': never, 'updateOrganization /client/settings/organization': never, 'updateProfile /client/settings/profile': never, 'updateProfilePicture /client/settings/profile': never, 'changePassword /client/settings/security': never, 'updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'createSimCard /client/tracking/sim-cards/new': never, 'updateTracker /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'createTracker /client/tracking/trackers/new': never, 'createVehicle /client/tracking/vehicles/new': never }
   LINKS: Record<string, never>
   Params: { redirect: never, access_level_id: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never, session_id: never }
 }

@@ -27,11 +27,14 @@ export const apiGetVehicles = (
 
 /**
  * Delete vehicle by ID
- *
- * TODO: will we use ?
  */
-export const apiDeleteVehicle = (id: number): Promise<string> =>
-	api.delete(`/vehicle/${id}`).json<string>();
+export const apiDeleteVehicle = (id: number): Promise<string> => {
+	const url = route('DELETE /client/tracking/vehicles/[vehicle_id=integer]', {
+		vehicle_id: id.toString()
+	});
+
+	return api.delete(url).json<string>();
+};
 
 /**
  * Updates a vehicle
@@ -43,19 +46,25 @@ export const apiUpdateVehicle = (id: number, body: UpdateVehicleBody): Promise<V
 
 /**
  * change a vehicle photo
- *
- * TODO: will we use ?
  */
-export const updateVehiclePhoto = (id: number, image: File): Promise<string> =>
-	api.formData({ image }).put(undefined, `/vehicle/${id}/photo`).json<string>();
+export const updateVehiclePhoto = (id: number, image: File): Promise<string> => {
+	const url = route('PUT /client/tracking/vehicles/[vehicle_id=integer]/photo', {
+		vehicle_id: id.toString()
+	});
+
+	return api.formData({ image }).put(undefined, url).json<string>();
+};
 
 /**
  * delete a vehicle photo
- *
- * TODO: will we use ?
  */
-export const removeVehiclePhoto = (id: number): Promise<string> =>
-	api.delete(`/vehicle/${id}/photo`).json<string>();
+export const removeVehiclePhoto = (id: number): Promise<string> => {
+	const url = route('DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo', {
+		vehicle_id: id.toString()
+	});
+
+	return api.delete(url).json<string>();
+};
 
 /**
  * Fetch a vehicles tracker, might be NULL if the vehicle does not have a installed tracker

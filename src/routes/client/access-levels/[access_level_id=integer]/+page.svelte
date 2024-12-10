@@ -1,50 +1,38 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import { apiDeleteAccessLevel, apiGetAccessLevelById } from '$lib/api/access-level';
-	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
+	import { apiDeleteAccessLevel } from '$lib/api/access-level';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
+	import { route } from '$lib/ROUTES';
+	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation, createQuery } from '@tanstack/svelte-query';
-	import AccessLevelInfo from './components/AccessLevelInfo.svelte';
-	import UpdateAccessLevelForm from './components/UpdateAccessLevelForm.svelte';
+	import { createMutation } from '@tanstack/svelte-query';
 
 	let { data } = $props();
 
 	let editMode = $state(data.startInEditMode);
 
+	let accessLevel = $state(data.accessLevel);
 	let accessLevelDeleted = $state(false);
 
-	const toaster = getToaster();
-
-	const query = createQuery({
-		queryKey: ['access-level', data.accessLevelId],
-		queryFn: () => apiGetAccessLevelById(data.accessLevelId)
-	});
-
-	const deleteAccessLevelMutation = createMutation({
-		mutationFn: () => apiDeleteAccessLevel(data.accessLevelId),
-		onError: () => toaster.error()
-	});
+	const deleteAccessLevelMutation = createMutation(() => ({
+		mutationFn: () => apiDeleteAccessLevel(accessLevel.id),
+		onError: showErrorToast
+	}));
 
 	const deleteAccessLevel = async () => {
 		if (!confirm('Permanently delete this access level ?')) return;
 
-		await $deleteAccessLevelMutation.mutateAsync().then(() => (accessLevelDeleted = true));
+		await deleteAccessLevelMutation.mutateAsync().then(() => (accessLevelDeleted = true));
 	};
 
-	let accessLevel;
-	run(() => {
-		({ data: accessLevel, error, isLoading } = $query);
-	});
+	const auth = getAuthContext();
+	const { user } = $derived(auth);
 
-	let { user } = $derived($authStore);
+	let accessLevelIsFixed = $derived(accessLevel.isFixed);
 
-	let accessLevelIsFixed = $derived(!!accessLevel?.isFixed);
-
-	let isCurrentUserAccessLevel = $derived(!!accessLevel && accessLevel.id === user?.accessLevel.id);
+	let isCurrentUserAccessLevel = $derived(accessLevel.id === user?.accessLevel.id);
 
 	let canEditOrDeleteAccessLevel = $derived(!accessLevelIsFixed && !isCurrentUserAccessLevel);
 </script>
@@ -53,16 +41,21 @@
 	<TitleAndBreadCrumbsPageHeader
 		title="Access Level"
 		breadCrumbs={[
-			{ href: '/client', icon: 'mdi:home', text: 'home' },
-			{ href: '/client/access-levels', icon: 'mdi:shield', text: 'access levels' },
-			{ href: `/client/access-levels/${data.accessLevelId}`, text: data.accessLevelId.toString() }
+			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
+			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'access levels' },
+			{
+				href: route(`/client/access-levels/[access_level_id=integer]`, {
+					access_level_id: accessLevel.id.toString()
+				}),
+				text: data.accessLevel.id.toString()
+			}
 		]}
 	/>
 
 	{#if accessLevelDeleted}
 		<DeletionSuccessMessage
 			title="Access level deleted successfully"
-			href="/client/access-levels"
+			href={route('/client/access-levels')}
 		/>
 	{:else}
 		<div class="flex items-center">
@@ -70,13 +63,14 @@
 				{editMode ? 'Editing access level' : `Name: ${accessLevel?.name ?? ''}`}
 			</div>
 
-			<span
+			<!-- TODO: -->
+			<!-- <span
 				class:hidden={!accessLevelIsFixed || !isCurrentUserAccessLevel}
 				class="badge variant-filled-primary mx-4"
 				use:popup={{ event: 'hover', target: 'accessLevelBadgePopup', placement: 'top' }}
 			>
 				{isCurrentUserAccessLevel ? 'your access level' : 'fixed access level'}
-			</span>
+			</span> -->
 
 			<ArrowUpTooltip dataPopup="accessLevelBadgePopup">
 				<div class="text-sm text-center">
@@ -86,14 +80,15 @@
 				</div>
 			</ArrowUpTooltip>
 
-			<LoadableButton
+			<!-- TODO: -->
+			<!-- <LoadableButton
 				isLoading={$deleteAccessLevelMutation.isPending}
 				disabled={!canEditOrDeleteAccessLevel}
 				class="btn-icon mx-2 btn-icon-sm variant-filled-error"
 				on:click={deleteAccessLevel}
 			>
 				<Icon icon="mdi:trash" />
-			</LoadableButton>
+			</LoadableButton> -->
 
 			<button
 				disabled={!canEditOrDeleteAccessLevel}
@@ -104,10 +99,9 @@
 			</button>
 		</div>
 
-		{#if error}
+		<!-- TODO: -->
+		<!-- {#if error}
 			<div class="text-error-500">Error loading access level</div>
-		{:else if isLoading}
-			<div>loading</div>
 		{:else if accessLevel}
 			{#if editMode}
 				<UpdateAccessLevelForm
@@ -121,6 +115,6 @@
 			{:else}
 				<AccessLevelInfo {accessLevel} />
 			{/if}
-		{/if}
+		{/if} -->
 	{/if}
 </div>

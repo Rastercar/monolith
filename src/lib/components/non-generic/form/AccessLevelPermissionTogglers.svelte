@@ -8,8 +8,8 @@
 		type permission,
 		type permissionCategory
 	} from '$lib/constants/permissions';
+	import { getAuthContext } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	interface Props {
 		/**
@@ -17,6 +17,12 @@
 		 * val: boolean indicating the permission is selected
 		 */
 		permissionToToggleStatus: Record<permission, boolean>;
+
+		/**
+		 * if a warning should be shown explaining when the CREATE_USERS
+		 * permission is selected, explaining it is not possible to create
+		 * a user with permissions the creator does not have
+		 */
 		showManageUserAccessLevelsWarningIfToggled?: boolean;
 	}
 
@@ -30,6 +36,8 @@
 			[permissionCategory, PermissionDetailsAndKey[]]
 		]
 	);
+
+	const auth = getAuthContext();
 </script>
 
 {#each permissionsByCategory as [category, permissions], i}
@@ -42,12 +50,11 @@
 		{#each permissions as permissionDetails}
 			<div>
 				<div class="flex items-center gap-4 mb-2">
-					<SlideToggle
-						name="slide"
+					<input
+						class="checkbox"
+						type="checkbox"
 						bind:checked={permissionToToggleStatus[permissionDetails.key]}
-						size="sm"
 					/>
-
 					{permissionDetails.summary}
 				</div>
 
@@ -58,7 +65,7 @@
 		{/each}
 
 		{#if i !== permissionsByCategory.length - 1}
-			<hr />
+			<hr class="hr" />
 		{/if}
 	</div>
 {/each}
@@ -69,6 +76,6 @@
 
 {#if showManageUserAccessLevelsWarningIfToggled && permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS']}
 	<ManageAccessLevelsPermissionSelectedAlert
-		on:undo-clicked={() => (permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS'] = false)}
+		onUndoClicked={() => (permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS'] = false)}
 	/>
 {/if}

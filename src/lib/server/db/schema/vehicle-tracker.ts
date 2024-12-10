@@ -22,11 +22,13 @@ export const vehicleTracker = pgTable(
 			'btree',
 			table.imei.asc().nullsLast().op('text_ops')
 		),
+
 		vehicleTrackerOrganizationIdForeign: foreignKey({
 			columns: [table.organizationId],
 			foreignColumns: [organization.id],
 			name: 'vehicle_tracker_organization_id_foreign'
 		}).onUpdate('cascade'),
+
 		vehicleTrackerVehicleIdForeign: foreignKey({
 			columns: [table.vehicleId],
 			foreignColumns: [vehicle.id],
@@ -34,10 +36,12 @@ export const vehicleTracker = pgTable(
 		})
 			.onUpdate('cascade')
 			.onDelete('set null'),
+
 		vehicleTrackerImeiUnique: unique('vehicle_tracker_imei_unique').on(
 			table.imei,
 			table.organizationId
 		),
+
 		vehicleTrackerVehicleIdUnique: unique('vehicle_tracker_vehicle_id_unique').on(table.vehicleId)
 	})
 );

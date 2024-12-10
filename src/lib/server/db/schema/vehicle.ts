@@ -38,10 +38,10 @@ export const vehicle = pgTable(
 	})
 );
 
-export const vehicleRelations = relations(vehicle, ({ one, many }) => ({
+export const vehicleRelations = relations(vehicle, ({ one }) => ({
 	organization: one(organization, {
 		fields: [vehicle.organizationId],
 		references: [organization.id]
 	}),
-	vehicleTrackers: many(vehicleTracker)
+	vehicleTracker: one(vehicleTracker)
 }));

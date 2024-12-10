@@ -188,7 +188,7 @@
 			</button>
 
 			<button
-				class="btn-icon preset-filled-error-300-700"
+				class="btn-icon preset-filled-warning-200-800"
 				disabled={uploadMutation.isPending}
 				onclick={clearPreview}
 			>
@@ -202,7 +202,7 @@
 			class:pointer-events-none={isDraggingFile}
 		>
 			<button
-				class="btn-icon preset-filled-primary-300-700"
+				class="btn-icon preset-filled-primary-200-800"
 				disabled={uploadMutation.isPending}
 				onclick={() => filePicker?.click()}
 			>
@@ -211,7 +211,7 @@
 
 			{#if hasPictureToShow}
 				<button
-					class="btn-icon preset-filled-error-300-700"
+					class="btn-icon preset-filled-warning-200-800"
 					disabled={uploadMutation.isPending}
 					onclick={() => deleteFile()}
 				>

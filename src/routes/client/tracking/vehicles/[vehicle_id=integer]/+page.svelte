@@ -5,6 +5,8 @@
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import VehicleLocationCard from './components/VehicleLocationCard.svelte';
 	import VehiclePhoto from './components/VehiclePhoto.svelte';
+	import VehicleTrackerCard from './components/tracker-card/VehicleTrackerCard.svelte';
+	import VehicleDisplayCard from './components/vehicle-card/VehicleDisplayCard.svelte';
 
 	let { data } = $props();
 
@@ -36,9 +38,9 @@
 		]}
 	/>
 
-	{#if vehicleDeleted}
-		<hr class="hr my-4" />
+	<hr class="hr my-4" />
 
+	{#if vehicleDeleted}
 		<DeletionSuccessMessage title="Vehicle deleted" href={route('/client/tracking/vehicles')} />
 	{:else if vehicle}
 		<VehiclePhoto
@@ -47,21 +49,20 @@
 			onPhotoChange={onVehiclePhotoUpdated}
 		/>
 
-		<!-- 
 		<VehicleDisplayCard
-			{vehicle}
+			bind:vehicle
 			formSchema={data.updateVehicleForm}
-			on:vehicle-updated={onVehicleUpdated}
-			on:vehicle-deleted={() => (vehicleDeleted = true)}
+			onVehicleUpdate={onVehicleUpdated}
+			onVehicleDelete={() => (vehicleDeleted = true)}
 		/>
 
 		<VehicleTrackerCard
-			vehicleId={vehicle.id}
+			{vehicle}
 			updateSimCardForm={data.updateSimCardForm}
 			createTrackerForm={data.createTrackerForm}
 			updateTrackerForm={data.updateTrackerForm}
 			createSimCardForm={data.createSimCardForm}
-		/> -->
+		/>
 
 		{#if false}
 			<!-- TODO:  -->

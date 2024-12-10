@@ -1,6 +1,6 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
-import { updateVehicleSchema } from '$lib/api/vehicle.schema';
+import { updateVehicleSchema, vehicleSchema } from '$lib/api/vehicle.schema';
 import { findOrgVehicleById } from '$lib/server/db/repo/vehicle.js';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
@@ -10,9 +10,11 @@ export const load = async ({ params, locals }) => {
 	if (!locals.user) return error(403);
 
 	const vehicleId = parseInt(params.vehicle_id);
-	const vehicle = await findOrgVehicleById(vehicleId, locals.user.organization.id);
+	const vehicleFromDb = await findOrgVehicleById(vehicleId, locals.user.organization.id);
 
-	if (!vehicle) return error(404);
+	if (!vehicleFromDb) return error(404);
+
+	const vehicle = vehicleSchema.parse(vehicleFromDb);
 
 	return {
 		vehicle,

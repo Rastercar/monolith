@@ -1,95 +1,77 @@
 <script lang="ts">
-	import { apiCreateAccessLevel } from '$lib/api/access-level';
-	import {
-		createAccessLevelSchema,
-		type CreateAccessLevelBody
-	} from '$lib/api/access-level.schema';
+	import { createAccessLevelSchema } from '$lib/api/access-level.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import TextArea from '$lib/components/form/TextArea.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
+	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
-	import { permissionDetails, type apiPermission } from '$lib/constants/permissions';
-	import { getToaster } fropermission/toaster';
-	import { createMutation } from '@tanstack/svelte-query';
+	import { permissionDetails, type permission } from '$lib/constants/permissions';
+	import { route } from '$lib/ROUTES.js';
+	import { showSuccessToast } from '$lib/store/toast.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	let { data } = $props();
 
-	const form = superForm(data.createAccessLevelForm, {
-		validators: zodClient(createAccessLevelSchema)
-	});
+	const getAllPermissionsWithSelectStatusAsFalse = () =>
+		Object.keys(permissionDetails).reduce((acc, v) => ({ ...acc, [v]: false }), {}) as Record<
+			permission,
+			boolean
+		>;
 
-	const toaster = getToaster();
+	const sForm = superForm(data.createAccessLevelForm, {
+		validators: zodClient(createAccessLevelSchema),
+		dataType: 'json',
+		onSubmit({ jsonData }) {
+			const selectedPermissions = Object.entries(permissionToToggleStatus)
+				.filter(([_, toggled]) => toggled)
+				.map(([permission]) => permission);
+
+			jsonData({ ...$form, permissions: selectedPermissions });
+		},
+		onUpdate: ({ result }) => {
+			if (result.type === 'success') {
+				showSuccessToast('access level created');
+				permissionToToggleStatus = getAllPermissionsWithSelectStatusAsFalse();
+			}
+		}
+	});
+	const { form } = $derived(sForm);
 
 	/**
 	 * key: permission key (eg: CREATE_USER)
 	 * val: boolean indicating the permission is selected
 	 */
-	const permissionToToggleStatus = $state(
-		Object.keys(permissionDetails).reduce((acc, v) => ({ ...acc, [v]: false }), {}) as Record<
-			apiPermission,
-			boolean
-		>
-	);
-
-	const mutation = createMutation({
-		mutationFn: (b: CreateAccessLevelBody) => apiCreateAccessLevel(b),
-		onError: () => toaster.error()
-	});
-
-	const createAccessLevel = async () => {
-		const validated = await form.vpermission;
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
-
-		const selectedPermissions = Object.entries(permissionToToggleStatus)
-			.filter(([_, toggled]) => toggled)
-			.map(([permission]) => permission);
-
-		const requestBody = { ...validated.data, permissions: selectedPermissions };
-
-		$mutation.mutateAsync(requestBody).then(() => {
-			form.reset();
-			toaster.success('Access level created');
-			Object.keys(permissionToToggleStatus).forEach((key) => {
-				permissionToToggleStatus[key as apiPermission] = false;
-			});
-		});
-	};
-
-	let { allErrors } = $derived(form);
-
-	let canSubmit = $derived($allErrors.length === 0);
+	let permissionToToggleStatus = $state(getAllPermissionsWithSelectStatusAsFalse());
 </script>
 
-permission
-<div class="p-6 max-w-5xl mx-auto">
+<form
+	class="p-6 max-w-5xl mx-auto"
+	method="POST"
+	datatype="json"
+	action={route('createAccessLevel /client/access-levels/new')}
+	use:sForm.enhance
+>
 	<TitleAndBreadCrumbsPageHeader
 		title="create access level"
 		breadCrumbs={[
-			{ href: '/client', icon: 'mdi:home', text: 'home' },
-			{ href: '/client/access-levels', icon: 'mdi:shield', text: 'access levels' },
-			{ href: '/client/access-levels/new', text: 'new' }
+			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
+			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'access levels' },
+			{ href: route('/client/access-levels/new'), text: 'new' }
 		]}
 	/>
 
-	<hr class="my-4" />
+	<hr class="hr my-6" />
 
-	<TextInput field="name" label="Name" {form} />
+	<TextField form={sForm} classes="mb-4" name="name" label="Name" />
 
-	<TextArea field="description" label="Description" {form} />
+	<TextAreaField form={sForm} name="description" label="Description" />
 
 	<AccessLevelPermissionTogglers {permissionToToggleStatus} />
 
 	<div class="flex justify-end mt-4">
-		<LoadableButton
-			isLoading={false}
-			disabled={!canSubmit}
-			class="btn variant-filled-primary ml-auto mt-auto"
-			on:click={createAccessLevel}
-		>
+		<LoadableButton isLoading={false} classes="btn preset-filled-primary-200-800 ml-auto mt-auto">
 			create access level
 		</LoadableButton>
 	</div>
-</div>
+</form>

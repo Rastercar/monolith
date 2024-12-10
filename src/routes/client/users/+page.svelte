@@ -7,6 +7,7 @@
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
+	import { route } from '$lib/ROUTES';
 	import { toLocaleDateString } from '$lib/utils/date';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
@@ -57,7 +58,12 @@
 		},
 		{
 			id: 'actions',
-			cell: ({ row }) => renderComponent(InfoIconLink, { href: `/client/users/${row.original.id}` })
+			cell: ({ row }) =>
+				renderComponent(InfoIconLink, {
+					href: route(`/client/users/[user_id=integer]`, {
+						user_id: row.original.id.toString()
+					})
+				})
 		}
 	];
 

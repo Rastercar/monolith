@@ -1,6 +1,6 @@
 import type { PaginationWithFilters } from '$lib/api/common';
 import type { CreateVehicleBody, GetVehiclesFilters } from '$lib/api/vehicle.schema';
-import { eq, ilike, type SQL } from 'drizzle-orm';
+import { and, eq, ilike, type SQL } from 'drizzle-orm';
 import { db } from '../db';
 import type { Tx } from '../helpers';
 import { paginate } from '../pagination';
@@ -21,7 +21,8 @@ export async function findOrgVehiclesWithPagination(
 
 export function findOrgVehicleById(id: number, orgId: number) {
 	return db.query.vehicle.findFirst({
-		where: (vehicle, { eq, and }) => and(eq(vehicle.organizationId, orgId), eq(vehicle.id, id))
+		where: (vehicle, { eq, and }) => and(eq(vehicle.organizationId, orgId), eq(vehicle.id, id)),
+		with: { vehicleTracker: true }
 	});
 }
 
@@ -46,4 +47,8 @@ export async function updateOrgVehiclePhoto(id: number, photo: string | null, tx
 		.returning();
 
 	return updatedVehicle;
+}
+
+export function deleteOrgVehicleById(id: number, orgId: number) {
+	return db.delete(vehicle).where(and(eq(vehicle.id, id), eq(vehicle.organizationId, orgId)));
 }

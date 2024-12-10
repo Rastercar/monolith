@@ -1,19 +1,21 @@
 import { getAccessLevelSearchParamsSchema } from '$lib/api/access-level.schema';
 import { findOrgAccessLevelsWithPagination } from '$lib/server/db/repo/access-level';
-import { withAuth } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestSearchParams } from '$lib/server/middlewares/validation';
 import { getPaginationParamsFromSearchParams } from '$lib/utils/pagination';
 import { json } from '@sveltejs/kit';
 
-export const GET = withAuth(async ({ url, locals }) => {
+export const GET = async ({ url, locals }) => {
+	const { user } = acl(locals);
+
 	const pagination = getPaginationParamsFromSearchParams(url.searchParams);
 
 	const filters = validateRequestSearchParams(url.searchParams, getAccessLevelSearchParamsSchema);
 
-	const accessLevels = await findOrgAccessLevelsWithPagination(locals.user.organization.id, {
+	const accessLevels = await findOrgAccessLevelsWithPagination(user.organization.id, {
 		pagination,
 		filters
 	});
 
 	return json(accessLevels);
-});
+};

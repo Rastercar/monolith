@@ -1,12 +1,14 @@
 import { imageSchema } from '$lib/api/common.schema';
 import { updateUserProfilePicture } from '$lib/server/db/repo/user';
-import { withAuth } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { s3 } from '$lib/server/services/s3';
 import { json } from '@sveltejs/kit';
 import path from 'path';
 
-export const PUT = withAuth(async ({ request, locals: { user } }) => {
+export const PUT = async ({ request, locals }) => {
+	const { user } = acl(locals);
+
 	const form = await validateFormWithFailOnError(request, imageSchema);
 
 	const { image } = form.data;
@@ -27,15 +29,17 @@ export const PUT = withAuth(async ({ request, locals: { user } }) => {
 	if (oldUserProfilePicture) await s3.deleteFile(oldUserProfilePicture);
 
 	return json(fileKey);
-});
+};
 
-export const DELETE = withAuth(async ({ locals }) => {
-	if (!locals.user.profilePicture) {
+export const DELETE = async ({ locals }) => {
+	const { user } = acl(locals);
+
+	if (!user.profilePicture) {
 		return json('user does not have a profile picture to delete');
 	}
 
-	await s3.deleteFile(locals.user.profilePicture);
-	await updateUserProfilePicture(locals.user.id, null);
+	await s3.deleteFile(user.profilePicture);
+	await updateUserProfilePicture(user.id, null);
 
 	return json('profile picture deleted');
-});
+};

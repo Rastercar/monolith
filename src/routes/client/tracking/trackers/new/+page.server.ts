@@ -2,9 +2,8 @@ import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.sche
 import { createTrackerSchema, trackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { createOrgTracker } from '$lib/server/db/repo/tracker.js';
-import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
-import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -17,20 +16,17 @@ export const load = async () => ({
 
 export const actions = {
 	createTracker: async ({ request, locals }) => {
-		if (!locals.user) return error(400);
-		verifyUserHasPermissions(locals.user, 'CREATE_TRACKER');
+		const { user } = acl(locals, { requiredPermissions: 'CREATE_TRACKER' });
 
 		const form = await validateFormWithFailOnError(request, createTrackerSchema);
 
-		const trackerOrError = await createOrgTracker(locals.user.organization.id, form.data).catch(
-			(e) => {
-				if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
-					return 'vehicle_tracker_imei_unique' as const;
-				}
-
-				throw e;
+		const trackerOrError = await createOrgTracker(user.organization.id, form.data).catch((e) => {
+			if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
+				return 'vehicle_tracker_imei_unique' as const;
 			}
-		);
+
+			throw e;
+		});
 
 		if (trackerOrError === 'vehicle_tracker_imei_unique') {
 			return setError(form, 'imei', 'IMEI in use by another tracker');

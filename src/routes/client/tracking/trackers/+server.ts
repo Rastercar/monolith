@@ -1,19 +1,21 @@
 import { getTrackersSearchParamsSchema } from '$lib/api/tracker.schema';
 import { findOrgTrackersWithPagination } from '$lib/server/db/repo/tracker';
-import { withAuth } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestSearchParams } from '$lib/server/middlewares/validation';
 import { getPaginationParamsFromSearchParams } from '$lib/utils/pagination';
 import { json } from '@sveltejs/kit';
 
-export const GET = withAuth(async ({ url, locals }) => {
+export const GET = async ({ url, locals }) => {
+	const { user } = acl(locals);
+
 	const pagination = getPaginationParamsFromSearchParams(url.searchParams);
 
 	const filters = validateRequestSearchParams(url.searchParams, getTrackersSearchParamsSchema);
 
-	const trackers = await findOrgTrackersWithPagination(locals.user.organization.id, {
+	const trackers = await findOrgTrackersWithPagination(user.organization.id, {
 		pagination,
 		filters
 	});
 
 	return json(trackers);
-});
+};

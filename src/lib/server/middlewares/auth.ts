@@ -6,7 +6,7 @@ import { route } from '$lib/ROUTES';
 import type { LoggedInPageMeta } from '$lib/routes-meta';
 import { db } from '$lib/server/db/db';
 import { wrapToArray } from '$lib/utils/arrays';
-import type { RequestEvent, RequestHandler } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import { error, redirect } from '@sveltejs/kit';
 
 /**
@@ -81,52 +81,24 @@ export function verifyUserCanAccessAuthenticatedRoute(evt: RequestEvent, meta: L
 	}
 }
 
-/**
- * Overide of the App.Locals for when we know the user has been authenticated
- */
-type AuthedLocals = Omit<App.Locals, 'user' | 'session'> & { user: User; session: UserSession };
+interface AclOptions {
+	requiredPermissions?: permission | permission[];
+}
 
-type ReqParams = RequestEvent['params'];
-type ReqRouteId = RequestEvent['route']['id'];
+interface AclRes {
+	user: User;
+	session: UserSession;
+}
 
-/**
- * Basically the same as SvelteKit RequestEvent but the locals are
- *
- * different as we know the request has been previously authenticated
- */
-type AuthedRequestEvent<T extends ReqParams, U extends ReqRouteId> = Omit<
-	RequestEvent<T, U>,
-	'locals'
-> & { locals: AuthedLocals };
+export function acl({ user, session }: App.Locals, options?: AclOptions): AclRes {
+	const { requiredPermissions } = options ?? {};
 
-/**
- * Same as SvelteKit RequestHandler but for already authenticated Requests
- */
-type AuthedRequestHandler<Params extends ReqParams, RouteId extends ReqRouteId> = (
-	event: AuthedRequestEvent<Params, RouteId>
-) => Response | Promise<Response>;
+	if (!user || !session) error(403);
 
-/**
- * Wraps a request handler and calls it after verifying
- * the request has been previously authenticated, augmenting request.locals
- *
- * usefull for +server.ts files endpoints as unlike pages they are not protected
- *
- * @param handler - the authenticated request handler
- */
-export function withAuth<T extends ReqParams, U extends ReqRouteId>(
-	handler: AuthedRequestHandler<T, U>,
-	requiredPermissions?: permission | permission[]
-): RequestHandler<T, U> {
-	const inner: RequestHandler<T, U> = (req) => {
-		if (!req.locals.user) error(403);
+	if (requiredPermissions) {
+		if (!user) return error(401);
+		verifyUserHasPermissions(user, requiredPermissions);
+	}
 
-		if (requiredPermissions) {
-			verifyUserHasPermissions(req.locals.user, requiredPermissions);
-		}
-
-		return handler(req as AuthedRequestEvent<T, U>);
-	};
-
-	return inner;
+	return { user, session };
 }

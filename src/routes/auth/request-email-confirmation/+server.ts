@@ -2,14 +2,16 @@ import { requestEmailConfirmationSchema } from '$lib/api/auth.schema';
 import { route } from '$lib/ROUTES';
 import { setConfirmBillingEmailToken } from '$lib/server/db/repo/organization';
 import { setConfirmEmailToken } from '$lib/server/db/repo/user';
-import { withAuth } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestBody } from '$lib/server/middlewares/validation';
 import { sendConfirmEmailAddressEmail } from '$lib/server/services/mailer';
 import { json } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
 
-export const POST = withAuth(async ({ request, url, locals }) => {
-	const { email, id, emailVerified, username, organization } = locals.user;
+export const POST = async ({ locals, request, url }) => {
+	const { user } = acl(locals);
+
+	const { email, id, emailVerified, username, organization } = user;
 
 	const { confirmingForOrg = false } = await validateRequestBody(
 		request,
@@ -41,4 +43,4 @@ export const POST = withAuth(async ({ request, url, locals }) => {
 	}
 
 	return json('confirmation email sent');
-});
+};

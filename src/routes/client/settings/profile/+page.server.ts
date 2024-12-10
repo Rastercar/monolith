@@ -1,5 +1,6 @@
 import { updateUserSchema } from '$lib/api/user.schema';
 import { updateUser } from '$lib/server/db/repo/user';
+import { acl } from '$lib/server/middlewares/auth.js';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
@@ -14,22 +15,22 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	updateProfile: async ({ request, locals }) => {
-		if (!locals.user) return error(400);
+		let { user } = acl(locals);
 
 		const form = await validateFormWithFailOnError(request, updateUserSchema);
 
-		const { email, username, password } = await updateUser(locals.user.id, form.data);
-		locals.user = { ...locals.user, ...{ email, username, password } };
+		const { email, username, password } = await updateUser(user.id, form.data);
+		user = { ...user, ...{ email, username, password } };
 
 		return message(form, { text: 'user updated', type: 'success' });
 	},
 
 	updateProfilePicture: async ({ request, locals }) => {
-		if (!locals.user) return error(400);
+		const { user } = acl(locals);
 
 		const form = await validateFormWithFailOnError(request, updateUserSchema);
 
-		await updateUser(locals.user.id, form.data);
+		await updateUser(user.id, form.data);
 
 		return message(form, { text: 'user updated', type: 'success' });
 	}

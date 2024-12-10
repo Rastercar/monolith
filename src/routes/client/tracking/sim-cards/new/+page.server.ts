@@ -1,9 +1,8 @@
 import { createSimCardSchema, simCardSchema } from '$lib/api/sim-card.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { createOrgSimCard } from '$lib/server/db/repo/sim-card';
-import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
-import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -13,12 +12,11 @@ export const load = async () => ({
 
 export const actions = {
 	createSimCard: async ({ request, locals }) => {
-		if (!locals.user) return error(400);
-		verifyUserHasPermissions(locals.user, 'CREATE_SIM_CARD');
+		const { user } = acl(locals, { requiredPermissions: 'CREATE_SIM_CARD' });
 
 		const form = await validateFormWithFailOnError(request, createSimCardSchema);
 
-		const simOrError = await createOrgSimCard(locals.user.organization.id, form.data).catch((e) => {
+		const simOrError = await createOrgSimCard(user.organization.id, form.data).catch((e) => {
 			if (isErrorFromUniqueConstraint(e, 'sim_card_ssn_unique')) {
 				return 'sim_card_ssn_unique' as const;
 			}

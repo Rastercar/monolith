@@ -3,34 +3,33 @@ import {
 	deleteOrgAccessLevelById,
 	findOrgAccessLevelById
 } from '$lib/server/db/repo/access-level';
-import { withAuth } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import type { RouteParams } from './$types';
 
-export const DELETE: RequestHandler<RouteParams> = withAuth(
-	async ({ params, locals: { user } }) => {
-		const alId = parseInt(params.access_level_id);
+export const DELETE: RequestHandler<RouteParams> = async ({ params, locals }) => {
+	const { user } = acl(locals, { requiredPermissions: 'MANAGE_USER_ACCESS_LEVELS' });
 
-		if (user.accessLevel.id === alId) {
-			return error(403, 'cannot delete your own access level');
-		}
+	const alId = parseInt(params.access_level_id);
 
-		const accessLevelToDelete = await findOrgAccessLevelById(alId, user.organization.id);
-		if (!accessLevelToDelete) return error(404);
+	if (user.accessLevel.id === alId) {
+		return error(403, 'cannot delete your own access level');
+	}
 
-		if (accessLevelToDelete.isFixed) {
-			return error(403, 'cannot delete a fixed access level');
-		}
+	const accessLevelToDelete = await findOrgAccessLevelById(alId, user.organization.id);
+	if (!accessLevelToDelete) return error(404);
 
-		const userCount = await countUsersUsingAccessLevel(alId);
+	if (accessLevelToDelete.isFixed) {
+		return error(403, 'cannot delete a fixed access level');
+	}
 
-		if (userCount > 0) {
-			return error(403, 'cannot delete access level with associated users');
-		}
+	const userCount = await countUsersUsingAccessLevel(alId);
 
-		await deleteOrgAccessLevelById(alId, user.organization.id);
+	if (userCount > 0) {
+		return error(403, 'cannot delete access level with associated users');
+	}
 
-		return json('access level deleted');
-	},
-	'MANAGE_USER_ACCESS_LEVELS'
-);
+	await deleteOrgAccessLevelById(alId, user.organization.id);
+
+	return json('access level deleted');
+};

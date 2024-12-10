@@ -1,11 +1,13 @@
 import { getTrackerLocationsSearchParamsSchema } from '$lib/api/tracker.schema';
 import { findOrgTrackerById, findTrackerLocationList } from '$lib/server/db/repo/tracker';
-import { withAuth } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestSearchParams } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import type { RouteParams } from './$types';
 
-export const GET: RequestHandler<RouteParams> = withAuth(async ({ url, locals, params }) => {
+export const GET: RequestHandler<RouteParams> = async ({ url, locals, params }) => {
+	const { user } = acl(locals);
+
 	const trackerId = parseInt(params.tracker_id);
 
 	const filters = validateRequestSearchParams(
@@ -14,7 +16,7 @@ export const GET: RequestHandler<RouteParams> = withAuth(async ({ url, locals, p
 	);
 
 	// assert the tracker exists and belongs to the user org
-	const tracker = await findOrgTrackerById(trackerId, locals.user.organization.id);
+	const tracker = await findOrgTrackerById(trackerId, user.organization.id);
 	if (!tracker) return error(404);
 
 	const positions = (await findTrackerLocationList(trackerId, filters)).map((p) => ({
@@ -26,4 +28,4 @@ export const GET: RequestHandler<RouteParams> = withAuth(async ({ url, locals, p
 	}));
 
 	return json(positions);
-});
+};

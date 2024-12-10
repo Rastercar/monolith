@@ -1,6 +1,6 @@
 import { updateSimCardSchema, type SimCard } from '$lib/api/sim-card.schema';
 import { findOrgSimCardById as findOrgSimCardByID } from '$lib/server/db/repo/sim-card.js';
-import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
@@ -22,14 +22,13 @@ export const load = async ({ params, locals }) => {
 
 export const actions = {
 	updateSimCard: async ({ request, locals, params }) => {
-		if (!locals.user) return error(400);
-		verifyUserHasPermissions(locals.user, 'UPDATE_SIM_CARD');
+		const { user } = acl(locals, { requiredPermissions: 'UPDATE_SIM_CARD' });
 
 		const simCardId = parseInt(params.sim_card_id);
 
 		const form = await validateFormWithFailOnError(request, updateSimCardSchema);
 
-		const res = await _updateSimCard(simCardId, locals.user.organization.id, form.data);
+		const res = await _updateSimCard(simCardId, user.organization.id, form.data);
 
 		if ('error' in res) {
 			if (res.error === 'SSN_IN_USE') {

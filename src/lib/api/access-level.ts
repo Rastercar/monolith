@@ -2,9 +2,7 @@ import { route } from '$lib/ROUTES';
 import {
 	accessLevelSchema,
 	type AccessLevel,
-	type CreateAccessLevelBody,
-	type GetAccessLevelFilters,
-	type UpdateAccessLevelBody
+	type GetAccessLevelFilters
 } from './access-level.schema';
 import {
 	createPaginatedResponseSchema,
@@ -26,18 +24,6 @@ export const apiGetAccessLevels = (
 		.then(createPaginatedResponseSchema(accessLevelSchema).parse);
 
 /**
- * create a acess level
- */
-export const apiCreateAccessLevel = (body: CreateAccessLevelBody): Promise<AccessLevel> =>
-	api.post(body, '/access-level').json<AccessLevel>().then(accessLevelSchema.parse);
-
-/**
- * get a access level by id
- */
-export const apiGetAccessLevelById = (id: number): Promise<AccessLevel> =>
-	api.get(`/access-level/${id}`).json<AccessLevel>().then(accessLevelSchema.parse);
-
-/**
  * delete a access level by id
  */
 export const apiDeleteAccessLevel = (id: number): Promise<string> => {
@@ -47,12 +33,3 @@ export const apiDeleteAccessLevel = (id: number): Promise<string> => {
 
 	return api.delete(url).json<string>();
 };
-
-/**
- * update a acess level
- */
-export const apiUpdateAccessLevel = (
-	id: number,
-	body: UpdateAccessLevelBody
-): Promise<AccessLevel> =>
-	api.put(body, `/access-level/${id}`).json<AccessLevel>().then(accessLevelSchema.parse);

@@ -1,13 +1,13 @@
 import { accessLevelSchema, updateAccessLevelSchema } from '$lib/api/access-level.schema';
 import { findOrgAccessLevelById, updateOrgAccessLevel } from '$lib/server/db/repo/access-level';
-import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params, locals: { user }, url }) => {
-	if (!user) return error(403);
+export const load = async ({ params, locals }) => {
+	const { user } = acl(locals);
 
 	const accessLevelId = parseInt(params.access_level_id);
 
@@ -25,9 +25,8 @@ export const load = async ({ params, locals: { user }, url }) => {
 };
 
 export const actions = {
-	updateAccessLevel: async ({ request, locals: { user }, params }) => {
-		if (!user) return error(400);
-		verifyUserHasPermissions(user, 'MANAGE_USER_ACCESS_LEVELS');
+	updateAccessLevel: async ({ request, locals, params }) => {
+		const { user } = acl(locals, { requiredPermissions: 'MANAGE_USER_ACCESS_LEVELS' });
 
 		const alId = parseInt(params.access_level_id);
 

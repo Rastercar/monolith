@@ -11,6 +11,7 @@ const schema = z.object({
 	AWS_SECRET_ACCESS_KEY: z.string(),
 	AWS_S3_UPLOADS_BUCKET: z.string(),
 	DATABASE_QUERY_LOGGING: castStringToBool,
+	DATABASE_QUERY_LOGGING_FORMATTED: castStringToBool,
 	DATABASE_NOTICE_LOGGING: castStringToBool
 });
 

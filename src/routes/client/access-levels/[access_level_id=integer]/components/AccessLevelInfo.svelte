@@ -11,7 +11,7 @@
 
 <span class="block mt-2">Description:</span>
 
-<p class="opacity-90 text-sm line-clamp-4 mb-2">
+<p class="opacity-90 line-clamp-4 mb-2">
 	{accessLevel.description}
 </p>
 

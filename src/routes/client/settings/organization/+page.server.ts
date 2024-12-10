@@ -1,25 +1,21 @@
 import { updateOrganizationSchema } from '$lib/api/organization.schema';
 import { updateOrganization } from '$lib/server/db/repo/organization';
-import { verifyUserHasPermissions } from '$lib/server/middlewares/auth';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
-import { error } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ locals }) => {
-	if (!locals.user) return error(400);
+	const { user } = acl(locals);
 
-	const form = await superValidate(zod(updateOrganizationSchema), {
-		defaults: locals.user.organization
-	});
+	const form = await superValidate(zod(updateOrganizationSchema), { defaults: user.organization });
 
 	return { form };
 };
 
 export const actions = {
 	updateOrganization: async ({ request, locals }) => {
-		if (!locals.user) return error(400);
-		verifyUserHasPermissions(locals.user, 'UPDATE_ORGANIZATION');
+		acl(locals, { requiredPermissions: 'UPDATE_ORGANIZATION' });
 
 		const form = await validateFormWithFailOnError(request, updateOrganizationSchema);
 		await updateOrganization(form.data);

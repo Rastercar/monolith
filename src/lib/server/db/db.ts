@@ -13,7 +13,9 @@ const client = postgres(env.DATABASE_URL, {
 
 class ConsolaLogger implements Logger {
 	logQuery(query: string, params: unknown[]): void {
-		consola.log('[DB]\n', format(query, { language: 'postgresql' }), '\n', params);
+		env.DATABASE_QUERY_LOGGING_FORMATTED
+			? consola.log('[DB]\n', format(query, { language: 'postgresql' }), '\n', params)
+			: consola.log('[DB]', query, params);
 	}
 }
 

@@ -2,14 +2,13 @@ import { updateUserSchema } from '$lib/api/user.schema';
 import { updateUser } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth.js';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
-import { error } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ locals }) => {
-	if (!locals.user) return error(400);
+	const { user } = acl(locals);
 
-	const form = await superValidate(zod(updateUserSchema), { defaults: locals.user });
+	const form = await superValidate(zod(updateUserSchema), { defaults: user });
 	return { form };
 };
 

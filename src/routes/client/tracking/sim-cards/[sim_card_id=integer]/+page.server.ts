@@ -8,10 +8,10 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { _updateSimCard } from './+server';
 
 export const load = async ({ params, locals }) => {
-	if (!locals.user) return error(403);
+	const { user } = acl(locals);
 
 	const simCardId = parseInt(params.sim_card_id);
-	const simCard = await findOrgSimCardByID(simCardId, locals.user.organization.id);
+	const simCard = await findOrgSimCardByID(simCardId, user.organization.id);
 
 	if (!simCard) return error(404);
 

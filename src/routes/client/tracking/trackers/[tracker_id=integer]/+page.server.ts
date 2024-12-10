@@ -9,10 +9,10 @@ import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, locals }) => {
-	if (!locals.user) return error(403);
+	const { user } = acl(locals);
 
 	const trackerId = parseInt(params.tracker_id);
-	const dbTracker = await findOrgTrackerById(trackerId, locals.user.organization.id);
+	const dbTracker = await findOrgTrackerById(trackerId, user.organization.id);
 
 	if (!dbTracker) return error(404);
 

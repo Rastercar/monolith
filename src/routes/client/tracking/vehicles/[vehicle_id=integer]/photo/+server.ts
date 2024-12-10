@@ -49,5 +49,6 @@ export const DELETE: RequestHandler<RouteParams> = withAuth(
 		await updateOrgVehiclePhoto(vehicleId, null);
 
 		return json('photo deleted');
-	}
+	},
+	'UPDATE_VEHICLE'
 );

@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { apiDeleteAccessLevel } from '$lib/api/access-level';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
-	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
 	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
+	import { Popover } from 'bits-ui';
+	import AccessLevelInfo from './components/AccessLevelInfo.svelte';
+	import UpdateAccessLevelForm from './components/UpdateAccessLevelForm.svelte';
 
 	let { data } = $props();
 
-	let editMode = $state(data.startInEditMode);
+	let editMode = $state(false);
 
 	let accessLevel = $state(data.accessLevel);
 	let accessLevelDeleted = $state(false);
@@ -23,7 +26,6 @@
 
 	const deleteAccessLevel = async () => {
 		if (!confirm('Permanently delete this access level ?')) return;
-
 		await deleteAccessLevelMutation.mutateAsync().then(() => (accessLevelDeleted = true));
 	};
 
@@ -52,69 +54,74 @@
 		]}
 	/>
 
+	<hr class="hr my-4" />
+
 	{#if accessLevelDeleted}
 		<DeletionSuccessMessage
 			title="Access level deleted successfully"
 			href={route('/client/access-levels')}
 		/>
 	{:else}
-		<div class="flex items-center">
-			<div class="flex items-center mr-auto text-xl">
-				{editMode ? 'Editing access level' : `Name: ${accessLevel?.name ?? ''}`}
+		<div class="card preset-filled-surface-100-900">
+			<div class="p-4 flex items-center">
+				<div class="flex items-center mr-auto type-scale-3">
+					{editMode ? 'Editing access level' : accessLevel.name}
+				</div>
+
+				{#if accessLevelIsFixed || isCurrentUserAccessLevel}
+					<Popover.Root>
+						<Popover.Trigger class="badge preset-filled-primary-200-800 mx-4">
+							{isCurrentUserAccessLevel ? 'your access level' : 'fixed access level'}
+						</Popover.Trigger>
+
+						<Popover.Portal>
+							<Popover.Content
+								class="z-30 max-w-64 bg-surface-200-800 p-2"
+								align="end"
+								sideOffset={8}
+							>
+								<div class="type-scale-1 text-center">
+									{isCurrentUserAccessLevel
+										? 'this is your own access level and thus cannot be edited nor deleted'
+										: 'this is main access level of your organization and cannot be edited nor deleted'}
+								</div>
+							</Popover.Content>
+						</Popover.Portal>
+					</Popover.Root>
+				{/if}
+
+				<LoadableButton
+					isLoading={deleteAccessLevelMutation.isPending}
+					disabled={!canEditOrDeleteAccessLevel}
+					classes="btn-icon mx-2 btn-icon-sm preset-filled-warning-200-800"
+					onclick={deleteAccessLevel}
+				>
+					<Icon icon="mdi:trash" />
+				</LoadableButton>
+
+				<button
+					disabled={!canEditOrDeleteAccessLevel}
+					class="btn-icon btn-icon-sm preset-filled-primary-200-800"
+					onclick={() => (editMode = !editMode)}
+				>
+					<Icon icon={editMode ? 'mdi:pencil-off' : 'mdi:pencil'} />
+				</button>
 			</div>
 
-			<!-- TODO: -->
-			<!-- <span
-				class:hidden={!accessLevelIsFixed || !isCurrentUserAccessLevel}
-				class="badge variant-filled-primary mx-4"
-				use:popup={{ event: 'hover', target: 'accessLevelBadgePopup', placement: 'top' }}
-			>
-				{isCurrentUserAccessLevel ? 'your access level' : 'fixed access level'}
-			</span> -->
-
-			<ArrowUpTooltip dataPopup="accessLevelBadgePopup">
-				<div class="text-sm text-center">
-					{isCurrentUserAccessLevel
-						? 'this is your own access level and thus cannot be edited nor deleted'
-						: 'this is main access level of your organization and cannot be edited nor deleted'}
-				</div>
-			</ArrowUpTooltip>
-
-			<!-- TODO: -->
-			<!-- <LoadableButton
-				isLoading={$deleteAccessLevelMutation.isPending}
-				disabled={!canEditOrDeleteAccessLevel}
-				class="btn-icon mx-2 btn-icon-sm variant-filled-error"
-				on:click={deleteAccessLevel}
-			>
-				<Icon icon="mdi:trash" />
-			</LoadableButton> -->
-
-			<button
-				disabled={!canEditOrDeleteAccessLevel}
-				class="btn-icon btn-icon-sm variant-filled-primary"
-				onclick={() => (editMode = !editMode)}
-			>
-				<Icon icon={editMode ? 'mdi:pencil-off' : 'mdi:pencil'} />
-			</button>
+			<div class="px-4 pb-4">
+				{#if editMode}
+					<UpdateAccessLevelForm
+						{accessLevel}
+						formSchema={data.updateAccessLevelForm}
+						onUpdate={(updatedAccessLevel) => {
+							accessLevel = updatedAccessLevel;
+							editMode = false;
+						}}
+					/>
+				{:else}
+					<AccessLevelInfo {accessLevel} />
+				{/if}
+			</div>
 		</div>
-
-		<!-- TODO: -->
-		<!-- {#if error}
-			<div class="text-error-500">Error loading access level</div>
-		{:else if accessLevel}
-			{#if editMode}
-				<UpdateAccessLevelForm
-					{accessLevel}
-					formSchema={data.updateAccessLevelForm}
-					on:access-level-updated={({ detail: updatedAccessLevel }) => {
-						accessLevel = updatedAccessLevel;
-						editMode = false;
-					}}
-				/>
-			{:else}
-				<AccessLevelInfo {accessLevel} />
-			{/if}
-		{/if} -->
 	{/if}
 </div>

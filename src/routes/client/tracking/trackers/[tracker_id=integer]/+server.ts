@@ -16,4 +16,4 @@ export const DELETE: RequestHandler<RouteParams> = withAuth(async ({ params, req
 	await deleteOrgTrackerById(trackerId, locals.user.organization.id, deleteAssociatedSimCards);
 
 	return json('tracker card deleted');
-});
+}, 'DELETE_TRACKER');

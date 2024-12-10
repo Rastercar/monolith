@@ -15,6 +15,6 @@
 	{accessLevel.description}
 </p>
 
-<hr class="my-4" />
+<hr class="hr my-4" />
 
 <AccessLevelPermissionsInfo {accessLevel} />

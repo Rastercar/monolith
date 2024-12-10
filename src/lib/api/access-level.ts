@@ -40,8 +40,13 @@ export const apiGetAccessLevelById = (id: number): Promise<AccessLevel> =>
 /**
  * delete a access level by id
  */
-export const apiDeleteAccessLevel = (id: number): Promise<string> =>
-	api.delete(`/access-level/${id}`).json<string>();
+export const apiDeleteAccessLevel = (id: number): Promise<string> => {
+	const url = route('DELETE /client/access-levels/[access_level_id=integer]', {
+		access_level_id: id.toString()
+	});
+
+	return api.delete(url).json<string>();
+};
 
 /**
  * update a acess level

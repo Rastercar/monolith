@@ -1,127 +1,93 @@
 <script lang="ts">
-	import { apiUpdateAccessLevel } from '$lib/api/access-level';
-	import {
-		updateAccessLevelSchema,
-		type AccessLevel,
-		type UpdateAccessLevelBody
-	} from '$lib/api/access-level.schema';
+	import { updateAccessLevelSchema, type AccessLevel } from '$lib/api/access-level.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import TextArea from '$lib/components/form/TextArea.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
-	import ManageAccessLevelsPermissionSelectedAlert from '$lib/components/non-generic/alert/ManageAccessLevelsPermissionSelectedAlert.svelte';
+	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
 	import { permissionDetails, type permission } from '$lib/constants/permissions';
-	import { type ModalSettinpermissionkeletonlabs/skeleton';
-	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { route } from '$lib/ROUTES';
+	import { showSuccessToast } from '$lib/store/toast';
+	import { onMount } from 'svelte';
+	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import type { ActionData } from '../$types';
 
 	interface Props {
-		accessLevel: AccessLevel;
 		formSchema: SuperValidated<Infer<typeof updateAccessLevelSchema>>;
+		accessLevel: AccessLevel;
+		onUpdate: (_: AccessLevel) => void;
 	}
 
-	let { accessLevel, formSchema }: Props = $props();
+	let { accessLevel, formSchema, onUpdate }: Props = $props();
 
-	let accessLevelInitiallyCouldManageUserAccessLevelsPermission = $state(false);
-
-	const form = superForm(formSchema, { validators: zodClient(updateAccessLevelSchema) });
-
-	const toaster = getToaster();
+	const getPermissionsToToggleMapFromAccessLevel = () =>
+		Object.keys(permissionDetails).reduce(
+			(acc, v) => ({ ...acc, [v]: accessLevel.permissions.includes(v) }),
+			{}
+		) as Record<permission, boolean>;
 
 	/**
 	 * key: permission key (eg: CREATE_USER)
 	 * val: boolean indicating the permission is selected
 	 */
-	const permissionToToggleStatus = $state(
-		Object.keys(permissionDetails).reduce((acc, v) => ({ ...acc, [v]: false }), {}) as Record<
-			apiPermission,
-			boolean
-		>
+	const permissionToToggleStatus = $state(getPermissionsToToggleMapFromAccessLevel());
+
+	let accessLevelInitiallyCouldManageUserAccessLevelsPermission = $state(
+		permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS']
 	);
 
-	const setPermissionsToggleStatusToTrue = (permissions: string[]) => {
-		permissions.forEach((p) => {
-			permissionToToggleStatus[p as permission] = true;
-		});
-	};
+	const sForm = superForm(formSchema, {
+		validators: zodClient(updateAccessLevelSchema),
+		dataType: 'json',
+		onSubmit({ jsonData, cancel }) {
+			const ok = confirm(
+				'all users within this access level will have their permissions changed, do you wish to proceed ?'
+			);
+			if (!ok) return cancel();
 
-	const mutation = createMutation({
-		mutationFn: (b: UpdateAccessLevelBody) => apiUpdateAccessLevel(accessLevel.id, b),
-		onError: () => toaster.error()
-	});
+			const selectedPermissions = Object.entries(permissionToToggleStatus)
+				.filter(([_, toggled]) => toggled)
+				.map(([permission]) => permission);
 
-	const dispatch = createEventDispatcher<{ 'access-level-updated': AccessLevel }>();
-permission
-	const openConfirmationModal = () => {
-		const modal: ModalSettings = {
-			type: 'confirm',
-			title: 'Confirm changes to access level',
-			body: 'All users within this access level will have their permissions changed, do you wish to proceed ?',
-			response: (confirmed: boolean) => {
-				if (conpermissioneAccessLevel();
+			jsonData({ ...$form, permissions: selectedPermissions });
+		},
+		onUpdate: ({ form, result }) => {
+			if (form.valid && result.type === 'success') {
+				showSuccessToast('access level updated');
+				const action = result.data as FormResult<ActionData>;
+				if (form.valid && action.updatedAccessLevel) onUpdate(action.updatedAccessLevel);
 			}
-		};
-
-		modalStore.trigger(modal);
-	};
-
-	const updateAccessLevel = async () => {
-		const validated = await form.validateForm();
-		if (!validated.valid) return form.restore({ ...validated, tainted: undefined });
-
-		const selectedPermissions = Object.entries(permissionToToggleStatus)
-			.filter(([_, toggled]) => toggled)
-			.map(([permission]) => permission);
-
-		const requestBody = { ...validated.data, permissions: selectedPermissions };
-
-		$mutation.mutateAsync(requestBody).then((updatedAccessLevel) => {
-			resetForm(updatedAccessLevel);
-			dispatch('access-level-updated', updatedAccessLevel);
-		});
-	};
-
-	const resetForm = (formData: AccessLevel) => {
-		form.reset({ data: { name: formData.name, description: formData.description } });
-		setPermissionsToggleStatusToTrue(formData.permissions);
-	};
+		}
+	});
+	const { form, submitting: isLoading } = sForm;
 
 	onMount(() => {
-		resetForm(accessLevel);
 		accessLevelInitiallyCouldManageUserAccessLevelsPermission =
 			permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS'];
 	});
-
-	let { allErrors } = $derived(form);
-
-	let canSubmit = $derived($allErrors.length === 0);
 </script>
 
-<TextInput field="name" label="Name" {form} />
+<form
+	method="POST"
+	datatype="json"
+	action={route('updateAccessLevel /client/access-levels/[access_level_id=integer]', {
+		access_level_id: accessLevel.id.toString()
+	})}
+	use:sForm.enhance
+>
+	<TextField name="name" label="Name" form={sForm} />
 
-<TextArea field="description" label="Description" {form} />
+	<TextAreaField name="description" label="Description" form={sForm} />
 
-<AccessLevelPermissionTogglers
-	{permissionToToggleStatus}
-	showManageUserAccessLevelsWarningIfToggled={!accessLevelInitiallyCouldManageUserAccessLevelsPermission}
-/>
-
-{#if !accessLevelInitiallyCouldManageUserAccessLevelsPermission && permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS']}
-	<ManageAccessLevelsPermissionSelectedAlert
-		on:undo-clicked={() => (permissionToToggleStatus['MANAGE_USER_ACCESS_LEVELS'] = false)}
+	<AccessLevelPermissionTogglers
+		{permissionToToggleStatus}
+		showManageUserAccessLevelsWarningIfToggled={!accessLevelInitiallyCouldManageUserAccessLevelsPermission}
 	/>
-{/if}
 
-<div class="flex justify-end mt-4">
-	<LoadableButton
-		isLoading={false}
-		disabled={!canSubmit}
-		class="btn variant-filled-primary ml-auto mt-auto"
-		on:click={openConfirmationModal}
-	>
-		save
-	</LoadableButton>
-</div>
+	<div class="flex justify-end mt-4">
+		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-200-800 mt-auto">
+			update
+		</LoadableButton>
+	</div>
+</form>

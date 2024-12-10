@@ -8,7 +8,7 @@
 		type PermissionDetailsAndKey
 	} from '$lib/constants/permissions';
 	import Icon from '@iconify/svelte';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import { Switch } from '@skeletonlabs/skeleton-svelte';
 
 	interface Props {
 		accessLevel: AccessLevel;
@@ -25,12 +25,12 @@
 	);
 </script>
 
-<div class="mb-1 flex justify-between">
+<div class="mb-2 flex justify-between">
 	<span>Permissions: </span>
 
 	<span class="flex items-center">
 		<span>show details</span>
-		<SlideToggle name="showDetailsInput" bind:checked={showDetails} size="sm" />
+		<Switch name="showDetailsInput" bind:checked={showDetails} classes="ml-4" />
 	</span>
 </div>
 
@@ -55,7 +55,7 @@
 	</div>
 
 	{#if i !== permissionsByCategory.length - 1}
-		<hr class="my-4" />
+		<hr class="hr my-4" />
 	{/if}
 {:else}
 	no permissions found

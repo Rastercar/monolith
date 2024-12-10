@@ -1,9 +1,13 @@
-import type { CreateAccessLevelBody, GetAccessLevelFilters } from '$lib/api/access-level.schema';
+import type {
+	CreateAccessLevelBody,
+	GetAccessLevelFilters,
+	UpdateAccessLevelBody
+} from '$lib/api/access-level.schema';
 import type { PaginationWithFilters } from '$lib/api/common';
-import { eq, ilike, SQL } from 'drizzle-orm';
+import { and, count, eq, ilike, SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { paginate } from '../pagination';
-import { accessLevel } from '../schema';
+import { accessLevel, user } from '../schema';
 
 export async function findOrgAccessLevelsWithPagination(
 	orgId: number,
@@ -25,6 +29,25 @@ export function findOrgAccessLevelById(id: number, orgId: number) {
 	});
 }
 
+export async function countUsersUsingAccessLevel(id: number) {
+	const [{ count: cnt }] = await db
+		.select({ count: count() })
+		.from(user)
+		.where(eq(user.accessLevelId, id));
+
+	return cnt;
+}
+
+export async function updateOrgAccessLevel(id: number, orgId: number, body: UpdateAccessLevelBody) {
+	const [updatedAccessLevel] = await db
+		.update(accessLevel)
+		.set(body)
+		.where(and(eq(accessLevel.id, id), eq(accessLevel.organizationId, orgId)))
+		.returning();
+
+	return updatedAccessLevel;
+}
+
 export async function createOrgAccessLevel(orgId: number, body: CreateAccessLevelBody) {
 	const [createdAccessLevel] = await db
 		.insert(accessLevel)
@@ -32,4 +55,10 @@ export async function createOrgAccessLevel(orgId: number, body: CreateAccessLeve
 		.returning();
 
 	return createdAccessLevel;
+}
+
+export function deleteOrgAccessLevelById(id: number, orgId: number) {
+	return db
+		.delete(accessLevel)
+		.where(and(eq(accessLevel.id, id), eq(accessLevel.organizationId, orgId)));
 }

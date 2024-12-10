@@ -36,7 +36,7 @@
 			}
 		}
 	});
-	const { form } = $derived(sForm);
+	const { form, submitting: isLoading } = sForm;
 
 	/**
 	 * key: permission key (eg: CREATE_USER)
@@ -70,7 +70,10 @@
 	<AccessLevelPermissionTogglers {permissionToToggleStatus} />
 
 	<div class="flex justify-end mt-4">
-		<LoadableButton isLoading={false} classes="btn preset-filled-primary-200-800 ml-auto mt-auto">
+		<LoadableButton
+			isLoading={$isLoading}
+			classes="btn preset-filled-primary-200-800 ml-auto mt-auto"
+		>
 			create access level
 		</LoadableButton>
 	</div>

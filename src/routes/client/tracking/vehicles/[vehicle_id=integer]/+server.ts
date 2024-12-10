@@ -14,4 +14,4 @@ export const DELETE: RequestHandler<RouteParams> = withAuth(async ({ params, loc
 	if (vehicleToDelete.photo) await s3.deleteFile(vehicleToDelete.photo);
 
 	return json('vehicle deleted');
-});
+}, 'DELETE_VEHICLE');

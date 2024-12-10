@@ -1,19 +1,27 @@
 import { env } from '$lib/env/private-env';
 import consola from 'consola';
+import type { Logger } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
+import { format } from 'sql-formatter';
 import * as schema from './schema';
 
 const client = postgres(env.DATABASE_URL, {
 	onnotice: env.DATABASE_NOTICE_LOGGING ? undefined : () => {}
 });
 
+class ConsolaLogger implements Logger {
+	logQuery(query: string, params: unknown[]): void {
+		consola.log('[DB]\n', format(query, { language: 'postgresql' }), '\n', params);
+	}
+}
+
 export const db = drizzle<typeof schema>({
 	client,
 	schema,
 	casing: 'snake_case',
-	logger: env.DATABASE_QUERY_LOGGING
+	logger: env.DATABASE_QUERY_LOGGING ? new ConsolaLogger() : false
 });
 
 consola.info('[DB] running migrations');

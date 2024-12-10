@@ -37,7 +37,7 @@ export const DELETE: RequestHandler<RouteParams> = withAuth(async ({ params, loc
 	await deleteOrgSimCardById(simCardId, locals.user.organization.id);
 
 	return json('sim card deleted');
-});
+}, 'DELETE_SIM_CARD');
 
 export const PUT: RequestHandler<RouteParams> = withAuth(async ({ params, request, locals }) => {
 	const simCardId = parseInt(params.sim_card_id);

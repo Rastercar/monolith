@@ -39,6 +39,7 @@
 		"formsnap": "^1.0.1",
 		"postgres": "3.4.4",
 		"socket.io-client": "4.7.5",
+		"sql-formatter": "^15.4.6",
 		"svelte-easy-crop": "3.0.1",
 		"sveltekit-superforms": "2.20.1",
 		"ua-parser-js": "2.0.0",

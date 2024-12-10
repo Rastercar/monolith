@@ -12,13 +12,13 @@
 		<UserSection user={auth.user} />
 
 		<div class="sm:hidden">
-			<hr />
+			<hr class="hr" />
 		</div>
 
 		<OrgSection organization={auth.user.organization} />
 
 		<div class="sm:hidden">
-			<hr />
+			<hr class="hr" />
 		</div>
 
 		<AccessLevelSection accessLevel={auth.user.accessLevel} />

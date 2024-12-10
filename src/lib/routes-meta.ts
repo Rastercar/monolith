@@ -66,7 +66,7 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 		requiredAuth: 'logged-in',
 		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
 	},
-	'/client/access-levels/[access_level_id]': {
+	'/client/access-levels/[access_level_id=integer]': {
 		requiredAuth: 'logged-in',
 		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
 	},
@@ -99,7 +99,7 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 	'/client/tracking/sim-cards': {
 		requiredAuth: 'logged-in'
 	},
-	'/client/tracking/sim-cards/[sim_card_id]': {
+	'/client/tracking/sim-cards/[sim_card_id=integer]': {
 		requiredAuth: 'logged-in'
 	},
 	'/client/tracking/sim-cards/new': {
@@ -109,7 +109,7 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 	'/client/tracking/trackers': {
 		requiredAuth: 'logged-in'
 	},
-	'/client/tracking/trackers/[tracker_id]': {
+	'/client/tracking/trackers/[tracker_id=integer]': {
 		requiredAuth: 'logged-in'
 	},
 	'/client/tracking/trackers/new': {
@@ -119,7 +119,7 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 	'/client/tracking/vehicles': {
 		requiredAuth: 'logged-in'
 	},
-	'/client/tracking/vehicles/[vehicle_id]': {
+	'/client/tracking/vehicles/[vehicle_id=integer]': {
 		requiredAuth: 'logged-in'
 	},
 	'/client/tracking/vehicles/new': {
@@ -129,7 +129,7 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 	'/client/users': {
 		requiredAuth: 'logged-in'
 	},
-	'/client/users/[user_id]': {
+	'/client/users/[user_id=integer]': {
 		requiredAuth: 'logged-in'
 	},
 	'/client/users/new': {

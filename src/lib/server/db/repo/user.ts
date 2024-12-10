@@ -1,5 +1,5 @@
 import type { PaginationWithFilters } from '$lib/api/common';
-import type { GetUsersFilters, UpdateUserBody } from '$lib/api/user.schema';
+import type { CreateUserBody, GetUsersFilters, UpdateUserBody } from '$lib/api/user.schema';
 import { allPermissions } from '$lib/constants/permissions';
 import { hashSync } from '$lib/server/crypto';
 import { eq, ilike, SQL } from 'drizzle-orm';
@@ -20,6 +20,15 @@ export async function findOrgUsersWithPagination(
 	return paginate(pagination, user, sqlFilters);
 }
 
+export async function createOrgUser(orgId: number, body: CreateUserBody) {
+	const [createdUser] = await db
+		.insert(user)
+		.values({ ...body, password: hashSync(body.password), organizationId: orgId })
+		.returning();
+
+	return createdUser;
+}
+
 export function findUserBy(
 	col: 'resetPasswordToken' | 'email' | 'username' | 'confirmEmailToken',
 	value: string
@@ -31,6 +40,12 @@ export function findUserBy(
 
 export function findUserById(id: number) {
 	return db.query.user.findFirst({ where: (user, { eq }) => eq(user.id, id) });
+}
+
+export function findOrgUserById(id: number, orgId: number) {
+	return db.query.user.findFirst({
+		where: (user, { eq, and }) => and(eq(user.id, id), eq(user.organizationId, orgId))
+	});
 }
 
 export function findUserByUsername(username: string) {

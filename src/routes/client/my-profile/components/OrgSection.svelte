@@ -10,7 +10,7 @@
 	let { organization }: Props = $props();
 </script>
 
-<div class="sm:card sm:p-4 sm:rounded-lg">
+<div class="sm:card sm:preset-filled-surface-100-900 sm:p-4 sm:rounded-lg">
 	<h3 class="mb-2 text-lg flex items-center justify-between">
 		<span class="flex items-center">
 			<Icon icon="mdi:company" width="32" height="32" class="mr-2" />

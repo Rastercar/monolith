@@ -1,121 +1,103 @@
 <script lang="ts">
 	import type { AccessLevel } from '$lib/api/access-level.schema';
-	import { apiCreateUser } from '$lib/api/user';
-	import { createUserSchema, type CreateUserBody } from '$lib/api/user.schema';
-	import { isAppErrorWithCode } from '$lib/api/utils';
+	import { createUserSchema, type SimpleUser } from '$lib/api/user.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import PasswordInput from '$lib/components/form/PasswordInput.svelte';
-	import TextArea from '$lib/components/form/TextArea.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
+	import PasswordField from '$lib/components/form/PasswordField.svelte';
+	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
-	import { EMAIL_IN_USE, USERNAME_IN_USE } from '$lib/constants/error-codes';
-	import { getToaster } from '$lib/store/toaster';
-	import { createMutation } from '@tanstack/svelte-query';
-	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import { route } from '$lib/ROUTES';
+	import { showErrorToast } from '$lib/store/toast';
+	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import type { ActionData } from '../$types';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createUserSchema>>;
+		onCreate?: (_: SimpleUser) => void;
 	}
 
-	let { formSchema }: Props = $props();
+	let { formSchema, onCreate }: Props = $props();
 
 	let selectedAccessLevel: null | AccessLevel = $state(null);
 
-	const sForm = superForm(formSchema, { validators: zodClient(createUserSchema) });
+	const sForm = superForm(formSchema, {
+		dataType: 'json',
+		validators: zodClient(createUserSchema),
+		onUpdate: ({ form, result }) => {
+			if (form.valid) {
+				const action = result.data as FormResult<ActionData>;
 
-	const toaster = getToaster();
+				selectedAccessLevel = null;
 
-	const mutation = createMutation({
-		mutationFn: (b: CreateUserBody) => apiCreateUser(b),
-
-		onSuccess: () => {
-			selectedAccessLevel = null;
-			toaster.success('User created successfully');
+				if (onCreate && action.createdUser) onCreate(action.createdUser);
+			}
 		},
-
-		onError: (e) => {
-			if (isAppErrorWithCode(e, EMAIL_IN_USE)) {
-				sForm.validate('email', { value: '', errors: 'email in use', update: 'errors' });
-				return;
-			}
-
-			if (isAppErrorWithCode(e, USERNAME_IN_USE)) {
-				sForm.validate('username', { value: '', errors: 'username in use', update: 'errors' });
-				return;
-			}
-
-			toaster.error();
-		}
+		onError: showErrorToast
 	});
-
-	const createUser = async () => {
-		const validated = await sForm.validateForm();
-
-		if (!validated.valid) return sForm.restore({ ...validated, tainted: undefined });
-
-		await $mutation.mutateAsync(validated.data);
-		sForm.reset();
-	};
-
-	let { form: f } = $derived(sForm);
+	const { form, submitting: isLoading, errors } = sForm;
 </script>
 
-<div class="grid grid-cols-2 gap-4 mb-4">
-	<TextInput form={sForm} field="email" label="Email" placeholder="email address" class="label" />
+<form method="POST" action={route('createUser /client/users/new')} use:sForm.enhance>
+	<div class="grid grid-cols-2 gap-4 mb-4">
+		<TextField form={sForm} name="email" label="Email" placeholder="email address" />
 
-	<TextInput form={sForm} field="username" label="Username" placeholder="username" class="label" />
+		<TextField form={sForm} name="username" label="Username" placeholder="username" />
 
-	<PasswordInput form={sForm} field="password" class="label" />
+		<PasswordField form={sForm} name="password" label="Password" />
 
-	<PasswordInput
-		form={sForm}
-		label="Confirm Password"
-		placeholder="Confirm Password"
-		field="passwordConfirmation"
-		class="label"
+		<PasswordField
+			form={sForm}
+			label="Confirm Password"
+			placeholder="Confirm Password"
+			name="passwordConfirmation"
+		/>
+
+		<TextAreaField
+			form={sForm}
+			name="description"
+			label="Description / Bio"
+			placeholder="description"
+			classes="col-span-2"
+		/>
+	</div>
+
+	<span class="mb-2 block">User Access Level</span>
+	<SelectAccessLevelInput
+		value={selectedAccessLevel?.id.toString() ?? ''}
+		onItemSelected={(e) => {
+			if (e) {
+				$form.accessLevelId = e.id;
+				selectedAccessLevel = e;
+			} else {
+				$form.accessLevelId = 0;
+				selectedAccessLevel = null;
+			}
+		}}
 	/>
+	{#if $errors.accessLevelId}
+		<span class="block text-error-700-300 mt-2">{$errors.accessLevelId}</span>
+	{/if}
 
-	<TextArea
-		form={sForm}
-		field="description"
-		label="Description / Bio"
-		placeholder="description"
-		class="label col-span-2"
-	/>
-</div>
+	{#if selectedAccessLevel}
+		<span class="block mt-4 text-lg">
+			New Access Level: {selectedAccessLevel.name}
+		</span>
 
-<span class="mb-1 block">User Access Level</span>
-<SelectAccessLevelInput
-	on:item-selected={(e) => {
-		$f.accessLevelId = e.detail.id;
-		selectedAccessLevel = e.detail;
-	}}
-/>
+		<p class="opacity-90 line-clamp-4 my-2">
+			{selectedAccessLevel.description}
+		</p>
 
-{#if selectedAccessLevel}
-	<span class="block mt-4 text-lg">
-		New Access Level: {selectedAccessLevel.name}
-	</span>
+		<hr class="hr my-4" />
 
-	<p class="opacity-90 text-sm line-clamp-4 my-2">
-		{selectedAccessLevel.description}
-	</p>
+		<AccessLevelPermissionsInfo accessLevel={selectedAccessLevel} />
+	{/if}
 
-	<hr class="my-4" />
-
-	<AccessLevelPermissionsInfo accessLevel={selectedAccessLevel} />
-{/if}
-
-<div class="flex justify-end mt-4">
-	<LoadableButton
-		disabled={!selectedAccessLevel}
-		class="btn variant-filled-primary"
-		isLoading={$mutation.isPending}
-		on:click={createUser}
-	>
-		create user
-	</LoadableButton>
-</div>
+	<div class="flex justify-end mt-4">
+		<LoadableButton classes="btn preset-filled-primary-200-800" isLoading={$isLoading}>
+			create user
+		</LoadableButton>
+	</div>
+</form>

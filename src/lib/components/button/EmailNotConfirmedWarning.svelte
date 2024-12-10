@@ -22,7 +22,7 @@
 
 	let { sendConfirmationEmailTo, extraClasses = '' }: Props = $props();
 
-	const mutation = createMutation({
+	const mutation = createMutation(() => ({
 		mutationFn: () => {
 			const promise = apiRequestEmailAddressConfirmation({
 				confirmingForOrg: sendConfirmationEmailTo === 'organization'
@@ -30,11 +30,11 @@
 
 			return awaitPromiseWithMinimumTimeOf(promise, 1_500);
 		}
-	});
+	}));
 
 	let dismissed = $state(false);
 
-	const statusColors: Record<(typeof $mutation)['status'], string> = {
+	const statusColors: Record<(typeof mutation)['status'], string> = {
 		error: 'preset-outlined-error-500',
 		idle: 'preset-outlined-warning-500',
 		pending: 'preset-outlined-primary-500',
@@ -46,7 +46,7 @@
 	<button
 		type="button"
 		class="btn preset-tonal hover:preset-filled"
-		onclick={() => (type === 'dismiss' ? (dismissed = true) : $mutation.mutate())}
+		onclick={() => (type === 'dismiss' ? (dismissed = true) : mutation.mutate())}
 	>
 		{type === 'dismiss' ? 'Dismiss' : 'Verify Email'}
 	</button>
@@ -57,20 +57,20 @@
 		requiredPermissions={sendConfirmationEmailTo === 'organization' ? ['UPDATE_ORGANIZATION'] : []}
 	>
 		<div
-			class={`card grid grid-cols-1 items-center gap-4 p-4 lg:grid-cols-[auto_1fr_auto] w-full ${statusColors[$mutation.status]} ${extraClasses}`}
+			class={`card grid grid-cols-1 items-center gap-4 p-4 lg:grid-cols-[auto_1fr_auto] w-full ${statusColors[mutation.status]} ${extraClasses}`}
 		>
 			<Icon icon="mdi:info" class="hidden lg:block" />
 
-			{#if $mutation.status === 'pending'}
+			{#if mutation.status === 'pending'}
 				<div>
 					sending confirmation email
 					<Progress value={null} classes="mt-1" />
 				</div>
 				{@render btn('dismiss')}
-			{:else if $mutation.status === 'success'}
+			{:else if mutation.status === 'success'}
 				confirmation email sent to your inbox
 				{@render btn('dismiss')}
-			{:else if $mutation.status === 'error'}
+			{:else if mutation.status === 'error'}
 				error verifying your email address
 				{@render btn('dismiss')}
 			{:else}

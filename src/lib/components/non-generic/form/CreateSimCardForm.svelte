@@ -39,7 +39,6 @@
 		onUpdate: ({ form, result }) => {
 			if (form.valid) {
 				const action = result.data as FormResult<ActionData>;
-
 				if (onCreate && action.createdSim) onCreate(action.createdSim);
 			}
 		},

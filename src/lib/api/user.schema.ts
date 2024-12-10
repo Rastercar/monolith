@@ -21,8 +21,8 @@ export const userSchema = z.object({
 
 export const createUserSchema = z
 	.object({
-		email: z.string().email().optional(),
-		username: usernameValidator.optional(),
+		email: z.string().email(),
+		username: usernameValidator,
 		description: z.string().optional().nullable(),
 		accessLevelId: z.number().gt(0),
 		password: passwordValidator,

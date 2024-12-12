@@ -3,26 +3,7 @@
  *
  * this gives or denies access to certain api endpoints / pages / components
  */
-export type permission =
-	| 'CREATE_USER'
-	| 'DELETE_USER'
-	| 'LOGOFF_USER'
-	| 'LIST_USER_SESSIONS'
-	| 'MANAGE_USER_ACCESS_LEVELS'
-	//
-	| 'CREATE_TRACKER'
-	| 'UPDATE_TRACKER'
-	| 'DELETE_TRACKER'
-	//
-	| 'CREATE_VEHICLE'
-	| 'UPDATE_VEHICLE'
-	| 'DELETE_VEHICLE'
-	//
-	| 'DELETE_SIM_CARD'
-	| 'UPDATE_SIM_CARD'
-	| 'CREATE_SIM_CARD'
-	//
-	| 'UPDATE_ORGANIZATION';
+export type permission = (typeof allPermissions)[number];
 
 export type permissionCategory =
 	| 'user'
@@ -182,4 +163,24 @@ export const allPermissionsGroupedByCategory = groupPermissionsByCategory(
 	Object.keys(permissionDetails) as permission[]
 );
 
-export const allPermissions = Object.keys(permissionDetails);
+export const allPermissions = [
+	'CREATE_USER',
+	'DELETE_USER',
+	'LOGOFF_USER',
+	'LIST_USER_SESSIONS',
+	'MANAGE_USER_ACCESS_LEVELS',
+	//
+	'CREATE_TRACKER',
+	'UPDATE_TRACKER',
+	'DELETE_TRACKER',
+	//
+	'CREATE_VEHICLE',
+	'UPDATE_VEHICLE',
+	'DELETE_VEHICLE',
+	//
+	'DELETE_SIM_CARD',
+	'UPDATE_SIM_CARD',
+	'CREATE_SIM_CARD',
+	//
+	'UPDATE_ORGANIZATION'
+] as const;

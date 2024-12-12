@@ -5,21 +5,26 @@ import { api } from './utils';
 /**
  * Deletes (signs out) of the current user session by its public id
  */
-export const apiSignOutSpecificSession = (publicId: number): Promise<string> =>
-	api
-		.delete(
-			route('DELETE /auth/sign-out/[session_id=integer]', { session_id: publicId.toString() })
-		)
-		.text();
+export const apiSignOutSpecificSession = (publicId: number): Promise<string> => {
+	const url = route('DELETE /auth/sign-out/[session_id=integer]', {
+		session_id: publicId.toString()
+	});
+
+	return api.delete(url).text();
+};
 
 /**
- * TODO: remove if unused
- *
  * Deletes a session by its public id, unlike the `/auth/sign-out/:sid` endpoint
  * this endpoint can be used to remove sessions owned by other users
  */
-export const apiDeleteSession = (sessionPublicId: number): Promise<string> =>
-	api.delete(`/auth/session/${sessionPublicId}`).json<string>();
+export const apiDeleteUserSession = (userId: number, sessionPublicId: number): Promise<string> => {
+	const url = route('DELETE /client/users/[user_id=integer]/sessions/[session_id=integer]', {
+		user_id: userId.toString(),
+		session_id: sessionPublicId.toString()
+	});
+
+	return api.delete(url).json<string>();
+};
 
 /**
  * confirms the email address of a user or org that owns the email address confirmation token

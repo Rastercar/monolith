@@ -2,7 +2,7 @@ import type { PaginationWithFilters } from '$lib/api/common';
 import type { CreateUserBody, GetUsersFilters, UpdateUserBody } from '$lib/api/user.schema';
 import { allPermissions } from '$lib/constants/permissions';
 import { hashSync } from '$lib/server/crypto';
-import { eq, ilike, SQL } from 'drizzle-orm';
+import { and, eq, ilike, SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { paginate } from '../pagination';
 import { accessLevel, organization, user } from '../schema';
@@ -39,12 +39,15 @@ export function findUserBy(
 }
 
 export function findUserById(id: number) {
-	return db.query.user.findFirst({ where: (user, { eq }) => eq(user.id, id) });
+	return db.query.user.findFirst({
+		where: (user, { eq }) => eq(user.id, id)
+	});
 }
 
 export function findOrgUserById(id: number, orgId: number) {
 	return db.query.user.findFirst({
-		where: (user, { eq, and }) => and(eq(user.id, id), eq(user.organizationId, orgId))
+		where: (user, { eq, and }) => and(eq(user.id, id), eq(user.organizationId, orgId)),
+		with: { accessLevel: true, organization: true }
 	});
 }
 
@@ -62,6 +65,17 @@ export function findUserByConfirmEmailToken(token: string) {
 
 export function findUserByResetPasswordToken(token: string) {
 	return findUserBy('resetPasswordToken', token);
+}
+
+export function setOrgUserAccessLevel(ids: {
+	userId: number;
+	orgId: number;
+	accessLevelId: number;
+}) {
+	return db
+		.update(user)
+		.set({ accessLevelId: ids.accessLevelId })
+		.where(and(eq(user.id, ids.userId), eq(user.organizationId, ids.orgId)));
 }
 
 export function setUserResetPasswordToken(userId: number, token: string) {
@@ -128,7 +142,7 @@ export function signUpUser(args: { username: string; email: string; password: st
 				name: 'admin',
 				isFixed: true,
 				description: 'root access level',
-				permissions: allPermissions,
+				permissions: [...allPermissions],
 				organizationId: createdOrg.id
 			})
 			.returning();
@@ -171,4 +185,8 @@ export async function updateUserProfilePicture(id: number, s3Key: string | null)
 
 export function updateUserPassword(id: number, hashedPassword: string) {
 	return db.update(user).set({ password: hashedPassword }).where(eq(user.id, id)).returning();
+}
+
+export function deleteOrgUserById(id: number, orgId: number) {
+	return db.delete(user).where(and(eq(user.id, id), eq(user.organizationId, orgId)));
 }

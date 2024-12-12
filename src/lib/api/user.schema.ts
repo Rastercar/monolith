@@ -39,6 +39,10 @@ export const updateUserSchema = z.object({
 	description: z.string().optional().nullable()
 });
 
+export const updateUserAccessLevelSchema = z.object({
+	accessLevelId: z.number().gt(0)
+});
+
 export const changePasswordSchema = z
 	.object({
 		oldPassword: z.string().min(5),
@@ -77,7 +81,8 @@ export const simpleUserSchema = z.object({
 	email: z.string().email(),
 	emailVerified: z.boolean(),
 	profilePicture: z.string().nullable(),
-	description: z.string().nullable()
+	description: z.string().nullable(),
+	accessLevel: accessLevelSchema.optional()
 });
 
 /**
@@ -99,5 +104,7 @@ export type GetUsersFilters = z.infer<typeof getUsersSearchParamsSchema>;
 export type UpdateUserBody = z.infer<typeof updateUserSchema>;
 
 export type ChangePasswordBody = z.infer<typeof changePasswordSchema>;
+
+export type UpdateUserAccessLevelBody = z.infer<typeof updateUserAccessLevelSchema>;
 
 export type CreateUserBody = z.infer<typeof createUserSchema>;

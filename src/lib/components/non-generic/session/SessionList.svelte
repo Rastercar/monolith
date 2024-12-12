@@ -9,26 +9,21 @@
 		onSessionDeleted: (_id: number) => void;
 
 		/**
-		 * If the sessions being show with this component
-		 * belong to the currently logged in user, and as
-		 * such can be revoked
+		 * the ID of the user that owns the list of sessions,
+		 * if undefined its assumed the sesion belongs to the
+		 * logged in user
 		 */
-		isSessionsFromCurrentlyLoggedUser?: boolean;
+		sessionsOwnerId?: number;
 	}
 
-	let {
-		classes = '',
-		sessions,
-		isSessionsFromCurrentlyLoggedUser = false,
-		onSessionDeleted
-	}: Props = $props();
+	let { classes = '', sessions, sessionsOwnerId, onSessionDeleted }: Props = $props();
 </script>
 
 <div class={classes}>
 	{#each sessions as session, i}
 		<SessionCard
-			belongsToLoggedInUser={isSessionsFromCurrentlyLoggedUser}
 			{session}
+			sessionOwnerId={sessionsOwnerId}
 			onDeleted={() => onSessionDeleted(session.publicId)}
 		/>
 
@@ -36,7 +31,7 @@
 			<hr class="hr my-4 sm:my-0" />
 		{/if}
 	{:else}
-		<span class="flex items-center p-4">
+		<span class="flex items-center py-4">
 			<Icon icon="mdi:info" class="mr-2" />
 			no sessions found
 		</span>

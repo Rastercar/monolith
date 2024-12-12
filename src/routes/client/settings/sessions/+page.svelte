@@ -18,9 +18,4 @@
 	recognize.
 </p>
 
-<SessionList
-	{sessions}
-	{onSessionDeleted}
-	isSessionsFromCurrentlyLoggedUser
-	classes="rounded preset-filled-surface-100-900"
-/>
+<SessionList {sessions} {onSessionDeleted} classes="rounded preset-filled-surface-100-900" />

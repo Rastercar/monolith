@@ -5,18 +5,20 @@
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
+	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 
-	// TODO: get user and access level from page data to avoid querying
 	interface Props {
 		userId: number;
+		accessLevel: AccessLevel;
+		onAccessLevelChanged: (_: AccessLevel) => void;
 	}
 
-	let { userId }: Props = $props();
+	let { userId, accessLevel, onAccessLevelChanged }: Props = $props();
 
 	let isSelectingNewAccessLevel = $state(false);
 
@@ -36,8 +38,8 @@
 
 		showSuccessToast('user access level updated');
 
-		// TODO:
-		// accessLevel = selectedAccessLevelCopy;
+		onAccessLevelChanged(selectedAccessLevelCopy);
+
 		selectedAccessLevel = null;
 		isSelectingNewAccessLevel = false;
 	};
@@ -48,24 +50,26 @@
 	let canChangeUserAccessLevel = $derived(currentUser?.id !== userId);
 </script>
 
-<div class="sm:card sm:rounded-lg">
-	<Accordion padding="py-2">
-		<Accordion.Item regionControl="bg-surface-200-700-token px-4">
-			{#snippet summary()}
+<div class="sm:card sm:preset-filled-surface-100-900 sm:rounded-lg">
+	<Accordion multiple>
+		<Accordion.Item value="access-level" panelRounded="p-0">
+			{#snippet control()}
 				<div class="flex items-center py-2">
 					<Icon icon="mdi:shield" width="32" height="32" class="mr-2" />
 					Role and Permissions
 				</div>
 			{/snippet}
 
-			{#snippet content()}
-				<div class="sm:px-4 py-2">
+			{#snippet panel()}
+				<div class="py-2">
 					<div class="flex mb-4">
-						<h4 class="text-lg mr-auto mt-2 flex items-center">
+						<h4 class="type-scale-3 mr-auto mt-2 flex items-center">
 							{#if !isSelectingNewAccessLevel}
 								Access Level:
 								<a
-									href={`/client/access-levels/${accessLevel.id}`}
+									href={route(`/client/access-levels/[access_level_id=integer]`, {
+										access_level_id: accessLevel.id.toString()
+									})}
 									class="font-medium text-blue-600 dark:text-blue-500 hover:underline ml-2 flex items-center"
 								>
 									{accessLevel.name}
@@ -77,25 +81,25 @@
 							{/if}
 						</h4>
 
-						<PermissionGuard requiredPermissions={['MANAGE_USER_ACCESS_LEVELS']}>
+						<PermissionGuard requiredPermissions={'MANAGE_USER_ACCESS_LEVELS'}>
 							{#if canChangeUserAccessLevel}
 								{#if !isSelectingNewAccessLevel}
 									<button
-										class="btn btn-sm variant-filled-primary"
+										class="btn btn-sm preset-filled-secondary-200-800"
 										onclick={() => (isSelectingNewAccessLevel = true)}
 									>
-										<Icon icon="mdi:cog" class="mr-2" />
+										<Icon icon="mdi:cog" />
 										change access level
 									</button>
 								{:else}
 									<button
-										class="btn btn-sm variant-filled-error"
+										class="btn btn-sm preset-filled-warning-200-800"
 										onclick={() => {
 											selectedAccessLevel = null;
 											isSelectingNewAccessLevel = false;
 										}}
 									>
-										<Icon icon="mdi:cog-off" class="mr-2" />
+										<Icon icon="mdi:cog-off" />
 										cancel
 									</button>
 								{/if}
@@ -106,8 +110,9 @@
 					{#if isSelectingNewAccessLevel}
 						<div class="mt-4">
 							<SelectAccessLevelInput
-								on:item-selected={(e) => {
-									selectedAccessLevel = e.detail;
+								value={selectedAccessLevel?.id.toString() ?? ''}
+								onItemSelected={(v) => {
+									selectedAccessLevel = v;
 								}}
 							/>
 
@@ -120,15 +125,15 @@
 									{selectedAccessLevel.description}
 								</p>
 
-								<hr class="my-4" />
+								<hr class="hr my-4" />
 
 								<AccessLevelPermissionsInfo accessLevel={selectedAccessLevel} />
 
 								<div class="flex justify-end mt-4">
 									<LoadableButton
-										isLoading={$changeAccessLevelMutation.isPending}
-										class="btn btn-sm variant-filled-primary"
-										on:click={changeAccessLevel}
+										isLoading={changeAccessLevelMutation.isPending}
+										classes="btn  preset-filled-primary-200-800"
+										onclick={changeAccessLevel}
 									>
 										change access level
 									</LoadableButton>
@@ -136,11 +141,11 @@
 							{/if}
 						</div>
 					{:else}
-						<p class="opacity-90 text-sm line-clamp-4 mb-2">
+						<p class="opacity-90 mb-2">
 							{accessLevel.description}
 						</p>
 
-						<hr class="my-4" />
+						<hr class="hr my-4" />
 
 						<AccessLevelPermissionsInfo {accessLevel} />
 					{/if}

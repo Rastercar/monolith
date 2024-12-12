@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiDeleteSession, apiSignOutSpecificSession } from '$lib/api/auth';
+	import { apiDeleteUserSession, apiSignOutSpecificSession } from '$lib/api/auth';
 	import type { UserSession } from '$lib/api/user.schema';
 	import { getAuthContext } from '$lib/store/auth.svelte';
 	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
@@ -11,15 +11,18 @@
 
 	interface Props {
 		session: UserSession;
+
 		/**
-		 * If the session belongs to the logged in user
-		 * and therefore, can be revoked.
+		 * the ID of the user that owns the session, if
+		 * undefined its assumed the sesion belongs to the
+		 * logged in user
 		 */
-		belongsToLoggedInUser?: boolean;
+		sessionOwnerId?: number;
+
 		onDeleted: () => void;
 	}
 
-	let { session, onDeleted, belongsToLoggedInUser = false }: Props = $props();
+	let { session, onDeleted, sessionOwnerId }: Props = $props();
 
 	const uap = new UAParser(session.userAgent);
 	const { type } = uap.getDevice();
@@ -41,9 +44,9 @@
 
 	const mutation = createMutation(() => ({
 		mutationFn: () => {
-			const promise = belongsToLoggedInUser
-				? apiSignOutSpecificSession(session.publicId)
-				: apiDeleteSession(session.publicId);
+			const promise = sessionOwnerId
+				? apiDeleteUserSession(sessionOwnerId, session.publicId)
+				: apiSignOutSpecificSession(session.publicId);
 
 			return awaitPromiseWithMinimumTimeOf(promise, 1_000);
 		},
@@ -52,7 +55,7 @@
 
 	const auth = getAuthContext();
 
-	let canRemoveSessions = $derived(belongsToLoggedInUser || auth.hasPermission('LOGOFF_USER'));
+	let canRemoveSessions = $derived(!sessionOwnerId || auth.hasPermission('LOGOFF_USER'));
 </script>
 
 <div class="flex flex-wrap items-center p-4 gap-4">

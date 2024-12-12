@@ -47,7 +47,9 @@ export const apiGetUserById = (id: number): Promise<SimpleUser> =>
  * delete a user by id
  */
 export const apiDeleteUserById = (id: number): Promise<string> =>
-	api.delete(`/user/${id}`).json<string>();
+	api
+		.delete(route('DELETE /client/users/[user_id=integer]', { user_id: id.toString() }))
+		.json<string>();
 
 /**
  * gets a short lived token for the currently logged in user
@@ -73,8 +75,13 @@ export const apiGetUserAccessLevel = (id: number): Promise<AccessLevel> =>
 export const apiChangeUserAccessLevel = (ids: {
 	userId: number;
 	accessLevelId: number;
-}): Promise<string> =>
-	api.put({ accessLevelId: ids.accessLevelId }, `/user/${ids.userId}/access-level`).json<string>();
+}): Promise<string> => {
+	const url = route('PUT /client/users/[user_id=integer]/access-level', {
+		user_id: ids.userId.toString()
+	});
+
+	return api.put({ accessLevelId: ids.accessLevelId }, url).json<string>();
+};
 
 /**
  * gets the current user within the session id on the session ID cookie

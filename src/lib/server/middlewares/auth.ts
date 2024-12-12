@@ -57,9 +57,12 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 	});
 }
 
-export function verifyUserHasPermissions(user: User, reqPerms: permission | permission[]) {
-	const hasPerms = wrapToArray(reqPerms).every((p) => user.accessLevel.permissions.includes(p));
-	if (!hasPerms) return error(401, 'missing permissions');
+function verifyUserHasPermissions(user: User, reqPerms: permission | permission[]) {
+	if (!checkUSerHasPermissions(user, reqPerms)) return error(401, 'missing permissions');
+}
+
+export function checkUSerHasPermissions(user: User, reqPerms: permission | permission[]): boolean {
+	return wrapToArray(reqPerms).every((p) => user.accessLevel.permissions.includes(p));
 }
 
 /**

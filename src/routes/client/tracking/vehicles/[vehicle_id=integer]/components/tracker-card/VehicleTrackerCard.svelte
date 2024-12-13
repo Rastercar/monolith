@@ -5,6 +5,7 @@
 	import Icon from '@iconify/svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import TrackerInfo from './TrackerInfo.svelte';
 
 	interface Props {
 		vehicle: Vehicle;
@@ -25,54 +26,53 @@
 	let editMode = $state(false);
 
 	const clearTracker = () => {
-		vehicle.tracker = undefined;
+		vehicle.vehicleTracker = undefined;
 	};
 
-	const setTracker = (t: Tracker) => (vehicle.tracker = t);
+	const setTracker = (t: Tracker) => (vehicle.vehicleTracker = t);
 </script>
 
-<div class="card mt-4 flex-grow">
-	<div class="align-center items-center justify-center">
-		<Accordion collapsible multiple padding="px-0 py-4">
-			<Accordion.Item value="tracker" panelPadding="px-0" controlClasses="my-2 bg-surface-200-800">
-				{#snippet lead()}
-					<div class="flex items-center">
-						<Icon icon="gis:satellite" height={20} class="mr-4" />Tracker
-					</div>
-				{/snippet}
+<div class="sm:card sm:preset-filled-surface-100-900 sm:rounded-lg mt-4">
+	<Accordion multiple>
+		<Accordion.Item value="access-level" panelPadding="p-0">
+			{#snippet lead()}
+				<div class="flex items-center">
+					<Icon icon="gis:satellite" height={20} class="mr-4" />Tracker
+				</div>
+			{/snippet}
 
-				{#snippet control()}
-					{null}
-				{/snippet}
+			{#snippet control()}
+				{null}
+			{/snippet}
 
-				{#snippet panel()}
-					{#if vehicle.tracker}
-						{#if !editMode}
-							<!-- <TrackerInfo
-								tracker={vehicle.tracker}
-								{createSimCardForm}
-								{updateSimCardForm}
-								on:edit-mode-on={() => (editMode = true)}
-								on:tracker-deleted={clearTracker}
-								on:tracker-removed-from-vehicle={clearTracker}
-							/> -->
-						{:else}
-							<div class="px-4">
-								<div class="flex justify-between items-center">
-									<span>Updating vehicle tracker</span>
+			{#snippet panel()}
+				{#if vehicle.vehicleTracker}
+					{#if !editMode}
+						<TrackerInfo
+							tracker={vehicle.vehicleTracker}
+							{createSimCardForm}
+							{updateSimCardForm}
+							onTrackerRemoved={clearTracker}
+							onTrackerDeleted={clearTracker}
+							onEditModeClicked={() => (editMode = true)}
+						/>
+					{:else}
+						<div class="px-4">
+							<div class="flex justify-between items-center">
+								<span>Updating vehicle tracker</span>
 
-									<button
-										class="btn-icon btn-icon-sm preset-filled-primary-200-800"
-										onclick={() => (editMode = false)}
-									>
-										<Icon icon="mdi:pencil-off" />
-									</button>
-								</div>
+								<button
+									class="btn-icon btn-icon-sm preset-filled-primary-200-800"
+									onclick={() => (editMode = false)}
+								>
+									<Icon icon="mdi:pencil-off" />
+								</button>
+							</div>
 
-								<hr class="hr my-4" />
+							<hr class="hr my-4" />
 
-								<!-- TODO: -->
-								<!-- <UpdateTrackerForm
+							<!-- TODO: -->
+							<!-- <UpdateTrackerForm
 									{tracker}
 									formSchema={updateTrackerForm}
 									on:tracker-updated={(e) => {
@@ -80,24 +80,23 @@
 										setTracker(e);
 									}}
 								/> -->
-							</div>
-						{/if}
-					{:else}
-						<div>
-							<div class="flex items-center card p-4 bg-warning-200-800 mb-4">
-								<Icon icon="mdi:info" class="mr-2" /> no tracker installed on the vehicle
-							</div>
+						</div>
+					{/if}
+				{:else}
+					<div>
+						<div class="flex items-center card p-4 bg-warning-200-800 mb-4">
+							<Icon icon="mdi:info" class="mr-2" /> no tracker installed on the vehicle
+						</div>
 
-							<!-- <TrackerSelector
+						<!-- <TrackerSelector
 								{vehicleId}
 								formSchema={createTrackerForm}
 								onTrackerCreate={setTracker}
 								onTrackerSelect={setTracker}
 							/> -->
-						</div>
-					{/if}
-				{/snippet}
-			</Accordion.Item>
-		</Accordion>
-	</div>
+					</div>
+				{/if}
+			{/snippet}
+		</Accordion.Item>
+	</Accordion>
 </div>

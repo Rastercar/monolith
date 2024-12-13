@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createVehicleSchema, type Vehicle } from '$lib/api/vehicle.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import ComboBoxField from '$lib/components/form/ComboBoxField.svelte';
 	import FileInputField from '$lib/components/form/FileInputField.svelte';
 	import MaskedTextField from '$lib/components/form/MaskedTextField.svelte';
 	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
@@ -61,13 +60,19 @@
 		label="Plate *"
 	/>
 
-	<ComboBoxField
+	<TextField
 		form={sForm}
 		classes="col-span-1"
-		options={brandOptions}
 		name="brand"
 		label="Brand *"
+		maxlength={30}
+		list="brandSuggestions"
 	/>
+	<datalist id="brandSuggestions">
+		{#each brandOptions as brand}
+			<option value={brand.value}>{brand.value}</option>
+		{/each}
+	</datalist>
 
 	<TextField form={sForm} classes="col-span-1" name="model" label="Model *" maxlength={30} />
 

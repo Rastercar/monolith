@@ -110,7 +110,7 @@ export const vehicleSchema = z.object({
 	fabricationYear: z.number().nullable(),
 	chassisNumber: z.string().nullable(),
 	additionalInfo: z.string().nullable(),
-	tracker: trackerSchema.optional()
+	vehicleTracker: trackerSchema.optional()
 });
 
 export type GetVehiclesFilters = z.infer<typeof getVehiclesSearchParamsSchema>;

@@ -7,7 +7,6 @@
 		type Vehicle
 	} from '$lib/api/vehicle.schema';
 	import FileInput from '$lib/components/form/FileInput.svelte';
-	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
 	import ComboBox from '$lib/components/form/old/ComboBox.svelte';
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import TextInput from '$lib/components/form/TextInput.svelte';
@@ -60,23 +59,23 @@
 			delete validated.data.photo;
 		}
 
-		$mutation.mutateAsync(validated.data).then((createdVehicle) => {
+		mutation.mutateAsync(validated.data).then((createdVehicle) => {
 			dispatch('vehicle-created', createdVehicle);
 			$stepperState.current++;
 		});
 	};
-
-	let { tainted, allErrors } = $derived(sForm);
-
-	let canSubmit = $derived($tainted !== undefined && $allErrors.length === 0);
 </script>
 
-<span class="text-sm">Fields marked as * are required</span>
-
-<div class="grid grid-cols-2 gap-4 my-4">
-	<MaskedTextInput
+<form
+	class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+	method="POST"
+	enctype="multipart/form-data"
+	action={route('createVehicle /client/tracking/vehicles/new')}
+	use:sForm.enhance
+>
+	<MaskedTextField
 		form={sForm}
-		class="label sm:col-span-1 col-span-2 "
+		classes="col-span-1"
 		inputClass="input mb-1 uppercase"
 		maskOptions={{
 			mask: 'AAA0#00',
@@ -87,7 +86,7 @@
 				'#': { mask: /[0-9A-Za-z]/ }
 			}
 		}}
-		field="plate"
+		name="plate"
 		label="Plate *"
 	/>
 
@@ -161,6 +160,6 @@
 		rows="6"
 		maxlength="500"
 	/>
-</div>
+</form>
 
-<StepperNextStepBtn disabled={canSubmit} isLoading={$mutation.isPending} on:click={createVehicle} />
+<StepperNextStepBtn isLoading={mutation.isPending} on:click={createVehicle} />

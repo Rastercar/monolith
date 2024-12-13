@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Vehicle, updateVehicleSchema } from '$lib/api/vehicle.schema';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import UpdateVehicleForm from './UpdateVehicleForm.svelte';
 	import VehicleCardInfo from './VehicleCardInfo.svelte';
 
 	interface Props {
@@ -20,15 +21,13 @@
 	};
 </script>
 
-<div class="card flex-grow">
-	{#if !editMode}
-		<VehicleCardInfo {vehicle} onEditClick={() => (editMode = true)} {onVehicleDelete} />
-	{:else}
-		<!-- <UpdateVehicleForm
-			{vehicle}
-			{formSchema}
-			on:edit-canceled={() => (editMode = false)}
-			on:vehicle-updated={onVehicleUpdated}
-		/> -->
-	{/if}
-</div>
+{#if !editMode}
+	<VehicleCardInfo {vehicle} onEditClick={() => (editMode = true)} {onVehicleDelete} />
+{:else}
+	<UpdateVehicleForm
+		{vehicle}
+		{formSchema}
+		{onVehicleUpdated}
+		onEditCanceled={() => (editMode = false)}
+	/>
+{/if}

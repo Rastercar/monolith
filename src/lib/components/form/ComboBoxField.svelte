@@ -31,6 +31,14 @@
 		return options.filter((o) => o.label.toLowerCase().includes(searchValue.toLowerCase()));
 	});
 
+	// TODO: esse componente funciona mas esta bugado, como Combobox.Input não suporta
+	// binds para o value, não é possível resetar o valor quando de acordo com a mudança
+	// do formulário, etc.
+	//
+	// além disso esse componente do bits ui não se comporta como um text field com sugestões
+	// mas sim como um select com filtro de texto, então provavelmente teremos que implementar
+	// nosso proprio select com um dropdown de sugestões
+
 	const { form: formData } = form;
 </script>
 
@@ -41,7 +49,10 @@
 			type="single"
 			controlledValue
 			value={$formData[name] as string}
-			onValueChange={(v) => ($formData[name] = v as any)}
+			onValueChange={(v) => {
+				searchValue = v;
+				$formData[name] = v as any;
+			}}
 		>
 			<div class="relative">
 				<Label class={`${labelClass} ${labelExtraClasses}`}>

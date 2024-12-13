@@ -1,20 +1,15 @@
 <script lang="ts">
-	import { isAppErrorWithCode } from '$lib/api/utils';
 	import { apiUpdateVehicle } from '$lib/api/vehicle';
 	import type { UpdateVehicleBody, Vehicle } from '$lib/api/vehicle.schema';
 	import { updateVehicleSchema } from '$lib/api/vehicle.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import MaskedTextInput from '$lib/components/form/MaskedTextInput.svelte';
-	import NumberInput from '$lib/components/form/NumberInput.svelte';
-	import ComboBox from '$lib/components/form/old/ComboBox.svelte';
-	import TextArea from '$lib/components/form/TextArea.svelte';
-	import TextInput from '$lib/components/form/TextInput.svelte';
+	import MaskedTextField from '$lib/components/form/MaskedTextField.svelte';
+	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
+	import TextField from '$lib/components/form/TextField.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';
-	import { PLATE_IN_USE } from '$lib/constants/error-codes';
-	import { getToaster } from '$lib/store/toaster';
+	import { route } from '$lib/ROUTES';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createEventDispatcher, onMount } from 'svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -22,9 +17,11 @@
 	interface Props {
 		vehicle: Vehicle;
 		formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
+		onEditCanceled: () => void;
+		onVehicleUpdated: (_: Vehicle) => void;
 	}
 
-	let { vehicle, formSchema }: Props = $props();
+	let { vehicle, formSchema, onEditCanceled, onVehicleUpdated }: Props = $props();
 
 	const getValuesFromVehicle = (v: Vehicle) => ({
 		plate: v.plate,
@@ -43,39 +40,28 @@
 		validationMethod: 'oninput'
 	});
 
-	const toaster = getToaster();
-
 	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
 
-	const mutation = createMutation({
-		mutationFn: (b: UpdateVehicleBody) => apiUpdateVehicle(vehicle.id, b),
-		onError: (e) => {
-			isAppErrorWithCode(e, PLATE_IN_USE)
-				? sForm.validate('plate', { value: '', errors: 'plate in use', update: 'errors' })
-				: toaster.error();
-		}
-	});
+	const mutation = createMutation(() => ({
+		mutationFn: (b: UpdateVehicleBody) => apiUpdateVehicle(vehicle.id, b)
+	}));
 
 	const createVehicle = async () => {
 		const validated = await sForm.validateForm();
 
 		if (!validated.valid) return sForm.restore({ ...validated, tainted: undefined });
 
-		$mutation.mutateAsync(validated.data).then((updatedVehicle) => {
-			toaster.success('vehicle updated successfully');
-			sForm.reset({ data: getValuesFromVehicle(updatedVehicle) });
-			dispatch('vehicle-updated', updatedVehicle);
-		});
+		// $mutation.mutateAsync(validated.data).then((updatedVehicle) => {
+		// 	// toaster.success('vehicle updated successfully');
+		// 	sForm.reset({ data: getValuesFromVehicle(updatedVehicle) });
+		// 	dispatch('vehicle-updated', updatedVehicle);
+		// });
 	};
 
-	const dispatch = createEventDispatcher<{
-		'vehicle-updated': Vehicle;
-		'edit-canceled': void;
-	}>();
-
-	onMount(() => {
-		sForm.reset({ data: getValuesFromVehicle(vehicle) });
-	});
+	// TODO:
+	// onMount(() => {
+	// 	sForm.reset({ data: getValuesFromVehicle(vehicle) });
+	// });
 
 	let { allErrors } = $derived(sForm);
 
@@ -83,20 +69,27 @@
 </script>
 
 <div class="p-4 flex">
-	<span class="text-lg">Editing vehicle</span>
+	<span class="type-scale-3">Editing vehicle</span>
 
 	<button
-		class="btn-icon btn-icon-sm ml-auto variant-filled-primary"
-		onclick={() => dispatch('edit-canceled')}
+		class="btn-icon btn-icon-sm ml-auto preset-filled-secondary-200-800"
+		onclick={() => onEditCanceled()}
 	>
 		<Icon icon="mdi:pencil-off" />
 	</button>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 px-4 pb-4">
-	<MaskedTextInput
+<!-- TODO: action -->
+<form
+	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+	method="POST"
+	enctype="multipart/form-data"
+	action={route('updateVehicle /client/tracking/vehicles/new')}
+	use:sForm.enhance
+>
+	<MaskedTextField
 		form={sForm}
-		class="label col-span-1"
+		classes="col-span-1"
 		inputClass="input mb-1 uppercase"
 		maskOptions={{
 			mask: 'AAA0#00',
@@ -107,53 +100,71 @@
 				'#': { mask: /[0-9A-Za-z]/ }
 			}
 		}}
-		field="plate"
+		name="plate"
 		label="Plate *"
 	/>
 
-	<ComboBox
+	<TextField
 		form={sForm}
-		class="label col-span-1"
-		options={brandOptions}
-		field="brand"
+		classes="col-span-1"
+		name="brand"
 		label="Brand *"
+		maxlength={30}
+		list="brandSuggestions"
 	/>
+	<datalist id="brandSuggestions">
+		{#each brandOptions as brand}
+			<option value={brand.value}>{brand.value}</option>
+		{/each}
+	</datalist>
 
-	<TextInput form={sForm} class="label col-span-1" field="model" label="Model *" maxlength="30" />
+	<TextField form={sForm} class="label col-span-1" name="model" label="Model *" maxlength={30} />
 
-	<TextInput
+	<TextField
 		form={sForm}
 		class="label col-span-1"
-		field="chassisNumber"
+		name="chassisNumber"
 		label="Chassis Number"
-		maxlength="30"
+		maxlength={30}
 	/>
 
-	<NumberInput
+	<TextField
 		form={sForm}
-		class="label col-span-1"
-		field="fabricationYear"
+		classes="col-span-1"
+		name="fabricationYear"
 		label="Fabrication Year"
+		type="text"
+		maxlength={4}
 	/>
 
-	<NumberInput form={sForm} class="label col-span-1" field="modelYear" label="Model Year" />
-
-	<TextInput form={sForm} class="label col-span-1" field="color" label="Color" maxlength="12" />
-
-	<TextArea
+	<TextField
 		form={sForm}
-		class="label col-span-1 sm:col-span-2 md:col-span-4"
-		field="additionalInfo"
-		label="Additional Info"
-		rows="2"
-		maxlength="500"
+		classes="col-span-1"
+		name="modelYear"
+		label="Model Year"
+		type="text"
+		maxlength={4}
 	/>
-</div>
 
-<div class="flex px-4 pb-4 justify-end">
-	<LoadableButton isLoading={$mutation.isPending}>
-		<button class="btn variant-filled-primary" disabled={!canSubmit} onclick={createVehicle}>
+	<TextField form={sForm} class="label col-span-1" name="color" label="Color" maxlength={12} />
+
+	<TextAreaField
+		form={sForm}
+		class="label col-span-1 sm:col-span-2 md:col-span-3"
+		name="additionalInfo"
+		label="Additional Info"
+		rows={2}
+		maxlength={500}
+	/>
+
+	<div class="flex px-4 pb-4 justify-end col-span-1 sm:col-span-3">
+		<LoadableButton
+			isLoading={mutation.isPending}
+			classes="btn preset-filled-primary-200-800"
+			disabled={!canSubmit}
+			onclick={createVehicle}
+		>
 			update
-		</button>
-	</LoadableButton>
-</div>
+		</LoadableButton>
+	</div>
+</form>

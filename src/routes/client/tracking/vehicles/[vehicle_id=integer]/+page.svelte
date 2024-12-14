@@ -57,7 +57,7 @@
 		/>
 
 		<VehicleTrackerCard
-			{vehicle}
+			bind:vehicle
 			updateSimCardForm={data.updateSimCardForm}
 			createTrackerForm={data.createTrackerForm}
 			updateTrackerForm={data.updateTrackerForm}

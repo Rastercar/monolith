@@ -34,30 +34,28 @@
 	</div>
 {/snippet}
 
-<div class="sm:card sm:preset-filled-surface-100-900 sm:p-4 mt-4">
-	<div class="flex items-center mb-4">
-		<span class="text-lg mr-auto">
-			{vehicle.model || 'no model'} / Plate: {vehicle.plate.toLocaleUpperCase()}
-		</span>
+<div class="flex items-center mb-4">
+	<span class="text-lg mr-auto">
+		{vehicle.model || 'no model'} / Plate: {vehicle.plate.toLocaleUpperCase()}
+	</span>
 
-		<PermissionGuard requiredPermissions={'DELETE_VEHICLE'}>
-			<button class="btn-icon preset-filled-warning-200-800" onclick={deleteVehicle}>
-				<Icon icon="mdi:trash" />
-			</button>
-		</PermissionGuard>
+	<PermissionGuard requiredPermissions={'DELETE_VEHICLE'}>
+		<button class="btn-icon preset-filled-warning-200-800" onclick={deleteVehicle}>
+			<Icon icon="mdi:trash" />
+		</button>
+	</PermissionGuard>
 
-		<PermissionGuard requiredPermissions={'UPDATE_VEHICLE'}>
-			<button class="btn-icon ml-3 preset-filled-primary-200-800" onclick={() => onEditClick()}>
-				<Icon icon="mdi:pencil" />
-			</button>
-		</PermissionGuard>
-	</div>
+	<PermissionGuard requiredPermissions={'UPDATE_VEHICLE'}>
+		<button class="btn-icon ml-3 preset-filled-primary-200-800" onclick={() => onEditClick()}>
+			<Icon icon="mdi:pencil" />
+		</button>
+	</PermissionGuard>
+</div>
 
-	<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-		{@render field('Brand', vehicle.brand)}
-		{@render field('Year', year)}
-		{@render field('Chassis', vehicle.chassisNumber)}
-		{@render field('Color', vehicle.color)}
-		{@render field('Additional Information', vehicle.additionalInfo, 'col-span-2 md:col-span-4')}
-	</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+	{@render field('Brand', vehicle.brand)}
+	{@render field('Year', year)}
+	{@render field('Chassis', vehicle.chassisNumber)}
+	{@render field('Color', vehicle.color)}
+	{@render field('Additional Information', vehicle.additionalInfo, 'col-span-2 md:col-span-4')}
 </div>

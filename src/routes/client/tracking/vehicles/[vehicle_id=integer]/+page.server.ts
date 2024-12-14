@@ -1,10 +1,12 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
-import { updateVehicleSchema, vehicleSchema } from '$lib/api/vehicle.schema';
-import { findOrgVehicleById } from '$lib/server/db/repo/vehicle.js';
+import { updateVehicleSchema, vehicleSchema, type Vehicle } from '$lib/api/vehicle.schema';
+import { isErrorFromUniqueConstraint } from '$lib/server/db/error.js';
+import { findOrgVehicleById, updateOrgVehicle } from '$lib/server/db/repo/vehicle.js';
 import { acl } from '$lib/server/middlewares/auth';
+import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
+import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, locals }) => {
@@ -19,10 +21,38 @@ export const load = async ({ params, locals }) => {
 
 	return {
 		vehicle,
-		updateVehicleForm: await superValidate(zod(updateVehicleSchema)),
+		updateVehicleForm: await superValidate(zod(updateVehicleSchema), { defaults: vehicle }),
 		createTrackerForm: await superValidate(zod(createTrackerSchema)),
 		updateTrackerForm: await superValidate(zod(updateTrackerSchema)),
 		createSimCardForm: await superValidate(zod(createSimCardSchema)),
 		updateSimCardForm: await superValidate(zod(updateSimCardSchema))
 	};
+};
+
+export const actions = {
+	updateVehicle: async ({ request, locals, params }) => {
+		const { user } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
+
+		const vehicleId = parseInt(params.vehicle_id);
+
+		const form = await validateFormWithFailOnError(request, updateVehicleSchema);
+
+		const res = await updateOrgVehicle(vehicleId, user.organization.id, form.data)
+			.then((vehicle) => vehicleSchema.parse(vehicle))
+			.catch((e) => {
+				if (isErrorFromUniqueConstraint(e, 'vehicle_plate_unique')) {
+					return { error: 'PLATE_IN_USE' };
+				}
+
+				throw e;
+			});
+
+		if ('error' in res) {
+			if (res.error === 'PLATE_IN_USE') {
+				return setError(form, 'plate', 'Plate in use by another vehicle');
+			}
+		}
+
+		return { form, updatedVehicle: res as Vehicle };
+	}
 };

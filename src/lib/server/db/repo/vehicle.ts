@@ -1,5 +1,9 @@
 import type { PaginationWithFilters } from '$lib/api/common';
-import type { CreateVehicleBody, GetVehiclesFilters } from '$lib/api/vehicle.schema';
+import type {
+	CreateVehicleBody,
+	GetVehiclesFilters,
+	UpdateVehicleBody
+} from '$lib/api/vehicle.schema';
 import { and, eq, ilike, type SQL } from 'drizzle-orm';
 import { db } from '../db';
 import type { Tx } from '../helpers';
@@ -37,6 +41,16 @@ export async function createOrgVehicle(
 		.returning();
 
 	return createdVehicle;
+}
+
+export async function updateOrgVehicle(id: number, orgId: number, body: UpdateVehicleBody) {
+	const [updatedVehicle] = await db
+		.update(vehicle)
+		.set(body)
+		.where(and(eq(vehicle.id, id), eq(vehicle.organizationId, orgId)))
+		.returning();
+
+	return updatedVehicle;
 }
 
 export async function updateOrgVehiclePhoto(id: number, photo: string | null, tx?: Tx) {

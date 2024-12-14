@@ -12,20 +12,23 @@
 	import type { ActionData } from '../../../../routes/client/tracking/trackers/new/$types';
 
 	interface Props {
+		/**
+		 * ID of the vehicle to be associated with the created tracker
+		 */
+		vehicleIdToAssociate?: number;
+
 		formSchema: SuperValidated<Infer<typeof createTrackerSchema>>;
 
-		children?: Snippet<[{ isLoading: boolean }]>;
-
 		onCreated: (_: Tracker) => void;
+		children?: Snippet<[{ isLoading: boolean }]>;
 	}
 
-	let { formSchema, children, onCreated }: Props = $props();
+	let { formSchema, vehicleIdToAssociate, children, onCreated }: Props = $props();
 
 	const sForm = superForm(formSchema, {
 		validators: zodClient(createTrackerSchema),
 		onUpdate: ({ form, result }) => {
 			const action = result.data as FormResult<ActionData>;
-
 			if (form.valid && action.createdTracker) onCreated(action.createdTracker);
 		}
 	});
@@ -46,6 +49,10 @@
 		name="model"
 		label="Model *"
 	/>
+
+	{#if vehicleIdToAssociate}
+		<input type="hidden" name="vehicleId" value={vehicleIdToAssociate} />
+	{/if}
 
 	{#if children}
 		{@render children({ isLoading: $isLoading })}

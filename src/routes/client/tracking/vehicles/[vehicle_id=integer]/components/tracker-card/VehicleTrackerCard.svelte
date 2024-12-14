@@ -6,6 +6,7 @@
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import TrackerInfo from './TrackerInfo.svelte';
+	import TrackerSelector from './TrackerSelector.svelte';
 
 	interface Props {
 		vehicle: Vehicle;
@@ -34,15 +35,11 @@
 
 <div class="sm:card sm:preset-filled-surface-100-900 sm:rounded-lg mt-4">
 	<Accordion multiple>
-		<Accordion.Item value="access-level" panelPadding="p-0">
-			{#snippet lead()}
+		<Accordion.Item value="access-level" panelPadding="p-0" controlPadding="p-4">
+			{#snippet control()}
 				<div class="flex items-center">
 					<Icon icon="gis:satellite" height={20} class="mr-4" />Tracker
 				</div>
-			{/snippet}
-
-			{#snippet control()}
-				{null}
 			{/snippet}
 
 			{#snippet panel()}
@@ -83,17 +80,17 @@
 						</div>
 					{/if}
 				{:else}
-					<div>
+					<div class="p-4">
 						<div class="flex items-center card p-4 bg-warning-200-800 mb-4">
 							<Icon icon="mdi:info" class="mr-2" /> no tracker installed on the vehicle
 						</div>
 
-						<!-- <TrackerSelector
-								{vehicleId}
-								formSchema={createTrackerForm}
-								onTrackerCreate={setTracker}
-								onTrackerSelect={setTracker}
-							/> -->
+						<TrackerSelector
+							vehicleId={vehicle.id}
+							formSchema={createTrackerForm}
+							onTrackerCreated={setTracker}
+							onTrackerSelected={setTracker}
+						/>
 					</div>
 				{/if}
 			{/snippet}

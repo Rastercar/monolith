@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Vehicle, updateVehicleSchema } from '$lib/api/vehicle.schema';
+	import { showSuccessToast } from '$lib/store/toast';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import UpdateVehicleForm from './UpdateVehicleForm.svelte';
 	import VehicleCardInfo from './VehicleCardInfo.svelte';
@@ -14,20 +15,22 @@
 	let { vehicle = $bindable(), formSchema, onVehicleUpdate, onVehicleDelete }: Props = $props();
 
 	let editMode = $state(false);
-
-	const onVehicleUpdated = (v: Vehicle) => {
-		editMode = false;
-		onVehicleUpdate(v);
-	};
 </script>
 
-{#if !editMode}
-	<VehicleCardInfo {vehicle} onEditClick={() => (editMode = true)} {onVehicleDelete} />
-{:else}
-	<UpdateVehicleForm
-		{vehicle}
-		{formSchema}
-		{onVehicleUpdated}
-		onEditCanceled={() => (editMode = false)}
-	/>
-{/if}
+<div class="sm:card sm:preset-filled-surface-100-900 sm:p-4 mt-4">
+	{#if !editMode}
+		<VehicleCardInfo {vehicle} onEditClick={() => (editMode = true)} {onVehicleDelete} />
+	{:else}
+		<UpdateVehicleForm
+			{vehicle}
+			{formSchema}
+			onVehicleUpdated={(v) => {
+				editMode = false;
+
+				showSuccessToast('vehicle updated');
+				onVehicleUpdate(v);
+			}}
+			onEditCanceled={() => (editMode = false)}
+		/>
+	{/if}
+</div>

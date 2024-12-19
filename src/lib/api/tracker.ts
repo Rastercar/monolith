@@ -5,7 +5,6 @@ import {
 	type Paginated,
 	type PaginationWithFilters
 } from './common';
-import { simCardSchema } from './sim-card.schema';
 import {
 	trackerLocationSchema,
 	trackerSchema,
@@ -42,15 +41,16 @@ export const apiGetTrackerById = (id: number): Promise<Tracker> =>
  *
  * - `DELETE_TRACKER`
  */
-export const apiDeleteTracker = (trackerId: number, opts?: DeleteTrackerBody) =>
-	api
+export const apiDeleteTracker = (trackerId: number, opts?: DeleteTrackerBody) => {
+	const url = route('DELETE /client/tracking/trackers/[tracker_id=integer]', {
+		tracker_id: trackerId.toString()
+	});
+
+	return api
 		.json({ deleteAssociatedSimCards: opts?.deleteAssociatedSimCards || false })
-		.delete(
-			route('DELETE /client/tracking/trackers/[tracker_id=integer]', {
-				tracker_id: trackerId.toString()
-			})
-		)
+		.delete(url)
 		.json<string>();
+};
 
 /**
  * changes the vehicle a tracker is associated (aka: suposedly installed)
@@ -71,23 +71,15 @@ export const apiSetTrackerVehicle = (ids: {
 };
 
 /**
- * get SIM cards that belong to a tracker
- */
-export const apiGetTrackerSimCards = (vehicleTrackerId: number) =>
-	api
-		.get(`/tracker/${vehicleTrackerId}/sim-cards`)
-		.json<Tracker[]>()
-		.then(z.array(simCardSchema).parse);
-
-/**
  * get the last known tracker location
  */
-export const apiGetTrackerLastLocation = (id: number) => {
+export const apiGetTrackerLastLocation = async (id: number) => {
 	const url = route('GET /client/tracking/trackers/[tracker_id=integer]/last-location', {
 		tracker_id: id.toString()
 	});
 
-	return api.get(url).json<TrackerLocation | null>().then(trackerLocationSchema.nullable().parse);
+	const data = await api.get(url).json<TrackerLocation | null>();
+	return trackerLocationSchema.nullable().parse(data);
 };
 
 /**

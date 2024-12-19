@@ -4,6 +4,8 @@ import { api } from './utils';
 
 /**
  * gets the lastest position of a few trackers
+ *
+ * TODO: will we use this ?
  */
 export const apiGetTrackersLastPositions = (trackerIds: number[]): Promise<TrackerPosition[]> =>
 	api

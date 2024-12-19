@@ -5,11 +5,6 @@
 
 	const routes: Route[] = [
 		{
-			href: '/client',
-			label: 'home',
-			icon: 'mdi:home'
-		},
-		{
 			href: '/client/tracking/map',
 			label: 'map',
 			icon: 'mdi:map'
@@ -33,11 +28,6 @@
 			href: '/client/tracking/vehicles',
 			label: 'vehicles',
 			icon: 'mdi:car'
-		},
-		{
-			href: '/client/tracking/quick-track',
-			label: 'quick track',
-			icon: 'mdi:car-info'
 		},
 		{
 			href: '/client/tracking/trackers',
@@ -88,7 +78,7 @@
 		<NavList routes={settingsRoutes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
 
 		<div class="flex justify-end">
-			<a href="/client" class="btn preset-filled-primary-500 mx-4 my-4">
+			<a href="/client/my-profile" class="btn preset-filled-primary-500 mx-4 my-4">
 				<Icon icon="mdi:arrow-left" class="mr-2" />
 				exit settings
 			</a>

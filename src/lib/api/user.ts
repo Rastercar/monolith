@@ -52,12 +52,6 @@ export const apiDeleteUserById = (id: number): Promise<string> =>
 		.json<string>();
 
 /**
- * gets a short lived token for the currently logged in user
- */
-export const apiGetJwtForCurrentUser = async (): Promise<string> =>
-	api.get('/user/me/short-lived-token').json<string>();
-
-/**
  * get all sessions belonging to a user
  */
 export const apiGetUserSessions = (id: number): Promise<UserSession[]> =>

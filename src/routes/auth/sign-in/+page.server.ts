@@ -39,8 +39,8 @@ export const actions = {
 		const redirectRoute =
 			// this would cause a loop (sign-in -> sign-out -> sign-in)
 			redirectRouteFromQuery === '/auth/sign-out'
-				? route('/client')
-				: (redirectRouteFromQuery ?? route('/client'));
+				? route('/client/my-profile')
+				: (redirectRouteFromQuery ?? route('/client/my-profile'));
 
 		redirect(307, redirectRoute);
 	}

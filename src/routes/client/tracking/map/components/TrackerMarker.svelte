@@ -1,34 +1,29 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-	import { getMapContext, type Position } from '../map';
-	import Icon from '@iconify/svelte';
-	import { getDrawerStore, type DrawerSettings } from '@skeletonlabs/skeleton';
-	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
 	import type { Tracker } from '$lib/api/tracker.schema';
-
+	import { getMapContext, type Position } from '$lib/store/map.svelte';
+	import Icon from '@iconify/svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	interface Props {
 		tracker: Tracker;
 		position: Position;
+		onClick: (_: google.maps.marker.AdvancedMarkerElement) => void;
 	}
 
-	let { tracker, position }: Props = $props();
+	let { tracker, position, onClick }: Props = $props();
 
-	let markerContentElement: HTMLElement = $state();
+	let markerContentElement = $state<HTMLDivElement>();
 
-	let markerInstance: InstanceType<typeof google.maps.marker.AdvancedMarkerElement> | null = $state(null);
+	let markerInstance: InstanceType<typeof google.maps.marker.AdvancedMarkerElement> | null =
+		$state(null);
 
 	const mapContext = getMapContext();
 
 	const map = mapContext.getGoogleMap();
 
-	const drawerStore = getDrawerStore();
-
-	const dispatch = createEventDispatcher<{ click: google.maps.marker.AdvancedMarkerElement }>();
-
 	const addMarkerToMap = () => {
+		if (!map) return;
+
 		markerInstance = new google.maps.marker.AdvancedMarkerElement({
 			map,
 			content: markerContentElement,
@@ -38,20 +33,25 @@
 		markerInstance.addListener('click', () => {
 			map.panTo(position);
 
-			const drawerSettings: DrawerSettings = {
-				position: 'right',
-				width: 'max-w-xl',
-				meta: {
-					component: SelectedTrackerOverlay,
-					props: { tracker, position }
-				}
-			};
+			// TODO:
+			// const drawerSettings: DrawerSettings = {
+			// 	position: 'right',
+			// 	width: 'max-w-xl',
+			// 	meta: {
+			// 		component: SelectedTrackerOverlay,
+			// 		props: { tracker, position }
+			// 	}
+			// };
 
-			drawerStore.open(drawerSettings);
+			// drawerStore.open(drawerSettings);
 
 			if (!markerInstance) return;
-			dispatch('click', markerInstance);
+			onClick(markerInstance);
 		});
+
+		if (position && markerInstance) {
+			markerInstance.position = position;
+		}
 	};
 
 	const removeMarkerFromMap = () => {
@@ -60,12 +60,6 @@
 
 	onMount(addMarkerToMap);
 	onDestroy(removeMarkerFromMap);
-
-	run(() => {
-		if (position && markerInstance) {
-			markerInstance.position = position;
-		}
-	});
 </script>
 
 <div

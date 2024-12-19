@@ -11,7 +11,7 @@
 	lang="ts"
 	generics="TransitionIn extends Transition = FadeTransition, TransitionOut extends Transition = FadeTransition"
 >
-	import { setContext } from 'svelte';
+	import { setContext, type Snippet } from 'svelte';
 
 	interface Props {
 		/** Provide the initially selected step*/
@@ -29,7 +29,7 @@
 		/** Transition params provided to `transitionOut`. */
 		transitionOutParams?: TransitionParams<TransitionOut>;
 
-		children?: import('svelte').Snippet;
+		children?: Snippet;
 	}
 
 	let {

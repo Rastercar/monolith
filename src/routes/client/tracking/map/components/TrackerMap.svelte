@@ -1,25 +1,16 @@
 <script lang="ts">
-	import { onDestroy, onMount, setContext } from 'svelte';
-	import { loadMapLibraries } from '$lib/utils/google-maps';
-	import {
-		MAP_CONTEXT_KEY,
-		selectedTrackerStore,
-		type MapContext,
-		createWsConnectionToTrackingNamespace,
-		trackerPositionStore,
-		getTrackersMapBounds
-	} from '../map';
-	import { apiGetJwtForCurrentUser } from '$lib/api/user';
-	import TrackersMapControls from './TrackersMapControls.svelte';
-	import TrackerMarker from './TrackerMarker.svelte';
-	import { dev } from '$app/environment';
-	import { getToaster } from '$lib/store/toaster';
-	import ConnectionFailedAlert from './ConnectionFailedAlert.svelte';
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
+	import { getMapContext, setMapContext } from '$lib/store/map.svelte';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import { loadMapLibraries } from '$lib/utils/google-maps';
+	import { onDestroy, onMount } from 'svelte';
+	import { createWsConnectionToTrackingNamespace } from '../map';
+	import TrackerMarker from './TrackerMarker.svelte';
+	import TrackersMapControls from './TrackersMapControls.svelte';
 
-	let mapElement: HTMLDivElement;
+	setMapContext();
 
-	let googleMap: InstanceType<typeof window.google.maps.Map> = $state();
+	const mapContext = getMapContext();
 
 	/**
 	 * SocketIO connection for realtime tracker position updates
@@ -33,6 +24,8 @@
 
 	/**
 	 * The trackers currently selected to be shown on the map
+	 *
+	 * TODO: isnt this duplicate state ?
 	 */
 	let selectedTrackers: number[] = [];
 
@@ -40,20 +33,15 @@
 
 	let showConnectionErrorAlert = $state(false);
 
-	setContext<MapContext>(MAP_CONTEXT_KEY, {
-		getGoogleMap: () => googleMap,
-		getMapElement: () => mapElement
-	});
-
-	const toaster = getToaster();
-
 	const initMap = async () => {
 		await loadMapLibraries();
 
-		mapElement = document.getElementById('map') as HTMLDivElement;
+		const mapElement = document.getElementById('map') as HTMLDivElement;
 		if (!mapElement) throw new Error('failed to get map element');
 
-		const cachedPositionsBounds = getTrackersMapBounds();
+		mapContext.mapElement = mapElement;
+
+		const cachedPositionsBounds = mapContext.getTrackersMapBounds();
 
 		const defaultCenter = { lat: -20.397, lng: -54.644 };
 
@@ -61,7 +49,7 @@
 			? cachedPositionsBounds.getCenter()
 			: defaultCenter;
 
-		googleMap = new window.google.maps.Map(mapElement, {
+		mapContext.mapInstance = new window.google.maps.Map(mapElement, {
 			center,
 			zoom: 20,
 
@@ -74,13 +62,15 @@
 			mapId: 'DEMO_MAP_ID'
 		});
 
-		if (!cachedPositionsBounds.isEmpty()) googleMap.fitBounds(cachedPositionsBounds);
+		if (!cachedPositionsBounds.isEmpty()) mapContext.mapInstance.fitBounds(cachedPositionsBounds);
 	};
+
+	let showMap = $state(false);
 
 	// emit a SocketIO message to the rastercar API, informing the trackers we want
 	// to recieve positions of, whenever the tracker selection changed
-	const unsubscribe = selectedTrackerStore.subscribe((v) => {
-		let newTrackerIds = Object.keys(v)
+	$effect(() => {
+		let newTrackerIds = Object.keys(mapContext.mapSelectedTrackers)
 			.map((v) => parseInt(v))
 			.filter((n) => !Number.isNaN(n));
 
@@ -108,32 +98,21 @@
 			// again, so we need to fetch the last positions of all of them manually
 			apiGetTrackersLastPositions(newTrackerIds).then((trackersLastPositions) => {
 				trackersLastPositions.forEach(({ trackerId, ...position }) => {
-					$trackerPositionStore[trackerId] = position;
+					mapContext.trackerPositionCache[trackerId] = position;
 				});
 			});
-		}, 500);
+		});
 	});
 
 	const createWsConnectionToApi = async () => {
 		const connect = async () => {
-			const token = await apiGetJwtForCurrentUser().catch((e) => {
-				if (dev) console.warn(e);
-				showConnectionErrorAlert = true;
-
-				throw e;
-			});
-
-			if (typeof token === 'boolean') return;
-
-			socket = createWsConnectionToTrackingNamespace(token);
+			socket = createWsConnectionToTrackingNamespace();
 
 			socket.on('position', ({ trackerId, ...position }) => {
-				$trackerPositionStore[trackerId] = position;
+				mapContext.trackerPositionCache[trackerId] = position;
 			});
 
-			socket.on('error', (error) => {
-				if (dev) console.warn(error);
-			});
+			socket.on('error', console.warn);
 		};
 
 		isConnectingToApi = true;
@@ -148,23 +127,26 @@
 	const reconnectWsToApi = () => {
 		createWsConnectionToApi()
 			.then(() => {
-				toaster.success('reconnected');
+				showSuccessToast('reconnected');
 				showConnectionErrorAlert = false;
 			})
 			.catch(() => {
-				toaster.error('reconnection failed');
+				showErrorToast('connection error');
 			});
 	};
 
 	onMount(async () => {
 		await initMap();
 		await createWsConnectionToApi();
+
+		showMap = true;
 	});
 
 	onDestroy(() => {
-		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
+		mapContext.mapElement = undefined;
+		mapContext.mapInstance = undefined;
 
-		unsubscribe();
+		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
 
 		if (socket) {
 			socket.disconnect();
@@ -174,15 +156,15 @@
 </script>
 
 {#if showConnectionErrorAlert}
-	<ConnectionFailedAlert
+	<!-- <ConnectionFailedAlert
 		{isConnectingToApi}
 		on:reconnect-click={reconnectWsToApi}
 		on:close-click={() => (showConnectionErrorAlert = false)}
-	/>
+	/> -->
 {/if}
 
 <div id="map" class="h-full w-full">
-	{#if googleMap}
+	{#if showMap}
 		<TrackersMapControls />
 
 		<!-- 
@@ -191,11 +173,17 @@
 			
 			this is not the end of the world but it can be improved
 		-->
-		{#each Object.values($selectedTrackerStore) as tracker}
-			{@const position = $trackerPositionStore[tracker.id]}
+		{#each Object.values(mapContext.mapSelectedTrackers) as tracker}
+			{@const position = mapContext.trackerPositionCache[tracker.id]}
 
 			{#if position}
-				<TrackerMarker {position} {tracker} />
+				<TrackerMarker
+					{position}
+					{tracker}
+					onClick={() => {
+						// TODO:
+					}}
+				/>
 			{/if}
 		{/each}
 	{/if}

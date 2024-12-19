@@ -86,7 +86,7 @@
 
 				<button
 					class="btn preset-filled-primary-300-700 mt-4 mx-auto flex items-center"
-					onclick={() => goto(route('/client'))}
+					onclick={() => goto(route('/client/my-profile'))}
 				>
 					go to home page
 					<Icon icon="mdi:home" />

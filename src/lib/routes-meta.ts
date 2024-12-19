@@ -59,9 +59,6 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 	},
 
 	// logged-in routes
-	'/client': {
-		requiredAuth: 'logged-in'
-	},
 	'/client/access-levels': {
 		requiredAuth: 'logged-in',
 		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
@@ -91,9 +88,7 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 		requiredAuth: 'logged-in'
 	},
 	'/client/tracking/map': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/quick-track': {
+		headerVisibility: false,
 		requiredAuth: 'logged-in'
 	},
 	'/client/tracking/sim-cards': {
@@ -147,5 +142,5 @@ export function getRouteMetaFromPath(path: string): PageMeta | undefined {
  */
 export async function redirectToStartingPage(event: RequestEvent) {
 	const isLoggedIn = !!event.locals.user;
-	return redirect(303, isLoggedIn ? route('/client') : route('/auth/sign-in'));
+	return redirect(303, isLoggedIn ? route('/client/my-profile') : route('/auth/sign-in'));
 }

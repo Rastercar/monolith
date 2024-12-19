@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import { getMapContext } from '../map';
+	import { getMapContext } from '$lib/store/map.svelte';
+	import { onDestroy, onMount, type Snippet } from 'svelte';
 
 	interface Props {
 		position: google.maps.ControlPosition;
-		children?: import('svelte').Snippet;
+		children?: Snippet;
 	}
 
 	let { position, children }: Props = $props();
@@ -13,16 +13,16 @@
 
 	const map = mapContext.getGoogleMap();
 
-	let slotData: HTMLDivElement = $state();
+	let slotRef = $state<HTMLDivElement>();
 
-	const addControl = () => map.controls[position].push(slotData);
-	const removeControl = () => map.controls[position].clear();
+	const addControl = () => slotRef && map && map.controls[position].push(slotRef);
+	const removeControl = () => map && map.controls[position].clear();
 
 	onMount(addControl);
 	onDestroy(removeControl);
 </script>
 
-<div bind:this={slotData}>
+<div bind:this={slotRef}>
 	{#if children}{@render children()}{:else}
 		<div class="m-2 p-2 bg-white text-red-600 text-md rounded-md">error</div>
 	{/if}

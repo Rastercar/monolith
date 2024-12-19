@@ -1,19 +1,7 @@
 import { browser } from '$app/environment';
+import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/localStorage';
 import { getContext, setContext } from 'svelte';
 import { DARK_MODE_KEY, LAYOUT_CONTEXT_KEY, THEME_KEY } from './keys';
-
-function loadFromLocalStorage<T>(key: string, defaultValue: T): T {
-	if (browser) {
-		const v = localStorage.getItem(key);
-		return v ? JSON.parse(v) : defaultValue;
-	}
-
-	return defaultValue;
-}
-
-const setLocalStorage = (key: string, value: unknown) => {
-	localStorage.setItem(key, JSON.stringify(value));
-};
 
 class LayoutStore {
 	darkMode = $state(true);

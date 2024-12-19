@@ -13,7 +13,7 @@
 	bind:indeterminate
 	{disabled}
 	{checked}
-	class="checkbox disabled:bg-surface-300-600-token disabled:cursor-not-allowed"
+	class="checkbox disabled:bg-surface-300-700 disabled:cursor-not-allowed"
 	type="checkbox"
 	onchange={(e) => onChange(e.currentTarget.checked)}
 />

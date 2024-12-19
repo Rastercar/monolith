@@ -50,7 +50,7 @@
 			{#if data.user}
 				<AuthRedirectLink
 					linkLabel="go to home page"
-					href={route('/client')}
+					href={route('/client/my-profile')}
 					question="False alert?"
 				/>
 			{:else}

@@ -1,12 +1,13 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
-import { trackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
-import { isErrorFromUniqueConstraint } from '$lib/server/db/error.js';
-import { findOrgTrackerById, updateOrgTracker } from '$lib/server/db/repo/tracker.js';
+import { trackerSchema, updateTrackerSchema, type Tracker } from '$lib/api/tracker.schema';
+import { findOrgTrackerById } from '$lib/server/db/repo/tracker.js';
+import { findOrgVehicleById } from '$lib/server/db/repo/vehicle';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { _updateVehicleTracker } from './+server';
 
 export const load = async ({ params, locals }) => {
 	const { user } = acl(locals);
@@ -33,19 +34,19 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, updateTrackerSchema);
 
-		const trackerOrError = await updateOrgTracker(trackerId, user.organization.id, form.data).catch(
-			(e) => {
-				if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
-					return 'vehicle_tracker_imei_unique';
-				}
-			}
-		);
-
-		if (trackerOrError === 'vehicle_tracker_imei_unique') {
-			return setError(form, 'imei', 'IMEI in use by another tracker');
+		if (form.data.vehicleId) {
+			const vehicle = await findOrgVehicleById(form.data.vehicleId, user.organization.id);
+			if (!vehicle) setError(form, 'vehicleId', 'vehicle not found');
 		}
 
-		const updatedTracker = trackerSchema.parse(trackerOrError);
-		return { form, updatedTracker };
+		const res = await _updateVehicleTracker(trackerId, user.organization.id, form.data);
+
+		if ('error' in res) {
+			if (res.error === 'IMEI_IN_USE') {
+				return setError(form, 'imei', 'IMEI in use by another tracker');
+			}
+		}
+
+		return { form, updatedTracker: res as Tracker };
 	}
 };

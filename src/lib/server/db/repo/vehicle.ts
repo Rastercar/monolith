@@ -26,7 +26,11 @@ export async function findOrgVehiclesWithPagination(
 export function findOrgVehicleById(id: number, orgId: number) {
 	return db.query.vehicle.findFirst({
 		where: (vehicle, { eq, and }) => and(eq(vehicle.organizationId, orgId), eq(vehicle.id, id)),
-		with: { vehicleTracker: true }
+		with: {
+			vehicleTracker: {
+				with: { simCards: true }
+			}
+		}
 	});
 }
 

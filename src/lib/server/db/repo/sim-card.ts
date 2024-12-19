@@ -38,6 +38,13 @@ export function findOrgSimCardById(id: number, orgId: number) {
 	});
 }
 
+export function findOrgSimCardsByVehicleTrackerId(vehicleTrackerId: number, orgId: number) {
+	return db.query.simCard.findMany({
+		where: (simCard, { eq, and }) =>
+			and(eq(simCard.vehicleTrackerId, vehicleTrackerId), eq(simCard.organizationId, orgId))
+	});
+}
+
 export async function updateOrgSimCard(id: number, orgId: number, body: UpdateSimCardBody) {
 	const [updatedSimCard] = await db
 		.update(simCard)

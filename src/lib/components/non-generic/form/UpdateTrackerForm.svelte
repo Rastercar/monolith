@@ -14,6 +14,8 @@
 	interface Props {
 		trackerId: number;
 
+		extraClasses?: string;
+
 		initialValues?: Tracker;
 
 		formSchema: SuperValidated<Infer<typeof updateTrackerSchema>>;
@@ -23,7 +25,14 @@
 		onUpdated: (_: Tracker) => void;
 	}
 
-	let { formSchema, trackerId, initialValues, children, onUpdated }: Props = $props();
+	let {
+		formSchema,
+		trackerId,
+		initialValues,
+		extraClasses = '',
+		children,
+		onUpdated
+	}: Props = $props();
 
 	const sForm = superForm(formSchema, {
 		validators: zodClient(updateTrackerSchema),
@@ -32,7 +41,7 @@
 			if (form.valid && action.updatedTracker) onUpdated(action.updatedTracker);
 		}
 	});
-	const { submitting: isLoading } = sForm;
+	const { submitting: isLoading, form } = sForm;
 
 	onMount(() => {
 		if (initialValues) sForm.reset({ data: { ...initialValues } });
@@ -40,7 +49,7 @@
 </script>
 
 <form
-	class="grid grid-cols-1 md:grid-cols-2 gap-4"
+	class={`grid grid-cols-1 md:grid-cols-2 gap-4 ${extraClasses}`}
 	method="POST"
 	action={route('updateTracker /client/tracking/trackers/[tracker_id=integer]', {
 		tracker_id: trackerId.toString()
@@ -55,6 +64,12 @@
 		label="Model *"
 		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
 	/>
+
+	<!--
+		Important: if we dont provide a vehicle field it will be sent as
+		null and unintentionally dissasociate the tracker with its vehicle
+		-->
+	<input type="hidden" name="vehicleId" value={$form.vehicleId} />
 
 	{#if children}
 		{@render children({ isLoading: $isLoading })}

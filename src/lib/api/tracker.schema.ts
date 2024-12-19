@@ -36,8 +36,9 @@ export const createTrackerSchema = z.object({
 });
 
 export const updateTrackerSchema = z.object({
-	imei: z.string().min(1),
-	model: z.enum(trackerModels)
+	imei: z.string().min(1).optional(),
+	model: z.enum(trackerModels).optional(),
+	vehicleId: z.number().gte(1).nullish()
 });
 
 export const trackerSchema = z.object({
@@ -74,3 +75,5 @@ export type DeleteTrackerBody = z.infer<typeof deleteTrackerSchema>;
 export type GetTrackerLocationsFilters = z.infer<typeof getTrackerLocationsSearchParamsSchema>;
 
 export type TrackerLocation = z.infer<typeof trackerLocationSchema>;
+
+export type UpdateTrackerRes = Tracker | { error: 'IMEI_IN_USE' };

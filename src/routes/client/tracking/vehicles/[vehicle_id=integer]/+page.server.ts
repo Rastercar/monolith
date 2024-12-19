@@ -23,7 +23,9 @@ export const load = async ({ params, locals }) => {
 		vehicle,
 		updateVehicleForm: await superValidate(zod(updateVehicleSchema), { defaults: vehicle }),
 		createTrackerForm: await superValidate(zod(createTrackerSchema)),
-		updateTrackerForm: await superValidate(zod(updateTrackerSchema)),
+		updateTrackerForm: await superValidate(zod(updateTrackerSchema), {
+			defaults: vehicle.vehicleTracker ?? undefined
+		}),
 		createSimCardForm: await superValidate(zod(createSimCardSchema)),
 		updateSimCardForm: await superValidate(zod(updateSimCardSchema))
 	};

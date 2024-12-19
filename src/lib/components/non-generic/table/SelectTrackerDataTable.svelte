@@ -1,47 +1,43 @@
-<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
-<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
-<!-- 
-  @component
-  Simple data table for selecting a tracker that is not associated with a vehicle
--->
 <script lang="ts">
-	import type { Paginated } from '$lib/api/common';
-	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
-	import type { Tracker } from '$lib/api/tracker.schema';
+	import { apiGetTrackers } from '$lib/api/tracker';
+	import type { GetTrackersFilters, Tracker } from '$lib/api/tracker.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import { Paginator } from '@skeletonlabs/skeleton';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
 		renderComponent,
 		type ColumnDef,
-		type TableOptions
+		type RowSelectionState
 	} from '@tanstack/svelte-table';
-	import { derived, writable } from 'svelte/store';
+	import { Popover } from 'bits-ui';
+	import type { Snippet } from 'svelte';
 
-	const pagination = writable({ page: 1, pageSize: 5 });
-	const filters = writable<GetTrackersFilters>({ withAssociatedVehicle: false });
+	interface Props {
+		bottomRight?: Snippet<[{ isLoading: boolean; selectedTracker: Tracker | null }]>;
+	}
 
-	const query = createQuery(
-		derived([pagination, filters], ([$pagination, $filters]) => ({
-			queryKey: ['trackers', $pagination, $filters],
-			placeholderData: keepPreviousData,
-			queryFn: async (): Promise<Paginated<Tracker>> => {
-				const result = await apiGetTrackers({ pagination: $pagination, filters: $filters });
+	const { bottomRight }: Props = $props();
 
-				// since we are doing server side pagination, we need to
-				// clear the row selection since the dataset changes bellow
-				$table.resetRowSelection();
+	const pagination = $state({ page: 1, pageSize: 5 });
+	const filters = $state<GetTrackersFilters>({ withAssociatedVehicle: false });
 
-				$options.data = result.records;
+	let rowSelection = $state<RowSelectionState>({});
 
-				return result;
-			}
-		}))
-	);
+	const query = createQuery(() => ({
+		queryKey: ['trackers', pagination, filters],
+		queryFn: async () => {
+			const result = await apiGetTrackers({ pagination: pagination, filters: filters });
+
+			// reset row selection since the dataset changed
+			rowSelection = {};
+
+			return result;
+		}
+	}));
 
 	const columns: ColumnDef<Tracker>[] = [
 		{
@@ -59,101 +55,85 @@
 		},
 		{
 			id: 'selector',
-			cell: ({ cell }) =>
+			cell: (cell) =>
 				renderComponent(SimpleCheckbox, {
 					checked: cell.row.getIsSelected(),
 					disabled: !cell.row.getCanSelect(),
 					indeterminate: cell.row.getIsSomeSelected(),
-					onChange: cell.row.getToggleSelectedHandler()
+					onChange: (a) => (rowSelection = { [cell.row.id]: a })
 				})
 		}
 	];
 
 	const colspan = columns.length;
 
-	const options = writable<TableOptions<Tracker>>({
-		data: $query.data?.records ?? [],
-		columns: columns,
-		manualPagination: true,
-		enableRowSelection: true,
-		enableMultiRowSelection: false,
-		state: {
-			pagination: {
-				pageIndex: $pagination.page,
-				pageSize: $pagination.pageSize
-			}
-		},
-		getCoreRowModel: getCoreRowModel()
+	const table = $derived(
+		createSvelteTable({
+			data: query.data?.records ?? [],
+			columns: columns,
+			manualPagination: true,
+			enableRowSelection: true,
+			enableMultiRowSelection: false,
+			state: {
+				rowSelection,
+				pagination: {
+					pageIndex: pagination.page,
+					pageSize: pagination.pageSize
+				}
+			},
+			getCoreRowModel: getCoreRowModel()
+		})
+	);
+
+	let selectedTracker = $derived.by(() => {
+		const selectedRow = Object.entries(rowSelection).find(([_, isSelected]) => isSelected);
+
+		if (!selectedRow) return null;
+
+		const rowId = selectedRow[0];
+		return $table.getRow(rowId).original;
 	});
-
-	const table = createSvelteTable(options);
-
-	const showTrackerInfoModal = () => {
-		modalStore.trigger({
-			type: 'alert',
-			title: 'About available trackers',
-			body: 'Only trackers that are not associated with a vehicle can be selected, if you wish to use a tracker that is already installed in a vehicle, please uninstall the tracker.',
-			buttonTextCancel: 'ok'
-		});
-	};
-
-	let selectedTracker: Tracker | null = null;
-
-	$: isLoading = $query.isLoading || $query.isFetching;
-
-	$: {
-		let selectedRowId = Object.keys($table.getState().rowSelection)?.[0] || null;
-
-		if (selectedRowId) {
-			let row = $table.getRow(selectedRowId);
-			selectedTracker = row?.original || null;
-		} else {
-			selectedTracker = null;
-		}
-	}
 </script>
 
-<p class="text-sm mb-4">Select bellow the tracker to use</p>
-
-<hr />
-
 <DebouncedTextField
-	class="label my-4"
-	label="Filter by IMEI"
-	title="Filter by IMEI"
-	on:change={(e) => ($filters.imei = e.detail)}
+	classes="label my-4"
+	placeholder="Filter by IMEI"
+	onChange={(v) => (filters.imei = v)}
 />
 
-<DataTable {table} {colspan} {isLoading} />
+<DataTable {table} isLoading={query.isFetching} />
 
-<div class="mt-4">
-	<Paginator
-		select="select min-w-[150px] py-1"
-		settings={{
-			page: $pagination.page - 1,
-			limit: $pagination.pageSize,
-			size: $query.data?.itemCount ?? 0,
-			amounts: [1, 5, 10, 15]
-		}}
-		maxNumerals={1}
-		showFirstLastButtons
-		on:page={({ detail: zeroIndexedPage }) => {
-			$pagination.page = zeroIndexedPage + 1;
-		}}
-		on:amount={({ detail: pageSize }) => {
-			$pagination.pageSize = pageSize;
-		}}
-	/>
-</div>
+<DataTableFooter
+	extraClasses="mt-4"
+	bind:page={pagination.page}
+	bind:pageSize={pagination.pageSize}
+	data={query.data?.records ?? []}
+	count={query.data?.itemCount ?? 0}
+/>
 
 <div class="flex justify-between items-center">
-	<button
-		type="button"
-		class="btn !bg-transparent p-0 text-surface-700-200-token"
-		on:click={showTrackerInfoModal}
-	>
-		not finding your tracker ?
-	</button>
+	<Popover.Root>
+		<Popover.Trigger>
+			<button type="button" class="btn p-0 text-primary-800-200 ml-auto">
+				not finding your tracker ?
+			</button>
+		</Popover.Trigger>
 
-	<slot name="bottom-right" {isLoading} {selectedTracker} />
+		<Popover.Portal>
+			<Popover.Content
+				class="z-30 max-w-96 rounded-lg bg-surface-200-800 p-4 shadow-lg"
+				align="end"
+				sideOffset={8}
+			>
+				<p>
+					Only trackers that are not associated with a vehicle can be selected, if you wish to use a
+					tracker that is already installed in a vehicle, please uninstall the tracker.
+				</p>
+			</Popover.Content>
+		</Popover.Portal>
+	</Popover.Root>
+
+	{#if bottomRight}
+		{@render bottomRight({ isLoading: query.isFetching, selectedTracker })}
+	{/if}
 </div>

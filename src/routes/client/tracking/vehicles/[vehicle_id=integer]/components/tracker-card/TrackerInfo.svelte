@@ -52,6 +52,9 @@
 	};
 
 	const deleteTracker = async (deleteSimCards: boolean) => {
+		const ok = confirm('Delete the tracker ?\n\nAny positions recieved will be lost');
+		if (!ok) return;
+
 		await deleteTrackerMutation.mutateAsync(deleteSimCards);
 		onTrackerDeleted();
 	};
@@ -59,9 +62,7 @@
 	const onOptionClick = async (opt: string) => {
 		if (opt === 'edit') return onEditModeClicked();
 		if (opt === 'remove') return removeTracker();
-
-		// TODO:
-		// if (e === 'delete') return openDeleteTrackerConfirmModal();
+		if (opt === 'delete') return deleteTracker(false);
 	};
 
 	const auth = getAuthContext();
@@ -114,8 +115,11 @@
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content class="card preset-filled-surface-200-800">
 					{#each menuOptions as { icon, text, id }}
-						<DropdownMenu.Item class="flex select-none rounded py-3 hover:bg-surface-100-900">
-							<button class="flex items-center gap-2 px-4" onclick={() => onOptionClick(id)}>
+						<DropdownMenu.Item
+							class="flex select-none rounded py-3 hover:bg-surface-100-900"
+							onclick={() => onOptionClick(id)}
+						>
+							<button class="flex items-center gap-2 px-4">
 								<Icon {icon} height={18} />{text}
 							</button>
 						</DropdownMenu.Item>

@@ -1,8 +1,9 @@
-<!-- @migration-task Error while migrating Svelte code: 'default' is a reserved word in JavaScript and cannot be used here -->
 <script lang="ts">
 	import { apiSetTrackerVehicle } from '$lib/api/tracker';
 	import type { Tracker, createTrackerSchema } from '$lib/api/tracker.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import CreateTrackerForm from '$lib/components/non-generic/form/CreateTrackerForm.svelte';
+	import SelectTrackerDataTable from '$lib/components/non-generic/table/SelectTrackerDataTable.svelte';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
 	import { showErrorToast } from '$lib/store/toast';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -54,20 +55,19 @@
 	]}
 />
 
-<!-- TODO: -->
 {#if selectedTrackerForm === 'existing-tracker'}
-	<!-- <SelectTrackerDataTable>
-		<div slot="bottom-right" let:isLoading let:selectedTracker>
+	<SelectTrackerDataTable>
+		{#snippet bottomRight({ selectedTracker, isLoading })}
 			<LoadableButton
 				isLoading={selectTrackerMutation.isPending}
-				classes="btn variant-filled-primary mt-4"
+				classes="btn preset-filled-primary-200-800 mt-4"
 				disabled={!selectedTracker || isLoading}
 				onclick={() => associateTrackerToVehicle(selectedTracker)}
 			>
 				use selected tracker
 			</LoadableButton>
-		</div>
-	</SelectTrackerDataTable> -->
+		{/snippet}
+	</SelectTrackerDataTable>
 {:else}
 	<CreateTrackerForm {formSchema} vehicleIdToAssociate={vehicleId} onCreated={onTrackerCreated} />
 {/if}

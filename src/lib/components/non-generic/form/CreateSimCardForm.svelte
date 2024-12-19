@@ -31,7 +31,7 @@
 		onCreate?: (_: SimCard) => void;
 	}
 
-	let { formSchema, slotNumber = 1, onCreate, children }: Props = $props();
+	let { formSchema, slotNumber = 1, trackerIdToAssociate, onCreate, children }: Props = $props();
 
 	const sForm = superForm(formSchema, {
 		id: `sim-card-form-for-slot-${slotNumber ?? 0}`,
@@ -77,6 +77,8 @@
 	<TextField form={sForm} name="puk" label="PUK 1" placeholder="00000000" maxlength={8} />
 
 	<TextField form={sForm} name="puk2" label="PUK 2" placeholder="00000000" maxlength={8} />
+
+	<input type="hidden" name="vehicleTrackerId" value={trackerIdToAssociate} />
 
 	{#if children}
 		{@render children()}

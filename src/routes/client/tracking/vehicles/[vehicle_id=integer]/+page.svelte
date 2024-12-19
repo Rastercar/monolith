@@ -18,7 +18,7 @@
 	};
 
 	const onVehicleUpdated = (v: Vehicle) => {
-		vehicle = v;
+		vehicle = { ...vehicle, ...v };
 	};
 </script>
 

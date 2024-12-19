@@ -2,6 +2,7 @@
 	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker, createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
+	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
 	import Icon from '@iconify/svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
@@ -54,12 +55,12 @@
 							onEditModeClicked={() => (editMode = true)}
 						/>
 					{:else}
-						<div class="px-4">
+						<div class="p-4">
 							<div class="flex justify-between items-center">
 								<span>Updating vehicle tracker</span>
 
 								<button
-									class="btn-icon btn-icon-sm preset-filled-primary-200-800"
+									class="btn-icon preset-filled-primary-200-800"
 									onclick={() => (editMode = false)}
 								>
 									<Icon icon="mdi:pencil-off" />
@@ -68,15 +69,15 @@
 
 							<hr class="hr my-4" />
 
-							<!-- TODO: -->
-							<!-- <UpdateTrackerForm
-									{tracker}
-									formSchema={updateTrackerForm}
-									on:tracker-updated={(e) => {
-										editMode = false;
-										setTracker(e);
-									}}
-								/> -->
+							<UpdateTrackerForm
+								trackerId={vehicle.vehicleTracker.id}
+								initialValues={vehicle.vehicleTracker}
+								formSchema={updateTrackerForm}
+								onUpdated={(e) => {
+									editMode = false;
+									setTracker(e);
+								}}
+							/>
 						</div>
 					{/if}
 				{:else}

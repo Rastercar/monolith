@@ -62,8 +62,13 @@ export const apiDeleteTracker = (trackerId: number, opts?: DeleteTrackerBody) =>
 export const apiSetTrackerVehicle = (ids: {
 	vehicleId: number | null;
 	vehicleTrackerId: number;
-}): Promise<string> =>
-	api.put({ vehicleId: ids.vehicleId }, `/tracker/${ids.vehicleTrackerId}/vehicle`).json<string>();
+}): Promise<string> => {
+	const url = route('PUT /client/tracking/trackers/[tracker_id=integer]', {
+		tracker_id: ids.vehicleTrackerId.toString()
+	});
+
+	return api.put({ vehicleId: ids.vehicleId }, url).json<string>();
+};
 
 /**
  * get SIM cards that belong to a tracker

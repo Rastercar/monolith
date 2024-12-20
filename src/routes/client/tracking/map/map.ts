@@ -1,4 +1,5 @@
 import type { TrackerPosition } from '$lib/api/tracking.schema';
+import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
 import { Socket, io } from 'socket.io-client';
 
 /**
@@ -25,16 +26,11 @@ interface ClientToServerEvents {
 }
 
 /**
- * the SocketIO namespace for vehicle tracking
- */
-export const SOCKET_IO_TRACKING_NAMESPACE = 'tracking';
-
-/**
  * creates a SocketIO connection to the rastercar API under the tracking namspace
  */
 export const createWsConnectionToTrackingNamespace = (): Socket<
 	ServerToClientEvents,
 	ClientToServerEvents
-> =>
-	// TODO:
-	io(`http://localhost:3000/${SOCKET_IO_TRACKING_NAMESPACE}`, { reconnectionDelayMax: 10_000 });
+> => {
+	return io(`/${SOCKET_IO_TRACKING_NAMESPACE}`, { reconnectionDelayMax: 10_000 });
+};

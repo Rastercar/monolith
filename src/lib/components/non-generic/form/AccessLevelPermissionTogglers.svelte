@@ -8,7 +8,6 @@
 		type permission,
 		type permissionCategory
 	} from '$lib/constants/permissions';
-	import { getAuthContext } from '$lib/store/auth.svelte';
 	import Icon from '@iconify/svelte';
 
 	interface Props {
@@ -36,8 +35,6 @@
 			[permissionCategory, PermissionDetailsAndKey[]]
 		]
 	);
-
-	const auth = getAuthContext();
 </script>
 
 {#each permissionsByCategory as [category, permissions], i}

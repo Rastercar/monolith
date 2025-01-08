@@ -1,5 +1,6 @@
-import amqp, { type Channel, type Connection, type Options } from 'amqplib';
+import amqp, { type Channel, type Connection, type ConsumeMessage, type Options } from 'amqplib';
 import consola from 'consola';
+import { handleH02TrackerPosition } from '../tracking/h02/position';
 import {
 	DEFAULT_EXCHANGE,
 	MAILER_QUEUE,
@@ -7,6 +8,9 @@ import {
 	TRACKER_EVENTS_QUEUE
 } from './constants';
 import { getRmqConnectionErrorInfo } from './rmq-helpers';
+import { VEHICLE_TRACKER_IMEI_TO_ID_CACHE } from './tracker-event-handlers';
+
+type RmqConsumeCallback = (_: ConsumeMessage | null) => void;
 
 /**
  * Max RabbitMQ reconnection attempts
@@ -76,6 +80,9 @@ export class RabbitMQConnection {
 			await this.declareQueues().catch(this.handleFatalError);
 			await this.declareExchanges().catch(this.handleFatalError);
 			await this.bindQueuesAndExchanges().catch(this.handleFatalError);
+
+			// start consuming tracker events
+			this.startTrackerEventsConsumer();
 		} catch (error) {
 			this.handleConnectionError(error);
 		}
@@ -177,7 +184,7 @@ export class RabbitMQConnection {
 	 *
 	 * TODO: set tracing headers here !
 	 */
-	async publish(
+	publish(
 		exchange = DEFAULT_EXCHANGE,
 		routingKey: string,
 		content: Parameters<typeof Buffer.from>[0],
@@ -185,5 +192,64 @@ export class RabbitMQConnection {
 	) {
 		if (!this.publishChannel) return;
 		return this.publishChannel.publish(exchange, routingKey, Buffer.from(content), options);
+	}
+
+	consume(queue: string, cb: RmqConsumeCallback, opts: Options.Consume) {
+		if (!this.consumeChannel) return;
+		this.consumeChannel.consume(queue, cb, opts);
+	}
+
+	private startTrackerEventsConsumer() {
+		this.consume(
+			TRACKER_EVENTS_QUEUE,
+			(delivery) => {
+				// if the delivery is null, the consumer is canceled or the connection
+				// is closed we cant do anything so just return
+				if (!delivery) return;
+
+				// tracking events routing keys have the following pattern
+				// {protocol}.{type}.{imei}
+				//
+				// - protocol: the original protocol of the tracker
+				// - type: eventy type, eg: "position", "alert", "heartbeat"
+				// - imei: the tracking device IMEI
+				const routingKey = delivery.fields.routingKey;
+
+				const routingKeyFields = routingKey.split('.');
+
+				if (routingKeyFields.length < 3) {
+					consola.error('[RMQ] invalid tracker event routing key');
+					return;
+				}
+
+				const [protocol, eventType, imei] = routingKeyFields;
+
+				if (!protocol || !eventType || !imei) {
+					consola.error('[RMQ] empty tracker event routing key');
+					return;
+				}
+
+				const protocolAndEvent = `${protocol}.${eventType}`;
+
+				if (protocolAndEvent !== 'h02.location') {
+					consola.info(`[RMQ] unknown protocol/event combination: ${protocol}/${eventType}`);
+					return;
+				}
+
+				VEHICLE_TRACKER_IMEI_TO_ID_CACHE.get(imei).then((trackerId) => {
+					if (!trackerId) {
+						consola.warn(`[RMQ] tracker of imei: ${imei} not found`);
+						return;
+					}
+
+					handleH02TrackerPosition(trackerId, delivery.content);
+				});
+			},
+			{
+				// automatically acknowledge messages
+				noAck: true,
+				consumerTag: 'monolith_tracker_events_consumer'
+			}
+		);
 	}
 }

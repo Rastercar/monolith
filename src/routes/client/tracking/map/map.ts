@@ -1,6 +1,5 @@
 import type { TrackerPosition } from '$lib/api/tracking.schema';
-import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
-import { Socket, io } from 'socket.io-client';
+import { type Socket, io } from 'socket.io-client';
 
 /**
  * events recieved by the rastercar api
@@ -32,5 +31,6 @@ export const createWsConnectionToTrackingNamespace = (): Socket<
 	ServerToClientEvents,
 	ClientToServerEvents
 > => {
-	return io(`/${SOCKET_IO_TRACKING_NAMESPACE}`, { reconnectionDelayMax: 10_000 });
+	// TODO: on prod connect to 3000 on dev connect to 5173
+	return io(`http://localhost:5173/tracking`, { reconnectionDelayMax: 10_000 });
 };

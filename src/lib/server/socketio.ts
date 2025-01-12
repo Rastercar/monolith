@@ -1,11 +1,18 @@
-import { Server } from 'socket.io';
+import { type Server } from 'socket.io';
 import { SOCKET_IO_TRACKING_NAMESPACE } from '../constants/socket-io';
 
+export function setSocketIoInstance(io: Server) {
+	globalThis.io = io;
+}
+
+export function getSocketIoInstance(): Server | null {
+	return globalThis.io ?? null;
+}
+
+// TODO: configure me to prod
 /**
  * Configures a socket io server with the needed callbacks for application logic
- *
  */
-// TODO: configure me to prod
 export function configureSocketIoServer(io: Server) {
 	io.of(SOCKET_IO_TRACKING_NAMESPACE).on('connection', (socket) => {
 		// TODO:

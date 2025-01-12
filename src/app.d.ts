@@ -46,13 +46,3 @@ declare namespace App {
 		};
 	}
 }
-
-/**
- * TODO: check im needed (probably not anymore !)
- */
-declare namespace svelteHTML {
-	interface HTMLAttributes<T> {
-		'on:accept'?: (event: CustomEvent<T>) => void;
-		'on:complete'?: (event: CustomEvent<T>) => void;
-	}
-}

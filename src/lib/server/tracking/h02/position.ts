@@ -1,4 +1,5 @@
-import { createVehicleTrackerLocation } from '$lib/server/db/repo/vehicle-tracker-location';
+import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
+import { getSocketIoInstance } from '$lib/server/socketio';
 import { z } from 'zod';
 
 export const h02TrackerPositionSchema = z.object({
@@ -30,35 +31,23 @@ export async function handleH02TrackerPosition(vehicleTrackerId: number, data: B
 	// TODO: handle possible errors
 	const position = h02TrackerPositionSchema.parse(json);
 
-	await createVehicleTrackerLocation({
-		// TODO:
-		time: '',
-		vehicleTrackerId,
-		point: [position.lng, position.lat]
-	});
+	// await createVehicleTrackerLocation({
+	// 	// TODO:
+	// 	time: '',
+	// 	vehicleTrackerId,
+	// 	point: [position.lng, position.lat]
+	// });
 
 	// TODO: send this to socket somehow (how do i get the socket instance ???)
 
-	// 	let parse_result: Result<shared::dto::decoder::h02::LocationMsg, serde_json::Error> =
-	// 	serde_json::from_slice(delivery.data.as_slice());
+	// TODO: Problem, when running in development mode, the SocketIO instance is created
+	// on the vite websocket plugin (see vite.config.ts), but we cannot set global values
+	// of other modules there since the modules get re-evaluated after the plugin runs
+	// and so the global value (SocketIo instance) would be reset
+	const io = getSocketIoInstance();
+	if (!io) return;
 
-	// match parse_result {
-	// 	Ok(decoded) => {
-	// 		let position = PositionDto {
-	// 			lat: decoded.lat,
-	// 			lng: decoded.lng,
-	// 			timestamp: decoded.timestamp,
-	// 			tracker_id,
-	// 		};
-
-	// 		let _ = socket
-	// 			.of("/tracking")
-	// 			.expect("/tracking socket io namespace not available")
-	// 			.within(tracker_id.to_string())
-	// 			.emit("position", position);
-	// 	}
-	// 	Err(e) => {
-	// 		error!("failed to parse H02 location: {e}");
-	// 	}
-	// }
+	// send the location to the vehicle tracker room (room name is the tracker id)
+	// TODO: TS type the emmited event
+	io.of(SOCKET_IO_TRACKING_NAMESPACE).to(vehicleTrackerId.toString()).emit('position', position);
 }

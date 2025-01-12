@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { env } from '$lib/env/private-env';
 import consola from 'consola';
 import type { Logger } from 'drizzle-orm';
@@ -26,8 +27,10 @@ export const db = drizzle<typeof schema>({
 	logger: env.DATABASE_QUERY_LOGGING ? new ConsolaLogger() : false
 });
 
-consola.info('[DB] running migrations');
-migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
+if (!building) {
+	consola.info('[DB] running migrations');
+	migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
+}
 
 /** noop to load the db connection */
 export const initDb = () => null;

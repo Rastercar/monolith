@@ -108,6 +108,12 @@
 		const connect = async () => {
 			socket = createWsConnectionToTrackingNamespace();
 
+			console.log('registering callbacks !');
+
+			socket.on('eventFromServer', () => {
+				console.log('got event from server');
+			});
+
 			socket.on('position', ({ trackerId, ...position }) => {
 				mapContext.trackerPositionCache[trackerId] = position;
 			});
@@ -148,10 +154,11 @@
 
 		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
 
-		if (socket) {
-			socket.disconnect();
-			socket = null;
-		}
+		// TODO: this is getting called on init for some reason
+		// if (socket) {
+		// 	socket.disconnect();
+		// 	socket = null;
+		// }
 	});
 </script>
 

@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import {
 	getRouteMetaFromPath as getPageMetaFromPath,
 	redirectToStartingPage
@@ -10,9 +11,11 @@ import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
 import { type Handle } from '@sveltejs/kit';
 import { bootstrapApplication } from './bootstrap';
 
-// important: initialize telemetry before anything else
-initTelemetry();
-bootstrapApplication();
+if (!building) {
+	// important: initialize telemetry before anything else
+	initTelemetry();
+	bootstrapApplication();
+}
 
 // server hook:
 //

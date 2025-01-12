@@ -6,3 +6,7 @@ export function wrapToArray<T>(v: T | T[]): T[] {
 	if (Array.isArray(v)) return v;
 	return [v];
 }
+
+export function range(n: number) {
+	return new Array(n).map((_, i) => i);
+}

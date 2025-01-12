@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import amqp, { type Channel, type Connection, type ConsumeMessage, type Options } from 'amqplib';
 import consola from 'consola';
 import { handleH02TrackerPosition } from '../tracking/h02/position';
@@ -8,7 +9,7 @@ import {
 	TRACKER_EVENTS_QUEUE
 } from './constants';
 import { getRmqConnectionErrorInfo } from './rmq-helpers';
-import { VEHICLE_TRACKER_IMEI_TO_ID_CACHE } from './tracker-event-handlers';
+import { VEHICLE_TRACKER_IMEI_TO_ID_CACHE } from './tracker-id-cache';
 
 type RmqConsumeCallback = (_: ConsumeMessage | null) => void;
 
@@ -52,7 +53,11 @@ export class RabbitMQConnection {
 
 	constructor(connetionUrl: string) {
 		this.connetionUrl = connetionUrl;
-		this.connect();
+
+		// dont attempt to connect to rabbitmq if this code is running during
+		// the app build proccess as the connection is most likely unavailable
+		// in such context
+		if (!building) this.connect();
 	}
 
 	async connect() {
@@ -238,7 +243,7 @@ export class RabbitMQConnection {
 
 				VEHICLE_TRACKER_IMEI_TO_ID_CACHE.get(imei).then((trackerId) => {
 					if (!trackerId) {
-						consola.warn(`[RMQ] tracker of imei: ${imei} not found`);
+						consola.info(`[RMQ] tracker of imei: ${imei} not found`);
 						return;
 					}
 

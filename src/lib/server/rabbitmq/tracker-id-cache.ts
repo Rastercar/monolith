@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db/db';
 import { vehicleTracker } from '../db/schema';
 
-interface CacheMissHistory {
+export interface CacheMissHistory {
 	/**
 	 * epoch (in milliseconds) of the first cache miss
 	 */
@@ -14,10 +14,8 @@ interface CacheMissHistory {
 	cacheMissCount: number;
 }
 
-// TODO: como esse cõdigo aqui é critico mas o caso de erro nao vai ocorrer localmente, vamos criar os testes usando
-// deno (apos migrar pro deno)
-class VehicleTrackerImeiToIdCache {
-	db = db;
+export class VehicleTrackerImeiToIdCache {
+	private db = db;
 
 	/**
 	 * key: imei
@@ -29,26 +27,22 @@ class VehicleTrackerImeiToIdCache {
 	 * key: imei
 	 * val: cache miss history for said IMEI
 	 */
-	imeiToCacheMissHistory: Record<string, CacheMissHistory | undefined> = {};
+	imeiToMissHistory: Record<string, CacheMissHistory | undefined> = {};
 
 	/**
 	 * amount of times a imei can fail to find a tracker ID before
 	 * the next attempts are ignored (for a while) to avoid performance costs
 	 */
-	maxConsecutiveCacheMisses = 5;
+	maxConsecutiveMisses = 5;
 
-	secondsToIgnoreAttemptsAfterMaxConsecutiveCacheMissesReached = 5 * 60;
+	millisecondsToIgnoreAttemptsAfterMaxMissesReached = 5 * 60 * 1000;
 
-	private set(imei: string, id: number) {
-		this.imeiToId[imei] = id;
-	}
-
-	private delete(imei: string) {
+	delete(imei: string) {
 		delete this.imeiToId[imei];
-		delete this.imeiToCacheMissHistory[imei];
+		delete this.imeiToMissHistory[imei];
 	}
 
-	private async getFromDb(imei: string): Promise<number | null> {
+	async getFromDb(imei: string): Promise<number | null> {
 		const result = await this.db
 			.select({ id: vehicleTracker.id })
 			.from(vehicleTracker)
@@ -60,27 +54,28 @@ class VehicleTrackerImeiToIdCache {
 
 	/**
 	 * gets a tracker ID by IMEI, attempts to get the value
-	 * on the cache first and if not found hits the DB
+	 * on the cache first and fallbacks to the DB on a miss
 	 *
 	 * If there was too many failed attempts for a given imei, its assumed a tracker with this imei does not exist
 	 * and for a period of time NULL will be returned for all GET attempts to avoid needlessly accessing the database
 	 */
 	async get(imei: string): Promise<number | null> {
-		const cacheMissistory = this.imeiToCacheMissHistory[imei];
+		const cacheMissHistory = this.imeiToMissHistory[imei];
 
-		if (cacheMissistory) {
-			// TODO: this is wrong i should compare against the ellapsed time since first miss at
-			const isWithinTimeWindow =
-				cacheMissistory.firstMissAt <
-				this.secondsToIgnoreAttemptsAfterMaxConsecutiveCacheMissesReached;
+		// if there is a cache miss history for this imei,
+		// check if the current attempt should be ignored
+		if (cacheMissHistory) {
+			const millisecondsSinceLastMiss = new Date().getTime() - cacheMissHistory.firstMissAt;
 
-			const hasReachedMaxAttempts =
-				cacheMissistory.cacheMissCount >= this.maxConsecutiveCacheMisses;
+			const isWithinIgnoreAttemptTimeWindow =
+				millisecondsSinceLastMiss < this.millisecondsToIgnoreAttemptsAfterMaxMissesReached;
+
+			const hasReachedMaxAttempts = cacheMissHistory.cacheMissCount >= this.maxConsecutiveMisses;
 
 			// If the current attempt is within the time window and the maximun amount
 			// of attempts has been reached, avoid trying to get the value from the
 			// cache or the database as it will most likely be none.
-			if (isWithinTimeWindow && hasReachedMaxAttempts) {
+			if (isWithinIgnoreAttemptTimeWindow && hasReachedMaxAttempts) {
 				return null;
 			}
 		}
@@ -89,29 +84,38 @@ class VehicleTrackerImeiToIdCache {
 		if (cachedId) return cachedId;
 
 		const idFromDb = await this.getFromDb(imei);
-		if (idFromDb) return idFromDb;
+		if (idFromDb) {
+			this.imeiToId[imei] = idFromDb;
+			return idFromDb;
+		}
 
+		// at this point there has been a cache miss and a DB miss
 		const nowEpoch = new Date().getTime();
 
-		if (!this.imeiToCacheMissHistory[imei]) {
-			this.imeiToCacheMissHistory[imei] = { cacheMissCount: 1, firstMissAt: nowEpoch };
+		// if there is no cache miss history for this imei, create it
+		if (!this.imeiToMissHistory[imei]) {
+			this.imeiToMissHistory[imei] = { cacheMissCount: 1, firstMissAt: nowEpoch };
 			return null;
 		}
 
-		const { cacheMissCount, firstMissAt } = this.imeiToCacheMissHistory[imei];
+		// if this is another cache miss we need to determine if should
+		// reset the cacheMissCount and the firstMissAt instance
+		const { firstMissAt } = this.imeiToMissHistory[imei];
 
-		// TODO:
-		const ellapsedSeconds = 10;
+		const millisecondsSinceFirstMiss = nowEpoch - firstMissAt;
 
-		const isWithinTimeWindow =
-			ellapsedSeconds < this.secondsToIgnoreAttemptsAfterMaxConsecutiveCacheMissesReached;
+		const isWithinIgnoreTimeWindow =
+			millisecondsSinceFirstMiss < this.millisecondsToIgnoreAttemptsAfterMaxMissesReached;
 
-		if (isWithinTimeWindow) {
-			this.imeiToCacheMissHistory[imei].cacheMissCount++;
-		} else {
-			this.imeiToCacheMissHistory[imei] = { cacheMissCount: 1, firstMissAt: nowEpoch };
+		// if the current miss is within the ignore attempt time window then just increment the counter
+		if (isWithinIgnoreTimeWindow) {
+			this.imeiToMissHistory[imei].cacheMissCount++;
+			return null;
 		}
 
+		// if the miss is after the ignore time windown, then should reset the miss count and set firstMissAt
+		// to the current time instance, this 'resets' the cache means further attempts wont be ignored
+		this.imeiToMissHistory[imei] = { cacheMissCount: 1, firstMissAt: nowEpoch };
 		return null;
 	}
 }

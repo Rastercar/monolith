@@ -79,7 +79,7 @@ export class RabbitMQConnection {
 			this.consumeChannel = await this.connection.createChannel();
 
 			this.reconectionAttempt = 0;
-			consola.info(`[RMQ] connected`);
+			consola.info('[RMQ] connected');
 
 			// create needed queues, exchanges and bindings
 			await this.declareQueues().catch(this.handleFatalError);

@@ -1,3 +1,4 @@
+import consola from 'consola';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/db';
 import { vehicleTracker } from '../db/schema';
@@ -16,6 +17,11 @@ export interface CacheMissHistory {
 
 export class VehicleTrackerImeiToIdCache {
 	private db = db;
+	private debug = false;
+
+	constructor(debug: boolean) {
+		this.debug = debug;
+	}
 
 	/**
 	 * key: imei
@@ -60,6 +66,8 @@ export class VehicleTrackerImeiToIdCache {
 	 * and for a period of time NULL will be returned for all GET attempts to avoid needlessly accessing the database
 	 */
 	async get(imei: string): Promise<number | null> {
+		if (this.debug) consola.debug('[tracker-cache] getting imei', imei);
+
 		const cacheMissHistory = this.imeiToMissHistory[imei];
 
 		// if there is a cache miss history for this imei,
@@ -76,6 +84,7 @@ export class VehicleTrackerImeiToIdCache {
 			// of attempts has been reached, avoid trying to get the value from the
 			// cache or the database as it will most likely be none.
 			if (isWithinIgnoreAttemptTimeWindow && hasReachedMaxAttempts) {
+				if (this.debug) consola.debug(imei, ' returned null due to ignore period');
 				return null;
 			}
 		}
@@ -128,4 +137,4 @@ export class VehicleTrackerImeiToIdCache {
  * consecutive cache misses, this is a realistic scenario if there is a tracker comunicating with the platform but not
  * registered on the database
  */
-export const VEHICLE_TRACKER_IMEI_TO_ID_CACHE = new VehicleTrackerImeiToIdCache();
+export const VEHICLE_TRACKER_IMEI_TO_ID_CACHE = new VehicleTrackerImeiToIdCache(true);

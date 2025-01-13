@@ -7,6 +7,7 @@ import {
 	setUserLocalsFromSessionCookie,
 	verifyUserCanAccessAuthenticatedRoute
 } from '$lib/server/middlewares/auth';
+import { ensureSocketIoServerIsConfigured } from '$lib/server/socketio';
 import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
 import { type Handle } from '@sveltejs/kit';
 import { bootstrapApplication } from './bootstrap';
@@ -25,6 +26,8 @@ if (!building) {
 // This should be as slim as possible and not contain any compute heavy or blocking code
 // such as a HTTP request.
 export const handle: Handle = async ({ event, resolve }) => {
+	ensureSocketIoServerIsConfigured();
+
 	const path = event.url.pathname;
 	const pageMeta = getPageMetaFromPath(path);
 

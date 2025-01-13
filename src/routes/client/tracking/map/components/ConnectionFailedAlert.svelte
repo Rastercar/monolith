@@ -1,4 +1,5 @@
 <script lang="ts">
+	// TODOL:
 	import { nonpassive } from 'svelte/legacy';
 
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
@@ -40,10 +41,9 @@
 	<div class="alert-actions">
 		<LoadableButton
 			isLoading={isConnectingToApi}
-			class="btn btn-sm variant-filled"
+			classes="btn btn-sm variant-filled"
 			contentWrapperClass="flex items-center"
-			loaderWidth="w-4"
-			on:click={() => dispatch('reconnect-click')}
+			onclick={() => dispatch('reconnect-click')}
 		>
 			<div>reconnect</div>
 			<Icon icon="mdi:reload" class="ml-2" />

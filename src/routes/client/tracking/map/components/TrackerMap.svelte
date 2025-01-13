@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
+	import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
 	import { getMapContext, setMapContext } from '$lib/store/map.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import { onDestroy, onMount } from 'svelte';
-	import { createWsConnectionToTrackingNamespace } from '../map';
+	import { createWsConnectionToTrackingNamespace as createSocketIoConnection } from '../map';
 	import TrackerMarker from './TrackerMarker.svelte';
 	import TrackersMapControls from './TrackersMapControls.svelte';
 
@@ -15,7 +16,7 @@
 	/**
 	 * SocketIO connection for realtime tracker position updates
 	 */
-	let socket: ReturnType<typeof createWsConnectionToTrackingNamespace> | null = null;
+	let socket: ReturnType<typeof createSocketIoConnection> | null = null;
 
 	/**
 	 * Timer for deboucing changed tracker selection
@@ -91,7 +92,8 @@
 
 			selectedTrackers = newTrackerIds;
 
-			socket.emit('change_trackers_to_listen', newTrackerIds);
+			// TODO:
+			socket.emit('changeTrackersToListen', newTrackerIds);
 
 			// now that we updated the trackers to see on the map, simply changing the trackers to listen
 			// is not enough, as a position would only be shown when the tracker comunicates with the platform
@@ -106,15 +108,14 @@
 
 	const createWsConnectionToApi = async () => {
 		const connect = async () => {
-			socket = createWsConnectionToTrackingNamespace();
+			socket = createSocketIoConnection(
+				`${window.location.origin}/${SOCKET_IO_TRACKING_NAMESPACE}`
+			);
 
-			console.log('registering callbacks !');
-
-			socket.on('eventFromServer', () => {
-				console.log('got event from server');
-			});
-
+			// TODO: now we must inform the backend what trackers we are interested in,
+			//
 			socket.on('position', ({ trackerId, ...position }) => {
+				console.log('got position', { position });
 				mapContext.trackerPositionCache[trackerId] = position;
 			});
 
@@ -136,9 +137,7 @@
 				showSuccessToast('reconnected');
 				showConnectionErrorAlert = false;
 			})
-			.catch(() => {
-				showErrorToast('connection error');
-			});
+			.catch(() => showErrorToast('connection error'));
 	};
 
 	onMount(async () => {

@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { consola } from 'consola';
 import { lt, sql } from 'drizzle-orm';
 import { db } from './db/db';
@@ -72,7 +73,7 @@ function startCronjobs() {
 
 const runningCrons: Record<string, Cron | undefined> = {};
 
-startCronjobs();
+if (!building) startCronjobs();
 
 /** noop to start cronjobs */
 export const initCronJobs = () => null;

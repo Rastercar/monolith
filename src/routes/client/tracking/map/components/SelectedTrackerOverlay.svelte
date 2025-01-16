@@ -1,49 +1,39 @@
 <script lang="ts">
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import { apiGetVehicleById } from '$lib/api/vehicle';
-	import ArrowUpTooltip from '$lib/components/tooltip/ArrowUpTooltip.svelte';
+	import { apiGetVehicle } from '$lib/api/vehicle';
+	import { route } from '$lib/ROUTES';
+	import type { Position } from '$lib/store/map.svelte';
 	import { isDateOlderThanXMilliseconds, toLocaleDateString } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
-	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { createQuery } from '@tanstack/svelte-query';
-	import type { Position } from '../map';
 
 	interface Props {
 		tracker: Tracker;
 		position: Position;
+		onCloseClick: () => void;
 	}
 
-	let { tracker, position }: Props = $props();
+	let { tracker, position, onCloseClick }: Props = $props();
 
 	const fiveMinutes = 1000 * 60 * 5;
 
-	const drawerStore = getDrawerStore();
-
-	const query = createQuery({
+	const query = createQuery(() => ({
 		enabled: !!tracker.vehicleId,
 		queryKey: ['vehicle', tracker.vehicleId],
-		queryFn: () => apiGetVehicleById(tracker.vehicleId ?? 0)
-	});
+		queryFn: () => apiGetVehicle(tracker.vehicleId ?? 0)
+	}));
 
-	let { data: vehicleTracker } = $derived($query);
+	let { data: vehicleTracker } = $derived(query);
 
 	let isOnline = $derived(
 		!!position.timestamp && isDateOlderThanXMilliseconds(position.timestamp, fiveMinutes)
 	);
-
-	let iconColor = $derived(
-		isOnline ? 'bg-green-700 dark:bg-green-300' : 'bg-red-700 dark:bg-red-300'
-	);
 </script>
 
-<ArrowUpTooltip dataPopup="trackerOverlayStatusPopup">
-	<span class="text-xs">
-		{isOnline
-			? 'this tracker has communicated with the rastercar platform under the last 5 minutes'
-			: 'its been over 5 minutes since a position has been recieved from this tracker'}
-	</span>
-</ArrowUpTooltip>
+{#snippet field(xd: string, value: string | null)}
+	<div><span class="type-scale-2 opacity-80">{xd}:</span> {value ?? 'n/a'}</div>
+{/snippet}
 
 <div class="max-w-sm">
 	<div class="px-4 pt-4">
@@ -57,15 +47,6 @@
 
 		<div class="flex items-center mb-2">
 			status: {isOnline ? 'online' : 'offline'}
-
-			<div
-				use:popup={{
-					event: 'hover',
-					target: 'trackerOverlayStatusPopup',
-					placement: 'top'
-				}}
-				class={`h-2 w-2 ${iconColor} rounded-full ml-2`}
-			></div>
 		</div>
 
 		<div class="mb-2 flex items-center">
@@ -80,15 +61,17 @@
 			{position.lat.toFixed(5)} <span class="ml-4">{position.lng.toFixed(5)}</span>
 		</div>
 
-		<span class="opacity-80 text-xs mt-4">
+		<span class="opacity-80 type-scale-1 mt-4">
 			last position at {new Date(position.timestamp).toLocaleString()}
 		</span>
 
 		<div class="flex mt-1">
 			<a
 				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
-				href={`/client/tracking/trackers/${tracker.id}`}
-				onclick={drawerStore.close}
+				href={route(`/client/tracking/trackers/[tracker_id=integer]`, {
+					tracker_id: tracker.id.toString()
+				})}
+				onclick={onCloseClick}
 			>
 				<Icon icon="mdi:link" class="mr-2" />
 				see details
@@ -109,31 +92,31 @@
 
 		{#if vehicleTracker.photo}
 			<img
-				class="h-40 mb-4 w-full object-cover"
+				class="h-40 mb-4 w-full object-cover px-4"
 				src={cloudFrontUrl(vehicleTracker.photo)}
 				alt="vehicle"
 			/>
 		{/if}
 
 		<div class="px-4">
-			<div><span class="text-sm opacity-80">plate:</span> {vehicleTracker.plate ?? 'n/a'}</div>
-			<div><span class="text-sm opacity-80">brand:</span> {vehicleTracker.brand ?? 'n/a'}</div>
-			<div><span class="text-sm opacity-80">model:</span> {vehicleTracker.model ?? 'n/a'}</div>
-			<div><span class="text-sm opacity-80">color:</span> {vehicleTracker.color ?? 'n/a'}</div>
+			{@render field('plate', vehicleTracker.plate)}
+			{@render field('brand', vehicleTracker.brand)}
+			{@render field('model', vehicleTracker.model)}
+			{@render field('color', vehicleTracker.color)}
 
 			{#if vehicleTracker.modelYear && vehicleTracker.fabricationYear}
 				<div>
-					<span class="text-sm opacity-80">year:</span>
+					<span class="type-scale-2 opacity-80">year:</span>
 					{vehicleTracker.modelYear} / {vehicleTracker.fabricationYear}
 				</div>
 			{:else}
 				<div>
-					<span class="text-sm opacity-80">year: n/a</span>
+					<span class="type-scale-2 opacity-80">year: n/a</span>
 				</div>
 			{/if}
 
 			<div>
-				<span class="text-sm opacity-80">chassis:</span>
+				<span class="type-scale-2 opacity-80">chassis:</span>
 				{vehicleTracker.chassisNumber ?? 'n/a'}
 			</div>
 		</div>
@@ -145,15 +128,17 @@
 		<div class="flex mt-1 px-4">
 			<a
 				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
-				href={`/client/tracking/vehicles/${vehicleTracker.id}`}
-				onclick={drawerStore.close}
+				href={route('/client/tracking/vehicles/[vehicle_id=integer]', {
+					vehicle_id: vehicleTracker.id.toString()
+				})}
+				onclick={onCloseClick}
 			>
 				<Icon icon="mdi:link" class="mr-2" />
 				see details
 			</a>
 		</div>
 	{:else}
-		<div class="p-4 mt-4 text-sm flex items-center text-warning-600-300-token">
+		<div class="p-4 mt-4 type-scale-2 flex items-center text-warning-600-300-token">
 			<Icon icon="mdi:warning" class="mr-2" />
 			This tracker is not installed on a vehicle
 		</div>

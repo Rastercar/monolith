@@ -7,6 +7,12 @@ import {
 import { api, stripUndefined } from './utils';
 import { vehicleSchema, type GetVehiclesFilters, type Vehicle } from './vehicle.schema';
 
+export const apiGetVehicle = (id: number): Promise<Vehicle> =>
+	api
+		.get(route('GET /client/tracking/vehicles/[vehicle_id=integer]', { vehicle_id: id.toString() }))
+		.json<Paginated<Vehicle>>()
+		.then(vehicleSchema.parse);
+
 /**
  * list paginated vehicles that belong to the same organization as the request user
  */

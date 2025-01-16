@@ -1,3 +1,4 @@
+import { vehicleSchema } from '$lib/api/vehicle.schema';
 import { deleteOrgVehicleById, findOrgVehicleById } from '$lib/server/db/repo/vehicle';
 import { acl } from '$lib/server/middlewares/auth';
 import { s3 } from '$lib/server/services/s3';
@@ -16,4 +17,16 @@ export const DELETE: RequestHandler<RouteParams> = async ({ params, locals }) =>
 	if (vehicleToDelete.photo) await s3.deleteFile(vehicleToDelete.photo);
 
 	return json('vehicle deleted');
+};
+
+export const GET: RequestHandler<RouteParams> = async ({ params, locals }) => {
+	const { user } = acl(locals);
+
+	const vehicleId = parseInt(params.vehicle_id);
+	const vehicleFromDb = await findOrgVehicleById(vehicleId, user.organization.id);
+
+	if (!vehicleFromDb) return error(404);
+
+	const vehicle = vehicleSchema.parse(vehicleFromDb);
+	return json(vehicle);
 };

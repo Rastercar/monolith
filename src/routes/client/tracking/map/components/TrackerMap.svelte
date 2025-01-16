@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
+	import type { Tracker } from '$lib/api/tracker.schema';
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 	import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
-	import { getMapContext, setMapContext } from '$lib/store/map.svelte';
+	import { getMapContext, setMapContext, type Position } from '$lib/store/map.svelte';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
+	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import { createWsConnectionToTrackingNamespace as createSocketIoConnection } from '../map';
 	import ConnectionFailedAlert from './ConnectionFailedAlert.svelte';
+	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
 	import TrackerMarker from './TrackerMarker.svelte';
 	import TrackersMapControls from './TrackersMapControls.svelte';
 
@@ -24,6 +27,26 @@
 	 * should be displayed
 	 */
 	let showConnectionErrorAlert = $state(false);
+
+	/**
+	 * if the map libraries have been loaded and the map should be displayed
+	 */
+	let showMap = $state(false);
+
+	let trackerModalIsOpen = $state(false);
+
+	let trackerToDisplay = $state<Tracker | null>(null);
+	let trackerToDisplayPosition = $state<Position | null>(null);
+
+	/**
+	 * Timer for deboucing changed tracker selection
+	 */
+	let trackerSelectionDebounceTimer: ReturnType<typeof setTimeout>;
+
+	/**
+	 * The trackers currently selected to be shown on the map
+	 */
+	let selectedTrackers: number[] = [];
 
 	/**
 	 * SocketIO connection for realtime tracker position updates
@@ -57,16 +80,6 @@
 		mapContext.trackerPositionCache[trackerId] = position;
 	});
 
-	/**
-	 * Timer for deboucing changed tracker selection
-	 */
-	let trackerSelectionDebounceTimer: ReturnType<typeof setTimeout>;
-
-	/**
-	 * The trackers currently selected to be shown on the map
-	 */
-	let selectedTrackers: number[] = [];
-
 	const initMap = async () => {
 		await loadMapLibraries();
 
@@ -99,7 +112,18 @@
 		if (!cachedPositionsBounds.isEmpty()) mapContext.mapInstance.fitBounds(cachedPositionsBounds);
 	};
 
-	let showMap = $state(false);
+	onMount(async () => {
+		await initMap();
+		showMap = true;
+	});
+
+	onDestroy(() => {
+		mapContext.mapElement = undefined;
+		mapContext.mapInstance = undefined;
+
+		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
+		socket.disconnect();
+	});
 
 	// emit a SocketIO message to the rastercar API, informing the trackers we want
 	// to recieve positions of, whenever the tracker selection changed
@@ -143,19 +167,6 @@
 			});
 		});
 	});
-
-	onMount(async () => {
-		await initMap();
-		showMap = true;
-	});
-
-	onDestroy(() => {
-		mapContext.mapElement = undefined;
-		mapContext.mapInstance = undefined;
-
-		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
-		socket.disconnect();
-	});
 </script>
 
 {#if showConnectionErrorAlert}
@@ -188,10 +199,32 @@
 					{position}
 					{tracker}
 					onClick={() => {
-						// TODO: show tracker / vehicle overlay
+						trackerModalIsOpen = true;
+						trackerToDisplay = tracker;
+						trackerToDisplayPosition = position;
 					}}
 				/>
 			{/if}
 		{/each}
 	{/if}
 </div>
+
+<Modal
+	bind:open={trackerModalIsOpen}
+	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl w-[400px] h-screen"
+	positionerJustify="justify-end"
+	positionerPadding=""
+	positionerAlign=""
+	transitionsPositionerIn={{ x: 480, duration: 200 }}
+	transitionsPositionerOut={{ x: 480, duration: 200 }}
+>
+	{#snippet content()}
+		{#if trackerToDisplay && trackerToDisplayPosition}
+			<SelectedTrackerOverlay
+				tracker={trackerToDisplay}
+				position={trackerToDisplayPosition}
+				onCloseClick={() => (trackerModalIsOpen = false)}
+			/>
+		{/if}
+	{/snippet}
+</Modal>

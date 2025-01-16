@@ -1,19 +1,12 @@
 <script lang="ts">
 	import { getMapContext } from '$lib/store/map.svelte';
 	import Icon from '@iconify/svelte';
+	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import MapControl from './MapControl.svelte';
+	import SelectTrackerOverlay from './SelectTrackerOverlay.svelte';
 
 	const mapContext = getMapContext();
-
-	const openSelectTrackersDrawer = () => {
-		// TODO:
-		// const drawerSettings: DrawerSettings = {
-		// 	position: 'bottom',
-		// 	height: 'h-[500px] md:h-[600px]',
-		// 	meta: { component: SelectTrackerOverlay }
-		// };
-		// drawerStore.open(drawerSettings);
-	};
+	let isModalOpen = $state(false);
 
 	const fitMapToTrackersBeingShown = () => {
 		const bounds = mapContext.getTrackersMapBounds();
@@ -23,7 +16,7 @@
 
 <MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
 	<button
-		onclick={openSelectTrackersDrawer}
+		onclick={() => (isModalOpen = true)}
 		class="m-[10px] h-[60px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
 	>
 		<div class="my-auto">
@@ -46,3 +39,16 @@
 		</div>
 	</button>
 </MapControl>
+
+<Modal
+	bind:open={isModalOpen}
+	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl h-[600px] w-screen"
+	contentClasses="overflow-auto"
+	positionerJustify="justify-end"
+	positionerAlign="items-end"
+	positionerPadding=""
+>
+	{#snippet content()}
+		<SelectTrackerOverlay />
+	{/snippet}
+</Modal>

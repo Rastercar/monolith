@@ -13,16 +13,16 @@
 
 	const authContext = getAuthContext();
 
-	const mutation = createMutation({
+	const mutation = createMutation(() => ({
 		mutationFn: () => {
 			const promise = apiConfirmEmailAddress({ confirmingForOrg, token });
 			return awaitPromiseWithMinimumTimeOf(promise, 1_500);
 		},
 		onError: showErrorToast,
 		onSuccess: () => authContext.setUserEmailAsVerified()
-	});
+	}));
 
-	onMount($mutation.mutate);
+	onMount(mutation.mutate);
 </script>
 
 {#snippet homePageLink()}
@@ -33,10 +33,10 @@
 
 <div class="h-full flex justify-center pt-12">
 	<div>
-		{#if $mutation.isPending}
+		{#if mutation.isPending}
 			<h1 class="mb-1 text-center text-xl text-secondary-600-400">confirming your email address</h1>
 			<Progress value={null} classes="mt-4" />
-		{:else if $mutation.isSuccess}
+		{:else if mutation.isSuccess}
 			<h1 class="mb-1 text-center text-xl text-success-600-400">
 				{data.confirmingForOrg
 					? 'organization billing email address confirmed'
@@ -44,7 +44,7 @@
 			</h1>
 
 			{@render homePageLink()}
-		{:else if $mutation.isError}
+		{:else if mutation.isError}
 			<h1 class="mb-1 text-center text-xl text-error-600-400">
 				error confirming your email address
 			</h1>

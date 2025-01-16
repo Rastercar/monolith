@@ -11,13 +11,5 @@ export async function load({ locals, url }) {
 		return error(400, { message: 'You must be logged in to see this page', code: INVALID_SESSION });
 	}
 
-	const defaultLoggedInRouteMeta: RouteMeta = {
-		requiredAuth: 'logged-in'
-	};
-
-	// the else branch should never be reached
-	const loggedInRouteMeta =
-		locals.routeMeta?.requiredAuth === 'logged-in' ? locals.routeMeta : defaultLoggedInRouteMeta;
-
-	return { user: locals.user, routeMeta: loggedInRouteMeta };
+	return { user: locals.user };
 }

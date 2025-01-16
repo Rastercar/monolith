@@ -1,1 +1,3 @@
 export const SOCKET_IO_TRACKING_NAMESPACE = 'tracking';
+
+export const TRACKER_SUBSCRIPTION_PER_USER_LIMIT = 20;

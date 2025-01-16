@@ -4,7 +4,6 @@ import { defineConfig, type ViteDevServer } from 'vite';
 import { kitRoutes } from 'vite-plugin-kit-routes';
 import { purgeCss } from 'vite-plugin-tailwind-purgecss';
 import { type KIT_ROUTES } from './src/lib/ROUTES';
-import { setSocketIoInstance } from './src/lib/server/socketio';
 
 const socketIo = {
 	name: 'socketIo',
@@ -13,7 +12,7 @@ const socketIo = {
 
 		// dont configure the socket io server here as this is done on hooks.server.ts
 		const io = new Server(server.httpServer);
-		setSocketIoInstance(io);
+		globalThis.io = io;
 	}
 };
 

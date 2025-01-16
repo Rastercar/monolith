@@ -10,10 +10,7 @@ const server = createServer(app);
 
 const io = new Server(server);
 
-// TODO: we can set a gloalVariable with the socketIO instance and then
-// use this global variable elsewhere in our code, like:
-// https://github.com/suhaildawood/SvelteKit-integrated-WebSocket/blob/main/src/hooks.server.ts
-// this is great !
+// set a gloalVariable with the socketIO instance
 globalThis.io = io;
 
 // SvelteKit should handle everything else using Express middleware

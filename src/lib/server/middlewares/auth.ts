@@ -27,7 +27,6 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 	}
 
 	const sessionFromDb = await db.query.session.findFirst({
-		with: { user: true },
 		where: (session, { eq }) => eq(session.sessionToken, sessionToken)
 	});
 

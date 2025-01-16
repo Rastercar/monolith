@@ -6,7 +6,7 @@
 
 	interface Props {
 		label?: string | Snippet;
-		classes: string;
+		classes?: string;
 		placeholder?: string;
 		debounceMilliseconds?: number;
 		onChange: (_: string) => void;

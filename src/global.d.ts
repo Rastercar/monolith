@@ -1,12 +1,13 @@
-interface ServerToClientEvents {
-	position: (_position: H02TrackerPosition) => void;
+export interface ServerToClientEvents {
+	error: (message: string) => void;
+	position: (_position: H02TrackerPosition & { trackerId: number }) => void;
 }
 
 export interface ClientToServerEvents {
 	changeTrackersToListen: (_trackerIds: number[]) => void;
 }
 
-type SocketIoServer = import('socket.io').Server<
+export type SocketIoServer = import('socket.io').Server<
 	ClientToServerEvents,
 	ServerToClientEvents,
 	{},

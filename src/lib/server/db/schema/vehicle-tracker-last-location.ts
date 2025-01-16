@@ -6,7 +6,7 @@ export const vehicleTrackerLastLocation = pgTable(
 	'vehicle_tracker_last_location',
 	{
 		vehicleTrackerId: integer('vehicle_tracker_id').primaryKey().notNull(),
-		time: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+		time: timestamp({ withTimezone: true, mode: 'date' }).notNull(),
 		point: geometry().notNull()
 	},
 	(table) => {

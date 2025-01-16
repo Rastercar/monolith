@@ -1,5 +1,6 @@
+import { inArray } from 'drizzle-orm';
 import { db } from '../db';
-import { vehicleTrackerLocation } from '../schema';
+import { vehicleTrackerLastLocation, vehicleTrackerLocation } from '../schema';
 
 interface VehicleTrackerLocation {
 	time: string;
@@ -13,4 +14,13 @@ export async function createVehicleTrackerLocation(location: VehicleTrackerLocat
 	const [createdVehicle] = await db.insert(vehicleTrackerLocation).values(location).returning();
 
 	return createdVehicle;
+}
+
+export async function findMultipleVehicleTrackerLastLocations(ids: number[]) {
+	const positions = await db
+		.select()
+		.from(vehicleTrackerLastLocation)
+		.where(inArray(vehicleTrackerLastLocation.vehicleTrackerId, ids));
+
+	return positions;
 }

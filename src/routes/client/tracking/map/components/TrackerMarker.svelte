@@ -58,6 +58,11 @@
 		if (markerInstance) markerInstance.map = null;
 	};
 
+	$effect(() => {
+		if (!markerInstance) return;
+		markerInstance.position = position;
+	});
+
 	onMount(addMarkerToMap);
 	onDestroy(removeMarkerFromMap);
 </script>

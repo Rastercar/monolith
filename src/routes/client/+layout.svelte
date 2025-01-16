@@ -1,19 +1,27 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { routesMeta, type LoggedInPageMeta } from '$lib/routes-meta';
 	import { getAuthContext } from '$lib/store/auth.svelte';
-	import AppBarUserMenu from './layout/AppBarUserMenu.svelte';
+	import AppHeader from './layout/AppHeader.svelte';
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
-	import DarkModeSwitch from './layout/DarkModeSwitch.svelte';
-	import DrawerHamburgerButton from './layout/DrawerHamburgerButton.svelte';
-	import SidebarNavigation from './layout/SidebarNavigation.svelte';
-	import ThemeSelector from './layout/ThemeSelector.svelte';
-	import UserDisplay from './layout/UserDisplay.svelte';
+	import AppSidebar from './layout/AppSidebar.svelte';
 
 	let { children, data } = $props();
 
-	let { headerVisibility = true, sidebarVisibility = true } = data.routeMeta;
+	const defaultLoggedInRouteMeta: LoggedInPageMeta = { requiredAuth: 'logged-in' };
 
-	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
+	// on previous versions we loaded the route meta on +layout.server.ts
+	// and accessed it on $props().data, but on a client side page navigation
+	// the layout load function would not run and the route meta would be the route of
+	// the previous page, this whacky is not ideal as we load every route meta
+	// just to get the one of the current page, but at least it works
+	const { headerVisibility = true, sidebarVisibility = true } = $derived.by(() => {
+		const currentPageMeta = routesMeta[$page.url.pathname as keyof typeof routesMeta] as
+			| LoggedInPageMeta
+			| undefined;
+
+		return currentPageMeta ?? defaultLoggedInRouteMeta;
+	});
 
 	const auth = getAuthContext();
 
@@ -27,34 +35,21 @@
 >
 	<!-- Header -->
 	{#if headerVisibility}
-		<header class="bg-surface-200-800 p-4">
-			<div class="flex items-center">
-				<DrawerHamburgerButton />
-				<span class="type-scale-5 hidden lg:block">Dashboard</span>
-
-				<DarkModeSwitch classes="ml-auto" />
-				<ThemeSelector extraClasses="max-w-48 mx-4" />
-				<AppBarUserMenu />
-			</div>
-		</header>
+		<AppHeader />
 	{/if}
 
-	<!-- Sidebar -->
+	<!-- Page Content Layout -->
 	<div
 		class:lg:grid-cols-[1fr]={!sidebarVisibility}
 		class:lg:grid-cols-[auto_1fr]={sidebarVisibility}
 		class="grid grid-cols-1"
 	>
+		<!-- Sidebar -->
 		{#if sidebarVisibility}
-			<aside class="hidden lg:block bg-surface-100-900 w-72">
-				<div class:hidden={isInSettingsRoute}>
-					<UserDisplay classes="pl-5 pr-8 py-6" />
-				</div>
-
-				<SidebarNavigation />
-			</aside>
+			<AppSidebar />
 		{/if}
 
+		<!-- Page Content -->
 		<main>
 			<ApplicationDrawer />
 			{@render children()}

@@ -5,7 +5,7 @@ import { hashSync } from '$lib/server/crypto';
 import { and, eq, ilike, SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { paginate } from '../pagination';
-import { accessLevel, organization, user } from '../schema';
+import { accessLevel, organization, session, user } from '../schema';
 
 export async function findOrgUsersWithPagination(
 	orgId: number,
@@ -65,6 +65,17 @@ export function findUserByConfirmEmailToken(token: string) {
 
 export function findUserByResetPasswordToken(token: string) {
 	return findUserBy('resetPasswordToken', token);
+}
+
+export async function findUserBySessionToken(token: string) {
+	const res = await db
+		.select()
+		.from(user)
+		.innerJoin(session, eq(session.userId, user.id))
+		.where(eq(session.sessionToken, token))
+		.limit(1);
+
+	return res.length ? res[0].user : null;
 }
 
 export function setOrgUserAccessLevel(ids: {

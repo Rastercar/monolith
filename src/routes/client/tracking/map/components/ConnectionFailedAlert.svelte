@@ -1,57 +1,41 @@
 <script lang="ts">
-	// TODOL:
-	import { nonpassive } from 'svelte/legacy';
-
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import Icon from '@iconify/svelte';
-	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
+		onCloseClick: () => void;
+		onReconnectClick: () => void;
 		isConnectingToApi?: boolean;
 	}
 
-	let { isConnectingToApi = false }: Props = $props();
-
-	const dispatch = createEventDispatcher<{
-		'reconnect-click': void;
-		'close-click': void;
-	}>();
+	const { isConnectingToApi = false, onCloseClick, onReconnectClick }: Props = $props();
 </script>
 
-<aside
-	class="alert variant-filled-error"
-	use:nonpassive={[
-		'wheel',
-		() => (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-		}
-	]}
->
-	<Icon icon="mdi:error" height={48} />
+<aside class="preset-filled-error-200-800 flex items-center p-2">
+	<Icon class="mr-2 text-white" icon="mdi:error" height={32} />
 
-	<div class="alert-message">
-		<h4 class="h4">Failed to connect to tracking service</h4>
-		<p class="text-sm">
+	<div class="text-white">
+		<h4 class="type-scale-3">Failed to connect to tracking service</h4>
+		<p class="type-scale-1">
 			Realtime updates wont work and any tracker being shown on the map might have outdated
 			positions
 		</p>
 	</div>
 
-	<div class="alert-actions">
+	<div class="ml-auto">
 		<LoadableButton
 			isLoading={isConnectingToApi}
-			classes="btn btn-sm variant-filled"
-			contentWrapperClass="flex items-center"
-			onclick={() => dispatch('reconnect-click')}
+			classes="btn btn preset-filled-primary-200-800 mr-2"
+			contentWrapperClass="flex items-center gap-2"
+			onclick={onReconnectClick}
 		>
-			<div>reconnect</div>
-			<Icon icon="mdi:reload" class="ml-2" />
+			reconnect
+			<Icon icon="mdi:reload" />
 		</LoadableButton>
 
-		<button class="btn btn-sm variant-filled" onclick={() => dispatch('close-click')}>
+		<button class="btn preset-filled-secondary-200-800" onclick={onCloseClick}>
 			close
-			<Icon icon="mdi:close" class="ml-2" />
+			<Icon icon="mdi:close" />
 		</button>
 	</div>
 </aside>

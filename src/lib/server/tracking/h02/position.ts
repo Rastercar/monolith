@@ -84,5 +84,7 @@ export async function handleH02TrackerPosition(vehicleTrackerId: number, data: B
 	}
 
 	// send the location to the vehicle tracker room (room name is the tracker id)
-	io.of(SOCKET_IO_TRACKING_NAMESPACE).to(vehicleTrackerId.toString()).emit('position', position);
+	io.of(SOCKET_IO_TRACKING_NAMESPACE)
+		.to(vehicleTrackerId.toString())
+		.emit('position', { ...position, trackerId: vehicleTrackerId });
 }

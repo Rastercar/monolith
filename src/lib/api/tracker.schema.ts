@@ -24,6 +24,10 @@ export const getTrackerLocationsSearchParamsSchema = z.object({
 	limit: z.coerce.number().min(1).max(20).default(10)
 });
 
+export const getTrackersPositionsSearchParamsSchema = z.object({
+	ids: z.number().array()
+});
+
 export const getTrackersSearchParamsSchema = z.object({
 	imei: z.string().optional(),
 	withAssociatedVehicle: castStringToOptionalBool

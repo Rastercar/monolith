@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { dev } from '$app/environment';
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 	import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
 	import { getMapContext, setMapContext } from '$lib/store/map.svelte';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import { onDestroy, onMount } from 'svelte';
 	import { createWsConnectionToTrackingNamespace as createSocketIoConnection } from '../map';
+	import ConnectionFailedAlert from './ConnectionFailedAlert.svelte';
 	import TrackerMarker from './TrackerMarker.svelte';
 	import TrackersMapControls from './TrackersMapControls.svelte';
 
@@ -14,9 +15,47 @@
 	const mapContext = getMapContext();
 
 	/**
+	 * if SocketIO is connecting or reconnecting to the server
+	 */
+	let isConnecting = $state(true);
+
+	/**
+	 * if the initial connection has failed and a warning
+	 * should be displayed
+	 */
+	let showConnectionErrorAlert = $state(false);
+
+	/**
 	 * SocketIO connection for realtime tracker position updates
 	 */
-	let socket: ReturnType<typeof createSocketIoConnection> | null = null;
+	const socket = createSocketIoConnection(
+		`${window.location.origin}/${SOCKET_IO_TRACKING_NAMESPACE}`
+	);
+
+	socket.on('connect', () => {
+		isConnecting = true;
+		showConnectionErrorAlert = false;
+	});
+
+	socket.on('error', (error) => {
+		if (dev) console.warn('[ws error]', error);
+	});
+
+	socket.on('connect_error', () => {
+		isConnecting = false;
+		showConnectionErrorAlert = true;
+	});
+
+	socket.on('disconnect', () => {
+		// if socket.active then its a temporary disconnection, the socket will automatically try to
+		// reconnect else the connection was forcefully closed by the server or the client itself
+		// in that case, `socket.connect()` must be manually called in order to reconnect
+		isConnecting = socket.active;
+	});
+
+	socket.on('position', ({ trackerId, ...position }) => {
+		mapContext.trackerPositionCache[trackerId] = position;
+	});
 
 	/**
 	 * Timer for deboucing changed tracker selection
@@ -25,14 +64,8 @@
 
 	/**
 	 * The trackers currently selected to be shown on the map
-	 *
-	 * TODO: isnt this duplicate state ?
 	 */
 	let selectedTrackers: number[] = [];
-
-	let isConnectingToApi = $state(false);
-
-	let showConnectionErrorAlert = $state(false);
 
 	const initMap = async () => {
 		await loadMapLibraries();
@@ -46,20 +79,20 @@
 
 		const defaultCenter = { lat: -20.397, lng: -54.644 };
 
-		const center = cachedPositionsBounds.isEmpty()
+		const center = !cachedPositionsBounds.isEmpty()
 			? cachedPositionsBounds.getCenter()
 			: defaultCenter;
 
 		mapContext.mapInstance = new window.google.maps.Map(mapElement, {
 			center,
-			zoom: 20,
+			zoom: 15,
 
 			// for now we dont allow the fullscreen mode because it uses the browser
 			// fullscreen API where all elements that are not children on the map div
 			// are not shown, this is a problem for the select tracker overlay
 			fullscreenControl: false,
 
-			// [TODO-PROD] do not use a demo map id in prod
+			// TODO: do not use a demo map id in prod
 			mapId: 'DEMO_MAP_ID'
 		});
 
@@ -92,7 +125,6 @@
 
 			selectedTrackers = newTrackerIds;
 
-			// TODO:
 			socket.emit('changeTrackersToListen', newTrackerIds);
 
 			// now that we updated the trackers to see on the map, simply changing the trackers to listen
@@ -102,48 +134,18 @@
 				trackersLastPositions.forEach(({ trackerId, ...position }) => {
 					mapContext.trackerPositionCache[trackerId] = position;
 				});
+
+				const newBounds = mapContext.getTrackersMapBounds();
+
+				if (!newBounds.isEmpty() && mapContext.mapInstance) {
+					mapContext.mapInstance.fitBounds(newBounds);
+				}
 			});
 		});
 	});
 
-	const createWsConnectionToApi = async () => {
-		const connect = async () => {
-			socket = createSocketIoConnection(
-				`${window.location.origin}/${SOCKET_IO_TRACKING_NAMESPACE}`
-			);
-
-			// TODO: now we must inform the backend what trackers we are interested in,
-			//
-			socket.on('position', ({ trackerId, ...position }) => {
-				console.log('got position', { position });
-				mapContext.trackerPositionCache[trackerId] = position;
-			});
-
-			socket.on('error', console.warn);
-		};
-
-		isConnectingToApi = true;
-
-		try {
-			await connect();
-		} finally {
-			isConnectingToApi = false;
-		}
-	};
-
-	const reconnectWsToApi = () => {
-		createWsConnectionToApi()
-			.then(() => {
-				showSuccessToast('reconnected');
-				showConnectionErrorAlert = false;
-			})
-			.catch(() => showErrorToast('connection error'));
-	};
-
 	onMount(async () => {
 		await initMap();
-		await createWsConnectionToApi();
-
 		showMap = true;
 	});
 
@@ -152,21 +154,19 @@
 		mapContext.mapInstance = undefined;
 
 		if (trackerSelectionDebounceTimer) clearTimeout(trackerSelectionDebounceTimer);
-
-		// TODO: this is getting called on init for some reason
-		// if (socket) {
-		// 	socket.disconnect();
-		// 	socket = null;
-		// }
+		socket.disconnect();
 	});
 </script>
 
 {#if showConnectionErrorAlert}
-	<!-- <ConnectionFailedAlert
-		{isConnectingToApi}
-		on:reconnect-click={reconnectWsToApi}
-		on:close-click={() => (showConnectionErrorAlert = false)}
-	/> -->
+	<ConnectionFailedAlert
+		isConnectingToApi={isConnecting}
+		onReconnectClick={() => {
+			isConnecting = true;
+			socket.connect();
+		}}
+		onCloseClick={() => (showConnectionErrorAlert = false)}
+	/>
 {/if}
 
 <div id="map" class="h-full w-full">
@@ -183,11 +183,12 @@
 			{@const position = mapContext.trackerPositionCache[tracker.id]}
 
 			{#if position}
+				<!-- TODO: react to position changes -->
 				<TrackerMarker
 					{position}
 					{tracker}
 					onClick={() => {
-						// TODO:
+						// TODO: show tracker / vehicle overlay
 					}}
 				/>
 			{/if}

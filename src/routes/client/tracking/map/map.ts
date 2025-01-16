@@ -2,6 +2,8 @@ import type { TrackerPosition } from '$lib/api/tracking.schema';
 import { type Socket, io } from 'socket.io-client';
 import type { ClientToServerEvents } from '../../../../global';
 
+export type SocketIoClient = Socket<ServerToClientEvents, ClientToServerEvents>;
+
 /**
  * events recieved by the rastercar api
  */
@@ -21,8 +23,6 @@ interface ServerToClientEvents {
 /**
  * creates a SocketIO connection to the rastercar API under the tracking namspace
  */
-export const createWsConnectionToTrackingNamespace = (
-	url: string
-): Socket<ServerToClientEvents, ClientToServerEvents> => {
+export const createWsConnectionToTrackingNamespace = (url: string): SocketIoClient => {
 	return io(url, { reconnectionDelayMax: 10_000 });
 };

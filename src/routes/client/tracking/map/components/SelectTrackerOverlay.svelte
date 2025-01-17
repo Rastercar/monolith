@@ -6,6 +6,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { TRACKER_SUBSCRIPTION_PER_USER_LIMIT } from '$lib/constants/socket-io';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { getMapContext } from '$lib/store/map.svelte';
 	import Icon from '@iconify/svelte';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
@@ -19,9 +20,10 @@
 
 	const mapContext = getMapContext();
 
-	const pagination = $state({ page: 1, pageSize: 3 });
-
-	const filters = $state<GetTrackersFilters>({});
+	const { pagination, filters } = createPaginationWithFilters<GetTrackersFilters>(
+		{ withAssociatedVehicle: false },
+		{ page: 1, pageSize: 3 }
+	);
 
 	const query = createQuery(() => ({
 		queryKey: ['trackers', pagination, filters],

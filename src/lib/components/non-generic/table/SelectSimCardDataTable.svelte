@@ -11,6 +11,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { showErrorToast } from '$lib/store/toast';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
@@ -52,9 +53,10 @@
 
 	let rowSelection = $state<RowSelectionState>({});
 
-	const pagination = $state({ page: 1, pageSize: 3 });
-
-	const filters = $state<GetSimCardsFilters>({ withAssociatedTracker: false });
+	const { pagination, filters } = createPaginationWithFilters<GetSimCardsFilters>(
+		{ withAssociatedTracker: false },
+		{ page: 1, pageSize: 3 }
+	);
 
 	const query = createQuery(() => ({
 		queryKey: ['sim-cards', pagination, filters],

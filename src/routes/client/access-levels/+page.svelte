@@ -8,6 +8,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { toDateTime } from '$lib/utils/date';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
@@ -17,9 +18,7 @@
 		type ColumnDef
 	} from '@tanstack/svelte-table';
 
-	const pagination = $state({ page: 1, pageSize: 5 });
-
-	const filters = $state<GetAccessLevelFilters>({});
+	const { pagination, filters } = createPaginationWithFilters<GetAccessLevelFilters>({});
 
 	const query = createQuery(() => ({
 		queryKey: ['vehicles', pagination, filters],
@@ -66,6 +65,8 @@
 		})
 	);
 </script>
+
+<pre>{JSON.stringify({ pagination, filters }, null, 2)}</pre>
 
 <div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader

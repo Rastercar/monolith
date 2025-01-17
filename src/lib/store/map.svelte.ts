@@ -1,5 +1,5 @@
 import type { Tracker } from '$lib/api/tracker.schema';
-import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/localStorage';
+import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/local-storage';
 import { getContext, setContext } from 'svelte';
 import { MAP_CONTEXT_KEY, MAP_SELECTED_TRACKERS_KEY, TRACKER_POSITION_CACHE_KEY } from './keys';
 
@@ -15,7 +15,7 @@ export interface Position {
  * key: tracker ID
  * val: the tracker itself
  */
-type TrackerSelection = Record<number, Tracker>;
+export type TrackerSelection = Record<number, Tracker>;
 
 /**
  * key: tracker ID

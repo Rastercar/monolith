@@ -32,8 +32,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const pageMeta = getPageMetaFromPath(path);
 
 	if (path === '/') return redirectToStartingPage(event);
-
-	event.locals.routeMeta = pageMeta;
 	await setUserLocalsFromSessionCookie(event);
 
 	const isLoggedIn = !!event.locals.user;

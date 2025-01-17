@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { apiGetTrackers, type GetTrackersFilters } from '$lib/api/tracker';
-	import type { Tracker } from '$lib/api/tracker.schema';
+	import { apiGetTrackers } from '$lib/api/tracker';
+	import type { GetTrackersFilters, Tracker } from '$lib/api/tracker.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
@@ -8,6 +8,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -16,9 +17,7 @@
 		type ColumnDef
 	} from '@tanstack/svelte-table';
 
-	const pagination = $state({ page: 1, pageSize: 5 });
-
-	const filters = $state<GetTrackersFilters>({});
+	const { pagination, filters } = createPaginationWithFilters<GetTrackersFilters>({});
 
 	const query = createQuery(() => ({
 		queryKey: ['trackers', pagination, filters],

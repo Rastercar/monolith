@@ -29,17 +29,7 @@ export const apiGetTrackers = (
 		.then(createPaginatedResponseSchema(trackerSchema).parse);
 
 /**
- * Fetch a tracker by ID
- */
-export const apiGetTrackerById = (id: number): Promise<Tracker> =>
-	api.get(`/tracker/${id}`).json<Tracker>().then(trackerSchema.parse);
-
-/**
  * Delete a tracker by id
- *
- * ### required permissions
- *
- * - `DELETE_TRACKER`
  */
 export const apiDeleteTracker = (trackerId: number, opts?: DeleteTrackerBody) => {
 	const url = route('DELETE /client/tracking/trackers/[tracker_id=integer]', {
@@ -54,10 +44,6 @@ export const apiDeleteTracker = (trackerId: number, opts?: DeleteTrackerBody) =>
 
 /**
  * changes the vehicle a tracker is associated (aka: suposedly installed)
- *
- * ### required permissions
- *
- * - `UPDATE_TRACKER`
  */
 export const apiSetTrackerVehicle = (ids: {
 	vehicleId: number | null;

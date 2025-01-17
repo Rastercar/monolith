@@ -43,7 +43,6 @@
 	};
 
 	const removeMarkerFromMap = () => {
-		console.log('removing !');
 		if (markerInstance) markerInstance.map = null;
 	};
 

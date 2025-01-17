@@ -8,6 +8,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { toLocaleDateString } from '$lib/utils/date';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
@@ -18,9 +19,7 @@
 	} from '@tanstack/svelte-table';
 	import UserEmailColumn from './components/UserEmailColumn.svelte';
 
-	const pagination = $state({ page: 1, pageSize: 5 });
-
-	const filters = $state<GetUsersFilters>({});
+	const { pagination, filters } = createPaginationWithFilters<GetUsersFilters>({});
 
 	const query = createQuery(() => ({
 		queryKey: ['users', pagination, filters],

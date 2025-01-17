@@ -27,10 +27,6 @@ export const apiGetSimCards = (
 
 /**
  * update a sim card
- *
- * ### required permissions
- *
- * - `UPDATE_SIM_CARD`
  */
 export function apiUpdateSimCard(id: number, body: UpdateSimCardBody): Promise<UpdateSimCardRes> {
 	const url = route('PUT /client/tracking/sim-cards/[sim_card_id=integer]', {

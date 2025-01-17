@@ -8,6 +8,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -16,9 +17,7 @@
 		type ColumnDef
 	} from '@tanstack/svelte-table';
 
-	const pagination = $state({ page: 1, pageSize: 5 });
-
-	const filters = $state<GetSimCardsFilters>({});
+	const { pagination, filters } = createPaginationWithFilters<GetSimCardsFilters>({});
 
 	const query = createQuery(() => ({
 		queryKey: ['sim-cards', pagination, filters],

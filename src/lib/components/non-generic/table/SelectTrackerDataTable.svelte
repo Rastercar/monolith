@@ -5,6 +5,7 @@
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
@@ -22,8 +23,9 @@
 
 	const { bottomRight }: Props = $props();
 
-	const pagination = $state({ page: 1, pageSize: 5 });
-	const filters = $state<GetTrackersFilters>({ withAssociatedVehicle: false });
+	const { pagination, filters } = createPaginationWithFilters<GetTrackersFilters>({
+		withAssociatedVehicle: false
+	});
 
 	let rowSelection = $state<RowSelectionState>({});
 

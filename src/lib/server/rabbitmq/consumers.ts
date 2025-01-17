@@ -23,6 +23,7 @@ export const trackerEventsConsumer: RqmConsumer = {
 		noAck: true,
 		consumerTag: 'monolith_tracker_events_consumer'
 	},
+	// TODO: correlate tracing deleveries ?
 	handler: async (delivery: amqp.ConsumeMessage | null) => {
 		// if the delivery is null, the consumer is canceled or the connection
 		// is closed we cant do anything so just return

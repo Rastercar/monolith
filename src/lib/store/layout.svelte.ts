@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/localStorage';
+import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/local-storage';
 import { getContext, setContext } from 'svelte';
 import { DARK_MODE_KEY, LAYOUT_CONTEXT_KEY, THEME_KEY } from './keys';
 

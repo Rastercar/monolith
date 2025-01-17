@@ -24,14 +24,16 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout>;
 
-	const pagination = $state({ page: 1, pageSize: 100 });
 	const filters = $state<GetAccessLevelFilters>({});
 
 	const query = createQuery(() => ({
-		queryKey: ['access-levels', pagination, filters],
+		queryKey: ['access-levels', filters],
 		placeholderData: keepPreviousData,
 		queryFn: async (): Promise<Option<AccessLevel>[]> => {
-			const { records } = await apiGetAccessLevels({ pagination, filters });
+			const { records } = await apiGetAccessLevels({
+				pagination: { page: 1, pageSize: 100 },
+				filters
+			});
 
 			return records.map((accessLevel) => ({
 				label: accessLevel.name,

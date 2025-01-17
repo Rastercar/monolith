@@ -4,7 +4,12 @@
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 	import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
 	import { env } from '$lib/env/public-env';
-	import { getMapContext, setMapContext, type Position } from '$lib/store/map.svelte';
+	import {
+		getMapContext,
+		setMapContext,
+		type Position,
+		type TrackerSelection
+	} from '$lib/store/map.svelte';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import { onDestroy, onMount } from 'svelte';
@@ -13,6 +18,12 @@
 	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
 	import TrackerMarker from './TrackerMarker.svelte';
 	import TrackersMapControls from './TrackersMapControls.svelte';
+
+	interface Props {
+		initialTrackerSelection?: TrackerSelection;
+	}
+
+	const { initialTrackerSelection }: Props = $props();
 
 	setMapContext();
 
@@ -46,6 +57,9 @@
 
 	/**
 	 * The trackers currently selected to be shown on the map
+	 *
+	 * altough we use the map context to store the selected trackers, this is not
+	 * duplicate state as this is used to differentiate a new selection from a old selection
 	 */
 	let selectedTrackers: number[] = [];
 
@@ -81,8 +95,6 @@
 		mapContext.trackerPositionCache[trackerId] = position;
 	});
 
-	// TODO: read the search param 'lookupTracker' and init the map context with only it as the only selected tracker
-
 	const initMap = async () => {
 		await loadMapLibraries();
 
@@ -117,6 +129,8 @@
 	onMount(async () => {
 		await initMap();
 		mapIsLoaded = true;
+
+		if (initialTrackerSelection) mapContext.mapSelectedTrackers = initialTrackerSelection;
 	});
 
 	onDestroy(() => {

@@ -9,9 +9,6 @@ declare namespace App {
 	// interface PageData {}
 	// interface Platform {}
 
-	/**
-	 * Loaded from auth middleware
-	 */
 	interface Locals {
 		/**
 		 * The user loaded and authenticated by his session cookie
@@ -22,11 +19,6 @@ declare namespace App {
 		 * The session of the authenticated user
 		 */
 		session: UserSession | null;
-
-		/**
-		 * Route metadata
-		 */
-		routeMeta?: RouteMeta;
 	}
 
 	/**

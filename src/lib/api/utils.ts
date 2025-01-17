@@ -1,7 +1,6 @@
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
 import QueryStringAddon from 'wretch/addons/queryString';
-import { WretchError } from 'wretch/resolver';
 
 export const api = wretch()
 	.addon(FormDataAddon)
@@ -10,10 +9,6 @@ export const api = wretch()
 
 export const isAppError = (v: unknown): v is App.Error => {
 	return typeof v === 'object' && v !== null && typeof (v as App.Error).message === 'string';
-};
-
-export const isAppErrorWithCode = (e: unknown, errorCode: string): boolean => {
-	return e instanceof WretchError && isAppError(e.json) && e.json.code === errorCode;
 };
 
 /**

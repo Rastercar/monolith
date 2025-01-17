@@ -10,7 +10,7 @@
 
 <Modal
 	bind:open={layout.drawerOpen}
-	triggerBase="btn preset-tonal"
+	triggerBase="hidden"
 	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl w-[480px] h-screen"
 	positionerJustify="justify-start"
 	positionerAlign=""

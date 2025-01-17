@@ -4,8 +4,7 @@ import { WretchError } from 'wretch/resolver';
 
 // [IMPROVEMENT] while svelte-toast is pretty cool, we want it to use skeleton themes
 // if skeleton UI makes a toast component that applies the theme we shall use it,
-// if not we can set the toas themes to use skeleton css variables
-
+// if not we can set the toast themes to use skeleton css variables
 export const showSuccessToast = (message = 'Success!') => {
 	toast.push(message, {
 		theme: {

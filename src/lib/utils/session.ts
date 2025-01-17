@@ -1,5 +1,5 @@
+import { dev } from '$app/environment';
 import { SESSION_DAYS_DURATION, SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
-import { env } from '$lib/env/public-env';
 import type { Cookies } from '@sveltejs/kit';
 import { createDateXDaysFromNow, getDatesDiffInSeconds } from './date';
 
@@ -15,7 +15,7 @@ export function createSessionExpirationDateFromNow() {
 export function setSessionCookie(cookies: Cookies, sessionToken: string, maxAge: number) {
 	cookies.set(SESSION_ID_COOKIE_KEY, sessionToken, {
 		path: '/',
-		secure: !env.PUBLIC_IS_DEV,
+		secure: !dev,
 		httpOnly: true,
 		sameSite: 'strict',
 		maxAge

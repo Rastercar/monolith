@@ -28,6 +28,11 @@ export default defineConfig({
 					explicit_search_params: {
 						redirect: { required: false, type: 'string' }
 					}
+				},
+				'/client/tracking/map': {
+					explicit_search_params: {
+						lookupTracker: { required: false, type: 'number' }
+					}
 				}
 			}
 		})

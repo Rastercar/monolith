@@ -29,7 +29,7 @@ const sdk = new NodeSDK({
 		// we can have some interesting hooks here in the future
 		// consumeHook, consumeEndHook, publishConfirmHook, useLinksForConsume
 		new AmqplibInstrumentation({
-			publishHook: (_, { exchange, routingKey }) => {
+			publishHook: (span, { exchange, routingKey }) => {
 				const exchangeText = exchange === '' ? `default exchange` : `exchange: "${exchange}"`;
 				consola.info(`[RMQ] published to ${exchangeText} with routing key: "${routingKey}"`);
 			}
@@ -49,3 +49,5 @@ process.on('beforeExit', async () => {
 
 /** noop to register open telemetry */
 export const initTelemetry = () => null;
+
+export const tracer = trace.getTracer('rastercar-monolith');

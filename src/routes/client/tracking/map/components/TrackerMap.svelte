@@ -3,6 +3,7 @@
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 	import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
+	import { env } from '$lib/env/public-env';
 	import { getMapContext, setMapContext, type Position } from '$lib/store/map.svelte';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
@@ -31,7 +32,7 @@
 	/**
 	 * if the map libraries have been loaded and the map should be displayed
 	 */
-	let showMap = $state(false);
+	let mapIsLoaded = $state(false);
 
 	let trackerModalIsOpen = $state(false);
 
@@ -80,6 +81,8 @@
 		mapContext.trackerPositionCache[trackerId] = position;
 	});
 
+	// TODO: read the search param 'lookupTracker' and init the map context with only it as the only selected tracker
+
 	const initMap = async () => {
 		await loadMapLibraries();
 
@@ -105,8 +108,7 @@
 			// are not shown, this is a problem for the select tracker overlay
 			fullscreenControl: false,
 
-			// TODO: do not use a demo map id in prod
-			mapId: 'DEMO_MAP_ID'
+			mapId: env.PUBLIC_GOOGLE_MAPS_MAP_ID
 		});
 
 		if (!cachedPositionsBounds.isEmpty()) mapContext.mapInstance.fitBounds(cachedPositionsBounds);
@@ -114,7 +116,7 @@
 
 	onMount(async () => {
 		await initMap();
-		showMap = true;
+		mapIsLoaded = true;
 	});
 
 	onDestroy(() => {
@@ -159,6 +161,10 @@
 					mapContext.trackerPositionCache[trackerId] = position;
 				});
 
+				// if the map is not loaded dont calculate the bounds
+				// (this might happen on very rare cases the request responds faster than the google maps lib is loaded)
+				if (!mapIsLoaded) return;
+
 				const newBounds = mapContext.getTrackersMapBounds();
 
 				if (!newBounds.isEmpty() && mapContext.mapInstance) {
@@ -181,20 +187,13 @@
 {/if}
 
 <div id="map" class="h-full w-full">
-	{#if showMap}
+	{#if mapIsLoaded}
 		<TrackersMapControls />
 
-		<!-- 
-			[TODO-PROD] with this approach all trackers are redrawn
-			when the selection changes, causing them all to flicker
-			
-			this is not the end of the world but it can be improved
-		-->
 		{#each Object.values(mapContext.mapSelectedTrackers) as tracker}
 			{@const position = mapContext.trackerPositionCache[tracker.id]}
 
 			{#if position}
-				<!-- TODO: react to position changes -->
 				<TrackerMarker
 					{position}
 					{tracker}

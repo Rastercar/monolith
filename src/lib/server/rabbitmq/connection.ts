@@ -1,15 +1,13 @@
-import { building } from '$app/environment';
 import amqp, { type Channel, type Connection, type ConsumeMessage, type Options } from 'amqplib';
 import consola from 'consola';
-import { handleH02TrackerPosition } from '../tracking/h02/position';
 import {
 	DEFAULT_EXCHANGE,
 	MAILER_QUEUE,
 	TRACKER_EVENTS_EXCHANGE,
 	TRACKER_EVENTS_QUEUE
 } from './constants';
+import { trackerEventsConsumer } from './consumers';
 import { getRmqConnectionErrorInfo } from './rmq-helpers';
-import { VEHICLE_TRACKER_IMEI_TO_ID_CACHE } from './tracker-id-cache';
 
 type RmqConsumeCallback = (_: ConsumeMessage | null) => void;
 
@@ -51,13 +49,9 @@ export class RabbitMQConnection {
 	 */
 	reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 
-	constructor(connetionUrl: string) {
+	constructor(connetionUrl: string, autoConnect = true) {
 		this.connetionUrl = connetionUrl;
-
-		// dont attempt to connect to rabbitmq if this code is running during
-		// the app build proccess as the connection is most likely unavailable
-		// in such context
-		if (!building) this.connect();
+		if (autoConnect) this.connect();
 	}
 
 	async connect() {
@@ -82,12 +76,12 @@ export class RabbitMQConnection {
 			consola.info('[RMQ] connected');
 
 			// create needed queues, exchanges and bindings
-			await this.declareQueues().catch(this.handleFatalError);
-			await this.declareExchanges().catch(this.handleFatalError);
-			await this.bindQueuesAndExchanges().catch(this.handleFatalError);
+			await this.declareQueues().catch(this.reportFatalError);
+			await this.declareExchanges().catch(this.reportFatalError);
+			await this.bindQueuesAndExchanges().catch(this.reportFatalError);
 
 			// start consuming tracker events
-			this.startTrackerEventsConsumer();
+			this.startConsumers();
 		} catch (error) {
 			this.handleConnectionError(error);
 		}
@@ -152,13 +146,13 @@ export class RabbitMQConnection {
 		this.connection = null;
 
 		if (this.reconectionAttempt > MAX_RECONNECTION_ATTEMPTS) {
-			return this.handleFatalError(error);
+			return this.reportFatalError(error);
 		}
 
 		const { shouldRetry, code } = getRmqConnectionErrorInfo(error);
 
 		if (!shouldRetry) {
-			return this.handleFatalError(error);
+			return this.reportFatalError(error);
 		}
 
 		// first reconnection attempt in 5 seconds, second in 4, third in 6...
@@ -176,18 +170,19 @@ export class RabbitMQConnection {
 	}
 
 	/**
-	 * [TODO-PROD] this is pretty fucking bad, every feature depending
-	 * on rabbitmq will break, we should somehow notify infra by email,
-	 * sms or whatever to check this error
+	 * [TODO-PROD] here we are just logging to STOUT, this means
+	 * every feature dependingon rabbitmq will break, we should
+	 * somehow notify infra by email, sms or whatever to check this error
 	 */
-	async handleFatalError(error: unknown) {
-		consola.error('[RMQ] unknown FATAL error', error);
+	reportFatalError(error: unknown) {
+		consola.error('[RMQ] fatal error', error);
 	}
 
 	/**
 	 * Tiny wrapper aroung amqpChannel.publish
 	 *
 	 * TODO: set tracing headers here !
+	 * TODO: test email sending with headers
 	 */
 	publish(
 		exchange = DEFAULT_EXCHANGE,
@@ -196,6 +191,7 @@ export class RabbitMQConnection {
 		options?: Options.Publish
 	) {
 		if (!this.publishChannel) return;
+
 		return this.publishChannel.publish(exchange, routingKey, Buffer.from(content), options);
 	}
 
@@ -204,57 +200,11 @@ export class RabbitMQConnection {
 		this.consumeChannel.consume(queue, cb, opts);
 	}
 
-	private startTrackerEventsConsumer() {
+	private startConsumers() {
 		this.consume(
-			TRACKER_EVENTS_QUEUE,
-			(delivery) => {
-				// if the delivery is null, the consumer is canceled or the connection
-				// is closed we cant do anything so just return
-				if (!delivery) return;
-
-				// tracking events routing keys have the following pattern
-				// {protocol}.{type}.{imei}
-				//
-				// - protocol: the original protocol of the tracker
-				// - type: eventy type, eg: "position", "alert", "heartbeat"
-				// - imei: the tracking device IMEI
-				const routingKey = delivery.fields.routingKey;
-
-				const routingKeyFields = routingKey.split('.');
-
-				if (routingKeyFields.length < 3) {
-					consola.error('[RMQ] invalid tracker event routing key');
-					return;
-				}
-
-				const [protocol, eventType, imei] = routingKeyFields;
-
-				if (!protocol || !eventType || !imei) {
-					consola.error('[RMQ] empty tracker event routing key');
-					return;
-				}
-
-				const protocolAndEvent = `${protocol}.${eventType}`;
-
-				if (protocolAndEvent !== 'h02.location') {
-					consola.info(`[RMQ] unknown protocol/event combination: ${protocol}/${eventType}`);
-					return;
-				}
-
-				VEHICLE_TRACKER_IMEI_TO_ID_CACHE.get(imei).then((trackerId) => {
-					if (!trackerId) {
-						consola.info(`[RMQ] tracker of imei: ${imei} not found`);
-						return;
-					}
-
-					handleH02TrackerPosition(trackerId, delivery.content);
-				});
-			},
-			{
-				// automatically acknowledge messages
-				noAck: true,
-				consumerTag: 'monolith_tracker_events_consumer'
-			}
+			trackerEventsConsumer.queue,
+			trackerEventsConsumer.handler,
+			trackerEventsConsumer.options
 		);
 	}
 }

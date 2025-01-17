@@ -1,4 +1,4 @@
-import { env } from '$lib/env/public-env';
+import { dev } from '$app/environment';
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 
@@ -30,18 +30,18 @@ export const signInSchema = z.object({
 		.string()
 		.min(1)
 		.email()
-		.default(env.PUBLIC_IS_DEV ? 'rastercar.tests.002@gmail.com' : ''),
+		.default(dev ? 'rastercar.tests.002@gmail.com' : ''),
 	password: z
 		.string()
 		.min(1)
-		.default(env.PUBLIC_IS_DEV ? 'Contafake3!' : '')
+		.default(dev ? 'Contafake3!' : '')
 });
 
 export const recoverPasswordSchema = z.object({
 	email: z
 		.string()
 		.email()
-		.default(env.PUBLIC_IS_DEV ? 'rastercar.tests.002@gmail.com' : '')
+		.default(dev ? 'rastercar.tests.002@gmail.com' : '')
 });
 
 export const confirmEmailAddressSchema = z.object({

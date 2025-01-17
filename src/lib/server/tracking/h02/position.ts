@@ -61,15 +61,7 @@ type H02TrackerPosition = z.infer<typeof h02TrackerPositionSchema>;
 export async function handleH02TrackerPosition(vehicleTrackerId: number, data: Buffer) {
 	let position: H02TrackerPosition;
 
-	try {
-		// TODO: as vezes isso falha no parse the timestamp, com invalid datetime
-		position = readBufferAsUtf8JsonOfSchema(data, h02TrackerPositionSchema);
-	} catch (error) {
-		// TODO: remove log !?
-		JSON.parse(data.toString('utf8'));
-		consola.error(error);
-		return;
-	}
+	position = readBufferAsUtf8JsonOfSchema(data, h02TrackerPositionSchema);
 
 	await createVehicleTrackerLocation({
 		vehicleTrackerId,

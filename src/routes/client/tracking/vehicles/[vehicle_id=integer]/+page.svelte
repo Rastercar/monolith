@@ -64,9 +64,6 @@
 			createSimCardForm={data.createSimCardForm}
 		/>
 
-		{#if false}
-			<!-- TODO:  -->
-			<VehicleLocationCard />
-		{/if}
+		<VehicleLocationCard {vehicle} />
 	{/if}
 </div>

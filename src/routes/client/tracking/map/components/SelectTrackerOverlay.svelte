@@ -48,9 +48,6 @@
 						} else {
 							mapContext.mapSelectedTrackers[tracker.id] = tracker;
 						}
-
-						// TODO: this assignment is to trigger reactivity, but is it needed ?
-						mapContext.mapSelectedTrackers;
 					}
 				});
 			}

@@ -33,18 +33,6 @@
 		markerInstance.addListener('click', () => {
 			map.panTo(position);
 
-			// TODO:
-			// const drawerSettings: DrawerSettings = {
-			// 	position: 'right',
-			// 	width: 'max-w-xl',
-			// 	meta: {
-			// 		component: SelectedTrackerOverlay,
-			// 		props: { tracker, position }
-			// 	}
-			// };
-
-			// drawerStore.open(drawerSettings);
-
 			if (!markerInstance) return;
 			onClick(markerInstance);
 		});
@@ -55,6 +43,7 @@
 	};
 
 	const removeMarkerFromMap = () => {
+		console.log('removing !');
 		if (markerInstance) markerInstance.map = null;
 	};
 

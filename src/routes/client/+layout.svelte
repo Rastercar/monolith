@@ -2,11 +2,16 @@
 	import { page } from '$app/stores';
 	import { routesMeta, type LoggedInPageMeta } from '$lib/routes-meta';
 	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getLayoutContext } from '$lib/store/layout.svelte';
 	import AppHeader from './layout/AppHeader.svelte';
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
 	import AppSidebar from './layout/AppSidebar.svelte';
 
 	let { children, data } = $props();
+
+	const layoutContext = getLayoutContext();
+
+	layoutContext.availableThemes = data.availableThemes;
 
 	const defaultLoggedInRouteMeta: LoggedInPageMeta = { requiredAuth: 'logged-in' };
 
@@ -27,6 +32,8 @@
 
 	auth.setUser(data.user);
 </script>
+
+<svelte:head>{@html data.orgThemeStyleTag}</svelte:head>
 
 <div
 	class:grid-rows-[1fr]={!headerVisibility}

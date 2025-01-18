@@ -42,6 +42,7 @@ CREATE TABLE "organization" (
     "billing_email_verified" boolean DEFAULT false NOT NULL,
     "confirm_billing_email_token" UUID,
     "owner_id" integer,
+    "themes_css_vars" JSONB,
     CONSTRAINT "organization_billing_email_unique" UNIQUE("billing_email"),
     CONSTRAINT "organization_owner_id_unique" UNIQUE("owner_id")
 );

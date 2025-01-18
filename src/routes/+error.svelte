@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { INVALID_SESSION, NO_SID_COOKIE } from '$lib/constants/error-codes';
+	import { MISSING_SESSION, NO_SID_COOKIE } from '$lib/constants/error-codes';
 	import { route } from '$lib/ROUTES';
 	import Icon from '@iconify/svelte';
 
@@ -23,7 +23,7 @@
 		{$page.error?.message}
 	</h2>
 
-	{#if errorCode === INVALID_SESSION}
+	{#if errorCode === MISSING_SESSION}
 		{@render linkBtn(route('/auth/sign-out'), 'mdi:sign-out', 'click here to sign out')}
 	{:else if errorCode === NO_SID_COOKIE}
 		{@render linkBtn(route('/auth/sign-in'), 'mdi:sign-in', 'click here to sign in')}

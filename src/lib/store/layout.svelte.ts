@@ -1,19 +1,24 @@
 import { browser } from '$app/environment';
 import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/local-storage';
 import { getContext, setContext } from 'svelte';
+import { DEFAULT_THEME_NAME } from '../../themes/default';
 import { DARK_MODE_KEY, LAYOUT_CONTEXT_KEY, THEME_KEY } from './keys';
 
 class LayoutStore {
 	darkMode = $state(true);
+
 	drawerOpen = $state(false);
+
 	selectedTheme = $state('');
+
+	availableThemes = $state([DEFAULT_THEME_NAME]);
 
 	constructor() {
 		this.darkMode = loadFromLocalStorage(DARK_MODE_KEY, true);
 
 		const themeDefaultValue = browser
-			? (document.body.getAttribute('data-theme') ?? 'rastercar')
-			: 'rastercar';
+			? (document.body.getAttribute('data-theme') ?? DEFAULT_THEME_NAME)
+			: DEFAULT_THEME_NAME;
 
 		this.selectedTheme = loadFromLocalStorage(THEME_KEY, themeDefaultValue);
 

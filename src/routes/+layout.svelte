@@ -22,6 +22,10 @@
 	onMount(() => (mounted = true));
 </script>
 
+<svelte:head>
+	<title>Rastercar</title>
+</svelte:head>
+
 <QueryClientProvider client={queryClient}>
 	<SvelteToast />
 

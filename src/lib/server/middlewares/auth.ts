@@ -1,6 +1,6 @@
 import { userSchema, userSessionSchema } from '$lib/api/user.schema.js';
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
-import { INVALID_SESSION } from '$lib/constants/error-codes';
+import { MISSING_SESSION } from '$lib/constants/error-codes';
 import type { permission } from '$lib/constants/permissions';
 import { route } from '$lib/ROUTES';
 import type { LoggedInPageMeta } from '$lib/routes-meta';
@@ -43,7 +43,7 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 
 	// session points to a invalid user
 	if (!userFromDb) {
-		return error(500, { message: 'Invalid session', code: INVALID_SESSION });
+		return error(500, { message: 'Invalid session', code: MISSING_SESSION });
 	}
 
 	// this also remove sensitive data such as the password and other tokens

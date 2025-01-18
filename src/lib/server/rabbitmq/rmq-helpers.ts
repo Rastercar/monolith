@@ -1,3 +1,7 @@
+import { context, type Context } from '@opentelemetry/api';
+import amqp from 'amqplib';
+import { amqpHeadersTextMapGetter, jaegerPropagator } from '../telemetry/opentelemetry';
+
 export function getRmqConnectionErrorInfo(error: unknown) {
 	if (error instanceof Error && error.toString().includes('Socket closed')) {
 		return { shouldRetry: true, code: 'unknown' };
@@ -60,4 +64,11 @@ export function getRmqConnectionErrorInfo(error: unknown) {
 	const shouldRetry = typeof code === 'string' && retryWorthyErrorCodes.includes(code);
 
 	return { shouldRetry, code: code ?? 'unknown' };
+}
+
+export function getOtelContextFromDeliveryHeaders(
+	delivery: amqp.ConsumeMessage,
+	ctx = context.active()
+): Context {
+	return jaegerPropagator.extract(ctx, delivery.properties.headers, amqpHeadersTextMapGetter);
 }

@@ -170,7 +170,7 @@ export class RabbitMQConnection {
 	}
 
 	/**
-	 * [TODO-PROD] here we are just logging to STOUT, this means
+	 * [PROD-TODO] here we are just logging to STOUT, this means
 	 * every feature dependingon rabbitmq will break, we should
 	 * somehow notify infra by email, sms or whatever to check this error
 	 */
@@ -180,9 +180,6 @@ export class RabbitMQConnection {
 
 	/**
 	 * Tiny wrapper aroung amqpChannel.publish
-	 *
-	 * TODO: set tracing headers here !
-	 * TODO: test email sending with headers
 	 */
 	publish(
 		exchange = DEFAULT_EXCHANGE,

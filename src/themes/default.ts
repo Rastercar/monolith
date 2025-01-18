@@ -1,8 +1,13 @@
 import type { Theme } from '@skeletonlabs/skeleton/themes';
 
-// as copy-paste of catppuccin theme
-export const rastercarTheme = {
-	name: 'rastercar',
+export const DEFAULT_THEME_NAME = 'default';
+
+// this is the default theme, its supossed to be used on non client
+// specific pages and should always be included on the main CSS bundle
+//
+// (also a copy-paste of catppuccin theme with minor changes)
+export const defaultTheme = {
+	name: DEFAULT_THEME_NAME,
 	properties: {
 		'--type-scale-factor': '1.125',
 		'--type-scale-1': 'calc(0.75rem * var(--type-scale-factor))',

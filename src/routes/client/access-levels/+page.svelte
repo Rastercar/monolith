@@ -66,8 +66,6 @@
 	);
 </script>
 
-<pre>{JSON.stringify({ pagination, filters }, null, 2)}</pre>
-
 <div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
 		title="access levels"

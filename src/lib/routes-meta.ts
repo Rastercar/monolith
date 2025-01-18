@@ -59,6 +59,9 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 	},
 
 	// logged-in routes
+	'/client': {
+		requiredAuth: 'logged-in'
+	},
 	'/client/access-levels': {
 		requiredAuth: 'logged-in',
 		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']

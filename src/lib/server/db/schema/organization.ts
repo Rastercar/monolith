@@ -1,5 +1,14 @@
 import { relations } from 'drizzle-orm';
-import { boolean, integer, pgTable, serial, unique, uuid, varchar } from 'drizzle-orm/pg-core';
+import {
+	boolean,
+	integer,
+	jsonb,
+	pgTable,
+	serial,
+	unique,
+	uuid,
+	varchar
+} from 'drizzle-orm/pg-core';
 import { accessLevel } from './access-level';
 import { createdAt } from './schema-helpers';
 import { simCard } from './sim-card';
@@ -16,6 +25,7 @@ export const organization = pgTable(
 		blocked: boolean().notNull(),
 		billingEmail: varchar('billing_email', { length: 255 }).notNull(),
 		billingEmailVerified: boolean('billing_email_verified').default(false).notNull(),
+		themesCssVars: jsonb(),
 		/**
 		 * A UUID that is sent to the org billing email address to confirm
 		 * it belongs to a user of the organization

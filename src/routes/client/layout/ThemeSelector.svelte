@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getLayoutContext } from '$lib/store/layout.svelte';
 	import Icon from '@iconify/svelte';
-	import { availableThemesNames } from '../../../themes/available-themes';
 
 	const { extraClasses = '' }: { extraClasses: string } = $props();
 
@@ -16,7 +15,7 @@
 	</div>
 
 	<select bind:value={layout.selectedTheme}>
-		{#each availableThemesNames as theme}
+		{#each layout.availableThemes as theme}
 			<option value={theme}>{theme}</option>
 		{/each}
 	</select>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { permission } from '$lib/constants/permissions';
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import Icon from '@iconify/svelte';
 	import { type Snippet } from 'svelte';
 

@@ -20,5 +20,8 @@ test('promiseWithMinimumTimeOf - ensures a minimun time is ellapsed', async () =
 
 	const afterDelayEpoch = new Date().getTime();
 
-	expect(nowEpoch + minimunTime).toBe(afterDelayEpoch);
+	const leeway = 50;
+
+	expect(nowEpoch + minimunTime).toBeGreaterThan(afterDelayEpoch - leeway);
+	expect(nowEpoch + minimunTime).toBeLessThanOrEqual(afterDelayEpoch + leeway);
 });

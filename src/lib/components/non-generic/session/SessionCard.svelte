@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiDeleteUserSession, apiSignOutSpecificSession } from '$lib/api/auth';
 	import type { UserSession } from '$lib/api/user.schema';
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import { Avatar } from '@skeletonlabs/skeleton-svelte';
 	import type { ComponentProps } from 'svelte';

@@ -1,10 +1,9 @@
 import { browser } from '$app/environment';
 import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/local-storage';
-import { getContext, setContext } from 'svelte';
 import { DEFAULT_THEME_NAME } from '../../themes/default';
-import { DARK_MODE_KEY, LAYOUT_CONTEXT_KEY, THEME_KEY } from './keys';
+import { DARK_MODE_LS_KEY, THEME_LS_KEY } from './keys';
 
-class LayoutStore {
+export class LayoutStore {
 	darkMode = $state(true);
 
 	drawerOpen = $state(false);
@@ -14,13 +13,13 @@ class LayoutStore {
 	availableThemes = $state([DEFAULT_THEME_NAME]);
 
 	constructor() {
-		this.darkMode = loadFromLocalStorage(DARK_MODE_KEY, true);
+		this.darkMode = loadFromLocalStorage(DARK_MODE_LS_KEY, true);
 
 		const themeDefaultValue = browser
 			? (document.body.getAttribute('data-theme') ?? DEFAULT_THEME_NAME)
 			: DEFAULT_THEME_NAME;
 
-		this.selectedTheme = loadFromLocalStorage(THEME_KEY, themeDefaultValue);
+		this.selectedTheme = loadFromLocalStorage(THEME_LS_KEY, themeDefaultValue);
 
 		if (browser) {
 			this.setThemeOnHtml();
@@ -28,8 +27,8 @@ class LayoutStore {
 		}
 
 		$effect(() => {
-			setLocalStorage(THEME_KEY, this.selectedTheme);
-			setLocalStorage(DARK_MODE_KEY, this.darkMode);
+			setLocalStorage(THEME_LS_KEY, this.selectedTheme);
+			setLocalStorage(DARK_MODE_LS_KEY, this.darkMode);
 
 			if (!browser) return;
 
@@ -64,8 +63,3 @@ class LayoutStore {
 		this.drawerOpen = !this.drawerOpen;
 	}
 }
-
-export const setLayoutContext = () => setContext(LAYOUT_CONTEXT_KEY, new LayoutStore());
-
-export const getLayoutContext = () =>
-	getContext<ReturnType<typeof setLayoutContext>>(LAYOUT_CONTEXT_KEY);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getLayoutContext } from '$lib/store/layout.svelte';
+	import { getLayoutContext } from '$lib/store/context';
 	import Icon from '@iconify/svelte';
 
 	const layout = getLayoutContext();

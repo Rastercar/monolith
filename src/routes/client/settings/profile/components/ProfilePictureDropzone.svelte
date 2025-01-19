@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { removeUserProfilePicture, updateUserProfilePicture } from '$lib/api/user';
 	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import { showSuccessToast } from '$lib/store/toast';
 	import { cloudFrontUrl } from '$lib/utils/url';
 

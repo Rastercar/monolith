@@ -4,7 +4,7 @@
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';

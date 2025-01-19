@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getLayoutContext } from '$lib/store/layout.svelte';
+	import { getLayoutContext } from '$lib/store/context';
 	import type { PropsWithClasses } from '$lib/utils/svelte';
 	import Icon from '@iconify/svelte';
 	import { Switch } from '@skeletonlabs/skeleton-svelte';

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { setAuthContext } from '$lib/store/auth.svelte';
-	import { setLayoutContext } from '$lib/store/layout.svelte';
+	import { setAuthContext, setLayoutContext } from '$lib/store/context';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount, type Snippet } from 'svelte';

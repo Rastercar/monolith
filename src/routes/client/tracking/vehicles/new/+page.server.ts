@@ -1,5 +1,5 @@
 import { createVehicleSchema, vehicleSchema } from '$lib/api/vehicle.schema';
-import { db } from '$lib/server/db/db.js';
+import { getDB } from '$lib/server/db/db.js';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { createOrgVehicle, updateOrgVehiclePhoto } from '$lib/server/db/repo/vehicle';
 import { acl } from '$lib/server/middlewares/auth.js';
@@ -21,7 +21,7 @@ export const actions = {
 
 		const { photo, ...data } = form.data;
 
-		const createdVehicleOrError = await db.transaction(async (tx) => {
+		const createdVehicleOrError = await getDB().transaction(async (tx) => {
 			const vehicleOrError = await createOrgVehicle(user.organization.id, data, tx).catch((e) => {
 				if (isErrorFromUniqueConstraint(e, 'vehicle_plate_unique')) {
 					return 'vehicle_plate_unique' as const;

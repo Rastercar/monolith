@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { routesMeta, type LoggedInPageMeta } from '$lib/routes-meta';
-	import { getAuthContext } from '$lib/store/auth.svelte';
-	import { getLayoutContext } from '$lib/store/layout.svelte';
+	import { getAuthContext, getLayoutContext } from '$lib/store/context';
 	import AppHeader from './layout/AppHeader.svelte';
 	import ApplicationDrawer from './layout/ApplicationDrawer.svelte';
 	import AppSidebar from './layout/AppSidebar.svelte';

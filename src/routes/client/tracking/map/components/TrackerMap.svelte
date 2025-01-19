@@ -4,12 +4,8 @@
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 	import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
 	import { env } from '$lib/env/public-env';
-	import {
-		getMapContext,
-		setMapContext,
-		type Position,
-		type TrackerSelection
-	} from '$lib/store/map.svelte';
+	import { getMapContext, setMapContext } from '$lib/store/context';
+	import { type Position, type TrackerSelection } from '$lib/store/map.svelte';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import { onDestroy, onMount } from 'svelte';

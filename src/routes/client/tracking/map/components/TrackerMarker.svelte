@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import { getMapContext, type Position } from '$lib/store/map.svelte';
+	import { getMapContext } from '$lib/store/context';
+	import { type Position } from '$lib/store/map.svelte';
 	import Icon from '@iconify/svelte';
 	import { onDestroy, onMount } from 'svelte';
 

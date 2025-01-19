@@ -1,7 +1,6 @@
 import type { Tracker } from '$lib/api/tracker.schema';
 import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/local-storage';
-import { getContext, setContext } from 'svelte';
-import { MAP_CONTEXT_KEY, MAP_SELECTED_TRACKERS_KEY, TRACKER_POSITION_CACHE_KEY } from './keys';
+import { MAP_SELECTED_TRACKERS_LS_KEY, TRACKER_POSITION_CACHE_LS_KEY } from './keys';
 
 export interface Position {
 	lat: number;
@@ -25,7 +24,7 @@ type TrackerIdToLastPosition = Record<number, Position>;
 
 type GoogleMap = InstanceType<typeof window.google.maps.Map>;
 
-class MapPageStore {
+export class MapPageStore {
 	mapElement = $state<HTMLDivElement>();
 	mapInstance = $state<GoogleMap>();
 
@@ -33,12 +32,12 @@ class MapPageStore {
 	trackerPositionCache = $state<TrackerIdToLastPosition>({});
 
 	constructor() {
-		this.mapSelectedTrackers = loadFromLocalStorage(MAP_SELECTED_TRACKERS_KEY, {});
-		this.trackerPositionCache = loadFromLocalStorage(TRACKER_POSITION_CACHE_KEY, {});
+		this.mapSelectedTrackers = loadFromLocalStorage(MAP_SELECTED_TRACKERS_LS_KEY, {});
+		this.trackerPositionCache = loadFromLocalStorage(TRACKER_POSITION_CACHE_LS_KEY, {});
 
 		$effect(() => {
-			setLocalStorage(MAP_SELECTED_TRACKERS_KEY, this.mapSelectedTrackers);
-			setLocalStorage(TRACKER_POSITION_CACHE_KEY, this.trackerPositionCache);
+			setLocalStorage(MAP_SELECTED_TRACKERS_LS_KEY, this.mapSelectedTrackers);
+			setLocalStorage(TRACKER_POSITION_CACHE_LS_KEY, this.trackerPositionCache);
 		});
 	}
 
@@ -69,10 +68,3 @@ class MapPageStore {
 		return bounds;
 	}
 }
-
-/**
- * gets the appropriate context for components under the `Map` page
- */
-export const getMapContext = () => getContext<ReturnType<typeof setMapContext>>(MAP_CONTEXT_KEY);
-
-export const setMapContext = () => setContext(MAP_CONTEXT_KEY, new MapPageStore());

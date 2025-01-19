@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiConfirmEmailAddress } from '$lib/api/auth.js';
 	import { route } from '$lib/ROUTES.js';
-	import { getAuthContext } from '$lib/store/auth.svelte.js';
+	import { getAuthContext } from '$lib/store/context.js';
 	import { showErrorToast } from '$lib/store/toast.js';
 	import { promiseWithMinimumTimeOf } from '$lib/utils/promises.js';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';

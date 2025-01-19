@@ -7,7 +7,7 @@
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
 	import StepperHeader from '$lib/components/stepper/StepperHeader.svelte';
 	import { route } from '$lib/ROUTES';
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import Icon from '@iconify/svelte';
 	import CreateTrackerStep from './components/CreateTrackerStep.svelte';
 	import TrackerCreatedStep from './components/TrackerCreatedStep.svelte';

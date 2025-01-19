@@ -1,6 +1,6 @@
 <script lang="ts">
 	import UserAvatar from '$lib/components/avatar/UserAvatar.svelte';
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import type { PropsWithClasses } from '$lib/utils/svelte';
 
 	let { classes = '' }: PropsWithClasses = $props();

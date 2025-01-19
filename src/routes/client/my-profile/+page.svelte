@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import AccessLevelSection from './components/AccessLevelSection.svelte';
 	import OrgSection from './components/OrgSection.svelte';
 	import UserSection from './components/UserSection.svelte';

@@ -11,7 +11,7 @@
 </script>
 
 <script lang="ts">
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import NavLink from './NavLink.svelte';
 
 	interface Props {

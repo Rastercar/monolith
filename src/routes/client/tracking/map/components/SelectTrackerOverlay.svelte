@@ -6,8 +6,8 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { TRACKER_SUBSCRIPTION_PER_USER_LIMIT } from '$lib/constants/socket-io';
+	import { getMapContext } from '$lib/store/context';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { getMapContext } from '$lib/store/map.svelte';
 	import Icon from '@iconify/svelte';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {

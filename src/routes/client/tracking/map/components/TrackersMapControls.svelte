@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getMapContext } from '$lib/store/map.svelte';
+	import { getMapContext } from '$lib/store/context';
 	import Icon from '@iconify/svelte';
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import MapControl from './MapControl.svelte';

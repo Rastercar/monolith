@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getMapContext } from '$lib/store/map.svelte';
+	import { getMapContext } from '$lib/store/context';
 	import { onDestroy, onMount, type Snippet } from 'svelte';
 
 	interface Props {

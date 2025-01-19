@@ -6,7 +6,7 @@
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
 	import { route } from '$lib/ROUTES';
-	import { getAuthContext } from '$lib/store/auth.svelte';
+	import { getAuthContext } from '$lib/store/context';
 	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';

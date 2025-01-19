@@ -6,7 +6,7 @@ import type {
 	UpdateTrackerBody
 } from '$lib/api/tracker.schema';
 import { and, asc, eq, gt, ilike, isNotNull, isNull, lt, type SQL } from 'drizzle-orm';
-import { db } from '../db';
+import { getDB } from '../db';
 import { getISOFormatDateQuery } from '../helpers';
 import { paginate } from '../pagination';
 import {
@@ -48,7 +48,7 @@ export async function findTrackerLocationList(id: number, options: GetTrackerLoc
 		sqlFilters.push(gt(vehicleTrackerLocation.time, options.after));
 	}
 
-	return db
+	return getDB()
 		.select({
 			time: getISOFormatDateQuery(vehicleTrackerLocation.time),
 			point: vehicleTrackerLocation.point
@@ -60,7 +60,7 @@ export async function findTrackerLocationList(id: number, options: GetTrackerLoc
 }
 
 export async function findTrackerLastLocation(id: number) {
-	const locations = await db
+	const locations = await getDB()
 		.select({
 			time: getISOFormatDateQuery(vehicleTrackerLastLocation.time),
 			point: vehicleTrackerLastLocation.point
@@ -73,7 +73,7 @@ export async function findTrackerLastLocation(id: number) {
 }
 
 export function findOrgTrackerById(id: number, orgId: number) {
-	return db.query.vehicleTracker.findFirst({
+	return getDB().query.vehicleTracker.findFirst({
 		where: (vehicleTracker, { eq, and }) =>
 			and(eq(vehicleTracker.organizationId, orgId), eq(vehicleTracker.id, id)),
 		with: {
@@ -84,7 +84,7 @@ export function findOrgTrackerById(id: number, orgId: number) {
 }
 
 export async function createOrgTracker(orgId: number, body: CreateTrackerBody) {
-	const [createdTracker] = await db
+	const [createdTracker] = await getDB()
 		.insert(vehicleTracker)
 		.values({ ...body, organizationId: orgId })
 		.returning();
@@ -93,7 +93,7 @@ export async function createOrgTracker(orgId: number, body: CreateTrackerBody) {
 }
 
 export async function updateOrgTracker(id: number, orgId: number, body: UpdateTrackerBody) {
-	const [updatedTracker] = await db
+	const [updatedTracker] = await getDB()
 		.update(vehicleTracker)
 		.set(body)
 		.where(and(eq(vehicleTracker.id, id), eq(vehicleTracker.organizationId, orgId)))
@@ -103,7 +103,7 @@ export async function updateOrgTracker(id: number, orgId: number, body: UpdateTr
 }
 
 export function deleteOrgTrackerById(id: number, orgId: number, deleteAssociatedSimCards: boolean) {
-	return db.transaction(async (tx) => {
+	return getDB().transaction(async (tx) => {
 		if (deleteAssociatedSimCards) {
 			await tx
 				.delete(simCard)

@@ -5,7 +5,7 @@ import type {
 } from '$lib/api/access-level.schema';
 import type { PaginationWithFilters } from '$lib/api/common';
 import { and, count, eq, ilike, SQL } from 'drizzle-orm';
-import { db } from '../db';
+import { getDB } from '../db';
 import { paginate } from '../pagination';
 import { accessLevel, user } from '../schema';
 
@@ -23,14 +23,14 @@ export async function findOrgAccessLevelsWithPagination(
 }
 
 export function findOrgAccessLevelById(id: number, orgId: number) {
-	return db.query.accessLevel.findFirst({
+	return getDB().query.accessLevel.findFirst({
 		where: (accessLevel, { eq, and }) =>
 			and(eq(accessLevel.organizationId, orgId), eq(accessLevel.id, id))
 	});
 }
 
 export async function countUsersUsingAccessLevel(id: number) {
-	const [{ count: cnt }] = await db
+	const [{ count: cnt }] = await getDB()
 		.select({ count: count() })
 		.from(user)
 		.where(eq(user.accessLevelId, id));
@@ -39,7 +39,7 @@ export async function countUsersUsingAccessLevel(id: number) {
 }
 
 export async function updateOrgAccessLevel(id: number, orgId: number, body: UpdateAccessLevelBody) {
-	const [updatedAccessLevel] = await db
+	const [updatedAccessLevel] = await getDB()
 		.update(accessLevel)
 		.set(body)
 		.where(and(eq(accessLevel.id, id), eq(accessLevel.organizationId, orgId)))
@@ -49,7 +49,7 @@ export async function updateOrgAccessLevel(id: number, orgId: number, body: Upda
 }
 
 export async function createOrgAccessLevel(orgId: number, body: CreateAccessLevelBody) {
-	const [createdAccessLevel] = await db
+	const [createdAccessLevel] = await getDB()
 		.insert(accessLevel)
 		.values({ ...body, organizationId: orgId, isFixed: false })
 		.returning();
@@ -58,7 +58,7 @@ export async function createOrgAccessLevel(orgId: number, body: CreateAccessLeve
 }
 
 export function deleteOrgAccessLevelById(id: number, orgId: number) {
-	return db
+	return getDB()
 		.delete(accessLevel)
 		.where(and(eq(accessLevel.id, id), eq(accessLevel.organizationId, orgId)));
 }

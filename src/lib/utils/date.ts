@@ -1,23 +1,24 @@
 type DateOrTimestamp = Date | string;
 
-function castToDate(d: DateOrTimestamp): Date {
+export function castToDate(d: DateOrTimestamp): Date {
 	return typeof d === 'string' ? new Date(d) : d;
 }
 
 /**
- * Returns true if a date has occoured in the last X milliseconds
+ * Returns true if X milliseconds ellapsed since a date
+ *
  *
  * @example
  * ```ts
  * const fiveMinutes = 5 * 60 * 1000
  *
- * // false because 02/15/2020 is not between the last five minutes
- * isDateOlderThanXMilliseconds(new Date("2020-02-15T19:06:01Z"), fiveMinutes)
+ * // true because 02/15/2020 is not between the last five minutes
+ * checkMillisecondsEllapsedSinceDate(new Date("2020-02-15T19:06:01Z"), fiveMinutes)
  * ```
  */
-export function isDateOlderThanXMilliseconds(date: DateOrTimestamp, ms: number) {
+export function checkMillisecondsEllapsedSinceDate(date: DateOrTimestamp, ms: number) {
 	const nowToDateMsDiff = new Date().getTime() - castToDate(date).getTime();
-	return nowToDateMsDiff < ms;
+	return nowToDateMsDiff >= ms;
 }
 
 export function toLocaleDateString(d: DateOrTimestamp) {

@@ -3,7 +3,7 @@
 	import { apiGetVehicle } from '$lib/api/vehicle';
 	import { route } from '$lib/ROUTES';
 	import type { Position } from '$lib/store/map.svelte';
-	import { isDateOlderThanXMilliseconds, toLocaleDateString } from '$lib/utils/date';
+	import { checkMillisecondsEllapsedSinceDate, toLocaleDateString } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
 	import { createQuery } from '@tanstack/svelte-query';
@@ -27,7 +27,7 @@
 	let { data: vehicleTracker } = $derived(query);
 
 	let isOnline = $derived(
-		!!position.timestamp && isDateOlderThanXMilliseconds(position.timestamp, fiveMinutes)
+		!!position.timestamp && !checkMillisecondsEllapsedSinceDate(position.timestamp, fiveMinutes)
 	);
 </script>
 

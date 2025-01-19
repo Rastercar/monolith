@@ -8,5 +8,5 @@ export function wrapToArray<T>(v: T | T[]): T[] {
 }
 
 export function range(n: number) {
-	return new Array(n).map((_, i) => i);
+	return new Array(n).fill(0).map((_, i) => i);
 }

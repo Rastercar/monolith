@@ -1,7 +1,7 @@
 import type { PaginationParameters } from '$lib/api/common';
 import { and, count, type SQL } from 'drizzle-orm';
 import type { PgTableWithColumns, TableConfig } from 'drizzle-orm/pg-core';
-import { db } from './db';
+import { getDB } from './db';
 
 export async function paginate<T, U extends TableConfig>(
 	pagination: PaginationParameters,
@@ -9,6 +9,8 @@ export async function paginate<T, U extends TableConfig>(
 	filters?: SQL<T>[]
 ) {
 	const { page, pageSize } = pagination;
+
+	const db = getDB();
 
 	const records = await db
 		.select()

@@ -5,7 +5,7 @@ import type {
 	UpdateSimCardBody
 } from '$lib/api/sim-card.schema';
 import { and, eq, ilike, isNotNull, isNull, SQL } from 'drizzle-orm';
-import { db } from '../db';
+import { getDB } from '../db';
 import { paginate } from '../pagination';
 import { simCard } from '../schema';
 
@@ -33,20 +33,20 @@ export async function findOrgSimCardsWithPagination(
 }
 
 export function findOrgSimCardById(id: number, orgId: number) {
-	return db.query.simCard.findFirst({
+	return getDB().query.simCard.findFirst({
 		where: (simCard, { eq, and }) => and(eq(simCard.organizationId, orgId), eq(simCard.id, id))
 	});
 }
 
 export function findOrgSimCardsByVehicleTrackerId(vehicleTrackerId: number, orgId: number) {
-	return db.query.simCard.findMany({
+	return getDB().query.simCard.findMany({
 		where: (simCard, { eq, and }) =>
 			and(eq(simCard.vehicleTrackerId, vehicleTrackerId), eq(simCard.organizationId, orgId))
 	});
 }
 
 export async function updateOrgSimCard(id: number, orgId: number, body: UpdateSimCardBody) {
-	const [updatedSimCard] = await db
+	const [updatedSimCard] = await getDB()
 		.update(simCard)
 		.set(body)
 		.where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)))
@@ -56,7 +56,7 @@ export async function updateOrgSimCard(id: number, orgId: number, body: UpdateSi
 }
 
 export async function createOrgSimCard(orgId: number, body: CreateSimCardBody) {
-	const [createdSimCard] = await db
+	const [createdSimCard] = await getDB()
 		.insert(simCard)
 		.values({ ...body, organizationId: orgId })
 		.returning();
@@ -65,5 +65,7 @@ export async function createOrgSimCard(orgId: number, body: CreateSimCardBody) {
 }
 
 export function deleteOrgSimCardById(id: number, orgId: number) {
-	return db.delete(simCard).where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));
+	return getDB()
+		.delete(simCard)
+		.where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));
 }

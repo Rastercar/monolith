@@ -1,5 +1,5 @@
 import { and, eq, inArray } from 'drizzle-orm';
-import { db } from '../db';
+import { getDB } from '../db';
 import { vehicleTracker } from '../schema';
 
 /**
@@ -10,7 +10,7 @@ export async function filterVehicleTrackerIdsByAssertingBelongsToOrg(
 	trackerIds: number[],
 	orgId: number
 ) {
-	const result = await db
+	const result = await getDB()
 		.select({ id: vehicleTracker.id })
 		.from(vehicleTracker)
 		.where(and(inArray(vehicleTracker.id, trackerIds), eq(vehicleTracker.organizationId, orgId)));

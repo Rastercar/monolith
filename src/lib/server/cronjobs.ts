@@ -1,7 +1,7 @@
 import { building } from '$app/environment';
 import { consola } from 'consola';
 import { lt, sql } from 'drizzle-orm';
-import { db } from './db/db';
+import { getDB } from './db/db';
 import { session } from './db/schema';
 
 interface Cron {
@@ -66,7 +66,9 @@ function startCronjobs() {
 		description: 'Deletes Expired Sessions',
 		intervalSeconds: 5 * 60,
 		cb: () => {
-			db.delete(session).where(lt(session.expiresAt, sql`NOW()`));
+			getDB()
+				.delete(session)
+				.where(lt(session.expiresAt, sql`NOW()`));
 		}
 	});
 }

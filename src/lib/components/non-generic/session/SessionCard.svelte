@@ -2,7 +2,7 @@
 	import { apiDeleteUserSession, apiSignOutSpecificSession } from '$lib/api/auth';
 	import type { UserSession } from '$lib/api/user.schema';
 	import { getAuthContext } from '$lib/store/auth.svelte';
-	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
+	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { UAParser } from 'ua-parser-js';
@@ -48,7 +48,7 @@
 				? apiDeleteUserSession(sessionOwnerId, session.publicId)
 				: apiSignOutSpecificSession(session.publicId);
 
-			return awaitPromiseWithMinimumTimeOf(promise, 1_000);
+			return promiseWithMinimumTimeOf(promise, 1_000);
 		},
 		onSuccess: () => onDeleted()
 	}));

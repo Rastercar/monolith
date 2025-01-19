@@ -5,7 +5,7 @@ import type {
 	UpdateVehicleBody
 } from '$lib/api/vehicle.schema';
 import { and, eq, ilike, type SQL } from 'drizzle-orm';
-import { db } from '../db';
+import { getDB } from '../db';
 import type { Tx } from '../helpers';
 import { paginate } from '../pagination';
 import { vehicle } from '../schema';
@@ -24,7 +24,7 @@ export async function findOrgVehiclesWithPagination(
 }
 
 export function findOrgVehicleById(id: number, orgId: number) {
-	return db.query.vehicle.findFirst({
+	return getDB().query.vehicle.findFirst({
 		where: (vehicle, { eq, and }) => and(eq(vehicle.organizationId, orgId), eq(vehicle.id, id)),
 		with: {
 			vehicleTracker: {
@@ -39,7 +39,7 @@ export async function createOrgVehicle(
 	body: Omit<CreateVehicleBody, 'photo'> & { photo?: string | null },
 	tx?: Tx
 ) {
-	const [createdVehicle] = await (db || tx)
+	const [createdVehicle] = await (getDB() || tx)
 		.insert(vehicle)
 		.values({ ...body, organizationId: orgId })
 		.returning();
@@ -48,7 +48,7 @@ export async function createOrgVehicle(
 }
 
 export async function updateOrgVehicle(id: number, orgId: number, body: UpdateVehicleBody) {
-	const [updatedVehicle] = await db
+	const [updatedVehicle] = await getDB()
 		.update(vehicle)
 		.set(body)
 		.where(and(eq(vehicle.id, id), eq(vehicle.organizationId, orgId)))
@@ -58,7 +58,7 @@ export async function updateOrgVehicle(id: number, orgId: number, body: UpdateVe
 }
 
 export async function updateOrgVehiclePhoto(id: number, photo: string | null, tx?: Tx) {
-	const [updatedVehicle] = await (db || tx)
+	const [updatedVehicle] = await (getDB() || tx)
 		.update(vehicle)
 		.set({ photo })
 		.where(eq(vehicle.id, id))
@@ -68,5 +68,7 @@ export async function updateOrgVehiclePhoto(id: number, photo: string | null, tx
 }
 
 export function deleteOrgVehicleById(id: number, orgId: number) {
-	return db.delete(vehicle).where(and(eq(vehicle.id, id), eq(vehicle.organizationId, orgId)));
+	return getDB()
+		.delete(vehicle)
+		.where(and(eq(vehicle.id, id), eq(vehicle.organizationId, orgId)));
 }

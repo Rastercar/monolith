@@ -1,4 +1,4 @@
-import { toMegabytes } from '$lib/utils/number';
+import { megabytesToBytes } from '$lib/utils/number';
 import { emptyStringToNull } from '$lib/utils/string';
 import { z } from 'zod';
 import { trackerSchema } from './tracker.schema';
@@ -33,7 +33,7 @@ export const createVehicleSchema = z.object({
 	photo: z
 		.instanceof(File, { message: 'Please upload a file.' })
 		.nullable()
-		.refine((f?: File | null) => !f || f.size <= toMegabytes(5), `Max file size is 5MB.`)
+		.refine((f?: File | null) => !f || f.size <= megabytesToBytes(5), `Max file size is 5MB.`)
 		.refine(
 			(f?: File | null) => !f || ACCEPTED_IMAGE_TYPES.includes(f.type),
 			'jpg, jpeg, png and webp files are accepted.'

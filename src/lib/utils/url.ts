@@ -7,4 +7,4 @@ import { env } from '$lib/env/public-env';
 export const cloudFrontUrl = (s: string) => `${env.PUBLIC_CLOUDFRONT_BASE_URL}/${s}`;
 
 export const getBooleanFromUrlQuery = (url: URL, queryKey: string): boolean =>
-	['true', 't', 'TRUE', 'T'].includes(url.searchParams.get(queryKey) ?? '');
+	['true', 't', '1'].includes((url.searchParams.get(queryKey) ?? '').toLowerCase());

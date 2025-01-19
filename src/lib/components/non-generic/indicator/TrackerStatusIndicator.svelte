@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { apiGetTrackerLastLocation } from '$lib/api/tracker';
-	import { isDateOlderThanXMilliseconds } from '$lib/utils/date';
+	import { checkMillisecondsEllapsedSinceDate } from '$lib/utils/date';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { Tooltip } from 'bits-ui';
 	import type { Snippet } from 'svelte';
@@ -26,7 +26,7 @@
 	let lastPositionDate = $derived(query.data?.time ? new Date(query.data.time) : null);
 
 	let isOnline = $derived(
-		!!lastPositionDate && isDateOlderThanXMilliseconds(lastPositionDate, fiveMinutes)
+		!!lastPositionDate && !checkMillisecondsEllapsedSinceDate(lastPositionDate, fiveMinutes)
 	);
 
 	let iconColor = $derived(

@@ -143,7 +143,7 @@ export function getRouteMetaFromPath(path: string): PageMeta | undefined {
 /**
  * Redirects to the appropriate page according to user login status
  */
-export async function redirectToStartingPage(event: RequestEvent) {
+export function redirectToStartingPage(event: RequestEvent) {
 	const isLoggedIn = !!event.locals.user;
 	return redirect(303, isLoggedIn ? route('/client/my-profile') : route('/auth/sign-in'));
 }

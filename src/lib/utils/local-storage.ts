@@ -9,6 +9,5 @@ export function loadFromLocalStorage<T>(key: string, defaultValue: T): T {
 
 export function setLocalStorage(key: string, value: unknown) {
 	if (!browser) return;
-
 	localStorage.setItem(key, JSON.stringify(value));
 }

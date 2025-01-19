@@ -1,6 +1,7 @@
+import { dev } from '$app/environment';
 import consola from 'consola';
 import { eq } from 'drizzle-orm';
-import { db } from '../db/db';
+import { getDB } from '../db/db';
 import { vehicleTracker } from '../db/schema';
 
 export interface CacheMissHistory {
@@ -16,10 +17,9 @@ export interface CacheMissHistory {
 }
 
 export class VehicleTrackerImeiToIdCache {
-	private db = db;
 	private debug = false;
 
-	constructor(debug: boolean) {
+	constructor(debug = false) {
 		this.debug = debug;
 	}
 
@@ -49,7 +49,7 @@ export class VehicleTrackerImeiToIdCache {
 	}
 
 	async getFromDb(imei: string): Promise<number | null> {
-		const result = await this.db
+		const result = await getDB()
 			.select({ id: vehicleTracker.id })
 			.from(vehicleTracker)
 			.where(eq(vehicleTracker.imei, imei))
@@ -137,4 +137,4 @@ export class VehicleTrackerImeiToIdCache {
  * consecutive cache misses, this is a realistic scenario if there is a tracker comunicating with the platform but not
  * registered on the database
  */
-export const VEHICLE_TRACKER_IMEI_TO_ID_CACHE = new VehicleTrackerImeiToIdCache(true);
+export const VEHICLE_TRACKER_IMEI_TO_ID_CACHE = new VehicleTrackerImeiToIdCache(dev);

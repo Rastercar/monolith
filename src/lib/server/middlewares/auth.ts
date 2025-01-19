@@ -4,10 +4,10 @@ import { MISSING_SESSION } from '$lib/constants/error-codes';
 import type { permission } from '$lib/constants/permissions';
 import { route } from '$lib/ROUTES';
 import type { LoggedInPageMeta } from '$lib/routes-meta';
-import { db } from '$lib/server/db/db';
 import { wrapToArray } from '$lib/utils/arrays';
 import type { RequestEvent } from '@sveltejs/kit';
 import { error, redirect } from '@sveltejs/kit';
+import { getDB } from '../db/db';
 
 /**
  * If there is a session cookie, authenticates and sets the locals
@@ -26,7 +26,7 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 		return;
 	}
 
-	const sessionFromDb = await db.query.session.findFirst({
+	const sessionFromDb = await getDB().query.session.findFirst({
 		where: (session, { eq }) => eq(session.sessionToken, sessionToken)
 	});
 
@@ -36,7 +36,7 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 		redirect(302, route('/auth/sign-out'));
 	}
 
-	const userFromDb = await db.query.user.findFirst({
+	const userFromDb = await getDB().query.user.findFirst({
 		where: (user, { eq }) => eq(user.id, sessionFromDb.userId),
 		with: { organization: true, accessLevel: true }
 	});

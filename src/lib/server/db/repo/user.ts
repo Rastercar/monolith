@@ -3,7 +3,7 @@ import type { CreateUserBody, GetUsersFilters, UpdateUserBody } from '$lib/api/u
 import { allPermissions } from '$lib/constants/permissions';
 import { hashSync } from '$lib/server/crypto';
 import { and, eq, ilike, SQL } from 'drizzle-orm';
-import { db } from '../db';
+import { getDB } from '../db';
 import { paginate } from '../pagination';
 import { accessLevel, organization, session, user } from '../schema';
 
@@ -21,7 +21,7 @@ export async function findOrgUsersWithPagination(
 }
 
 export async function createOrgUser(orgId: number, body: CreateUserBody) {
-	const [createdUser] = await db
+	const [createdUser] = await getDB()
 		.insert(user)
 		.values({ ...body, password: hashSync(body.password), organizationId: orgId })
 		.returning();
@@ -33,19 +33,19 @@ export function findUserBy(
 	col: 'resetPasswordToken' | 'email' | 'username' | 'confirmEmailToken',
 	value: string
 ) {
-	return db.query.user.findFirst({
+	return getDB().query.user.findFirst({
 		where: (user, { eq }) => eq(user[col], value)
 	});
 }
 
 export function findUserById(id: number) {
-	return db.query.user.findFirst({
+	return getDB().query.user.findFirst({
 		where: (user, { eq }) => eq(user.id, id)
 	});
 }
 
 export function findOrgUserById(id: number, orgId: number) {
-	return db.query.user.findFirst({
+	return getDB().query.user.findFirst({
 		where: (user, { eq, and }) => and(eq(user.id, id), eq(user.organizationId, orgId)),
 		with: { accessLevel: true, organization: true }
 	});
@@ -68,7 +68,7 @@ export function findUserByResetPasswordToken(token: string) {
 }
 
 export async function findUserBySessionToken(token: string) {
-	const res = await db
+	const res = await getDB()
 		.select()
 		.from(user)
 		.innerJoin(session, eq(session.userId, user.id))
@@ -83,36 +83,36 @@ export function setOrgUserAccessLevel(ids: {
 	orgId: number;
 	accessLevelId: number;
 }) {
-	return db
+	return getDB()
 		.update(user)
 		.set({ accessLevelId: ids.accessLevelId })
 		.where(and(eq(user.id, ids.userId), eq(user.organizationId, ids.orgId)));
 }
 
 export function setUserResetPasswordToken(userId: number, token: string) {
-	return db.update(user).set({ resetPasswordToken: token }).where(eq(user.id, userId));
+	return getDB().update(user).set({ resetPasswordToken: token }).where(eq(user.id, userId));
 }
 
 export function setPasswordAndClearResetPasswordToken(password: string, token: string) {
-	return db
+	return getDB()
 		.update(user)
 		.set({ password: password, resetPasswordToken: null })
 		.where(eq(user.resetPasswordToken, token));
 }
 
 export function setConfirmEmailToken(userId: number, token: string) {
-	return db.update(user).set({ confirmEmailToken: token }).where(eq(user.id, userId));
+	return getDB().update(user).set({ confirmEmailToken: token }).where(eq(user.id, userId));
 }
 
 export function setEmailVerifiedAndClearConfirmEmailToken(token: string) {
-	return db
+	return getDB()
 		.update(user)
 		.set({ emailVerified: true, confirmEmailToken: null })
 		.where(eq(user.confirmEmailToken, token));
 }
 
 export async function checkEmailIsInUse(email: string) {
-	const foundUsersWithEmail = await db
+	const foundUsersWithEmail = await getDB()
 		.select({ id: user.id })
 		.from(user)
 		.where(eq(user.email, email))
@@ -120,7 +120,7 @@ export async function checkEmailIsInUse(email: string) {
 
 	if (foundUsersWithEmail.length > 0) return true;
 
-	const foundOrgsWithEmail = await db
+	const foundOrgsWithEmail = await getDB()
 		.select({ id: organization.id })
 		.from(organization)
 		.where(eq(organization.billingEmail, email))
@@ -136,7 +136,7 @@ export async function checkEmailIsInUse(email: string) {
 export function signUpUser(args: { username: string; email: string; password: string }) {
 	const { username, email, password } = args;
 
-	return db.transaction(async (tx) => {
+	return getDB().transaction(async (tx) => {
 		const [createdOrg] = await tx
 			.insert(organization)
 			.values({
@@ -180,12 +180,12 @@ export function signUpUser(args: { username: string; email: string; password: st
 }
 
 export async function updateUser(id: number, body: UpdateUserBody) {
-	const [updatedUser] = await db.update(user).set(body).where(eq(user.id, id)).returning();
+	const [updatedUser] = await getDB().update(user).set(body).where(eq(user.id, id)).returning();
 	return updatedUser;
 }
 
 export async function updateUserProfilePicture(id: number, s3Key: string | null) {
-	const [updatedUser] = await db
+	const [updatedUser] = await getDB()
 		.update(user)
 		.set({ profilePicture: s3Key })
 		.where(eq(user.id, id))
@@ -195,9 +195,11 @@ export async function updateUserProfilePicture(id: number, s3Key: string | null)
 }
 
 export function updateUserPassword(id: number, hashedPassword: string) {
-	return db.update(user).set({ password: hashedPassword }).where(eq(user.id, id)).returning();
+	return getDB().update(user).set({ password: hashedPassword }).where(eq(user.id, id)).returning();
 }
 
 export function deleteOrgUserById(id: number, orgId: number) {
-	return db.delete(user).where(and(eq(user.id, id), eq(user.organizationId, orgId)));
+	return getDB()
+		.delete(user)
+		.where(and(eq(user.id, id), eq(user.organizationId, orgId)));
 }

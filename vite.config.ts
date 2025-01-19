@@ -11,8 +11,7 @@ const socketIo = {
 		if (!server.httpServer) return;
 
 		// dont configure the socket io server here as this is done on hooks.server.ts
-		const io = new Server(server.httpServer);
-		globalThis.io = io;
+		globalThis.io = new Server(server.httpServer);
 	}
 };
 

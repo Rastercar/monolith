@@ -1,7 +1,7 @@
 /**
  * Creates a promise that will resolve after X milliseconds
  */
-export const createPromiseThatResolvesIn = (ms: number) =>
+export const delay = (ms: number) =>
 	new Promise((resolve) => {
 		setTimeout(resolve, ms);
 	});
@@ -9,10 +9,10 @@ export const createPromiseThatResolvesIn = (ms: number) =>
 /**
  * Waits for a minium time (milliseconds) before returning the result of a certain promise
  */
-export const awaitPromiseWithMinimumTimeOf = async <T>(
+export const promiseWithMinimumTimeOf = async <T>(
 	originalPromise: Promise<T>,
-	delay = 1000
+	delayMs = 1000
 ): Promise<T> => {
-	const [promiseResult] = await Promise.all([originalPromise, createPromiseThatResolvesIn(delay)]);
+	const [promiseResult] = await Promise.all([originalPromise, delay(delayMs)]);
 	return promiseResult;
 };

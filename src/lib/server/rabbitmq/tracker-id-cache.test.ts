@@ -1,4 +1,4 @@
-import { createPromiseThatResolvesIn } from '$lib/utils/promises';
+import { delay } from '$lib/utils/promises';
 import { describe, expect, test, vi } from 'vitest';
 import { VehicleTrackerImeiToIdCache, type CacheMissHistory } from './tracker-id-cache';
 
@@ -119,7 +119,7 @@ describe('cache miss history', async () => {
 		}
 
 		// now we wait for the ignore windown to expire and attempt again, this should reset the miss history
-		await createPromiseThatResolvesIn(cache.millisecondsToIgnoreAttemptsAfterMaxMissesReached);
+		await delay(cache.millisecondsToIgnoreAttemptsAfterMaxMissesReached);
 
 		await cache.get(fakeImei);
 
@@ -139,7 +139,7 @@ describe('cache miss history', async () => {
 		await cache.get(fakeImei);
 
 		// wait for the ignore windown to expire and attempt again
-		await createPromiseThatResolvesIn(cache.millisecondsToIgnoreAttemptsAfterMaxMissesReached);
+		await delay(cache.millisecondsToIgnoreAttemptsAfterMaxMissesReached);
 		await cache.get(fakeImei);
 
 		expect(spy).toHaveBeenCalledTimes(2);

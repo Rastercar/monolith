@@ -2,15 +2,25 @@ import { building } from '$app/environment';
 import { env } from '$lib/env/private-env';
 import consola from 'consola';
 import type { Logger } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import { format } from 'sql-formatter';
 import * as schema from './schema';
 
-const client = postgres(env.DATABASE_URL, {
-	onnotice: env.DATABASE_NOTICE_LOGGING ? undefined : () => {}
-});
+export type DB = PostgresJsDatabase<typeof schema> & {
+	$client: postgres.Sql<{}>;
+};
+
+/**
+ * global drizzle orm instance
+ */
+let db: DB | null = null;
+
+/**
+ * global postgres client instance, used by drizzle orm
+ */
+let client: postgres.Sql<{}> | null = null;
 
 class ConsolaLogger implements Logger {
 	logQuery(query: string, params: unknown[]): void {
@@ -20,17 +30,34 @@ class ConsolaLogger implements Logger {
 	}
 }
 
-export const db = drizzle<typeof schema>({
-	client,
-	schema,
-	casing: 'snake_case',
-	logger: env.DATABASE_QUERY_LOGGING ? new ConsolaLogger() : false
-});
+/**
+ * Connects to the database and sets the global `db` variable
+ */
+export const initDb = (runMigrations = !building) => {
+	if (!client) {
+		client = postgres(env.DATABASE_URL, {
+			onnotice: env.DATABASE_NOTICE_LOGGING ? undefined : () => {}
+		});
+	}
 
-if (!building) {
-	consola.info('[DB] running migrations');
-	migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
-}
+	if (!db) {
+		db = drizzle<typeof schema>({
+			client,
+			schema,
+			casing: 'snake_case',
+			logger: env.DATABASE_QUERY_LOGGING ? new ConsolaLogger() : false
+		});
 
-/** noop to load the db connection */
-export const initDb = () => null;
+		if (runMigrations) {
+			consola.info('[DB] running migrations');
+			migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
+		}
+	}
+
+	return db;
+};
+
+/**
+ * gets the drizzle orm DB, ensuring the connection was initialized
+ */
+export const getDB = (runMigrations = !building) => db ?? initDb(runMigrations);

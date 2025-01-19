@@ -1,1 +1,1 @@
-export const toMegabytes = (bytes: number) => bytes * 1024 * 1024;
+export const megabytesToBytes = (megaBytes: number) => megaBytes * 1024 * 1024;

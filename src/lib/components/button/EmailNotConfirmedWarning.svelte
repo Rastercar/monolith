@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { apiRequestEmailAddressConfirmation } from '$lib/api/auth';
-	import { awaitPromiseWithMinimumTimeOf } from '$lib/utils/promises';
+	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
@@ -28,7 +28,7 @@
 				confirmingForOrg: sendConfirmationEmailTo === 'organization'
 			});
 
-			return awaitPromiseWithMinimumTimeOf(promise, 1_500);
+			return promiseWithMinimumTimeOf(promise, 1_500);
 		}
 	}));
 

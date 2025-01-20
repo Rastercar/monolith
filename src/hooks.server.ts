@@ -3,19 +3,27 @@ import {
 	getRouteMetaFromPath as getPageMetaFromPath,
 	redirectToStartingPage
 } from '$lib/routes-meta';
+import { initCronJobs } from '$lib/server/cronjobs';
+import { initDb } from '$lib/server/db/db';
 import {
 	setUserLocalsFromSessionCookie,
 	verifyUserCanAccessAuthenticatedRoute
 } from '$lib/server/middlewares/auth';
+import { initRabbitMq } from '$lib/server/rabbitmq/rabbitmq';
 import { ensureSocketIoServerIsConfigured } from '$lib/server/socketio';
 import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
 import { type Handle } from '@sveltejs/kit';
-import { bootstrapApplication } from './bootstrap';
 
+// if this modules is not being loaded during a build, then
+// we should initialize the application dependencies
+//
+// important: initialize telemetry before anything else
 if (!building) {
-	// important: initialize telemetry before anything else
 	initTelemetry();
-	bootstrapApplication();
+
+	initDb();
+	initRabbitMq();
+	initCronJobs();
 }
 
 // server hook:

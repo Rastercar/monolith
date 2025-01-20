@@ -206,7 +206,6 @@
 			{#if position}
 				<TrackerMarker
 					{position}
-					{tracker}
 					onClick={() => {
 						trackerModalIsOpen = true;
 						trackerToDisplay = tracker;

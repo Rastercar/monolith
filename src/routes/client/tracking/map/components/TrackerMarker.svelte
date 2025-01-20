@@ -1,38 +1,34 @@
 <script lang="ts">
-	import type { Tracker } from '$lib/api/tracker.schema';
 	import { getMapContext } from '$lib/store/context';
 	import { type Position } from '$lib/store/map.svelte';
 	import Icon from '@iconify/svelte';
 	import { onDestroy, onMount } from 'svelte';
 
 	interface Props {
-		tracker: Tracker;
 		position: Position;
 		onClick: (_: google.maps.marker.AdvancedMarkerElement) => void;
 	}
 
-	let { tracker, position, onClick }: Props = $props();
+	let { position, onClick }: Props = $props();
 
 	let markerContentElement = $state<HTMLDivElement>();
 
 	let markerInstance: InstanceType<typeof google.maps.marker.AdvancedMarkerElement> | null =
 		$state(null);
 
-	const mapContext = getMapContext();
-
-	const map = mapContext.getGoogleMap();
+	const mapCtx = getMapContext();
 
 	const addMarkerToMap = () => {
-		if (!map) return;
+		if (!mapCtx.mapInstance) return;
 
 		markerInstance = new google.maps.marker.AdvancedMarkerElement({
-			map,
+			map: mapCtx.mapInstance,
 			content: markerContentElement,
 			position
 		});
 
 		markerInstance.addListener('click', () => {
-			map.panTo(position);
+			mapCtx.mapInstance?.panTo(position);
 
 			if (!markerInstance) return;
 			onClick(markerInstance);

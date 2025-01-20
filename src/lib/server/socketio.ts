@@ -6,7 +6,7 @@ import { handleChangeTrackersToListenEvent } from './tracking/client-to-server-e
 /**
  * If the socket IO instance has been configured with event callbacks
  */
-let hasConfiguredSocketIoServer = false;
+export let hasConfiguredSocketIoServer = false;
 
 export function getSocketIoInstance(): (typeof globalThis)['io'] | null {
 	return globalThis.io ?? null;
@@ -29,7 +29,7 @@ export interface SocketIoSession {
 /**
  * Configures a socket io server with the needed callbacks for application logic
  */
-function configureSocketIoServer(io: SocketIoServer) {
+export function configureSocketIoServer(io: SocketIoServer) {
 	io.of(SOCKET_IO_TRACKING_NAMESPACE).on('connection', async (socket) => {
 		const cookieHeader = socket.handshake.headers.cookie ?? '';
 

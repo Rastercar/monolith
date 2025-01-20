@@ -23,31 +23,31 @@ describe('createSessionExpirationDateFromNow', () => {
 	});
 });
 
-describe('setSessionCookie', () => {
-	class MockCookies implements Cookies {
-		private cookies: Map<string, string> = new Map();
+class MockCookies implements Cookies {
+	private cookies: Map<string, string> = new Map();
 
-		get(name: string): string | undefined {
-			return this.cookies.get(name);
-		}
-
-		getAll(): Array<{ name: string; value: string }> {
-			return Array.from(this.cookies.entries()).map(([name, value]) => ({ name, value }));
-		}
-
-		set(name: string, value: string): void {
-			this.cookies.set(name, value);
-		}
-
-		delete(name: string): void {
-			this.cookies.delete(name);
-		}
-
-		serialize(name: string, value: string): string {
-			return `${name}=${value}; Path=/; HttpOnly; Secure`;
-		}
+	get(name: string): string | undefined {
+		return this.cookies.get(name);
 	}
 
+	getAll(): Array<{ name: string; value: string }> {
+		return Array.from(this.cookies.entries()).map(([name, value]) => ({ name, value }));
+	}
+
+	set(name: string, value: string): void {
+		this.cookies.set(name, value);
+	}
+
+	delete(name: string): void {
+		this.cookies.delete(name);
+	}
+
+	serialize(name: string, value: string): string {
+		return `${name}=${value}; Path=/; HttpOnly; Secure`;
+	}
+}
+
+describe('setSessionCookie', () => {
 	test('calls set with the appropriate options', () => {
 		const sessionToken = 'token';
 		const sessionMaxAge = 5 * 60;

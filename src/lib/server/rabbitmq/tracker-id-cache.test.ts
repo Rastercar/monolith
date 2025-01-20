@@ -141,6 +141,7 @@ describe('cache miss history', async () => {
 		// wait for the ignore windown to expire and attempt again
 		await delay(cache.millisecondsToIgnoreAttemptsAfterMaxMissesReached);
 		await cache.get(fakeImei);
+		await delay(10);
 
 		expect(spy).toHaveBeenCalledTimes(2);
 	});

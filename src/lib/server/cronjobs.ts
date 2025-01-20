@@ -1,23 +1,22 @@
-import { building } from '$app/environment';
 import { consola } from 'consola';
-import { lt, sql } from 'drizzle-orm';
-import { getDB } from './db/db';
-import { session } from './db/schema';
+import { deleteExpiredSessions } from './db/repo/session';
 
 interface Cron {
 	timeout: ReturnType<typeof setInterval>;
 	description: string;
-	intervalSeconds: number;
+	intervalMilliseconds: number;
 }
 
 interface CreateCronArgs {
 	key: string;
 	description: string;
-	intervalSeconds: number;
+	intervalMilliseconds: number;
 	cb: () => void;
 }
 
-function fmt(seconds: number): string {
+const runningCrons: Record<string, Cron | undefined> = {};
+
+export function fmt(seconds: number): string {
 	if (seconds < 60) {
 		return `${seconds} second${seconds !== 1 ? 's' : ''}`;
 	}
@@ -36,22 +35,25 @@ function fmt(seconds: number): string {
 	return `${days} day${days !== 1 ? 's' : ''}`;
 }
 
-function createCron({ key, description, intervalSeconds, cb }: CreateCronArgs) {
-	consola.info(`[CRON] registering cronjob: ${key} with interval of ${fmt(intervalSeconds)}`);
+export function createCron(
+	{ key, description, intervalMilliseconds, cb }: CreateCronArgs,
+	logOnReplace = true
+) {
+	consola.info(`[CRON] registering cronjob: ${key} with interval of ${fmt(intervalMilliseconds)}`);
 
 	// If a cron with this key already exists, then clear the previous interval
 	if (runningCrons[key]) {
-		console.warn(`[CRON] conjob with key ${key} has changed`);
+		if (logOnReplace) console.warn(`[CRON] conjob with key ${key} has changed`);
 		clearInterval(runningCrons[key].timeout);
 	}
 
 	runningCrons[key] = {
 		description,
-		intervalSeconds,
+		intervalMilliseconds,
 		timeout: setInterval(() => {
 			consola.info(`[CRON] running cron job: ${key} - ${description}`);
 			cb();
-		}, intervalSeconds * 1_000)
+		}, intervalMilliseconds)
 	};
 }
 
@@ -60,22 +62,11 @@ function createCron({ key, description, intervalSeconds, cb }: CreateCronArgs) {
  * whenever running sveltekit on dev mode with HMR modifying cronjobs wont
  * delete the previous cronjobs, so restart the DEV server.
  */
-function startCronjobs() {
+export function initCronJobs() {
 	createCron({
 		key: 'DeleteSessions',
 		description: 'Deletes Expired Sessions',
-		intervalSeconds: 5 * 60,
-		cb: () => {
-			getDB()
-				.delete(session)
-				.where(lt(session.expiresAt, sql`NOW()`));
-		}
+		intervalMilliseconds: 5 * 60 * 1_000,
+		cb: deleteExpiredSessions
 	});
 }
-
-const runningCrons: Record<string, Cron | undefined> = {};
-
-if (!building) startCronjobs();
-
-/** noop to start cronjobs */
-export const initCronJobs = () => null;

@@ -1,5 +1,6 @@
 import type { AccessLevel } from '$lib/api/access-level.schema';
 import type { Organization } from '$lib/api/organization.schema';
+import type { Tracker } from '$lib/api/tracker.schema';
 
 export const createUserMock = (): User => ({
 	id: 0,
@@ -29,4 +30,14 @@ export const createOrganizationMock = (): Organization => ({
 	billingEmail: '',
 	blocked: false,
 	billingEmailVerified: false
+});
+
+export const createTrackerMock = (values?: Partial<Tracker>): Tracker => ({
+	id: 0,
+	createdAt: new Date(),
+	imei: '',
+	model: 'H02',
+	vehicleId: null,
+	organizationId: 0,
+	...values
 });

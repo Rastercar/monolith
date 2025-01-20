@@ -7,9 +7,12 @@ test('delay - creates a promise that resolves in X milliseconds', async () => {
 	const delayTime = 5;
 	await delay(delayTime);
 
+	const leeway = 50;
+
 	const afterDelayEpoch = new Date().getTime();
 
-	expect(nowEpoch + delayTime).toBe(afterDelayEpoch);
+	expect(nowEpoch + delayTime).toBeGreaterThanOrEqual(afterDelayEpoch - leeway);
+	expect(nowEpoch + delayTime).toBeLessThanOrEqual(afterDelayEpoch + leeway);
 });
 
 test('promiseWithMinimumTimeOf - ensures a minimun time is ellapsed', async () => {

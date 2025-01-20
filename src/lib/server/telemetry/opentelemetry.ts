@@ -1,4 +1,3 @@
-import { building } from '$app/environment';
 import { env } from '$lib/env/private-env';
 import { diag, DiagConsoleLogger, type TextMapGetter } from '@opentelemetry/api';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
@@ -68,14 +67,18 @@ const sdk = new NodeSDK({
 	]
 });
 
-if (!building) {
+let otelStarted = false;
+
+export const initTelemetry = () => {
+	if (otelStarted) return;
+
 	consola.info('[OTEL] starting telemetry');
+
 	sdk.start();
 
 	process.on('beforeExit', async () => {
 		await sdk.shutdown();
 	});
-}
 
-/** noop to register open telemetry */
-export const initTelemetry = () => null;
+	otelStarted = true;
+};

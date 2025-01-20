@@ -10,7 +10,7 @@
 
 	const fitMapToTrackersBeingShown = () => {
 		const bounds = mapContext.getTrackersMapBounds();
-		if (!bounds.isEmpty()) mapContext.getGoogleMap()?.fitBounds(bounds);
+		if (!bounds.isEmpty()) mapContext.mapInstance?.fitBounds(bounds);
 	};
 </script>
 

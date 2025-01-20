@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, lt, sql } from 'drizzle-orm';
 import { getDB } from '../db';
 import { session } from '../schema';
 
@@ -30,4 +30,10 @@ export function deleteSessionByToken(token: string) {
 
 export function deleteSessionByPublicId(id: number) {
 	return getDB().delete(session).where(eq(session.publicId, id));
+}
+
+export function deleteExpiredSessions() {
+	return getDB()
+		.delete(session)
+		.where(lt(session.expiresAt, sql`NOW()`));
 }

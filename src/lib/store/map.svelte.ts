@@ -20,7 +20,7 @@ export type TrackerSelection = Record<number, Tracker>;
  * key: tracker ID
  * val: tracker last position
  */
-type TrackerIdToLastPosition = Record<number, Position>;
+export type TrackerIdToLastPosition = Record<number, Position>;
 
 type GoogleMap = InstanceType<typeof window.google.maps.Map>;
 
@@ -39,14 +39,6 @@ export class MapPageStore {
 			setLocalStorage(MAP_SELECTED_TRACKERS_LS_KEY, this.mapSelectedTrackers);
 			setLocalStorage(TRACKER_POSITION_CACHE_LS_KEY, this.trackerPositionCache);
 		});
-	}
-
-	getGoogleMap() {
-		return this.mapInstance;
-	}
-
-	getMapElement() {
-		return this.mapElement;
 	}
 
 	/**

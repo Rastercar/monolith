@@ -76,6 +76,3 @@ class S3Service {
 }
 
 export const s3 = new S3Service();
-
-/** noop to connect to S3 */
-export const initS3 = () => null;

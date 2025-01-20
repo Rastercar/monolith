@@ -2,7 +2,6 @@ import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
 import { createVehicleTrackerLocation } from '$lib/server/db/repo/vehicle-tracker-location';
 import { getSocketIoInstance } from '$lib/server/socketio';
 import { readBufferAsUtf8JsonOfSchema } from '$lib/utils/buffer';
-import consola from 'consola';
 import { z } from 'zod';
 
 const h02TrackerPositionSchema = z.object({
@@ -69,14 +68,9 @@ export async function handleH02TrackerPosition(vehicleTrackerId: number, data: B
 		point: [position.lng, position.lat]
 	});
 
-	const io = getSocketIoInstance();
-	if (!io) {
-		consola.warn('failed to get SocketIO instance to send postions to');
-		return;
-	}
-
 	// send the location to the vehicle tracker room (room name is the tracker id)
-	io.of(SOCKET_IO_TRACKING_NAMESPACE)
+	getSocketIoInstance()
+		?.of(SOCKET_IO_TRACKING_NAMESPACE)
 		.to(vehicleTrackerId.toString())
 		.emit('position', { ...position, trackerId: vehicleTrackerId });
 }

@@ -1,4 +1,3 @@
-import { building } from '$app/environment';
 import { env } from '$lib/env/private-env';
 import type { Options } from 'amqplib';
 import { RabbitMQConnection } from './connection';
@@ -6,15 +5,15 @@ import { DEFAULT_EXCHANGE, MAILER_QUEUE, type TRACKER_EVENTS_QUEUE } from './con
 
 type queue = typeof TRACKER_EVENTS_QUEUE | typeof MAILER_QUEUE;
 
-// dont attempt to connect to rabbitmq if this code is running during
-// the app build proccess as the connection is most likely unavailable
-// in such context
-const autoConnect = !building;
-
 /**
  * rabbitmq connection singleton
  */
-export const rmqConnection = new RabbitMQConnection(env.RABBITMQ_URL, autoConnect);
+let rmqConnection: RabbitMQConnection | null = null;
+
+const getRmqConnection = () => {
+	if (!rmqConnection) rmqConnection = new RabbitMQConnection(env.RABBITMQ_URL, true);
+	return rmqConnection;
+};
 
 /**
  * Publishes directly to a queue using the default exchange, JSON.stringify the content
@@ -25,11 +24,15 @@ export async function publishJsonToQueue(
 	content: unknown,
 	options: Omit<Options.Publish, 'contentType'>
 ) {
-	return rmqConnection.publish(DEFAULT_EXCHANGE, queue, JSON.stringify(content), {
+	return getRmqConnection().publish(DEFAULT_EXCHANGE, queue, JSON.stringify(content), {
 		...options,
 		contentType: 'application/json'
 	});
 }
 
-/** noop to load the RabbitMQ connection */
-export const initRabbitMq = () => null;
+/**
+ *
+ */
+export const initRabbitMq = () => {
+	rmqConnection = new RabbitMQConnection(env.RABBITMQ_URL, true);
+};

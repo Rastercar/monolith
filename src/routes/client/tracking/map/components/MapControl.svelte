@@ -9,14 +9,14 @@
 
 	let { position, children }: Props = $props();
 
-	const mapContext = getMapContext();
-
-	const map = mapContext.getGoogleMap();
+	const mapCtx = getMapContext();
 
 	let slotRef = $state<HTMLDivElement>();
 
-	const addControl = () => slotRef && map && map.controls[position].push(slotRef);
-	const removeControl = () => map && map.controls[position].clear();
+	const addControl = () =>
+		slotRef && mapCtx.mapInstance && mapCtx.mapInstance.controls[position].push(slotRef);
+
+	const removeControl = () => mapCtx.mapInstance && mapCtx.mapInstance.controls[position].clear();
 
 	onMount(addControl);
 	onDestroy(removeControl);

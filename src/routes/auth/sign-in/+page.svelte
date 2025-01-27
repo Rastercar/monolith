@@ -44,6 +44,7 @@
 		</div>
 
 		<LoadableButton
+			type="submit"
 			classes="btn preset-filled-primary-200-800 mt-6 w-full"
 			disabled={$isLoading}
 			isLoading={$isLoading}

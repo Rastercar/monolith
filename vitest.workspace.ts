@@ -1,6 +1,6 @@
 import { defineWorkspace } from 'vitest/config';
 
-const anyTestGlob = 'src/**/*.test.ts';
+const e2eTestGlob = 'src/**/*.e2e.test.ts';
 const browserTestGlob = 'src/**/*.browser.test.ts';
 const integrationTestGlob = 'src/**/*.integration.test.ts';
 
@@ -10,7 +10,7 @@ export default defineWorkspace([
 		resolve: { conditions: ['svelte'] },
 		test: {
 			include: [integrationTestGlob],
-			exclude: [browserTestGlob],
+			exclude: [browserTestGlob, e2eTestGlob],
 			name: 'integration',
 			environment: 'node',
 			setupFiles: ['./src/test/integration-setup.ts'],
@@ -22,7 +22,7 @@ export default defineWorkspace([
 		resolve: { conditions: ['svelte'] },
 		test: {
 			include: ['src/**/*.test.ts'],
-			exclude: [browserTestGlob, integrationTestGlob],
+			exclude: [browserTestGlob, integrationTestGlob, e2eTestGlob],
 			name: 'unit',
 			environment: 'node'
 		}
@@ -32,7 +32,7 @@ export default defineWorkspace([
 		resolve: { conditions: ['svelte', 'browser'] },
 		test: {
 			include: [browserTestGlob],
-			exclude: [integrationTestGlob],
+			exclude: [integrationTestGlob, e2eTestGlob],
 			name: 'unit-browser',
 			environment: 'jsdom'
 		}

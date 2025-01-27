@@ -11,3 +11,9 @@ vite.config.ts.timestamp-*
 todo.txt
 notes.txt
 coverage/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

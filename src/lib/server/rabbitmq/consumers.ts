@@ -7,15 +7,13 @@ import { TRACKER_EVENTS_QUEUE } from './constants';
 import { getOtelContextFromDeliveryHeaders } from './rmq-helpers';
 import { VEHICLE_TRACKER_IMEI_TO_ID_CACHE } from './tracker-id-cache';
 
-type Handler = (msg: amqp.ConsumeMessage | null) => void;
+type Handler = (msg: amqp.ConsumeMessage | null) => Promise<void>;
 
 interface RqmConsumer {
 	queue: string;
 	options: amqp.Options.Consume;
 	handler: Handler;
 }
-
-const tracer = trace.getTracer('tracker-events-consumer');
 
 export const trackerEventsConsumer: RqmConsumer = {
 	queue: TRACKER_EVENTS_QUEUE,
@@ -34,6 +32,8 @@ export const trackerEventsConsumer: RqmConsumer = {
 		if (!delivery) return;
 
 		const ctx = getOtelContextFromDeliveryHeaders(delivery);
+
+		const tracer = trace.getTracer('tracker-events-consumer');
 
 		const span = tracer.startSpan('process-tracker-event', { kind: SpanKind.CONSUMER }, ctx);
 
@@ -67,6 +67,7 @@ export const trackerEventsConsumer: RqmConsumer = {
 			const protocolAndEvent = `${protocol}.${eventType}`;
 
 			if (protocolAndEvent !== 'h02.location') {
+				span.setStatus({ code: SpanStatusCode.ERROR, message: 'cannot handle protocol and event' });
 				if (dev) consola.info(`[RMQ] unknown protocol/event combination: ${protocol}/${eventType}`);
 				return;
 			}

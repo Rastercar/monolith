@@ -15,6 +15,7 @@ const schema = z.object({
 	DATABASE_QUERY_LOGGING: castStringToBool,
 	DATABASE_QUERY_LOGGING_FORMATTED: castStringToBool,
 	DATABASE_NOTICE_LOGGING: castStringToBool,
+	DATABASE_SEED_ON_STARTUP: castStringToBool,
 
 	// NONE = 0
 	// ERROR = 30

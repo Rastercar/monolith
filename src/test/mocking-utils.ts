@@ -5,8 +5,8 @@ import type { Tracker } from '$lib/api/tracker.schema';
 export const createUserMock = (): User => ({
 	id: 0,
 	createdAt: new Date(),
-	email: '',
-	username: '',
+	email: 'testuser@gmail.com',
+	username: 'some_username',
 	description: null,
 	emailVerified: false,
 	profilePicture: null,
@@ -39,5 +39,15 @@ export const createTrackerMock = (values?: Partial<Tracker>): Tracker => ({
 	model: 'H02',
 	vehicleId: null,
 	organizationId: 0,
+	...values
+});
+
+export const createSessionMock = (values?: Partial<UserSession>): UserSession => ({
+	createdAt: new Date(),
+	ip: '',
+	publicId: 1,
+	expiresAt: new Date(),
+	userAgent: '',
+	sameAsFromRequest: false,
 	...values
 });

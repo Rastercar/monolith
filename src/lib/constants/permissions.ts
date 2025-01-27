@@ -3,7 +3,7 @@
  *
  * this gives or denies access to certain api endpoints / pages / components
  */
-export type permission = (typeof allPermissions)[number];
+export type permission = (typeof permissions)[number];
 
 export type permissionCategory =
 	| 'user'
@@ -24,6 +24,32 @@ export interface PermissionDetails {
 export type PermissionDetailsAndKey = PermissionDetails & { key: permission };
 
 type PermissionByCategory = Record<permissionCategory, PermissionDetailsAndKey[]>;
+
+export const permissions = [
+	'CREATE_USER',
+	'DELETE_USER',
+	'LOGOFF_USER',
+	'LIST_USER_SESSIONS',
+	'MANAGE_USER_ACCESS_LEVELS',
+	//
+	'CREATE_TRACKER',
+	'UPDATE_TRACKER',
+	'DELETE_TRACKER',
+	//
+	'CREATE_VEHICLE',
+	'UPDATE_VEHICLE',
+	'DELETE_VEHICLE',
+	//
+	'DELETE_SIM_CARD',
+	'UPDATE_SIM_CARD',
+	'CREATE_SIM_CARD',
+	//
+	'UPDATE_ORGANIZATION'
+] as const;
+
+// the reason whe dont export permissions is because it would not be typed as
+// permission[], and we cant type it as so due to cyclic refs, so we need this workaround
+export const allPermissions = [...permissions] as permission[];
 
 export const permissionCategoryIcons: Record<permissionCategory, string> = {
 	user: 'mdi:user',
@@ -162,25 +188,3 @@ export const groupPermissionsByCategory = (permissions: permission[]): Permissio
 export const allPermissionsGroupedByCategory = groupPermissionsByCategory(
 	Object.keys(permissionDetails) as permission[]
 );
-
-export const allPermissions = [
-	'CREATE_USER',
-	'DELETE_USER',
-	'LOGOFF_USER',
-	'LIST_USER_SESSIONS',
-	'MANAGE_USER_ACCESS_LEVELS',
-	//
-	'CREATE_TRACKER',
-	'UPDATE_TRACKER',
-	'DELETE_TRACKER',
-	//
-	'CREATE_VEHICLE',
-	'UPDATE_VEHICLE',
-	'DELETE_VEHICLE',
-	//
-	'DELETE_SIM_CARD',
-	'UPDATE_SIM_CARD',
-	'CREATE_SIM_CARD',
-	//
-	'UPDATE_ORGANIZATION'
-] as const;

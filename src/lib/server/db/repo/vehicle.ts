@@ -4,9 +4,9 @@ import type {
 	GetVehiclesFilters,
 	UpdateVehicleBody
 } from '$lib/api/vehicle.schema';
-import { and, eq, ilike, type SQL } from 'drizzle-orm';
+import { and, eq, type SQL } from 'drizzle-orm';
 import { getDB } from '../db';
-import type { Tx } from '../helpers';
+import { pushIlikeFilterIdDefined, type Tx } from '../helpers';
 import { paginate } from '../pagination';
 import { vehicle } from '../schema';
 
@@ -18,9 +18,9 @@ export async function findOrgVehiclesWithPagination(
 
 	const sqlFilters: SQL[] = [eq(vehicle.organizationId, orgId)];
 
-	if (filters?.plate) sqlFilters.push(ilike(vehicle.plate, `%${filters.plate}%`));
+	pushIlikeFilterIdDefined(sqlFilters, vehicle.plate, filters?.plate);
 
-	return paginate(pagination, vehicle, sqlFilters);
+	return paginate(vehicle, { pagination, where: and(...sqlFilters) });
 }
 
 export function findOrgVehicleById(id: number, orgId: number) {

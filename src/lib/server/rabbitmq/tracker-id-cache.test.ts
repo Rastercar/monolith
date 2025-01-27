@@ -132,16 +132,19 @@ describe('cache miss history', async () => {
 	test('after the ignore time window is expired, hits the DB again on another miss', async () => {
 		const cache = createCache();
 
+		// allow only one miss
 		cache.maxConsecutiveMisses = 1;
 		cache.millisecondsToIgnoreAttemptsAfterMaxMissesReached = 10;
 
+		// simulate cache miss on first attempt
 		const spy = vi.spyOn(cache, 'getFromDb').mockResolvedValue(null);
 		await cache.get(fakeImei);
 
 		// wait for the ignore windown to expire and attempt again
 		await delay(cache.millisecondsToIgnoreAttemptsAfterMaxMissesReached);
+
+		// try again, this should call the getFromDb spy a second time
 		await cache.get(fakeImei);
-		await delay(10);
 
 		expect(spy).toHaveBeenCalledTimes(2);
 	});

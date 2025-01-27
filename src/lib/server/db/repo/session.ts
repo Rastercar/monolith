@@ -2,6 +2,12 @@ import { eq, lt, sql } from 'drizzle-orm';
 import { getDB } from '../db';
 import { session } from '../schema';
 
+export async function findSessionByToken(sessionToken: string) {
+	return getDB().query.session.findFirst({
+		where: (session, { eq }) => eq(session.sessionToken, sessionToken)
+	});
+}
+
 export async function findSessionByPublicId(id: number) {
 	return getDB().query.session.findFirst({
 		where: (session, { eq }) => eq(session.publicId, id)

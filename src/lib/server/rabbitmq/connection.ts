@@ -11,10 +11,9 @@ import { getRmqConnectionErrorInfo } from './rmq-helpers';
 
 type RmqConsumeCallback = (_: ConsumeMessage | null) => void;
 
-/**
- * Max RabbitMQ reconnection attempts
- */
-const MAX_RECONNECTION_ATTEMPTS = 10;
+export const MAX_RECONNECTION_ATTEMPTS = 200;
+
+export const MAX_RECONNECT_ATTEMPT_INTERVAL = 5 * 60 * 1_000;
 
 export class RabbitMQConnection {
 	/**
@@ -55,14 +54,12 @@ export class RabbitMQConnection {
 	}
 
 	async connect() {
-		const isReconectionAttempt = this.reconectionAttempt > 0;
+		const msg =
+			this.reconectionAttempt === 0
+				? '[RMQ] connecting to RabbitMQ'
+				: `[RMQ] reconnecting to RabbitMQ, attempt: ${this.reconectionAttempt}`;
 
-		if (isReconectionAttempt) {
-			const ts = new Date().toLocaleString();
-			consola.info(`[RMQ] ${ts} reconnecting to RabbitMQ, attempt: ${this.reconectionAttempt}`);
-		} else {
-			consola.info(`[RMQ] connecting to RabbitMQ`);
-		}
+		consola.info(msg);
 
 		try {
 			this.connection = await amqp.connect(`${this.connetionUrl}?heartbeat=${15}`);
@@ -87,7 +84,7 @@ export class RabbitMQConnection {
 		}
 	}
 
-	async onConnectionClosed() {
+	onConnectionClosed() {
 		this.connection = null;
 		this.publishChannel = null;
 		this.consumeChannel = null;
@@ -144,7 +141,12 @@ export class RabbitMQConnection {
 	 */
 	async handleConnectionError(error: unknown) {
 		this.connection = null;
+		this.publishChannel = null;
+		this.consumeChannel = null;
 
+		// given the large reconnection time and generous MAX_RECONNECTION_ATTEMPTS
+		// if we still did not manage to reconnect, there is something very wrong
+		// so we consider this a fatal error.
 		if (this.reconectionAttempt > MAX_RECONNECTION_ATTEMPTS) {
 			return this.reportFatalError(error);
 		}
@@ -155,18 +157,20 @@ export class RabbitMQConnection {
 			return this.reportFatalError(error);
 		}
 
-		// first reconnection attempt in 5 seconds, second in 4, third in 6...
-		const timeout = this.reconectionAttempt * 2_000;
-
-		// If there was already a reconnection attempt "queued" delete it
+		// if there was already a reconnection attempt "queued" delete it
 		if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout);
 
-		// Queue the reconnection attemp
+		// queue the reconnection attemp
 		this.reconnectTimeout = setTimeout(() => {
 			consola.error(`[RMQ] connection failed with code: ${code}`);
 			this.connect();
 			this.reconectionAttempt++;
-		}, timeout);
+		}, this.getMillisecondsToWaitUntilNextReconnectAttempt());
+	}
+
+	getMillisecondsToWaitUntilNextReconnectAttempt() {
+		// first reconnection attempt in 2 seconds, second in 4, third in 6...
+		return Math.min(this.reconectionAttempt * 2_000, MAX_RECONNECT_ATTEMPT_INTERVAL);
 	}
 
 	/**
@@ -178,26 +182,22 @@ export class RabbitMQConnection {
 		consola.error('[RMQ] fatal error', error);
 	}
 
-	/**
-	 * Tiny wrapper aroung amqpChannel.publish
-	 */
 	publish(
 		exchange = DEFAULT_EXCHANGE,
 		routingKey: string,
 		content: Parameters<typeof Buffer.from>[0],
 		options?: Options.Publish
 	) {
-		if (!this.publishChannel) return;
-
+		if (!this.publishChannel) return false;
 		return this.publishChannel.publish(exchange, routingKey, Buffer.from(content), options);
 	}
 
 	consume(queue: string, cb: RmqConsumeCallback, opts: Options.Consume) {
-		if (!this.consumeChannel) return;
+		if (!this.consumeChannel) return false;
 		this.consumeChannel.consume(queue, cb, opts);
 	}
 
-	private startConsumers() {
+	startConsumers() {
 		this.consume(
 			trackerEventsConsumer.queue,
 			trackerEventsConsumer.handler,

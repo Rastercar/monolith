@@ -4,8 +4,9 @@ import type {
 	UpdateAccessLevelBody
 } from '$lib/api/access-level.schema';
 import type { PaginationWithFilters } from '$lib/api/common';
-import { and, count, eq, ilike, SQL } from 'drizzle-orm';
+import { and, count, eq, SQL } from 'drizzle-orm';
 import { getDB } from '../db';
+import { pushIlikeFilterIdDefined } from '../helpers';
 import { paginate } from '../pagination';
 import { accessLevel, user } from '../schema';
 
@@ -17,9 +18,13 @@ export async function findOrgAccessLevelsWithPagination(
 
 	const sqlFilters: SQL[] = [eq(accessLevel.organizationId, orgId)];
 
-	if (filters?.name) sqlFilters.push(ilike(accessLevel.name, `%${filters.name}%`));
+	pushIlikeFilterIdDefined(sqlFilters, accessLevel.name, filters?.name);
 
-	return paginate(pagination, accessLevel, sqlFilters);
+	return paginate(accessLevel, {
+		pagination,
+		where: and(...sqlFilters),
+		orderBy: accessLevel.id
+	});
 }
 
 export function findOrgAccessLevelById(id: number, orgId: number) {

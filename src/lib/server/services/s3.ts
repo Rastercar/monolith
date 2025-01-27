@@ -10,7 +10,7 @@ const objectKeySchema = z.object({
 	 *
 	 * must not start nor end with a /
 	 */
-	organizationSubFolder: z.string(),
+	organizationSubFolder: z.string().min(3),
 
 	/**
 	 * determines the root folder (/organization/:id)
@@ -20,7 +20,10 @@ const objectKeySchema = z.object({
 	/**
 	 * file name with extension
 	 */
-	filenameWithExtension: z.string().min(1),
+	filenameWithExtension: z
+		.string()
+		.min(3)
+		.regex(/^[\w\s-]+\.[A-Za-z]{2,9}$/),
 
 	/**
 	 * upload date
@@ -30,10 +33,10 @@ const objectKeySchema = z.object({
 
 type ObjectKey = z.infer<typeof objectKeySchema>;
 
-class S3Service {
+export class S3Service {
 	private c!: S3Client;
 
-	private uploadsBucket!: string;
+	uploadsBucket!: string;
 
 	constructor() {
 		this.c = new S3Client({
@@ -47,7 +50,7 @@ class S3Service {
 		this.uploadsBucket = env.AWS_S3_UPLOADS_BUCKET;
 	}
 
-	private createS3Key(key: ObjectKey) {
+	createS3Key(key: ObjectKey) {
 		// assert key is valid to avoid uploading unindentifiable crap
 		objectKeySchema.parse(key);
 
@@ -61,9 +64,9 @@ class S3Service {
 		const upload = new Upload({
 			client: this.c,
 			params: {
-				Bucket: this.uploadsBucket,
 				Key: fileKey,
-				Body: file.stream()
+				Body: file.stream(),
+				Bucket: this.uploadsBucket
 			}
 		});
 

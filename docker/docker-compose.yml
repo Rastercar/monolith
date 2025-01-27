@@ -2,19 +2,36 @@ volumes:
   postgres:
 
 services:
+  # postgres database used for development
   postgres:
     image: timescale/timescaledb-ha:pg14-latest
     container_name: rastercar-db
     environment:
-      POSTGRES_DB: db
+      POSTGRES_DB: raster_dev
       POSTGRES_USER: raster_user
       POSTGRES_PASSWORD: raster_pass
     ports:
       - '5432:5432'
     privileged: true
     volumes:
-      - ../env:/initdb-env
       - postgres:/var/lib/postgresql/data
+
+  # postgres database used for testing
+  postgrestest:
+    image: timescale/timescaledb-ha:pg14-latest
+    container_name: rastercar-db-test
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: raster_test
+      POSTGRES_USER: raster_user
+      POSTGRES_PASSWORD: raster_pass
+    ports:
+      - '5435:5432'
+    privileged: true
+    tmpfs:
+      # run as uid:1000 gid:1000 (your user) so docker can
+      # write to tempfs, otherwise we get a permission error
+      - /var/lib/postgresql/data:uid=1000,gid=1000
 
   rabbitmq:
     container_name: rastercar-rmq

@@ -1,9 +1,10 @@
 import type { PaginationWithFilters } from '$lib/api/common';
 import type { CreateUserBody, GetUsersFilters, UpdateUserBody } from '$lib/api/user.schema';
-import { allPermissions } from '$lib/constants/permissions';
+import { permissions } from '$lib/constants/permissions';
 import { hashSync } from '$lib/server/crypto';
-import { and, eq, ilike, SQL } from 'drizzle-orm';
+import { and, eq, SQL } from 'drizzle-orm';
 import { getDB } from '../db';
+import { pushIlikeFilterIdDefined } from '../helpers';
 import { paginate } from '../pagination';
 import { accessLevel, organization, session, user } from '../schema';
 
@@ -15,9 +16,9 @@ export async function findOrgUsersWithPagination(
 
 	const sqlFilters: SQL[] = [eq(user.organizationId, orgId)];
 
-	if (filters?.email) sqlFilters.push(ilike(user.email, `%${filters.email}%`));
+	pushIlikeFilterIdDefined(sqlFilters, user.email, filters?.email);
 
-	return paginate(pagination, user, sqlFilters);
+	return paginate(user, { pagination, where: and(...sqlFilters) });
 }
 
 export async function createOrgUser(orgId: number, body: CreateUserBody) {
@@ -65,6 +66,13 @@ export function findUserByConfirmEmailToken(token: string) {
 
 export function findUserByResetPasswordToken(token: string) {
 	return findUserBy('resetPasswordToken', token);
+}
+
+export function findUserByIdWithOrgAndAccessLevel(id: number) {
+	return getDB().query.user.findFirst({
+		where: (user, { eq }) => eq(user.id, id),
+		with: { organization: true, accessLevel: true }
+	});
 }
 
 export async function findUserBySessionToken(token: string) {
@@ -153,7 +161,7 @@ export function signUpUser(args: { username: string; email: string; password: st
 				name: 'admin',
 				isFixed: true,
 				description: 'root access level',
-				permissions: [...allPermissions],
+				permissions: [...permissions],
 				organizationId: createdOrg.id
 			})
 			.returning();
@@ -194,8 +202,14 @@ export async function updateUserProfilePicture(id: number, s3Key: string | null)
 	return updatedUser;
 }
 
-export function updateUserPassword(id: number, hashedPassword: string) {
-	return getDB().update(user).set({ password: hashedPassword }).where(eq(user.id, id)).returning();
+export async function updateUserPassword(id: number, hashedPassword: string) {
+	const [updatedUser] = await getDB()
+		.update(user)
+		.set({ password: hashedPassword })
+		.where(eq(user.id, id))
+		.returning();
+
+	return updatedUser;
 }
 
 export function deleteOrgUserById(id: number, orgId: number) {

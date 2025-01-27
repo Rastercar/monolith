@@ -13,5 +13,6 @@ start_deps:
 .PHONY: stop_deps
 stop_deps:
 	docker stop rastercar-db
+	docker stop rastercar-db-test
 	docker stop rastercar-rmq
 	docker stop rastercar-jaeger

@@ -22,8 +22,15 @@ export async function setBillingEmailVerifiedAndClearConfirmEmailToken(token: st
 		.where(eq(organization.confirmBillingEmailToken, token));
 }
 
-export async function updateOrganization(body: { billingEmail?: string; name?: string }) {
-	const [updatedOrg] = await getDB().update(organization).set(body).returning();
+export async function updateOrganization(
+	id: number,
+	body: { billingEmail?: string; name?: string }
+) {
+	const [updatedOrg] = await getDB()
+		.update(organization)
+		.set(body)
+		.where(eq(organization.id, id))
+		.returning();
 
 	return updatedOrg;
 }

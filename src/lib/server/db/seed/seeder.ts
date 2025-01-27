@@ -4,11 +4,9 @@ import { TRACKER_MODEL_H02 } from '$lib/constants/tracker-models';
 import { hashSync } from '$lib/server/crypto';
 import { pickRandomFromArray } from '$lib/utils/arrays';
 import { faker } from '@faker-js/faker';
-import type { ExtractTablesWithRelations } from 'drizzle-orm';
-import type { PgTransaction } from 'drizzle-orm/pg-core';
 import { eq } from 'drizzle-orm/pg-core/expressions';
-import { drizzle, type PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { type DB } from '../db';
+import type { Tx } from '../helpers';
 import { accessLevel } from '../schema/access-level';
 import { organization } from '../schema/organization';
 import { simCard } from '../schema/sim-card';
@@ -23,12 +21,6 @@ import {
 	fakeSsn
 } from './faker';
 import { apns, colors, vehicleModels } from './seed-data';
-
-type Tx = PgTransaction<
-	PostgresJsQueryResultHKT,
-	Record<string, never>,
-	ExtractTablesWithRelations<Record<string, never>>
->;
 
 async function createMasterUser(tx: Tx) {
 	const [al] = await tx
@@ -228,28 +220,11 @@ async function createEntitiesForOrg(orgId: number, tx: Tx) {
 	}
 }
 
-async function main() {
-	// since seeding is somewhat dangerous (we dont want do accidentally dump trash data on production databases)
-	// the least we can do is force the DATABASE_URL to be passed as a argument and not read it from a env variable
-	if (process.argv.length < 3 || !process.argv[2].includes('--DATABASE_URL=')) {
-		throw new Error("inform the database URL like so: 'pnpm db:seed --DATABASE_URL=<url>'");
-	}
+export async function seedDatabase(db: DB) {
+	return db.transaction(async (tx) => {
+		await createMasterUser(tx);
+		const testUser = await createTestUser(tx);
 
-	const dbUrl = process.argv[2].replace('--DATABASE_URL=', '');
-	const client = postgres(dbUrl);
-
-	const db = drizzle({ client, casing: 'snake_case' });
-
-	try {
-		await db.transaction(async (tx) => {
-			await createMasterUser(tx);
-			const testUser = await createTestUser(tx);
-
-			await createEntitiesForOrg(testUser.organizationId as number, tx);
-		});
-	} finally {
-		client.end();
-	}
+		await createEntitiesForOrg(testUser.organizationId as number, tx);
+	});
 }
-
-main();

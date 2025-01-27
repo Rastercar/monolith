@@ -7,7 +7,7 @@ import path from 'path';
 /**
  * Mailer RPC operation to send a email
  */
-const OP_SEND_EMAIL = 'sendEmail';
+export const OP_SEND_EMAIL = 'sendEmail';
 
 interface Recipient {
 	/**
@@ -60,20 +60,20 @@ interface SendEmailBody {
 	enableTracking?: boolean;
 }
 
-type template = 'recover-password' | 'confirm-email';
+export type emailTemplate = 'recover-password' | 'confirm-email';
 
-export function loadTemplate(template: template) {
+export function loadTemplate(template: emailTemplate) {
 	const filepath = `./static/templates/email/${template}.hbs`;
 
 	const absolutePath = path.resolve(filepath);
 	return readFileSync(absolutePath, 'utf-8');
 }
 
-function sendEmail(body: SendEmailBody) {
+export function sendEmail(body: SendEmailBody) {
 	return publishJsonToQueue(MAILER_QUEUE, body, { type: OP_SEND_EMAIL });
 }
 
-export async function sendRecoverPasswordEmail(
+export function sendRecoverPasswordEmail(
 	email: string,
 	replacements: { username: string; resetPasswordLink: string }
 ) {
@@ -85,7 +85,7 @@ export async function sendRecoverPasswordEmail(
 	});
 }
 
-export async function sendConfirmEmailAddressEmail(
+export function sendConfirmEmailAddressEmail(
 	email: string,
 	subject: string,
 	replacements: { title: string; confirmationLink: string }

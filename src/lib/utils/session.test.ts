@@ -8,8 +8,12 @@ describe('createSessionExpirationDateFromNow', () => {
 	test('returns maxAge as the difference in seconds between now and SESSION_DAYS_DURATION', () => {
 		const sesionDaysInSeconds = SESSION_DAYS_DURATION * 24 * 60 * 60;
 
+		const leeway = 10;
+
 		const { maxAge } = createSessionExpirationDateFromNow();
-		expect(maxAge).toEqual(sesionDaysInSeconds);
+
+		expect(maxAge).toBeGreaterThanOrEqual(sesionDaysInSeconds - leeway);
+		expect(maxAge).toBeLessThanOrEqual(sesionDaysInSeconds + leeway);
 	});
 
 	test('returns expiresAt as a iso string of now + SESSION_DAYS_DURATION', () => {

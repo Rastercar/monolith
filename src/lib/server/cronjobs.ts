@@ -43,7 +43,7 @@ export function createCron(
 
 	// If a cron with this key already exists, then clear the previous interval
 	if (runningCrons[key]) {
-		if (logOnReplace) console.warn(`[CRON] conjob with key ${key} has changed`);
+		if (logOnReplace) consola.warn(`[CRON] conjob ${key} has changed`);
 		clearInterval(runningCrons[key].timeout);
 	}
 

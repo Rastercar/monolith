@@ -1,3 +1,4 @@
+import { permissions } from '$lib/constants/permissions';
 import { z } from 'zod';
 
 export const getAccessLevelSearchParamsSchema = z.object({
@@ -16,13 +17,13 @@ export const accessLevelSchema = z.object({
 export const createAccessLevelSchema = z.object({
 	name: z.string().min(1),
 	description: z.string().min(1),
-	permissions: z.array(z.string())
+	permissions: z.array(z.enum(permissions))
 });
 
 export const updateAccessLevelSchema = z.object({
 	name: z.string().min(1).optional(),
 	description: z.string().min(1).optional(),
-	permissions: z.array(z.string()).optional()
+	permissions: z.array(z.enum(permissions)).optional()
 });
 
 export type AccessLevel = z.infer<typeof accessLevelSchema>;

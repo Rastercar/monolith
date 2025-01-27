@@ -12,7 +12,9 @@ export default defineWorkspace([
 			include: [integrationTestGlob],
 			exclude: [browserTestGlob],
 			name: 'integration',
-			environment: 'node'
+			environment: 'node',
+			setupFiles: ['./src/test/integration-setup.ts'],
+			globalSetup: ['./src/test/integration-global-setup.ts']
 		}
 	},
 	{

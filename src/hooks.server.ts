@@ -1,4 +1,5 @@
 import { building } from '$app/environment';
+import { route } from '$lib/ROUTES';
 import {
 	getRouteMetaFromPath as getPageMetaFromPath,
 	redirectToStartingPage
@@ -6,13 +7,13 @@ import {
 import { initCronJobs } from '$lib/server/cronjobs';
 import { initDb } from '$lib/server/db/db';
 import {
-	setUserLocalsFromSessionCookie,
-	verifyUserCanAccessAuthenticatedRoute
+	denyAccessOnMissingPermissions,
+	setUserLocalsFromSessionCookie
 } from '$lib/server/middlewares/auth';
 import { initRabbitMq } from '$lib/server/rabbitmq/rabbitmq';
 import { ensureSocketIoServerIsConfigured } from '$lib/server/socketio';
 import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
-import { type Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
 
 // if this modules is not being loaded during a build, then
 // we should initialize the application dependencies
@@ -48,7 +49,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const isLoadingPageWithMeta = !!pageMeta && event.request.method === 'GET';
 
 	if (isLoadingPageWithMeta && pageMeta?.requiredAuth === 'logged-in') {
-		verifyUserCanAccessAuthenticatedRoute(event, pageMeta);
+		if (!event.locals.user) {
+			return redirect(303, route('/auth/sign-in', { redirect: event.url.pathname }));
+		}
+
+		if (pageMeta.requiredPermissions) {
+			denyAccessOnMissingPermissions(event.locals.user, pageMeta.requiredPermissions);
+		}
 	}
 
 	if (pageMeta?.requiredAuth === 'logged-off' && isLoggedIn) {

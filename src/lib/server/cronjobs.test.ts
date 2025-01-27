@@ -2,7 +2,6 @@ import { delay } from '$lib/utils/promises';
 import { describe } from 'node:test';
 import { expect, test, vi } from 'vitest';
 import { createCron, fmt } from './cronjobs';
-import { hashSync } from './crypto';
 
 test('fmt - formats seconds to their biggest date type secs, min, hour, etc', () => {
 	const testCases = [
@@ -19,9 +18,6 @@ test('fmt - formats seconds to their biggest date type secs, min, hour, etc', ()
 	testCases.forEach(([input, expectedOutput]) => {
 		expect(fmt(input)).toEqual(expectedOutput);
 	});
-
-	expect(hashSync('something')).toBeTypeOf('string');
-	expect(hashSync('something')).toBeTypeOf('string');
 });
 
 describe('createCron', () => {
@@ -29,7 +25,7 @@ describe('createCron', () => {
 		key: 'key',
 		description: 'test',
 		cb,
-		intervalMilliseconds: 5
+		intervalMilliseconds: 10
 	});
 
 	test('creates a cronjob that runs X milliseconds ', async () => {
@@ -37,7 +33,7 @@ describe('createCron', () => {
 
 		const cronOptions = createCronOptions(cronCallRecorder);
 
-		const leeway = cronOptions.intervalMilliseconds - 3;
+		const leeway = cronOptions.intervalMilliseconds - 5;
 
 		createCron(cronOptions, false);
 

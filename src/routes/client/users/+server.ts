@@ -1,4 +1,4 @@
-import { getUsersSearchParamsSchema } from '$lib/api/user.schema.js';
+import { getUsersSearchParamsSchema } from '$lib/api/user.schema';
 import { findOrgUsersWithPagination } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestSearchParams } from '$lib/server/middlewares/validation';

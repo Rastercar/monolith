@@ -1,4 +1,4 @@
-import { findOrgTrackerById, findTrackerLastLocation } from '$lib/server/db/repo/tracker';
+import { findOrgTrackerById, findTrackerLastLocation } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import type { RouteParams } from './$types';

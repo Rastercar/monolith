@@ -3,7 +3,7 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PasswordField from '$lib/components/form/PasswordField.svelte';
 	import { route } from '$lib/ROUTES';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast.js';
+	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import SettingsPageTitle from '../components/SettingsPageTitle.svelte';

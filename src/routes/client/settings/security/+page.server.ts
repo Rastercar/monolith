@@ -1,5 +1,5 @@
 import { changePasswordSchema } from '$lib/api/user.schema';
-import { compareSync, hashSync } from '$lib/server/crypto.js';
+import { compareSync, hashSync } from '$lib/server/crypto';
 import { findUserById, updateUserPassword } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';

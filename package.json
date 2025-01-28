@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "run:dev": "vite dev",
+    "run:prod": "ORIGIN=http://localhost:3000 node --env-file=.env ./server",
     "test": "vitest",
     "test:unit": "vitest --project unit",
     "test:browser": "vitest --project browser",
@@ -12,7 +13,6 @@
     "test:e2e": "pnpm playwright test",
     "test:coverage": "vitest run --coverage",
     "build": "vite build",
-    "run:build": "node --env-file=.env ./server",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

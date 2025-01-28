@@ -1,5 +1,5 @@
 import { accessLevelSchema, createAccessLevelSchema } from '$lib/api/access-level.schema';
-import { createOrgAccessLevel } from '$lib/server/db/repo/access-level.js';
+import { createOrgAccessLevel } from '$lib/server/db/repo/access-level';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { superValidate } from 'sveltekit-superforms';

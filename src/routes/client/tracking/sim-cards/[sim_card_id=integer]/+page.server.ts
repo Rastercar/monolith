@@ -1,5 +1,5 @@
 import { updateSimCardSchema, type SimCard } from '$lib/api/sim-card.schema';
-import { findOrgSimCardById as findOrgSimCardByID } from '$lib/server/db/repo/sim-card.js';
+import { findOrgSimCardById as findOrgSimCardByID } from '$lib/server/db/repo/sim-card';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';

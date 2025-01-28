@@ -6,8 +6,8 @@
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
 	import { permissionDetails, type permission } from '$lib/constants/permissions';
-	import { route } from '$lib/ROUTES.js';
-	import { showSuccessToast } from '$lib/store/toast.js';
+	import { route } from '$lib/ROUTES';
+	import { showSuccessToast } from '$lib/store/toast';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 

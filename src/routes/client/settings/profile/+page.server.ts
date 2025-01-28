@@ -1,6 +1,6 @@
 import { updateUserSchema } from '$lib/api/user.schema';
 import { updateUser } from '$lib/server/db/repo/user';
-import { acl } from '$lib/server/middlewares/auth.js';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';

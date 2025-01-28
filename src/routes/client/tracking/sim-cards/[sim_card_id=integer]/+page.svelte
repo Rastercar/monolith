@@ -4,7 +4,7 @@
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
-	import { route } from '$lib/ROUTES.js';
+	import { route } from '$lib/ROUTES';
 	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';

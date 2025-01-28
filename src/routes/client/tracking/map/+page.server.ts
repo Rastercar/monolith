@@ -1,5 +1,5 @@
-import { trackerSchema, type Tracker } from '$lib/api/tracker.schema.js';
-import { findOrgTrackerById } from '$lib/server/db/repo/tracker.js';
+import { trackerSchema, type Tracker } from '$lib/api/tracker.schema';
+import { findOrgTrackerById } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import type { TrackerSelection } from '$lib/store/map.svelte';
 

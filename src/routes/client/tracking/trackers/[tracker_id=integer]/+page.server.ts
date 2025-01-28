@@ -1,7 +1,7 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { trackerSchema, updateTrackerSchema, type Tracker } from '$lib/api/tracker.schema';
-import { findOrgTrackerById } from '$lib/server/db/repo/tracker.js';
 import { findOrgVehicleById } from '$lib/server/db/repo/vehicle';
+import { findOrgTrackerById } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { error } from '@sveltejs/kit';

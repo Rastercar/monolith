@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { apiConfirmEmailAddress } from '$lib/api/auth.js';
-	import { route } from '$lib/ROUTES.js';
-	import { getAuthContext } from '$lib/store/context.js';
-	import { showErrorToast } from '$lib/store/toast.js';
-	import { promiseWithMinimumTimeOf } from '$lib/utils/promises.js';
+	import { apiConfirmEmailAddress } from '$lib/api/auth';
+	import { route } from '$lib/ROUTES';
+	import { getAuthContext } from '$lib/store/context';
+	import { showErrorToast } from '$lib/store/toast';
+	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';

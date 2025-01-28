@@ -18,3 +18,8 @@ globalThis.io = io;
 app.use(handler);
 
 server.listen(port);
+
+process.on('beforeExit', () => {
+	server.closeAllConnections();
+	server.close();
+});

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext, onDestroy, type Snippet } from 'svelte';
-	import type { StepperState } from './types.js';
+	import type { StepperState } from './types';
 
 	interface Props {
 		classes?: string;

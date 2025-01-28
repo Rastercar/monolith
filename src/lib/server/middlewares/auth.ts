@@ -1,4 +1,4 @@
-import { userSchema, userSessionSchema } from '$lib/api/user.schema.js';
+import { userSchema, userSessionSchema } from '$lib/api/user.schema';
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
 import { MISSING_SESSION } from '$lib/constants/error-codes';
 import type { permission } from '$lib/constants/permissions';

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import CreateSimCardForm from '$lib/components/non-generic/form/CreateSimCardForm.svelte';
-	import { route } from '$lib/ROUTES.js';
-	import { showSuccessToast } from '$lib/store/toast.js';
+	import { route } from '$lib/ROUTES';
+	import { showSuccessToast } from '$lib/store/toast';
 
 	let { data } = $props();
 </script>

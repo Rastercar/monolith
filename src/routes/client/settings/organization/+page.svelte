@@ -3,9 +3,9 @@
 	import EmailNotConfirmedWarning from '$lib/components/button/EmailNotConfirmedWarning.svelte';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
-	import { route } from '$lib/ROUTES.js';
+	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/context';
-	import { showSuccessToast } from '$lib/store/toast.js';
+	import { showSuccessToast } from '$lib/store/toast';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import SettingsPageTitle from '../components/SettingsPageTitle.svelte';

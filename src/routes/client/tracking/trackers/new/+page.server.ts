@@ -1,8 +1,8 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { createTrackerSchema, trackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
-import { createOrgTracker } from '$lib/server/db/repo/tracker.js';
-import { findOrgVehicleById } from '$lib/server/db/repo/vehicle.js';
+import { findOrgVehicleById } from '$lib/server/db/repo/vehicle';
+import { createOrgTracker } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { setError, superValidate } from 'sveltekit-superforms';

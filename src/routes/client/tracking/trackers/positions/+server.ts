@@ -1,6 +1,6 @@
 import { getTrackersPositionsSearchParamsSchema } from '$lib/api/tracker.schema';
+import { filterVehicleTrackerIdsByAssertingBelongsToOrg } from '$lib/server/db/repo/vehicle-tracker';
 import { findMultipleVehicleTrackerLastLocations } from '$lib/server/db/repo/vehicle-tracker-location';
-import { filterVehicleTrackerIdsByAssertingBelongsToOrg } from '$lib/server/db/repo/vehicle-tracker.js';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestBody } from '$lib/server/middlewares/validation';
 import { json } from '@sveltejs/kit';

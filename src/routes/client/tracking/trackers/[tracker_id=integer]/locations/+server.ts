@@ -1,5 +1,5 @@
 import { getTrackerLocationsSearchParamsSchema } from '$lib/api/tracker.schema';
-import { findOrgTrackerById, findTrackerLocationList } from '$lib/server/db/repo/tracker';
+import { findOrgTrackerById, findTrackerLocationList } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestSearchParams } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';

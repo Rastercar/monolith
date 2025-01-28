@@ -1,8 +1,8 @@
 import { createVehicleSchema, vehicleSchema } from '$lib/api/vehicle.schema';
-import { getDB } from '$lib/server/db/db.js';
+import { getDB } from '$lib/server/db/db';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { createOrgVehicle, updateOrgVehiclePhoto } from '$lib/server/db/repo/vehicle';
-import { acl } from '$lib/server/middlewares/auth.js';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
 import { s3 } from '$lib/server/services/s3';
 import path from 'path';

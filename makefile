@@ -4,7 +4,7 @@ lazy:
 
 .PHONY: dev
 dev:
-	pnpm dev
+	pnpm run:dev
 
 .PHONY: start_deps
 start_deps: 

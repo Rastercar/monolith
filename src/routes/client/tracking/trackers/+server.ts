@@ -1,5 +1,5 @@
 import { getTrackersSearchParamsSchema } from '$lib/api/tracker.schema';
-import { findOrgTrackersWithPagination } from '$lib/server/db/repo/tracker';
+import { findOrgTrackersWithPagination } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestSearchParams } from '$lib/server/middlewares/validation';
 import { getPaginationParamsFromSearchParams } from '$lib/utils/pagination';

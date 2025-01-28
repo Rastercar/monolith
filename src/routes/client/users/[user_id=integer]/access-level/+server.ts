@@ -1,7 +1,7 @@
-import { updateUserAccessLevelSchema } from '$lib/api/user.schema.js';
-import { findOrgAccessLevelById } from '$lib/server/db/repo/access-level.js';
+import { updateUserAccessLevelSchema } from '$lib/api/user.schema';
+import { findOrgAccessLevelById } from '$lib/server/db/repo/access-level';
 import { setOrgUserAccessLevel } from '$lib/server/db/repo/user';
-import { acl } from '$lib/server/middlewares/auth.js';
+import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestBody } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import type { RouteParams } from './$types';

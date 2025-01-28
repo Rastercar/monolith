@@ -1,7 +1,7 @@
-import { simpleUserSchema, userSessionSchema } from '$lib/api/user.schema.js';
-import { findSessionsByUserId } from '$lib/server/db/repo/session.js';
-import { findOrgUserById } from '$lib/server/db/repo/user.js';
-import { acl, checkUSerHasPermissions } from '$lib/server/middlewares/auth.js';
+import { simpleUserSchema, userSessionSchema } from '$lib/api/user.schema';
+import { findSessionsByUserId } from '$lib/server/db/repo/session';
+import { findOrgUserById } from '$lib/server/db/repo/user';
+import { acl, checkUSerHasPermissions } from '$lib/server/middlewares/auth';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, locals }) => {

@@ -6,8 +6,8 @@ import {
 	type UpdateTrackerRes
 } from '$lib/api/tracker.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
-import { deleteOrgTrackerById, updateOrgTracker } from '$lib/server/db/repo/tracker';
 import { findOrgVehicleById } from '$lib/server/db/repo/vehicle';
+import { deleteOrgTrackerById, updateOrgTracker } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestBody } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';

@@ -65,7 +65,7 @@ describe('S3Service', () => {
 			const deleteCalls = s3Mock.commandCalls(DeleteObjectCommand);
 
 			expect(deleteCalls.length).toBe(1);
-			expect(deleteCalls[0].args[0].input).toStrictEqual({ Bucket: s3s.uploadsBucket, Key: key });
+			expect(deleteCalls[0].args[0].input).toStrictEqual({ Bucket: s3s.bucket, Key: key });
 		});
 	});
 });

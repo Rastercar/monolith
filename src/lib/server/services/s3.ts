@@ -36,7 +36,7 @@ type ObjectKey = z.infer<typeof objectKeySchema>;
 export class S3Service {
 	private c!: S3Client;
 
-	uploadsBucket!: string;
+	bucket!: string;
 
 	constructor() {
 		this.c = new S3Client({
@@ -47,7 +47,7 @@ export class S3Service {
 			}
 		});
 
-		this.uploadsBucket = env.AWS_S3_UPLOADS_BUCKET;
+		this.bucket = env.AWS_S3_BUCKET;
 	}
 
 	createS3Key(key: ObjectKey) {
@@ -66,7 +66,7 @@ export class S3Service {
 			params: {
 				Key: fileKey,
 				Body: file.stream(),
-				Bucket: this.uploadsBucket
+				Bucket: this.bucket
 			}
 		});
 
@@ -74,7 +74,7 @@ export class S3Service {
 	}
 
 	deleteFile(key: string) {
-		return this.c.send(new DeleteObjectCommand({ Bucket: this.uploadsBucket, Key: key }));
+		return this.c.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
 	}
 }
 

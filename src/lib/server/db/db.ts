@@ -98,8 +98,8 @@ export const initDb = (opts?: InitDbOpts): InitDbRes => {
 			migratePromise = migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
 		}
 
+		// seeding should be run only after migrations have been run
 		if (options.runSeeder) {
-			// seeding should be run only after migrations have been run
 			consola.info('[DB] running seeder');
 			seedPromise = migratePromise
 				? migratePromise.then(() => seedDatabase(db as DB))
@@ -108,6 +108,7 @@ export const initDb = (opts?: InitDbOpts): InitDbRes => {
 	}
 
 	let setupPromise = seedPromise ?? migratePromise ?? Promise.resolve();
+	seedPromise?.catch(console.error);
 
 	return { db, client, setupPromise };
 };

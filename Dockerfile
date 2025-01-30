@@ -23,6 +23,9 @@ RUN pnpm run build
 # --- run the application
 FROM base
 
+# add curl so the healthcheck can succeed
+RUN apk --no-cache add curl
+
 # copy the dependencies
 COPY --from=prod-deps /app/node_modules /app/node_modules
 

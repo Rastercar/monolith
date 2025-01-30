@@ -1,3 +1,6 @@
+// IMPORTANT: LEAVE THIS AS THE FIRST IMPORT !
+import '$lib/server/telemetry/opentelemetry';
+
 import { building } from '$app/environment';
 import { route } from '$lib/ROUTES';
 import {
@@ -12,7 +15,6 @@ import {
 } from '$lib/server/middlewares/auth';
 import { initRabbitMq } from '$lib/server/rabbitmq/rabbitmq';
 import { ensureSocketIoServerIsConfigured } from '$lib/server/socketio';
-import { initTelemetry } from '$lib/server/telemetry/opentelemetry';
 import { redirect, type Handle } from '@sveltejs/kit';
 
 // if this modules is not being loaded during a build, then
@@ -20,8 +22,6 @@ import { redirect, type Handle } from '@sveltejs/kit';
 //
 // important: initialize telemetry before anything else
 if (!building) {
-	initTelemetry();
-
 	initDb();
 	initRabbitMq();
 	initCronJobs();

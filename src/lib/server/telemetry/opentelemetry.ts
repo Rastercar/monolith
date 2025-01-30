@@ -67,18 +67,9 @@ const sdk = new NodeSDK({
 	]
 });
 
-let otelStarted = false;
+consola.info('[OTEL] starting telemetry');
+sdk.start();
 
-export const initTelemetry = () => {
-	if (otelStarted) return;
-
-	consola.info('[OTEL] starting telemetry');
-
-	sdk.start();
-
-	process.on('beforeExit', async () => {
-		await sdk.shutdown();
-	});
-
-	otelStarted = true;
-};
+process.on('beforeExit', async () => {
+	await sdk.shutdown();
+});

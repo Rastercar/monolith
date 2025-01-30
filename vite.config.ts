@@ -26,6 +26,15 @@ const viteDevServerSocketIoPlugin = {
 
 export const viteConfig: UserConfig = {
 	plugins: [
+		{
+			name: 'custom-plugin',
+			transform(code, id) {
+				if (id.includes('amqplib')) {
+					return `import '@opentelemetry/instrumentation-amqplib';\n${code}`;
+				}
+				return code;
+			}
+		},
 		viteDevServerSocketIoPlugin,
 		sveltekit(),
 		purgeCss(),

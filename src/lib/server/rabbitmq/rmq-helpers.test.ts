@@ -1,10 +1,10 @@
 import type { ConsumeMessage } from 'amqplib';
 import { describe, expect, test, vi } from 'vitest';
-import * as otelUtils from '../telemetry/opentelemetry';
-import { amqpHeadersTextMapGetter } from '../telemetry/opentelemetry';
+import * as otelUtils from '../telemetry/otel-helpers';
+import { amqpHeadersTextMapGetter } from '../telemetry/otel-helpers';
 import { getOtelContextFromDeliveryHeaders, getRmqConnectionErrorInfo } from './rmq-helpers';
 
-vi.mock('../telemetry/opentelemetry', async (importOriginal) => ({
+vi.mock('../telemetry/otel-helpers', async (importOriginal) => ({
 	...(await importOriginal()),
 	jaegerPropagator: {
 		extract: vi.fn()

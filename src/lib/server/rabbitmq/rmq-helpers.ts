@@ -1,6 +1,6 @@
 import { context, type Context } from '@opentelemetry/api';
 import amqp from 'amqplib';
-import { amqpHeadersTextMapGetter, jaegerPropagator } from '../telemetry/opentelemetry';
+import { amqpHeadersTextMapGetter, jaegerPropagator } from '../telemetry/otel-helpers';
 
 export function getRmqConnectionErrorInfo(error: unknown) {
 	if (error instanceof Error && error.toString().includes('Socket closed')) {

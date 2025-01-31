@@ -1,6 +1,3 @@
-// IMPORTANT: LEAVE THIS AS THE FIRST IMPORT !
-import '$lib/server/telemetry/opentelemetry';
-
 import { building } from '$app/environment';
 import { route } from '$lib/ROUTES';
 import {
@@ -19,8 +16,6 @@ import { redirect, type Handle } from '@sveltejs/kit';
 
 // if this modules is not being loaded during a build, then
 // we should initialize the application dependencies
-//
-// important: initialize telemetry before anything else
 if (!building) {
 	initDb();
 	initRabbitMq();

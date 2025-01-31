@@ -43,7 +43,7 @@ jobs:
       # update the file of the task definition to have the new recently built image
       - name: Fill in new image ID in task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v2
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
           container-name: rastercar-monolith
@@ -51,7 +51,7 @@ jobs:
 
       # deploy the new task definition to homolog
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ secrets.ECS_HOMOLOG_CLUSTER }}

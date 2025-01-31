@@ -46,6 +46,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
+          container-name: rastercar-monolith
           image: ${{ steps.build-image.outputs.image }}
 
       # deploy the new task definition to homolog

@@ -47,7 +47,7 @@ COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build /app/build
 
 # copy the app entrypoint (index.js)
-COPY --from=build /app/server /app/server
+COPY --from=build /app/app /app/app
 
 # important, set the origin as this is needed to avoid cors errors
 ENV ORIGIN=http://localhost:3000

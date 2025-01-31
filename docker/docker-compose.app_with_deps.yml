@@ -70,7 +70,7 @@ services:
       - JAEGER_URL=http://jaeger:4317
       - RABBITMQ_URL=amqp://rabbitmq:5672
       - DATABASE_URL=postgres://raster_user:raster_pass@postgres:5432/raster_dev
-    command: ['node', '--env-file', '.env', 'server']
+    command: ['node', '--env-file', './env/.env.development', 'server']
     ports:
       - '3000:3000'
     depends_on:

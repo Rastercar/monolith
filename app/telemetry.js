@@ -12,7 +12,7 @@ import consola from 'consola';
 
 const srtToBool = (str) => (str ?? '').toLocaleLowerCase() === 'true';
 
-const { JAEGER_URL, EXPORT_OTEL_SPANS_TO_STDOUT, OTEL_DIAG_LOG_LEVEL } = process.env;
+const { JAEGER_URL, OTEL_EXPORT_SPANS_TO_STDOUT, OTEL_DIAG_LOG_LEVEL } = process.env;
 
 const otlptExporter = new OTLPTraceExporter({ url: JAEGER_URL });
 
@@ -20,7 +20,7 @@ const consoleExporter = new ConsoleSpanExporter();
 
 const batchSpanProcessor = new BatchSpanProcessor(otlptExporter);
 
-const spanProcessors = srtToBool(EXPORT_OTEL_SPANS_TO_STDOUT)
+const spanProcessors = srtToBool(OTEL_EXPORT_SPANS_TO_STDOUT)
 	? [batchSpanProcessor, new SimpleSpanProcessor(consoleExporter)]
 	: [batchSpanProcessor];
 

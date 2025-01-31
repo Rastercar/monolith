@@ -32,7 +32,7 @@ import { type KIT_ROUTES } from '../src/lib/ROUTES';
 export const devOpentelemetryPlugin = (): PluginOption => ({
 	name: 'openTelemetry',
 	configureServer(server) {
-		const env = loadEnv(server.config.mode, process.cwd(), '');
+		const env = loadEnv(server.config.mode, './env', '');
 
 		const otlptExporter = new OTLPTraceExporter({ url: env.JAEGER_URL });
 
@@ -41,7 +41,7 @@ export const devOpentelemetryPlugin = (): PluginOption => ({
 		const batchSpanProcessor = new BatchSpanProcessor(otlptExporter);
 
 		const spanProcessors =
-			env.EXPORT_OTEL_SPANS_TO_STDOUT === 'true'
+			env.OTEL_EXPORT_SPANS_TO_STDOUT === 'true'
 				? [batchSpanProcessor, new SimpleSpanProcessor(consoleExporter)]
 				: [batchSpanProcessor];
 

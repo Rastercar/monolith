@@ -1,7 +1,7 @@
-# commit everything to the master branch with a meaningless message like a lazy fuck
+# commit everything to the master homolog with a meaningless message like a lazy fuck
 .PHONY: lazy
 lazy:
-	git add . && git commit -m "." && git push origin master
+	git add . && git commit -m "." && git push origin homolog
 
 # alias for pnpm:dev
 .PHONY: dev

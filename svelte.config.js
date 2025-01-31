@@ -9,13 +9,16 @@ const config = {
 		inspector: true
 	},
 
+	kit: {
+		adapter: adapter(),
+		env: {
+			dir: './env'
+		}
+	},
+
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
-	preprocess: vitePreprocess(),
-
-	kit: {
-		adapter: adapter()
-	}
+	preprocess: vitePreprocess()
 };
 
 export default config;

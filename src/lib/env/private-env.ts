@@ -41,7 +41,7 @@ const schema = z.object({
 	/**
 	 * if spans should be exported to stdout
 	 */
-	EXPORT_OTEL_SPANS_TO_STDOUT: castStringToBool
+	OTEL_EXPORT_SPANS_TO_STDOUT: castStringToBool
 });
 
 /**

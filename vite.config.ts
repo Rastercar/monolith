@@ -9,7 +9,7 @@ import {
 } from './dev/vite-plugins';
 
 export const viteConfig: UserConfig = {
-	envDir: 'root/env',
+	envDir: './env',
 	plugins: [
 		// initializes otel for dev
 		devOpentelemetryPlugin(),

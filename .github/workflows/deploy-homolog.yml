@@ -35,24 +35,26 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+      # download task definition to a json file
       - name: Download task definition
         run: |
-          aws ecs describe-task-definition --task-definition etap-development --query taskDefinition > task-definition.json
+          aws ecs describe-task-definition --region ${{ secrets.AWS_REGION }} --task-definition monolith-homolog --query taskDefinition > task-definition.json
 
+      # update the file of the task definition to have the new recently built image
       - name: Fill in new image ID in task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: admin-backend
           image: ${{ steps.build-image.outputs.image }}
 
+      # deploy the new task definition to homolog
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: admin-backend
-          cluster: dev-env
+          service: ${{ secrets.ECS_HOMOLOG_CLUSTER }}
+          cluster: ${{ secrets.ECS_MONOLITH_HOMOLOG_SERVICE }}
           wait-for-service-stability: true
 
       - name: Verify ECS deployment

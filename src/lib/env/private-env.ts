@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { env as privateEnv } from '$env/dynamic/private';
 import z from 'zod';
 import { castStringToBool } from '../utils/zod-validators';
@@ -45,5 +46,7 @@ const schema = z.object({
 
 /**
  * typesafe private env vars
+ *
+ * (the variables are not checked nor loaded if the code is being executed during build)
  */
-export const env = schema.parse(privateEnv);
+export const env = building ? ({} as z.infer<typeof schema>) : schema.parse(privateEnv);

@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { env as publicEnv } from '$env/dynamic/public';
 import z from 'zod';
 
@@ -9,5 +10,7 @@ const schema = z.object({
 
 /**
  * typesafe public env vars
+ *
+ * (the variables are not checked nor loaded if the code is being executed during build)
  */
-export const env = schema.parse(publicEnv);
+export const env = building ? ({} as z.infer<typeof schema>) : schema.parse(publicEnv);

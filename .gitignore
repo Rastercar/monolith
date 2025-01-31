@@ -4,10 +4,14 @@ node_modules
 /.svelte-kit
 /package
 
-# env
+# env (forbidden)
 .env
 .env.*
+env/*.env
+
+# env (allowed)
 !.env.example
+!env/.env.example
 
 # vite
 vite.config.js.timestamp-*
@@ -21,8 +25,11 @@ notes.txt
 # tests
 coverage/
 
-# Playwright
+# playwright
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# reports
+bundle-size-report.html

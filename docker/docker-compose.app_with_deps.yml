@@ -1,0 +1,81 @@
+#
+# Docker compose file for running the monolith dependencies
+# databases, rabbitmq, jaeger, etc and the monolith itself
+# in docker containers.
+#
+# this is mostly usefull for testing the monolith container
+#
+
+volumes:
+  postgres:
+
+networks:
+  raster-network:
+    driver: bridge
+
+services:
+  postgres:
+    image: timescale/timescaledb-ha:pg14-latest
+    container_name: raster-db
+    environment:
+      POSTGRES_DB: raster_dev
+      POSTGRES_USER: raster_user
+      POSTGRES_PASSWORD: raster_pass
+    ports:
+      - '5432:5432'
+    privileged: true
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - raster-network
+
+  rabbitmq:
+    container_name: raster-rmq
+    image: rabbitmq:3.10.1-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - raster-network
+
+  jaeger:
+    container_name: raster-jaeger
+    image: 'jaegertracing/jaeger:2.0.0'
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - '5778:5778'
+      - '16686:16686'
+      - '4317:4317'
+      - '4318:4318'
+      - '14250:14250'
+      - '14268:14268'
+      - '9411:9411'
+    command:
+      - --set
+      - receivers.otlp.protocols.http.endpoint=0.0.0.0:4318
+      - --set
+      - receivers.otlp.protocols.grpc.endpoint=0.0.0.0:4317
+    networks:
+      - raster-network
+
+  rastercar-monolith:
+    image: rastercar/main-ecs-repo
+    container_name: raster-monolith
+    privileged: true
+    # important, override the connection env vars since the monolith will be running on a docker container
+    # and not on the local machine, therefore it wont be able to connect to the database and other services
+    # using localhost
+    environment:
+      - JAEGER_URL=http://jaeger:4317
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - DATABASE_URL=postgres://raster_user:raster_pass@postgres:5432/raster_dev
+    command: ['node', '--env-file', '.env', 'server']
+    ports:
+      - '3000:3000'
+    depends_on:
+      - jaeger
+      - postgres
+      - rabbitmq
+    networks:
+      - raster-network

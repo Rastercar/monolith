@@ -1,13 +1,21 @@
-.DS_Store
+# dependencies
 node_modules
+
+# output
 /build
 /.svelte-kit
-/package
+/coverage
+
+# env (forbidden)
 .env
 .env.*
-!.env.example
+env/*.env
 
-# Ignore files for PNPM, NPM and YARN
+# env (allowed)
+!.env.example
+!env/.env.example
+
+# PNPM, NPM and YARN
 pnpm-lock.yaml
 package-lock.json
 yarn.lock

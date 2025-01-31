@@ -1,8 +1,13 @@
+#
+# Docker compose file for running the monolith dependencies
+# databases, rabbitmq, jaeger, etc in docker containers.
+#
+
 volumes:
   postgres:
 
 services:
-  # postgres database used for development
+  # development database
   postgres:
     image: timescale/timescaledb-ha:pg14-latest
     container_name: rastercar-db
@@ -16,7 +21,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
-  # postgres database used for testing
+  # testing database
   postgrestest:
     image: timescale/timescaledb-ha:pg14-latest
     container_name: rastercar-db-test

@@ -9,6 +9,7 @@ import {
 } from './dev/vite-plugins';
 
 export const viteConfig: UserConfig = {
+	envDir: 'root/env',
 	plugins: [
 		// initializes otel for dev
 		devOpentelemetryPlugin(),
@@ -26,7 +27,7 @@ export const viteConfig: UserConfig = {
 		svelteKitRoutePlugin(),
 
 		// show the bundlesize of the builded application
-		visualizer({ open: true })
+		visualizer({ open: true, filename: 'bundle-size-report.html' })
 	]
 };
 

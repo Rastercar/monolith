@@ -53,4 +53,4 @@ COPY --from=build /app/app /app/app
 ENV ORIGIN=http://localhost:3000
 
 EXPOSE 3000
-CMD ["node", "server"]
+CMD ["node", "app"]

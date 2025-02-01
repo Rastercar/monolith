@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
 
 /**
@@ -6,8 +7,11 @@ import { json } from '@sveltejs/kit';
  */
 export function GET({ url }) {
 	if ((url.searchParams.get('debug') ?? '').toLocaleLowerCase() === 'true') {
+		const errMsg = '[error] should not be undefined';
+
 		return json({
-			commitHash: import.meta.env.VITE_COMMIT_HASH
+			origin: env.ORIGIN ?? errMsg,
+			commitHash: import.meta.env.VITE_COMMIT_HASH ?? errMsg
 		});
 	}
 

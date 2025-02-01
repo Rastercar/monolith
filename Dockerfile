@@ -50,7 +50,7 @@ COPY --from=build /app/build /app/build
 COPY --from=build /app/app /app/app
 
 # important, set the origin as this is needed to avoid cors errors
-ENV ORIGIN=http://localhost:3000
+ENV ORIGIN=https://rastercar.com
 
 EXPOSE 3000
 CMD ["node", "app"]

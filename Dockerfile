@@ -49,8 +49,6 @@ COPY --from=build /app/build /app/build
 # copy the app entrypoint (index.js)
 COPY --from=build /app/app /app/app
 
-# important, set the origin as this is needed to avoid cors errors
-ENV ORIGIN=https://rastercar.com
-
 EXPOSE 3000
+
 CMD ["node", "app"]

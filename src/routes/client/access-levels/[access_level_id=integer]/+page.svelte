@@ -82,7 +82,7 @@
 							>
 								<div class="type-scale-1 text-center">
 									{isCurrentUserAccessLevel
-										? 'this is your own access level and thus cannot be edited nor deleted'
+										? 'this is your own access level and cannot be edited nor deleted'
 										: 'this is main access level of your organization and cannot be edited nor deleted'}
 								</div>
 							</Popover.Content>

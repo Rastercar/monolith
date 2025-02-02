@@ -40,7 +40,7 @@ services:
 
   jaeger:
     container_name: raster-jaeger
-    image: 'jaegertracing/jaeger:2.0.0'
+    image: 'jaegertracing/jaeger:2.2.0'
     environment:
       - COLLECTOR_OTLP_ENABLED=true
     ports:
@@ -60,7 +60,7 @@ services:
       - raster-network
 
   rastercar-monolith:
-    image: rastercar/main-ecs-repo
+    image: rastercar/monolith
     container_name: raster-monolith
     privileged: true
     # important, override the connection env vars since the monolith will be running on a docker container

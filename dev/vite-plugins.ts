@@ -67,7 +67,7 @@ export const devOpentelemetryPlugin = (): PluginOption => ({
 			]
 		});
 
-		consola.info('[OTEL] starting telemetry');
+		consola.info(`[OTEL] starting telemetry at ${env.JAEGER_URL}`);
 
 		// set the opentelemetry diagnostics to log errors to the console, this is very usefull for
 		// debugging bad connections to jaeger and other unexpected errors

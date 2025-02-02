@@ -41,21 +41,12 @@ services:
   jaeger:
     container_name: raster-jaeger
     image: 'jaegertracing/jaeger:2.2.0'
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
     ports:
-      - '5778:5778'
       - '16686:16686'
       - '4317:4317'
       - '4318:4318'
       - '14250:14250'
       - '14268:14268'
-      - '9411:9411'
-    command:
-      - --set
-      - receivers.otlp.protocols.http.endpoint=0.0.0.0:4318
-      - --set
-      - receivers.otlp.protocols.grpc.endpoint=0.0.0.0:4317
     networks:
       - raster-network
 
@@ -70,7 +61,7 @@ services:
       - JAEGER_URL=http://jaeger:4317
       - RABBITMQ_URL=amqp://rabbitmq:5672
       - DATABASE_URL=postgres://raster_user:raster_pass@postgres:5432/raster_dev
-    command: ['node', '--env-file', './env/.env.development', 'server']
+    command: ['node', '--env-file', './env/.env.development', 'app']
     ports:
       - '3000:3000'
     depends_on:

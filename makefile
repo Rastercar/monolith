@@ -26,10 +26,13 @@ stop_deps:
 start_app_with_deps: 
 	docker compose -f docker/docker-compose.app_with_deps.yml -p prod up -d --remove-orphans
 
-# runs all dependencies and the monolith on docker containers
-.PHONY: start_app_with_deps
+# stop all dependencies and the monolith on docker containers
+.PHONY: stop_app_with_deps
 stop_app_with_deps: 
-	docker compose -f docker/docker-compose.app_with_deps.yml -p prod up -d --remove-orphans
+	docker stop raster-monolith
+	docker stop raster-db
+	docker stop raster-rmq
+	docker stop raster-jaeger
 
 # stops all docker containers
 .PHONY: stop_all

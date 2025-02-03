@@ -13,14 +13,14 @@ const PAGES = {
   "/auth/confirm-email-address": `/auth/confirm-email-address`,
   "/auth/recover-password": `/auth/recover-password`,
   "/auth/sign-in": (params?: { redirect?: (string) }) => {
-    return `/auth/sign-in${appendSp({ redirect: params?.redirect })}`
+    return `/auth/sign-in${appendSp({ 'redirect': params?.['redirect'] })}`
   },
   "/auth/sign-out": `/auth/sign-out`,
   "/auth/sign-up": `/auth/sign-up`,
   "/client": `/client`,
   "/client/access-levels": `/client/access-levels`,
-  "/client/access-levels/[access_level_id=integer]": (params: { access_level_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/access-levels/${params.access_level_id}`
+  "/client/access-levels/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/access-levels/${params['access_level_id']}`
   },
   "/client/access-levels/new": `/client/access-levels/new`,
   "/client/my-profile": `/client/my-profile`,
@@ -29,26 +29,26 @@ const PAGES = {
   "/client/settings/security": `/client/settings/security`,
   "/client/settings/sessions": `/client/settings/sessions`,
   "/client/tracking/map": (params?: { lookupTracker?: (number) }) => {
-    return `/client/tracking/map${appendSp({ lookupTracker: params?.lookupTracker })}`
+    return `/client/tracking/map${appendSp({ 'lookupTracker': params?.['lookupTracker'] })}`
   },
   "/client/tracking/sim-cards": `/client/tracking/sim-cards`,
-  "/client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/sim-cards/${params.sim_card_id}`
+  "/client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/sim-cards/${params['sim_card_id']}`
   },
   "/client/tracking/sim-cards/new": `/client/tracking/sim-cards/new`,
   "/client/tracking/trackers": `/client/tracking/trackers`,
-  "/client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/trackers/${params.tracker_id}`
+  "/client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/trackers/${params['tracker_id']}`
   },
   "/client/tracking/trackers/new": `/client/tracking/trackers/new`,
   "/client/tracking/vehicles": `/client/tracking/vehicles`,
-  "/client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/vehicles/${params.vehicle_id}`
+  "/client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/vehicles/${params['vehicle_id']}`
   },
   "/client/tracking/vehicles/new": `/client/tracking/vehicles/new`,
   "/client/users": `/client/users`,
-  "/client/users/[user_id=integer]": (params: { user_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/users/${params.user_id}`
+  "/client/users/[user_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/users/${params['user_id']}`
   },
   "/client/users/new": `/client/users/new`
 }
@@ -60,58 +60,58 @@ const SERVERS = {
   "POST /auth/confirm-email-address": `/auth/confirm-email-address`,
   "POST /auth/request-email-confirmation": `/auth/request-email-confirmation`,
   "POST /auth/sign-out": `/auth/sign-out`,
-  "DELETE /auth/sign-out/[session_id=integer]": (params: { session_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/auth/sign-out/${params.session_id}`
+  "DELETE /auth/sign-out/[session_id=integer]": (params: { session_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/auth/sign-out/${params['session_id']}`
   },
   "GET /client/access-levels": `/client/access-levels`,
-  "DELETE /client/access-levels/[access_level_id=integer]": (params: { access_level_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/access-levels/${params.access_level_id}`
+  "DELETE /client/access-levels/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/access-levels/${params['access_level_id']}`
   },
   "PUT /client/settings/profile/picture": `/client/settings/profile/picture`,
   "DELETE /client/settings/profile/picture": `/client/settings/profile/picture`,
   "GET /client/tracking/sim-cards": `/client/tracking/sim-cards`,
-  "DELETE /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/sim-cards/${params.sim_card_id}`
+  "DELETE /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/sim-cards/${params['sim_card_id']}`
   },
-  "PUT /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/sim-cards/${params.sim_card_id}`
+  "PUT /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/sim-cards/${params['sim_card_id']}`
   },
   "GET /client/tracking/trackers": `/client/tracking/trackers`,
-  "DELETE /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/trackers/${params.tracker_id}`
+  "DELETE /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/trackers/${params['tracker_id']}`
   },
-  "PUT /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/trackers/${params.tracker_id}`
+  "PUT /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/trackers/${params['tracker_id']}`
   },
-  "GET /client/tracking/trackers/[tracker_id=integer]/last-location": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/trackers/${params.tracker_id}/last-location`
+  "GET /client/tracking/trackers/[tracker_id=integer]/last-location": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/trackers/${params['tracker_id']}/last-location`
   },
-  "GET /client/tracking/trackers/[tracker_id=integer]/locations": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/trackers/${params.tracker_id}/locations`
+  "GET /client/tracking/trackers/[tracker_id=integer]/locations": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/trackers/${params['tracker_id']}/locations`
   },
   "POST /client/tracking/trackers/positions": `/client/tracking/trackers/positions`,
   "GET /client/tracking/vehicles": `/client/tracking/vehicles`,
-  "DELETE /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/vehicles/${params.vehicle_id}`
+  "DELETE /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/vehicles/${params['vehicle_id']}`
   },
-  "GET /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/vehicles/${params.vehicle_id}`
+  "GET /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/vehicles/${params['vehicle_id']}`
   },
-  "PUT /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/vehicles/${params.vehicle_id}/photo`
+  "PUT /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/vehicles/${params['vehicle_id']}/photo`
   },
-  "DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/vehicles/${params.vehicle_id}/photo`
+  "DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/vehicles/${params['vehicle_id']}/photo`
   },
   "GET /client/users": `/client/users`,
-  "DELETE /client/users/[user_id=integer]": (params: { user_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/users/${params.user_id}`
+  "DELETE /client/users/[user_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/users/${params['user_id']}`
   },
-  "PUT /client/users/[user_id=integer]/access-level": (params: { user_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/users/${params.user_id}/access-level`
+  "PUT /client/users/[user_id=integer]/access-level": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/users/${params['user_id']}/access-level`
   },
-  "DELETE /client/users/[user_id=integer]/sessions/[session_id=integer]": (params: { user_id: (Parameters<typeof import('../params/integer.ts').match>[0]), session_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/users/${params.user_id}/sessions/${params.session_id}`
+  "DELETE /client/users/[user_id=integer]/sessions/[session_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>), session_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/users/${params['user_id']}/sessions/${params['session_id']}`
   },
   "GET /healthcheck": `/healthcheck`
 }
@@ -124,24 +124,24 @@ const ACTIONS = {
   "recoverPassword /auth/recover-password": `/auth/recover-password?/recoverPassword`,
   "signIn /auth/sign-in": `/auth/sign-in?/signIn`,
   "signUp /auth/sign-up": `/auth/sign-up?/signUp`,
-  "updateAccessLevel /client/access-levels/[access_level_id=integer]": (params: { access_level_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/access-levels/${params.access_level_id}?/updateAccessLevel`
+  "updateAccessLevel /client/access-levels/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/access-levels/${params['access_level_id']}?/updateAccessLevel`
   },
   "createAccessLevel /client/access-levels/new": `/client/access-levels/new?/createAccessLevel`,
   "updateOrganization /client/settings/organization": `/client/settings/organization?/updateOrganization`,
   "updateProfile /client/settings/profile": `/client/settings/profile?/updateProfile`,
   "updateProfilePicture /client/settings/profile": `/client/settings/profile?/updateProfilePicture`,
   "changePassword /client/settings/security": `/client/settings/security?/changePassword`,
-  "updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/sim-cards/${params.sim_card_id}?/updateSimCard`
+  "updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/sim-cards/${params['sim_card_id']}?/updateSimCard`
   },
   "createSimCard /client/tracking/sim-cards/new": `/client/tracking/sim-cards/new?/createSimCard`,
-  "updateTracker /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/trackers/${params.tracker_id}?/updateTracker`
+  "updateTracker /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/trackers/${params['tracker_id']}?/updateTracker`
   },
   "createTracker /client/tracking/trackers/new": `/client/tracking/trackers/new?/createTracker`,
-  "updateVehicle /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (Parameters<typeof import('../params/integer.ts').match>[0]) }) => {
-    return `/client/tracking/vehicles/${params.vehicle_id}?/updateVehicle`
+  "updateVehicle /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/tracking/vehicles/${params['vehicle_id']}?/updateVehicle`
   },
   "createVehicle /client/tracking/vehicles/new": `/client/tracking/vehicles/new?/createVehicle`,
   "createUser /client/users/new": `/client/users/new?/createUser`
@@ -159,7 +159,10 @@ type ParamValue = string | number | undefined
 /**
  * Append search params to a string
  */
-export const appendSp = (sp?: Record<string, ParamValue | ParamValue[]>, prefix: '?' | '&' = '?') => {
+export const appendSp = (
+  sp?: Record<string, ParamValue | ParamValue[]>,
+  prefix: '?' | '&' = '?',
+) => {
   if (sp === undefined) return ''
 
   const params = new URLSearchParams()
@@ -169,7 +172,12 @@ export const appendSp = (sp?: Record<string, ParamValue | ParamValue[]>, prefix:
     }
   }
 
+  let anchor = ''
   for (const [name, val] of Object.entries(sp)) {
+    if (name === '__KIT_ROUTES_ANCHOR__' && val !== undefined) {
+      anchor = `#${val}`
+      continue
+    }
     if (Array.isArray(val)) {
       for (const v of val) {
         append(name, v)
@@ -180,8 +188,8 @@ export const appendSp = (sp?: Record<string, ParamValue | ParamValue[]>, prefix:
   }
 
   const formatted = params.toString()
-  if (formatted) {
-    return `${prefix}${formatted}`
+  if (formatted || anchor) {
+    return `${prefix}${formatted}${anchor}`.replace('?#', '#')
   }
   return ''
 }
@@ -203,7 +211,7 @@ export const currentSp = () => {
   return record
 }
 
-// route function helpers
+/* type helpers for route function */
 type NonFunctionKeys<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T]
 type FunctionKeys<T> = { [K in keyof T]: T[K] extends Function ? K : never }[keyof T]
 type FunctionParams<T> = T extends (...args: infer P) => any ? P : never
@@ -235,12 +243,16 @@ export function route<T extends keyof AllTypes>(key: T, ...params: any[]): strin
   }
 }
 
+/* type helpers param & predicate */
+type ExtractFnPredicate<T> = T extends (param: any) => param is infer U ? U : never;
+type ExtractParamType<T extends (param: any) => any> = ExtractFnPredicate<T> extends never ? Parameters<T>[0] : ExtractFnPredicate<T>
+
 /**
 * Add this type as a generic of the vite plugin `kitRoutes<KIT_ROUTES>`.
 *
 * Full example:
 * ```ts
-* import type { KIT_ROUTES } from './ROUTES'
+* import type { KIT_ROUTES } from '$lib/ROUTES'
 * import { kitRoutes } from 'vite-plugin-kit-routes'
 *
 * kitRoutes<KIT_ROUTES>({
@@ -255,5 +267,5 @@ export type KIT_ROUTES = {
   SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'DELETE /auth/sign-out/[session_id=integer]': 'session_id', 'GET /client/access-levels': never, 'DELETE /client/access-levels/[access_level_id=integer]': 'access_level_id', 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never, 'GET /client/tracking/sim-cards': never, 'DELETE /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'PUT /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'GET /client/tracking/trackers': never, 'DELETE /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'PUT /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/last-location': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/locations': 'tracker_id', 'POST /client/tracking/trackers/positions': never, 'GET /client/tracking/vehicles': never, 'DELETE /client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', 'GET /client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', 'PUT /client/tracking/vehicles/[vehicle_id=integer]/photo': 'vehicle_id', 'DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo': 'vehicle_id', 'GET /client/users': never, 'DELETE /client/users/[user_id=integer]': 'user_id', 'PUT /client/users/[user_id=integer]/access-level': 'user_id', 'DELETE /client/users/[user_id=integer]/sessions/[session_id=integer]': 'user_id' | 'session_id', 'GET /healthcheck': never }
   ACTIONS: { 'changePassword /auth/change-password': never, 'recoverPassword /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never, 'updateAccessLevel /client/access-levels/[access_level_id=integer]': 'access_level_id', 'createAccessLevel /client/access-levels/new': never, 'updateOrganization /client/settings/organization': never, 'updateProfile /client/settings/profile': never, 'updateProfilePicture /client/settings/profile': never, 'changePassword /client/settings/security': never, 'updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'createSimCard /client/tracking/sim-cards/new': never, 'updateTracker /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'createTracker /client/tracking/trackers/new': never, 'updateVehicle /client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', 'createVehicle /client/tracking/vehicles/new': never, 'createUser /client/users/new': never }
   LINKS: Record<string, never>
-  Params: { redirect: never, access_level_id: never, lookupTracker: never, sim_card_id: never, tracker_id: never, vehicle_id: never, user_id: never, session_id: never }
+  Params: { 'redirect': never, 'access_level_id': never, 'lookupTracker': never, 'sim_card_id': never, 'tracker_id': never, 'vehicle_id': never, 'user_id': never, 'session_id': never }
 }

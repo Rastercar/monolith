@@ -30,10 +30,12 @@ export const signInSchema = z.object({
 		.string()
 		.min(1)
 		.email()
+		// [PROD-TODO] remove me
 		.default(dev ? 'rastercar.tests.002@gmail.com' : ''),
 	password: z
 		.string()
 		.min(1)
+		// [PROD-TODO] remove me
 		.default(dev ? 'Contafake3!' : '')
 });
 
@@ -41,6 +43,7 @@ export const recoverPasswordSchema = z.object({
 	email: z
 		.string()
 		.email()
+		// [PROD-TODO] remove me
 		.default(dev ? 'rastercar.tests.002@gmail.com' : '')
 });
 

@@ -1,5 +1,5 @@
 # --- setup the application
-FROM node:23.3-alpine AS base
+FROM node:lts-alpine AS base
 
 # get the git commit hash (append with VITE_ to make sure its exposed to the vite build)
 ARG VITE_COMMIT_HASH
@@ -9,6 +9,7 @@ ENV VITE_COMMIT_HASH=$VITE_COMMIT_HASH
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+RUN npm install -g corepack@latest
 RUN corepack enable
 
 # copy everything (that is not on .dockerignore) to the app directory

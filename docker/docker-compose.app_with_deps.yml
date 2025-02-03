@@ -11,6 +11,7 @@ volumes:
 
 networks:
   raster-network:
+    name: raster-network
     driver: bridge
 
 services:
@@ -42,11 +43,11 @@ services:
     container_name: raster-jaeger
     image: 'jaegertracing/jaeger:2.2.0'
     ports:
-      - '16686:16686'
       - '4317:4317'
       - '4318:4318'
       - '14250:14250'
       - '14268:14268'
+      - '16686:16686'
     networks:
       - raster-network
 

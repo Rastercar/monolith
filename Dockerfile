@@ -8,6 +8,7 @@ ENV VITE_COMMIT_HASH=$VITE_COMMIT_HASH
 # enable pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+
 RUN corepack enable
 
 # copy everything (that is not on .dockerignore) to the app directory

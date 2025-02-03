@@ -50,8 +50,8 @@ services:
     container_name: rastercar-jaeger
     image: 'jaegertracing/jaeger:2.2.0'
     ports:
-      - '16686:16686' # Query UI
       - '4317:4317' # OTLP gRPC
       - '4318:4318' # OTLP HTTP
       - '14250:14250' # gRPC for collector
       - '14268:14268' # HTTP for collector
+      - '16686:16686' # Query UI

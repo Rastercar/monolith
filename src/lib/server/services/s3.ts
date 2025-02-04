@@ -39,13 +39,7 @@ export class S3Service {
 	bucket!: string;
 
 	constructor() {
-		this.c = new S3Client({
-			region: env.AWS_REGION,
-			credentials: {
-				accessKeyId: env.AWS_ACCESS_KEY_ID,
-				secretAccessKey: env.AWS_SECRET_ACCESS_KEY
-			}
-		});
+		this.c = new S3Client({ region: env.AWS_REGION });
 
 		this.bucket = env.AWS_S3_BUCKET;
 	}

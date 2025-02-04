@@ -24,7 +24,6 @@ services:
       POSTGRES_PASSWORD: raster_pass
     ports:
       - '5432:5432'
-    privileged: true
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
@@ -54,10 +53,6 @@ services:
   rastercar-monolith:
     image: rastercar/monolith
     container_name: raster-monolith
-    privileged: true
-    # important, override the connection env vars since the monolith will be running on a docker container
-    # and not on the local machine, therefore it wont be able to connect to the database and other services
-    # using localhost
     environment:
       - JAEGER_URL=http://jaeger:4317
       - RABBITMQ_URL=amqp://rabbitmq:5672
@@ -68,6 +63,31 @@ services:
     depends_on:
       - jaeger
       - postgres
+      - rabbitmq
+    networks:
+      - raster-network
+
+  rastercar-mailer:
+    image: rastercar/mailer
+    container_name: raster-mailer
+    environment:
+      - APP_DEBUG=true
+      - TRACER_SERVICE_NAME=mailer
+      - RMQ_URI=amqp://localhost:5672
+      - RMQ_QUEUE=mailer
+      - RMQ_CONSUMER_TAG=mailer_service_consumer
+      - RMQ_EMAIL_EVENTS_EXCHANGE=email_events
+      - AWS_REGION=us-east-1
+      - AWS_SES_TRACKING_CONFIG_SET=email-events
+      - AWS_SNS_TRACKING_SUBSCRIPTION_ARN=arn:aws:sns:us-east-1:152409327412:email-events:b725dae9-2782-4387-a418-8d279032a767
+      - AWS_SES_MAX_EMAILS_PER_SECOND=1
+      - HTTP_PORT=3005
+      - APP_DEFAULT_EMAIL_SENDER=no-reply@rastercar.com
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+    ports:
+      - '3005:3005'
+    depends_on:
+      - jaeger
       - rabbitmq
     networks:
       - raster-network

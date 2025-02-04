@@ -17,7 +17,6 @@ services:
       POSTGRES_PASSWORD: raster_pass
     ports:
       - '5432:5432'
-    privileged: true
     volumes:
       - postgres:/var/lib/postgresql/data
 
@@ -32,7 +31,6 @@ services:
       POSTGRES_PASSWORD: raster_pass
     ports:
       - '5435:5432'
-    privileged: true
     tmpfs:
       # run as uid:1000 gid:1000 (your user) so docker can
       # write to tempfs, otherwise we get a permission error

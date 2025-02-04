@@ -32,6 +32,9 @@ import { type KIT_ROUTES } from '../src/lib/ROUTES';
 export const devOpentelemetryPlugin = (): PluginOption => ({
 	name: 'openTelemetry',
 	configureServer(server) {
+		// dont load opentelemetry for testing
+		if (server.config.mode === 'test') return;
+
 		const env = loadEnv(server.config.mode, './env', '');
 
 		const otlptExporter = new OTLPTraceExporter({ url: env.JAEGER_URL });

@@ -8,32 +8,6 @@ lazy:
 dev:
 	pnpm run:dev
 
-# start all dev dependencies containers
-.PHONY: start_deps
-start_deps: 
-	docker compose -f docker/docker-compose.deps.yml -p dev up -d --remove-orphans
-
-# stop all dev dependencies containers
-.PHONY: stop_deps
-stop_deps:
-	docker stop rastercar-db
-	docker stop rastercar-db-test
-	docker stop rastercar-rmq
-	docker stop rastercar-jaeger
-
-# runs all dependencies and the monolith on docker containers
-.PHONY: start_app_with_deps
-start_app_with_deps: 
-	docker compose -f docker/docker-compose.app_with_deps.yml -p prod up -d --remove-orphans
-
-# stop all dependencies and the monolith on docker containers
-.PHONY: stop_app_with_deps
-stop_app_with_deps: 
-	docker stop raster-monolith
-	docker stop raster-db
-	docker stop raster-rmq
-	docker stop raster-jaeger
-
 # stops all docker containers
 .PHONY: stop_all
 stop_all: 

@@ -23,6 +23,7 @@ todo.txt
 notes.txt
 
 # tests
+reports/
 coverage/
 
 # playwright

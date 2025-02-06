@@ -10,6 +10,11 @@ import {
 
 export const viteConfig: UserConfig = {
 	envDir: './env',
+	test: {
+		coverage: {
+			reportsDirectory: './reports/coverage'
+		}
+	},
 	plugins: [
 		// initializes otel for dev
 		devOpentelemetryPlugin(),
@@ -27,7 +32,7 @@ export const viteConfig: UserConfig = {
 		svelteKitRoutePlugin(),
 
 		// show the bundlesize of the builded application
-		visualizer({ open: true, filename: 'bundle-size-report.html' })
+		visualizer({ open: true, filename: 'reports/bundle-size-report.html' })
 	]
 };
 

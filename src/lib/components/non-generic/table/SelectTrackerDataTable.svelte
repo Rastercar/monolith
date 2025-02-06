@@ -23,9 +23,7 @@
 
 	const { bottomRight }: Props = $props();
 
-	const { pagination, filters } = createPaginationWithFilters<GetTrackersFilters>({
-		withAssociatedVehicle: false
-	});
+	const { pagination, filters } = createPaginationWithFilters<GetTrackersFilters>({});
 
 	let rowSelection = $state<RowSelectionState>({});
 

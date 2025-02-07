@@ -27,6 +27,6 @@
 			</button>
 		</div>
 
-		<SidebarNavigation />
+		<SidebarNavigation onRouteClick={() => (layout.drawerOpen = false)} />
 	{/snippet}
 </Modal>

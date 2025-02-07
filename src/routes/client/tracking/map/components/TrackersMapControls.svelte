@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { route } from '$lib/ROUTES';
 	import { getMapContext } from '$lib/store/context';
 	import Icon from '@iconify/svelte';
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
@@ -12,6 +13,8 @@
 		const bounds = mapContext.getTrackersMapBounds();
 		if (!bounds.isEmpty()) mapContext.mapInstance?.fitBounds(bounds);
 	};
+
+	let isOnMobileViewPort = window.matchMedia('(max-width: 768px)').matches;
 </script>
 
 <MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
@@ -29,7 +32,11 @@
 	</button>
 </MapControl>
 
-<MapControl position={window.google.maps.ControlPosition.TOP_LEFT}>
+<MapControl
+	position={isOnMobileViewPort
+		? window.google.maps.ControlPosition.BLOCK_END_INLINE_CENTER
+		: window.google.maps.ControlPosition.TOP_LEFT}
+>
 	<button
 		onclick={fitMapToTrackersBeingShown}
 		class="m-[10px] h-[40px] flex items-center px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
@@ -39,6 +46,22 @@
 		</div>
 	</button>
 </MapControl>
+
+{#if isOnMobileViewPort}
+	<MapControl
+		position={isOnMobileViewPort
+			? window.google.maps.ControlPosition.INLINE_START_BLOCK_CENTER
+			: window.google.maps.ControlPosition.TOP_LEFT}
+	>
+		<a
+			href={route('/client/my-profile')}
+			onclick={fitMapToTrackersBeingShown}
+			class="m-[10px] h-[40px] flex items-center px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300 text-lg"
+		>
+			<Icon icon="mdi:arrow-left" />
+		</a>
+	</MapControl>
+{/if}
 
 <Modal
 	bind:open={isModalOpen}

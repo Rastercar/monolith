@@ -1,9 +1,9 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import SidebarNavigation from './SidebarNavigation.svelte';
 	import UserDisplay from './UserDisplay.svelte';
 
-	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
+	let isInSettingsRoute = $derived(page.url.pathname.includes('/settings'));
 </script>
 
 <aside class="hidden lg:block bg-surface-100-900 w-72">

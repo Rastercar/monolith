@@ -223,6 +223,7 @@
 	positionerJustify="justify-end"
 	positionerPadding=""
 	positionerAlign=""
+	triggerClasses="hidden"
 	transitionsPositionerIn={{ x: 480, duration: 200 }}
 	transitionsPositionerOut={{ x: 480, duration: 200 }}
 >

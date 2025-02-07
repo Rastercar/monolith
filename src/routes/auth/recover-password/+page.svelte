@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { recoverPasswordSchema } from '$lib/api/auth.schema';
+	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
 	import { route } from '$lib/ROUTES';
 	import { onMount } from 'svelte';
@@ -10,7 +11,7 @@
 	let { data } = $props();
 
 	const sForm = superForm(data.form, { validators: zodClient(recoverPasswordSchema) });
-	const { message } = sForm;
+	const { message, submitting } = sForm;
 
 	const success = $derived(!!$message && $message.type === 'success');
 
@@ -44,7 +45,13 @@
 					label="Your account email"
 					placeholder="email address"
 				/>
-				<button class="btn preset-filled-primary-200-800 mt-4 w-full"> recover password </button>
+
+				<LoadableButton
+					isLoading={$submitting}
+					classes="btn preset-filled-primary-200-800 mt-4 w-full"
+				>
+					recover password
+				</LoadableButton>
 			</form>
 
 			{#if data.user}

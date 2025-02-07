@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { routesMeta, type LoggedInPageMeta } from '$lib/routes-meta';
 	import { getAuthContext, getLayoutContext } from '$lib/store/context';
 	import AppHeader from './layout/AppHeader.svelte';
@@ -20,7 +20,7 @@
 	// the previous page, this whacky is not ideal as we load every route meta
 	// just to get the one of the current page, but at least it works
 	const { headerVisibility = true, sidebarVisibility = true } = $derived.by(() => {
-		const currentPageMeta = routesMeta[$page.url.pathname as keyof typeof routesMeta] as
+		const currentPageMeta = routesMeta[page.url.pathname as keyof typeof routesMeta] as
 			| LoggedInPageMeta
 			| undefined;
 

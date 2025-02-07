@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Icon from '@iconify/svelte';
 	import NavList, { type Route } from './NavList.svelte';
+
+	interface Props {
+		onRouteClick?: () => void;
+	}
+
+	const { onRouteClick }: Props = $props();
 
 	const routes: Route[] = [
 		{
@@ -64,7 +70,7 @@
 		}
 	];
 
-	let isInSettingsRoute = $derived($page.url.pathname.includes('/settings'));
+	let isInSettingsRoute = $derived(page.url.pathname.includes('/settings'));
 </script>
 
 <aside>
@@ -75,7 +81,10 @@
 			<hr class="hr border-t-2 mt-6 mb-8" />
 		</div>
 
-		<NavList routes={settingsRoutes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
+		<NavList
+			routes={settingsRoutes.map((r) => ({ ...r, closeSidebarOnClick: true }))}
+			{onRouteClick}
+		/>
 
 		<div class="flex justify-end">
 			<a href="/client/my-profile" class="btn preset-filled-primary-500 mx-4 my-4">
@@ -84,7 +93,7 @@
 			</a>
 		</div>
 	{:else}
-		<NavList routes={routes.map((r) => ({ ...r, closeSidebarOnClick: true }))} />
+		<NavList routes={routes.map((r) => ({ ...r, closeSidebarOnClick: true }))} {onRouteClick} />
 
 		<div class="px-5">
 			<hr class="hr border-t-2 my-4" />

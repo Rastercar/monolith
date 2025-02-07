@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import PageNavigationLoaderIndicator from '$lib/components/layout/PageNavigationLoaderIndicator.svelte';
 	import { setAuthContext, setLayoutContext } from '$lib/store/context';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
@@ -33,6 +34,8 @@
 		load the theme from the local storage causing a very annoying flicker
 	-->
 	{#if mounted}
+		<PageNavigationLoaderIndicator />
+
 		{@render children()}
 	{/if}
 </QueryClientProvider>

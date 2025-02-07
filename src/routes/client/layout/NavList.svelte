@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { KIT_ROUTES } from '$lib/ROUTES';
 	import { routesMeta } from '$lib/routes-meta';
 
@@ -17,11 +17,12 @@
 	interface Props {
 		routes: Route[];
 		classes?: string;
+		onRouteClick?: () => void;
 	}
 
 	const auth = getAuthContext();
 
-	let { routes, classes }: Props = $props();
+	let { routes, classes, onRouteClick }: Props = $props();
 </script>
 
 <nav class={classes}>
@@ -33,9 +34,9 @@
 			{#if !requiredPerms || auth.hasPermission(requiredPerms)}
 				<li
 					class="hover:bg-primary-300-700"
-					class:bg-primary-200-800={r.href === $page.url.pathname}
+					class:bg-primary-200-800={r.href === page.url.pathname}
 				>
-					<NavLink href={r.href} icon={r.icon} label={r.label} />
+					<NavLink href={r.href} icon={r.icon} label={r.label} onclick={onRouteClick} />
 				</li>
 			{/if}
 		{/each}

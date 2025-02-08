@@ -7,6 +7,8 @@
 		count: number;
 		data: unknown[];
 		extraClasses?: string;
+		withPageSizeSelector?: boolean;
+		alternativePagination?: boolean;
 	}
 
 	let {
@@ -14,19 +16,20 @@
 		count,
 		page = $bindable(),
 		pageSize = $bindable(),
-		extraClasses = ''
+		extraClasses = '',
+		withPageSizeSelector = true,
+		alternativePagination = $bindable()
 	}: Props = $props();
 </script>
 
 <div class={`flex-col-reverse sm:flex-row flex justify-between gap-4 ${extraClasses}`}>
-	<select name="size" class="select max-w-full sm:max-w-[150px]" bind:value={pageSize}>
-		{#each [3, 5, 10] as v}
-			<option value={v}>{v} Items</option>
-		{/each}
-	</select>
+	{#if withPageSizeSelector}
+		<select name="size" class="select max-w-full sm:max-w-[150px]" bind:value={pageSize}>
+			{#each [3, 5, 10] as v}
+				<option value={v}>{v} Items</option>
+			{/each}
+		</select>
+	{/if}
 
-	<!-- hack until: https://github.com/skeletonlabs/skeleton/issues/2986 is fixed -->
-	{#key count}
-		<Pagination bind:page bind:pageSize {data} {count} />
-	{/key}
+	<Pagination bind:page bind:pageSize {data} {count} alternative={alternativePagination} />
 </div>

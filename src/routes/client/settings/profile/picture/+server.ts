@@ -1,15 +1,18 @@
 import { imageSchema } from '$lib/api/common.schema';
 import { updateUserProfilePicture } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth';
-import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
+import { validateForm } from '$lib/server/middlewares/validation';
 import { s3 } from '$lib/server/services/s3';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import path from 'path';
 
 export const PUT = async ({ request, locals }) => {
 	const { user } = acl(locals);
 
-	const form = await validateFormWithFailOnError(request, imageSchema);
+	const form = await validateForm(request, imageSchema);
+	if (!form.valid) {
+		error(400, { message: form.errors.image?.[0] ?? 'invalid image' });
+	}
 
 	const { image } = form.data;
 

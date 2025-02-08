@@ -10,7 +10,7 @@ import type { z, ZodSchema } from 'zod';
  *
  * @returns The parsed data
  */
-export async function validateRequestBody<T extends z.ZodTypeAny>(
+export async function validateJsonRequestBody<T extends z.ZodTypeAny>(
 	req: Request,
 	schema: T
 ): Promise<z.infer<T>> {
@@ -56,12 +56,21 @@ export function validateRequestSearchParams<T extends z.ZodTypeAny>(
 /**
  * Parses the request body using superforms
  *
+ * @returns The parsed data
+ */
+export function validateForm<T extends ZodSchema>(req: Request, schema: T) {
+	return superValidate(req, zod(schema));
+}
+
+/**
+ * Parses the request body using superforms
+ *
  * @throws sveltekit fail on invalid request body
  *
  * @returns The parsed data
  */
 export async function validateFormWithFailOnError<T extends ZodSchema>(req: Request, schema: T) {
-	const form = await superValidate(req, zod(schema));
+	const form = await validateForm(req, schema);
 	if (!form.valid) fail(400, { form });
 
 	return form;

@@ -7,7 +7,7 @@ import {
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { deleteOrgSimCardById, updateOrgSimCard } from '$lib/server/db/repo/sim-card';
 import { acl } from '$lib/server/middlewares/auth';
-import { validateRequestBody } from '$lib/server/middlewares/validation';
+import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import type { RouteParams } from './$types';
 
@@ -46,7 +46,7 @@ export const PUT: RequestHandler<RouteParams> = async ({ params, request, locals
 
 	const simCardId = parseInt(params.sim_card_id);
 
-	const body = await validateRequestBody(request, updateSimCardSchema);
+	const body = await validateJsonRequestBody(request, updateSimCardSchema);
 
 	let simOrError = await _updateSimCard(simCardId, user.organization.id, body);
 

@@ -1,25 +1,26 @@
 <script lang="ts">
 	import { route } from '$lib/ROUTES';
 	import { getMapContext } from '$lib/store/context';
+	import { isOnMobileViewPort } from '$lib/store/viewport.svelte';
 	import Icon from '@iconify/svelte';
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import MapControl from './MapControl.svelte';
 	import SelectTrackerOverlay from './SelectTrackerOverlay.svelte';
 
 	const mapContext = getMapContext();
-	let isModalOpen = $state(false);
+	let isSelectTrackerOverlayOpen = $state(false);
 
 	const fitMapToTrackersBeingShown = () => {
 		const bounds = mapContext.getTrackersMapBounds();
 		if (!bounds.isEmpty()) mapContext.mapInstance?.fitBounds(bounds);
 	};
 
-	let isOnMobileViewPort = window.matchMedia('(max-width: 768px)').matches;
+	const { isMobileViewport } = isOnMobileViewPort();
 </script>
 
 <MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
 	<button
-		onclick={() => (isModalOpen = true)}
+		onclick={() => (isSelectTrackerOverlayOpen = true)}
 		class="m-[10px] h-[60px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
 	>
 		<div class="my-auto">
@@ -33,7 +34,7 @@
 </MapControl>
 
 <MapControl
-	position={isOnMobileViewPort
+	position={isMobileViewport
 		? window.google.maps.ControlPosition.BLOCK_END_INLINE_CENTER
 		: window.google.maps.ControlPosition.TOP_LEFT}
 >
@@ -47,9 +48,9 @@
 	</button>
 </MapControl>
 
-{#if isOnMobileViewPort}
+{#if isMobileViewport}
 	<MapControl
-		position={isOnMobileViewPort
+		position={isMobileViewport
 			? window.google.maps.ControlPosition.INLINE_START_BLOCK_CENTER
 			: window.google.maps.ControlPosition.TOP_LEFT}
 	>
@@ -64,14 +65,15 @@
 {/if}
 
 <Modal
-	bind:open={isModalOpen}
-	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl h-[600px] w-screen"
+	bind:open={isSelectTrackerOverlayOpen}
+	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl h-screen md:h-[600px] w-screen"
 	contentClasses="overflow-auto"
+	triggerClasses="hidden"
 	positionerJustify="justify-end"
 	positionerAlign="items-end"
 	positionerPadding=""
 >
 	{#snippet content()}
-		<SelectTrackerOverlay />
+		<SelectTrackerOverlay onCloseClick={() => (isSelectTrackerOverlayOpen = false)} />
 	{/snippet}
 </Modal>

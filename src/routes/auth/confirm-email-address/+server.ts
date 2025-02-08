@@ -7,11 +7,14 @@ import {
 	findUserByConfirmEmailToken,
 	setEmailVerifiedAndClearConfirmEmailToken
 } from '$lib/server/db/repo/user';
-import { validateRequestBody } from '$lib/server/middlewares/validation';
+import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { token, confirmingForOrg } = await validateRequestBody(request, confirmEmailAddressSchema);
+	const { token, confirmingForOrg } = await validateJsonRequestBody(
+		request,
+		confirmEmailAddressSchema
+	);
 
 	const sendInvalidTokenError = () => error(404, 'invalid or expired token');
 

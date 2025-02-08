@@ -2,13 +2,13 @@ import { getTrackersPositionsSearchParamsSchema } from '$lib/api/tracker.schema'
 import { filterVehicleTrackerIdsByAssertingBelongsToOrg } from '$lib/server/db/repo/vehicle-tracker';
 import { findMultipleVehicleTrackerLastLocations } from '$lib/server/db/repo/vehicle-tracker-location';
 import { acl } from '$lib/server/middlewares/auth';
-import { validateRequestBody } from '$lib/server/middlewares/validation';
+import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { json } from '@sveltejs/kit';
 
 export const POST = async ({ request, locals }) => {
 	const { user } = acl(locals);
 
-	const { ids } = await validateRequestBody(request, getTrackersPositionsSearchParamsSchema);
+	const { ids } = await validateJsonRequestBody(request, getTrackersPositionsSearchParamsSchema);
 
 	const validIds = await filterVehicleTrackerIdsByAssertingBelongsToOrg(ids, user.organization.id);
 

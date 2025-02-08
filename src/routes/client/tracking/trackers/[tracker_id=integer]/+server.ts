@@ -9,7 +9,7 @@ import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { findOrgVehicleById } from '$lib/server/db/repo/vehicle';
 import { deleteOrgTrackerById, updateOrgTracker } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
-import { validateRequestBody } from '$lib/server/middlewares/validation';
+import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import type { RouteParams } from './$types';
 
@@ -34,7 +34,7 @@ export const DELETE: RequestHandler<RouteParams> = async ({ params, request, loc
 
 	const trackerId = parseInt(params.tracker_id);
 
-	const { deleteAssociatedSimCards = false } = await validateRequestBody(
+	const { deleteAssociatedSimCards = false } = await validateJsonRequestBody(
 		request,
 		deleteTrackerSchema
 	);
@@ -49,7 +49,7 @@ export const PUT: RequestHandler<RouteParams> = async ({ params, request, locals
 
 	const simCardId = parseInt(params.tracker_id);
 
-	const body = await validateRequestBody(request, updateTrackerSchema);
+	const body = await validateJsonRequestBody(request, updateTrackerSchema);
 
 	if (body.vehicleId) {
 		const vehicle = await findOrgVehicleById(body.vehicleId, user.organization.id);

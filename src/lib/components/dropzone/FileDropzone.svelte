@@ -104,7 +104,9 @@
 		uploadMutation
 			.mutateAsync(newPhoto.file)
 			.then((uploadResult) => onUploadSuccess(uploadResult))
-			.catch(() => showErrorToast('failed to upload picture'))
+			.catch((e) => {
+				showErrorToast(e);
+			})
 			.finally(() => {
 				newPhoto = null;
 			});

@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { z } from 'zod';
 import {
 	validateFormWithFailOnError,
-	validateRequestBody,
+	validateJsonRequestBody,
 	validateRequestSearchParams
 } from './validation';
 
@@ -17,11 +17,11 @@ const superformsMock = vi.mocked(superforms);
 const testSchema = z.object({ id: z.string() });
 const validData = { id: '1' };
 
-describe('validateRequestBody', () => {
+describe('validateJsonRequestBody', () => {
 	test('calls error (400) if the request body is invalid json', async () => {
 		const req = new Request('http://test.com', { body: JSON.stringify({}) + '}', method: 'POST' });
 
-		await validateRequestBody(req, testSchema);
+		await validateJsonRequestBody(req, testSchema);
 
 		expect(kitHelpersMock.error).toHaveBeenLastCalledWith(
 			400,
@@ -32,7 +32,7 @@ describe('validateRequestBody', () => {
 	test('calls error (400) if the request body is valid json but invalid data', async () => {
 		const req = new Request('http://test.com', { body: '123', method: 'POST' });
 
-		await validateRequestBody(req, testSchema);
+		await validateJsonRequestBody(req, testSchema);
 
 		expect(kitHelpersMock.error).toHaveBeenLastCalledWith(
 			400,
@@ -43,7 +43,7 @@ describe('validateRequestBody', () => {
 	test('returns the parsed data on success', async () => {
 		const req = new Request('http://test.com', { body: JSON.stringify(validData), method: 'POST' });
 
-		const res = await validateRequestBody(req, testSchema);
+		const res = await validateJsonRequestBody(req, testSchema);
 		expect(res).toStrictEqual(validData);
 	});
 });

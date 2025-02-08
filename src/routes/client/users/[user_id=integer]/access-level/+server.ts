@@ -2,7 +2,7 @@ import { updateUserAccessLevelSchema } from '$lib/api/user.schema';
 import { findOrgAccessLevelById } from '$lib/server/db/repo/access-level';
 import { setOrgUserAccessLevel } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth';
-import { validateRequestBody } from '$lib/server/middlewares/validation';
+import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import type { RouteParams } from './$types';
 
@@ -11,7 +11,7 @@ export const PUT: RequestHandler<RouteParams> = async ({ params, request, locals
 
 	const userId = parseInt(params.user_id);
 
-	const { accessLevelId } = await validateRequestBody(request, updateUserAccessLevelSchema);
+	const { accessLevelId } = await validateJsonRequestBody(request, updateUserAccessLevelSchema);
 
 	// assert access level belongs to request user org
 	const accessLevel = await findOrgAccessLevelById(accessLevelId, reqUser.organization.id);

@@ -112,8 +112,8 @@ importers:
         specifier: 3.0.0-next.10
         version: 3.0.0-next.10(postcss@8.4.28)(tailwindcss@3.4.9)
       '@skeletonlabs/skeleton-svelte':
-        specifier: 1.0.0-next.17
-        version: 1.0.0-next.17(svelte@5.19.6)
+        specifier: 1.0.0-next.18
+        version: 1.0.0-next.18(svelte@5.19.6)
       '@sveltejs/adapter-auto':
         specifier: 3.1.1
         version: 3.1.1(@sveltejs/kit@2.16.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.19.6)(vite@6.0.11(@types/node@22.9.0)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.7.0)))(svelte@5.19.6)(vite@6.0.11(@types/node@22.9.0)(jiti@1.21.7)(tsx@4.19.2)(yaml@2.7.0)))
@@ -1559,8 +1559,8 @@ packages:
   '@sinonjs/text-encoding@0.7.3':
     resolution: {integrity: sha512-DE427ROAphMQzU4ENbliGYrBSYPXF+TtLg9S8vzeA+OF4ZKzoDdzfL8sxuMUGS/lgRhM6j1URSk9ghf7Xo1tyA==}
 
-  '@skeletonlabs/skeleton-svelte@1.0.0-next.17':
-    resolution: {integrity: sha512-BgBEZB7Ud+KjlAXnj8/ROiVR/wHZQFvXFfkn20yDcZFAHhS6nTRjPHc3+PlRoYJ1+Ft76wsIWLB7LIaqkHqO0w==}
+  '@skeletonlabs/skeleton-svelte@1.0.0-next.18':
+    resolution: {integrity: sha512-wwaO65aRUAHG8NRfCfVDLKUAco+rcOq9VKN0/ff1tdrmbB++4F1U2r8VKC2QJD3ImC62aUyLnEcDVJ7K8+BkCQ==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -6042,7 +6042,7 @@ snapshots:
 
   '@sinonjs/text-encoding@0.7.3': {}
 
-  '@skeletonlabs/skeleton-svelte@1.0.0-next.17(svelte@5.19.6)':
+  '@skeletonlabs/skeleton-svelte@1.0.0-next.18(svelte@5.19.6)':
     dependencies:
       '@zag-js/accordion': 0.78.3
       '@zag-js/avatar': 0.78.3

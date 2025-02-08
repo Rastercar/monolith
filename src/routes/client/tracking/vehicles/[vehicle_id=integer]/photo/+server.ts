@@ -1,7 +1,7 @@
 import { imageSchema } from '$lib/api/common.schema';
 import { findOrgVehicleById, updateOrgVehiclePhoto } from '$lib/server/db/repo/vehicle';
 import { acl } from '$lib/server/middlewares/auth';
-import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
+import { validateForm } from '$lib/server/middlewares/validation';
 import { s3 } from '$lib/server/services/s3';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import path from 'path';
@@ -10,7 +10,13 @@ import type { RouteParams } from './$types';
 export const PUT: RequestHandler<RouteParams> = async ({ request, params, locals }) => {
 	const { user } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
 
-	const { data } = await validateFormWithFailOnError(request, imageSchema);
+	const form = await validateForm(request, imageSchema);
+	if (!form.valid) {
+		error(400, { message: form.errors.image?.[0] ?? 'invalid image' });
+	}
+
+	const { image } = form.data;
+
 	const vehicleId = parseInt(params.vehicle_id);
 
 	const vehicle = await findOrgVehicleById(vehicleId, user.organization.id);
@@ -21,11 +27,11 @@ export const PUT: RequestHandler<RouteParams> = async ({ request, params, locals
 	const key = {
 		date: new Date(),
 		organizationId: user.organization.id,
-		filenameWithExtension: `pic${path.extname(data.image.name)}`,
+		filenameWithExtension: `pic${path.extname(image.name)}`,
 		organizationSubFolder: `vehicle/${vehicle.id}`
 	};
 
-	const { fileKey } = await s3.uploadFile(key, data.image);
+	const { fileKey } = await s3.uploadFile(key, image);
 	await updateOrgVehiclePhoto(vehicleId, fileKey);
 
 	// do this only after the new one has been uploaded

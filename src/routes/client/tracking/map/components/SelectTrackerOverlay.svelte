@@ -8,6 +8,7 @@
 	import { TRACKER_SUBSCRIPTION_PER_USER_LIMIT } from '$lib/constants/socket-io';
 	import { getMapContext } from '$lib/store/context';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
+	import { isOnMobileViewPort } from '$lib/store/viewport.svelte';
 	import Icon from '@iconify/svelte';
 	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
@@ -17,6 +18,12 @@
 		type ColumnDef,
 		type RowSelectionState
 	} from '@tanstack/svelte-table';
+
+	interface Props {
+		onCloseClick: () => void;
+	}
+
+	const { onCloseClick } = $props();
 
 	const mapContext = getMapContext();
 
@@ -83,28 +90,30 @@
 			// dataset changes
 			getRowId: (e) => e.id.toString(),
 			getCoreRowModel: getCoreRowModel(),
-			enableRowSelection: () => !reachedOrSurpassedSelectionLimit
+			enableRowSelection: () => !reachedSelectionLimit
 		})
 	);
 
-	let selectedTrackersCount = $derived(Object.keys(mapContext.mapSelectedTrackers).length);
-	let reachedOrSurpassedSelectionLimit = $derived(
-		selectedTrackersCount >= TRACKER_SUBSCRIPTION_PER_USER_LIMIT
-	);
+	const { isMobileViewport } = isOnMobileViewPort();
+
+	let selectedTrackersCnt = $derived(Object.keys(mapContext.mapSelectedTrackers).length);
+	let reachedSelectionLimit = $derived(selectedTrackersCnt >= TRACKER_SUBSCRIPTION_PER_USER_LIMIT);
 </script>
 
 <div class="flex justify-center">
-	<div class="w-full max-w-3xl p-4">
+	<div class="w-full max-w-2xl p-4">
 		<h2 class="flex items-center mb-4 type-scale-6">
-			<Icon icon="mdi:satellite" class="mr-2" height={36} />
-			Trackers to show
+			<Icon icon="mdi:satellite" class="mr-2 hidden md:block" height={32} />
+			trackers to show
 
-			{#if reachedOrSurpassedSelectionLimit}
+			{#if reachedSelectionLimit}
 				<span class="ml-auto flex items-center bg-warning-200-800 p-2 rounded-md type-scale-1">
 					<Icon icon="mdi:warning" class="mr-2" />
 					cannot select over {TRACKER_SUBSCRIPTION_PER_USER_LIMIT} trackers
 				</span>
 			{/if}
+
+			<Icon icon="mdi:close" onclick={onCloseClick} class="ml-auto" height={32} />
 		</h2>
 
 		<DebouncedTextField placeholder="search by imei" onChange={(v) => (filters.imei = v)} />
@@ -117,11 +126,13 @@
 			bind:pageSize={pagination.pageSize}
 			data={query.data?.records ?? []}
 			count={query.data?.itemCount ?? 0}
+			withPageSizeSelector={false}
+			alternativePagination={isMobileViewport}
 		/>
 
 		<div class="flex items-center mt-4">
 			<span class="mr-auto">
-				{selectedTrackersCount || 'no'} selected trackers
+				{selectedTrackersCnt || 'no'} selected trackers
 			</span>
 
 			<button

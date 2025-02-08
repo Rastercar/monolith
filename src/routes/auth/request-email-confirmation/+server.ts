@@ -3,7 +3,7 @@ import { route } from '$lib/ROUTES';
 import { setConfirmBillingEmailToken } from '$lib/server/db/repo/organization';
 import { setConfirmEmailToken } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth';
-import { validateRequestBody } from '$lib/server/middlewares/validation';
+import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { sendConfirmEmailAddressEmail } from '$lib/server/services/mailer';
 import { json } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
@@ -13,7 +13,7 @@ export const POST = async ({ locals, request, url }) => {
 
 	const { email, id, emailVerified, username, organization } = user;
 
-	const { confirmingForOrg = false } = await validateRequestBody(
+	const { confirmingForOrg = false } = await validateJsonRequestBody(
 		request,
 		requestEmailConfirmationSchema
 	);

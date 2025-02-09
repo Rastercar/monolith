@@ -1,27 +1,22 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
-	import type { Tracker } from '$lib/api/tracker.schema';
 	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 	import { SOCKET_IO_TRACKING_NAMESPACE } from '$lib/constants/socket-io';
 	import { env } from '$lib/env/public-env';
-	import { getMapContext, setMapContext } from '$lib/store/context';
-	import { type Position, type TrackerSelection } from '$lib/store/map.svelte';
+	import { getMapContext } from '$lib/store/context';
+	import { type TrackerSelection } from '$lib/store/map.svelte';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
-	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import { createWsConnectionToTrackingNamespace as createSocketIoConnection } from '../map';
 	import ConnectionFailedAlert from './ConnectionFailedAlert.svelte';
-	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
+	import TrackersMapControls from './MapControls.svelte';
 	import TrackerMarker from './TrackerMarker.svelte';
-	import TrackersMapControls from './TrackersMapControls.svelte';
 
 	interface Props {
 		initialTrackerSelection?: TrackerSelection;
 	}
 
 	const { initialTrackerSelection }: Props = $props();
-
-	setMapContext();
 
 	const mapContext = getMapContext();
 
@@ -40,11 +35,6 @@
 	 * if the map libraries have been loaded and the map should be displayed
 	 */
 	let mapIsLoaded = $state(false);
-
-	let trackerModalIsOpen = $state(false);
-
-	let trackerToDisplay = $state<Tracker | null>(null);
-	let trackerToDisplayPosition = $state<Position | null>(null);
 
 	/**
 	 * Timer for deboucing changed tracker selection
@@ -206,34 +196,9 @@
 			{#if position}
 				<TrackerMarker
 					{position}
-					onClick={() => {
-						trackerModalIsOpen = true;
-						trackerToDisplay = tracker;
-						trackerToDisplayPosition = position;
-					}}
+					onClick={() => mapContext.showSelectedTrackerOverlay(tracker, position)}
 				/>
 			{/if}
 		{/each}
 	{/if}
 </div>
-
-<Modal
-	bind:open={trackerModalIsOpen}
-	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl w-[400px] h-screen"
-	positionerJustify="justify-end"
-	positionerPadding=""
-	positionerAlign=""
-	triggerClasses="hidden"
-	transitionsPositionerIn={{ x: 480, duration: 200 }}
-	transitionsPositionerOut={{ x: 480, duration: 200 }}
->
-	{#snippet content()}
-		{#if trackerToDisplay && trackerToDisplayPosition}
-			<SelectedTrackerOverlay
-				tracker={trackerToDisplay}
-				position={trackerToDisplayPosition}
-				onCloseClick={() => (trackerModalIsOpen = false)}
-			/>
-		{/if}
-	{/snippet}
-</Modal>

@@ -24,12 +24,29 @@ export type TrackerIdToLastPosition = Record<number, Position>;
 
 type GoogleMap = InstanceType<typeof window.google.maps.Map>;
 
+/**
+ * overlay to show on the map page
+ */
+type overlay = 'select-tracker' | 'selected-tracker-list' | 'show-tracker';
+
 export class MapPageStore {
 	mapElement = $state<HTMLDivElement>();
 	mapInstance = $state<GoogleMap>();
 
+	mapOverlay = $state<overlay | null>(null);
+
 	mapSelectedTrackers = $state<TrackerSelection>({});
 	trackerPositionCache = $state<TrackerIdToLastPosition>({});
+
+	/**
+	 * Tracker to display on the selected tracker overlay
+	 */
+	trackerToDisplay = $state<Tracker | null>(null);
+
+	/**
+	 * Tracker position to display on the selected tracker overlay
+	 */
+	trackerToDisplayPosition = $state<Position | null>(null);
 
 	constructor() {
 		this.mapSelectedTrackers = loadFromLocalStorage(MAP_SELECTED_TRACKERS_LS_KEY, {});
@@ -58,5 +75,11 @@ export class MapPageStore {
 		});
 
 		return bounds;
+	}
+
+	showSelectedTrackerOverlay(tracker: Tracker, position: Position) {
+		this.mapOverlay = 'show-tracker';
+		this.trackerToDisplay = tracker;
+		this.trackerToDisplayPosition = position;
 	}
 }

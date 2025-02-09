@@ -23,7 +23,7 @@
 		onCloseClick: () => void;
 	}
 
-	const { onCloseClick } = $props();
+	const { onCloseClick }: Props = $props();
 
 	const mapContext = getMapContext();
 
@@ -104,7 +104,7 @@
 	<div class="w-full max-w-2xl p-4">
 		<h2 class="flex items-center mb-4 type-scale-6">
 			<Icon icon="mdi:satellite" class="mr-2 hidden md:block" height={32} />
-			trackers to show
+			Trackers to show
 
 			{#if reachedSelectionLimit}
 				<span class="ml-auto flex items-center bg-warning-200-800 p-2 rounded-md type-scale-1">

@@ -3,12 +3,9 @@
 	import { getMapContext } from '$lib/store/context';
 	import { isOnMobileViewPort } from '$lib/store/viewport.svelte';
 	import Icon from '@iconify/svelte';
-	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import MapControl from './MapControl.svelte';
-	import SelectTrackerOverlay from './SelectTrackerOverlay.svelte';
 
 	const mapContext = getMapContext();
-	let isSelectTrackerOverlayOpen = $state(false);
 
 	const fitMapToTrackersBeingShown = () => {
 		const bounds = mapContext.getTrackersMapBounds();
@@ -19,18 +16,27 @@
 </script>
 
 <MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
-	<button
-		onclick={() => (isSelectTrackerOverlayOpen = true)}
-		class="m-[10px] h-[60px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
-	>
-		<div class="my-auto">
-			<div class="flex items-center type-scale-3">
-				<Icon icon="mdi:car" class="mr-1" /> Trackers
-			</div>
+	<div class="flex flex-col">
+		<button
+			onclick={() => (mapContext.mapOverlay = 'select-tracker')}
+			class="m-[10px] h-[60px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
+		>
+			<div class="my-auto">
+				<div class="flex items-center type-scale-3">
+					<Icon icon="mdi:car" class="mr-1" /> Trackers
+				</div>
 
-			<div class="mt-[4px]">{Object.keys(mapContext.mapSelectedTrackers).length} selected</div>
-		</div>
-	</button>
+				<div class="mt-[4px]">{Object.keys(mapContext.mapSelectedTrackers).length} selected</div>
+			</div>
+		</button>
+
+		<button
+			onclick={() => (mapContext.mapOverlay = 'selected-tracker-list')}
+			class="m-[10px] h-[40px] flex items-center px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300 text-lg ml-auto"
+		>
+			<Icon icon="mdi:info" />
+		</button>
+	</div>
 </MapControl>
 
 <MapControl
@@ -63,17 +69,3 @@
 		</a>
 	</MapControl>
 {/if}
-
-<Modal
-	bind:open={isSelectTrackerOverlayOpen}
-	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl h-screen md:h-[600px] w-screen"
-	contentClasses="overflow-auto"
-	triggerClasses="hidden"
-	positionerJustify="justify-end"
-	positionerAlign="items-end"
-	positionerPadding=""
->
-	{#snippet content()}
-		<SelectTrackerOverlay onCloseClick={() => (isSelectTrackerOverlayOpen = false)} />
-	{/snippet}
-</Modal>

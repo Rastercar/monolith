@@ -43,7 +43,7 @@ as a workaround
 
 <Modal
 	open={ctx.mapOverlay === 'selected-tracker-list'}
-	contentBase="bg-surface-100-900 p-4 shadow-xl w-screen md:w-[600px] h-screen"
+	contentBase="bg-surface-100-900 shadow-xl w-screen md:w-[600px] h-screen"
 	contentClasses="overflow-auto"
 	triggerClasses="hidden"
 	positionerJustify="justify-end"

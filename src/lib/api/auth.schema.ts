@@ -26,24 +26,14 @@ export const recoverPasswordByTokenSchema = z
 	});
 
 export const signInSchema = z.object({
-	email: z
-		.string()
-		.min(1)
-		.email()
-		// [PROD-TODO] remove me
-		.default(dev ? 'rastercar.tests.002@gmail.com' : ''),
-	password: z
-		.string()
-		.min(1)
-		// [PROD-TODO] remove me
-		.default(dev ? 'Contafake3!' : '')
+	email: z.string().min(1).email(),
+	password: z.string().min(1)
 });
 
 export const recoverPasswordSchema = z.object({
 	email: z
 		.string()
 		.email()
-		// [PROD-TODO] remove me
 		.default(dev ? 'rastercar.tests.002@gmail.com' : '')
 });
 

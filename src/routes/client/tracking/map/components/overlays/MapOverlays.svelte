@@ -27,7 +27,7 @@ as a workaround
 
 <Modal
 	open={ctx.mapOverlay === 'select-tracker'}
-	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl h-screen md:h-[600px] w-screen"
+	contentBase="bg-surface-100-900 shadow-xl h-screen md:h-[600px] w-screen"
 	contentClasses="overflow-auto"
 	triggerClasses="hidden"
 	positionerJustify="justify-end"
@@ -61,7 +61,7 @@ as a workaround
 
 <Modal
 	open={ctx.mapOverlay === 'show-tracker'}
-	contentBase="bg-surface-100-900 p-4 space-y-4 shadow-xl w-[400px] h-screen"
+	contentBase="bg-surface-100-900 shadow-xl w-[400px] h-screen p-0"
 	positionerJustify="justify-end"
 	positionerPadding=""
 	positionerAlign=""
@@ -76,7 +76,6 @@ as a workaround
 			<SelectedTrackerOverlay
 				tracker={ctx.trackerToDisplay}
 				position={ctx.trackerToDisplayPosition}
-				onCloseClick={() => (ctx.mapOverlay = null)}
 			/>
 		{/if}
 	{/snippet}

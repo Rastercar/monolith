@@ -24,6 +24,8 @@ export async function load({ locals }) {
 
 	// [PROD-TODO] on error we are just ignoring the malformated themes and using the
 	// default one, ideally we should notify the user to fix his themes
+	//
+	// also, review how this feature is done once skeleton with tailwind v4 comes out
 	const availableThemes = locals.user.organization.themesCssVars ?? [];
 
 	return {

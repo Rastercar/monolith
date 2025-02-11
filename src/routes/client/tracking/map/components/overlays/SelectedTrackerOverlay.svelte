@@ -7,14 +7,15 @@
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
 	import { createQuery } from '@tanstack/svelte-query';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		tracker: Tracker;
 		position: Position;
-		onCloseClick: () => void;
+		title?: Snippet;
 	}
 
-	let { tracker, position, onCloseClick }: Props = $props();
+	let { tracker, position, title }: Props = $props();
 
 	const fiveMinutes = 1000 * 60 * 5;
 
@@ -35,11 +36,13 @@
 	<div><span class="type-scale-2 opacity-80">{xd}:</span> {value ?? 'n/a'}</div>
 {/snippet}
 
-<div class="max-w-sm">
-	<div class="px-4 pt-4">
+<div class="p-6">
+	<div>
 		<h2 class="flex items-center text-2xl">
 			<Icon icon="mdi:cellphone-marker" class="mr-2" height={24} />
 			Tracker Information
+
+			{@render title?.()}
 		</h2>
 
 		<div class="mt-4 mb-1">imei: {tracker.imei}</div>
@@ -65,29 +68,27 @@
 			last position at {new Date(position.timestamp).toLocaleString()}
 		</span>
 
-		<div class="flex mt-1">
-			<a
-				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
-				href={route(`/client/tracking/trackers/[tracker_id=integer]`, {
-					tracker_id: tracker.id.toString()
-				})}
-				onclick={onCloseClick}
-			>
-				<Icon icon="mdi:link" class="mr-2" />
-				see details
-			</a>
-		</div>
+		<a
+			class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
+			href={route(`/client/tracking/trackers/[tracker_id=integer]`, {
+				tracker_id: tracker.id.toString()
+			})}
+		>
+			<Icon icon="mdi:link" class="mr-2" />
+			see details
+		</a>
 	</div>
 
 	{#if vehicleTracker}
-		<div class="mb-3 mt-6 px-4 flex items-center text-xl">
-			<hr class="w-full mr-2" />
+		<div class="mb-3 mt-6 flex items-center text-xl">
+			<hr class="w-full mr-2 hr" />
+
 			<span class="flex items-center">
 				<Icon icon="mdi:car" class="mr-2" />
 				vehicle
 			</span>
 
-			<hr class="w-full ml-2" />
+			<hr class="w-full ml-2 hr" />
 		</div>
 
 		{#if vehicleTracker.photo}
@@ -98,7 +99,7 @@
 			/>
 		{/if}
 
-		<div class="px-4">
+		<div>
 			{@render field('plate', vehicleTracker.plate)}
 			{@render field('brand', vehicleTracker.brand)}
 			{@render field('model', vehicleTracker.model)}
@@ -122,21 +123,18 @@
 		</div>
 
 		{#if vehicleTracker.additionalInfo}
-			<p class="px-4 my-2">{vehicleTracker.additionalInfo}</p>
+			<p class="my-2">{vehicleTracker.additionalInfo}</p>
 		{/if}
 
-		<div class="flex mt-1 px-4">
-			<a
-				class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
-				href={route('/client/tracking/vehicles/[vehicle_id=integer]', {
-					vehicle_id: vehicleTracker.id.toString()
-				})}
-				onclick={onCloseClick}
-			>
-				<Icon icon="mdi:link" class="mr-2" />
-				see details
-			</a>
-		</div>
+		<a
+			class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
+			href={route('/client/tracking/vehicles/[vehicle_id=integer]', {
+				vehicle_id: vehicleTracker.id.toString()
+			})}
+		>
+			<Icon icon="mdi:link" class="mr-2" />
+			see details
+		</a>
 	{:else}
 		<div class="p-4 mt-4 type-scale-2 flex items-center text-warning-600-300-token">
 			<Icon icon="mdi:warning" class="mr-2" />

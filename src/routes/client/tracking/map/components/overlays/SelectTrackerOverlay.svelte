@@ -28,7 +28,7 @@
 	const mapContext = getMapContext();
 
 	const { pagination, filters } = createPaginationWithFilters<GetTrackersFilters>(
-		{ withAssociatedVehicle: false },
+		{},
 		{ page: 1, pageSize: 3 }
 	);
 

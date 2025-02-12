@@ -3,27 +3,36 @@
 	import type { GetUsersFilters, SimpleUser } from '$lib/api/user.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
-	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
+	import InfoIconButton from '$lib/components/link/InfoIconButton.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
+	import DataTableActioMenu from '$lib/components/table/DataTableActioMenu.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
+	import { getAuthContext } from '$lib/store/context';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { toLocaleDateString } from '$lib/utils/date';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
 		renderComponent,
 		type ColumnDef
 	} from '@tanstack/svelte-table';
+	import BlockStatusColumn from './components/BlockStatusColumn.svelte';
+	import BlockUserButton from './components/BlockUserButton.svelte';
 	import UserEmailColumn from './components/UserEmailColumn.svelte';
 
 	const { pagination, filters } = createPaginationWithFilters<GetUsersFilters>({});
 
+	const auth = getAuthContext();
+
+	const canBlockUsers = auth.hasPermission('BLOCK_USER');
+
 	const query = createQuery(() => ({
 		queryKey: ['users', pagination, filters],
-		queryFn: () => apiGetUsers({ pagination: pagination, filters: filters })
+		queryFn: () => apiGetUsers({ pagination: pagination, filters: filters }),
+		placeholderData: keepPreviousData
 	}));
 
 	const columns: ColumnDef<SimpleUser>[] = [
@@ -35,7 +44,7 @@
 			accessorKey: 'email',
 			header: () => 'Email',
 			cell: ({ row }) => {
-				const { email, emailVerified, id } = row.original;
+				const { email, emailVerified } = row.original;
 				return renderComponent(UserEmailColumn, { email, verified: emailVerified });
 			}
 		},
@@ -45,13 +54,33 @@
 			cell: ({ row }) => toLocaleDateString(row.original.createdAt)
 		},
 		{
+			accessorKey: 'blocked',
+			header: () => 'App Access',
+			cell: ({ row }) => renderComponent(BlockStatusColumn, { isBlocked: row.original.blocked })
+		},
+		{
 			id: 'actions',
-			cell: ({ row }) =>
-				renderComponent(InfoIconLink, {
-					href: route(`/client/users/[user_id=integer]`, {
-						user_id: row.original.id.toString()
+			cell: ({ row }) => {
+				const items = [
+					renderComponent(InfoIconButton, {
+						href: route(`/client/users/[user_id=integer]`, {
+							user_id: row.original.id.toString()
+						})
 					})
-				})
+				];
+
+				if (canBlockUsers) {
+					const blockBtn = renderComponent(BlockUserButton, {
+						userId: row.original.id,
+						isBlocked: row.original.blocked,
+						onBlockedStatusChange: query.refetch
+					});
+
+					items.unshift(blockBtn);
+				}
+
+				return renderComponent(DataTableActioMenu, { items });
+			}
 		}
 	];
 

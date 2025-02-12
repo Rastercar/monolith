@@ -41,7 +41,7 @@
     "@zerodevx/svelte-toast": "^0.9.6",
     "amqplib": "^0.10.5",
     "bcrypt": "5.1.1",
-    "bits-ui": "1.0.0-next.63",
+    "bits-ui": "1.0.0-next.97",
     "consola": "^3.4.0",
     "drizzle-orm": "0.36.3",
     "express": "^4.21.2",

@@ -8,8 +8,8 @@ import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { deleteOrgSimCardById, updateOrgSimCard } from '$lib/server/db/repo/sim-card';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
 export async function _updateSimCard(
 	id: number,
@@ -31,7 +31,7 @@ export async function _updateSimCard(
 		});
 }
 
-export const DELETE: RequestHandler<RouteParams> = async ({ params, locals }) => {
+export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const { user } = acl(locals, { requiredPermissions: 'DELETE_SIM_CARD' });
 
 	const simCardId = parseInt(params.sim_card_id);
@@ -41,7 +41,7 @@ export const DELETE: RequestHandler<RouteParams> = async ({ params, locals }) =>
 	return json('sim card deleted');
 };
 
-export const PUT: RequestHandler<RouteParams> = async ({ params, request, locals }) => {
+export const PUT: RequestHandler = async ({ params, request, locals }) => {
 	const { user } = acl(locals, { requiredPermissions: 'UPDATE_SIM_CARD' });
 
 	const simCardId = parseInt(params.sim_card_id);

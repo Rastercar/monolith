@@ -44,7 +44,7 @@ export const apiChangeUserAccessLevel = (ids: {
 /**
  * changes the current user profile picture
  */
-export const updateUserProfilePicture = (image: File): Promise<string> =>
+export const apiUpdateUserProfilePicture = (image: File): Promise<string> =>
 	api
 		.formData({ image })
 		.put(undefined, route('PUT /client/settings/profile/picture'))
@@ -53,5 +53,21 @@ export const updateUserProfilePicture = (image: File): Promise<string> =>
 /**
  * deletes the current user profile picture
  */
-export const removeUserProfilePicture = (): Promise<string> =>
+export const apiRemoveUserProfilePicture = (): Promise<string> =>
 	api.delete(route('DELETE /client/settings/profile/picture')).json<string>();
+
+/**
+ * block a user by id, marking them as blocked and destroying their sessions
+ */
+export const apiBlockUser = (id: number): Promise<string> =>
+	api
+		.post({}, route('POST /client/users/[user_id=integer]/block', { user_id: id.toString() }))
+		.json<string>();
+
+/**
+ * unblock a user by id
+ */
+export const apiUnblockUser = (id: number): Promise<string> =>
+	api
+		.post({}, route('POST /client/users/[user_id=integer]/unblock', { user_id: id.toString() }))
+		.json<string>();

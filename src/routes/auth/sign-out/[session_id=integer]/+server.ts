@@ -1,10 +1,10 @@
 import { SESSION_ID_COOKIE_KEY } from '$lib/constants/cookies';
 import { deleteSessionByPublicId, findSessionByPublicId } from '$lib/server/db/repo/session';
 import { acl } from '$lib/server/middlewares/auth';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const DELETE: RequestHandler<RouteParams> = async ({ locals, params, cookies }) => {
+export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 	const { user, session } = acl(locals);
 
 	const sessionPublicId = parseInt(params.session_id);

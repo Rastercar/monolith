@@ -84,7 +84,7 @@
 							{#if canChangeUserAccessLevel}
 								{#if !isSelectingNewAccessLevel}
 									<button
-										class="btn btn-sm preset-filled-secondary-200-800"
+										class="btn btn-sm preset-filled-secondary-200-800 ml-auto"
 										onclick={() => (isSelectingNewAccessLevel = true)}
 									>
 										<Icon icon="mdi:cog" />

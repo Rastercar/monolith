@@ -21,6 +21,13 @@ declare global {
 	 * this is set after the server is initialized
 	 */
 	var io: SocketIoServer | undefined;
+
+	interface Window {
+		/**
+		 * Tanstack query client (only available on a browser context)
+		 */
+		queryClient: import('@tanstack/svelte-query').QueryClient | undefined;
+	}
 }
 
 export {};

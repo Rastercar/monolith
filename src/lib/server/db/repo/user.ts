@@ -18,7 +18,7 @@ export async function findOrgUsersWithPagination(
 
 	pushIlikeFilterIdDefined(sqlFilters, user.email, filters?.email);
 
-	return paginate(user, { pagination, where: and(...sqlFilters) });
+	return paginate(user, { orderBy: user.username, pagination, where: and(...sqlFilters) });
 }
 
 export async function createOrgUser(orgId: number, body: CreateUserBody) {
@@ -216,5 +216,23 @@ export async function updateUserPassword(id: number, hashedPassword: string) {
 export function deleteOrgUserById(id: number, orgId: number) {
 	return getDB()
 		.delete(user)
+		.where(and(eq(user.id, id), eq(user.organizationId, orgId)));
+}
+
+export function blockOrgUserById(id: number, orgId: number) {
+	return getDB().transaction(async (tx) => {
+		await tx
+			.update(user)
+			.set({ blocked: true })
+			.where(and(eq(user.id, id), eq(user.organizationId, orgId)));
+
+		await tx.delete(session).where(eq(session.userId, id));
+	});
+}
+
+export function unblockOrgUserById(id: number, orgId: number) {
+	return getDB()
+		.update(user)
+		.set({ blocked: false })
 		.where(and(eq(user.id, id), eq(user.organizationId, orgId)));
 }

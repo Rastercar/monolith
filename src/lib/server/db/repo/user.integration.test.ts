@@ -5,6 +5,7 @@ import {
 	type TestDbHelper
 } from '../../../../test/integration-utils';
 import {
+	blockOrgUserById,
 	checkEmailIsInUse,
 	createOrgUser,
 	deleteOrgUserById,
@@ -24,6 +25,7 @@ import {
 	setPasswordAndClearResetPasswordToken,
 	setUserResetPasswordToken,
 	signUpUser,
+	unblockOrgUserById,
 	updateUser,
 	updateUserPassword,
 	updateUserProfilePicture
@@ -33,7 +35,7 @@ describe('user repo', async () => {
 	let testDb: TestDbHelper;
 
 	const orgId = 1;
-	const userId = 1;
+	const userId = 2;
 
 	const newUserData: CreateUserBody = {
 		email: 'test@example.com',
@@ -151,6 +153,7 @@ describe('user repo', async () => {
 	test('setPasswordAndClearResetPasswordToken', async () => {
 		const token = '474f8a49-637f-4d9e-8bde-1fc99d3dd379';
 		const newPassword = 'new-password';
+
 		await setUserResetPasswordToken(userId, token);
 		await setPasswordAndClearResetPasswordToken(newPassword, token);
 
@@ -191,6 +194,7 @@ describe('user repo', async () => {
 		};
 
 		const result = await signUpUser(signUpData);
+
 		expect(result.user).toMatchObject({ username: signUpData.username, email: signUpData.email });
 		expect(result.organization).toMatchObject({ name: signUpData.username });
 		expect(result.accessLevel).toMatchObject({ name: 'admin' });
@@ -198,12 +202,14 @@ describe('user repo', async () => {
 
 	test('updateUser', async () => {
 		const user = await updateUser(userId, updatedUserData);
+
 		expect(user).toMatchObject(updatedUserData);
 	});
 
 	test('updateUserProfilePicture', async () => {
 		const s3Key = 'profile-picture-key';
 		const user = await updateUserProfilePicture(userId, s3Key);
+
 		expect(user).toMatchObject({ profilePicture: s3Key });
 	});
 
@@ -213,10 +219,26 @@ describe('user repo', async () => {
 		expect(user).toMatchObject({ password: newPassword });
 	});
 
-	test('deleteOrgUserById', async () => {
-		await deleteOrgUserById(userId, orgId);
+	test('blockOrgUserById', async () => {
+		await blockOrgUserById(4, orgId);
 
-		const user = await findOrgUserById(userId, orgId);
+		const user = await findOrgUserById(4, orgId);
+		expect(user?.blocked).toBe(true);
+	});
+
+	test('unblockOrgUserById', async () => {
+		await blockOrgUserById(3, orgId);
+		await unblockOrgUserById(3, orgId);
+
+		const user = await findOrgUserById(3, orgId);
+
+		expect(user?.blocked).toBe(false);
+	});
+
+	test('deleteOrgUserById', async () => {
+		await deleteOrgUserById(10, orgId);
+
+		const user = await findOrgUserById(10, orgId);
 		expect(user).toBeUndefined();
 	});
 });

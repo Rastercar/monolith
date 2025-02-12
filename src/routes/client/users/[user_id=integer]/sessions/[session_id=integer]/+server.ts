@@ -1,10 +1,10 @@
 import { deleteSessionByPublicId } from '$lib/server/db/repo/session';
 import { findOrgUserById } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const DELETE: RequestHandler<RouteParams> = async ({ locals, params, cookies }) => {
+export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const { user: reqUser } = acl(locals, { requiredPermissions: 'LOGOFF_USER' });
 
 	const userIdOfSessionToBeDeleted = parseInt(params.user_id);

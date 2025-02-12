@@ -2,10 +2,10 @@ import { vehicleSchema } from '$lib/api/vehicle.schema';
 import { deleteOrgVehicleById, findOrgVehicleById } from '$lib/server/db/repo/vehicle';
 import { acl } from '$lib/server/middlewares/auth';
 import { s3 } from '$lib/server/services/s3';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const DELETE: RequestHandler<RouteParams> = async ({ params, locals }) => {
+export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const { user } = acl(locals, { requiredPermissions: 'DELETE_VEHICLE' });
 
 	const vehicleId = parseInt(params.vehicle_id);
@@ -19,7 +19,7 @@ export const DELETE: RequestHandler<RouteParams> = async ({ params, locals }) =>
 	return json('vehicle deleted');
 };
 
-export const GET: RequestHandler<RouteParams> = async ({ params, locals }) => {
+export const GET: RequestHandler = async ({ params, locals }) => {
 	const { user } = acl(locals);
 
 	const vehicleId = parseInt(params.vehicle_id);

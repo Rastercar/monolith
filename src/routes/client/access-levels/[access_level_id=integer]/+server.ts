@@ -4,10 +4,10 @@ import {
 	findOrgAccessLevelById
 } from '$lib/server/db/repo/access-level';
 import { acl } from '$lib/server/middlewares/auth';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const DELETE: RequestHandler<RouteParams> = async ({ params, locals }) => {
+export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const { user } = acl(locals, { requiredPermissions: 'MANAGE_USER_ACCESS_LEVELS' });
 
 	const alId = parseInt(params.access_level_id);

@@ -3,11 +3,11 @@ import { findOrgVehicleById, updateOrgVehiclePhoto } from '$lib/server/db/repo/v
 import { acl } from '$lib/server/middlewares/auth';
 import { validateForm } from '$lib/server/middlewares/validation';
 import { s3 } from '$lib/server/services/s3';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import path from 'path';
-import type { RouteParams } from './$types';
+import type { RequestHandler } from './$types';
 
-export const PUT: RequestHandler<RouteParams> = async ({ request, params, locals }) => {
+export const PUT: RequestHandler = async ({ request, params, locals }) => {
 	const { user } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
 
 	const form = await validateForm(request, imageSchema);
@@ -40,7 +40,7 @@ export const PUT: RequestHandler<RouteParams> = async ({ request, params, locals
 	return json(fileKey);
 };
 
-export const DELETE: RequestHandler<RouteParams> = async ({ locals, params }) => {
+export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const { user } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
 
 	const vehicleId = parseInt(params.vehicle_id);

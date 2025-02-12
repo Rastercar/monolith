@@ -10,7 +10,7 @@
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { toDateTime } from '$lib/utils/date';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -22,7 +22,8 @@
 
 	const query = createQuery(() => ({
 		queryKey: ['vehicles', pagination, filters],
-		queryFn: () => apiGetAccessLevels({ pagination: pagination, filters: filters })
+		queryFn: () => apiGetAccessLevels({ pagination: pagination, filters: filters }),
+		placeholderData: keepPreviousData
 	}));
 
 	const columns: ColumnDef<AccessLevel>[] = [

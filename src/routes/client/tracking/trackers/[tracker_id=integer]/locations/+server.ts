@@ -2,10 +2,10 @@ import { getTrackerLocationsSearchParamsSchema } from '$lib/api/tracker.schema';
 import { findOrgTrackerById, findTrackerLocationList } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateRequestSearchParams } from '$lib/server/middlewares/validation';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler<RouteParams> = async ({ url, locals, params }) => {
+export const GET: RequestHandler = async ({ url, locals, params }) => {
 	const { user } = acl(locals);
 
 	const trackerId = parseInt(params.tracker_id);
@@ -21,10 +21,7 @@ export const GET: RequestHandler<RouteParams> = async ({ url, locals, params }) 
 
 	const positions = (await findTrackerLocationList(trackerId, filters)).map((p) => ({
 		time: p.time,
-		point: {
-			lat: p.point[1], // lat
-			lng: p.point[0] // lng
-		}
+		point: { lat: p.point[1], lng: p.point[0] }
 	}));
 
 	return json(positions);

@@ -6,7 +6,7 @@
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -38,7 +38,8 @@
 			rowSelection = {};
 
 			return result;
-		}
+		},
+		placeholderData: keepPreviousData
 	}));
 
 	const columns: ColumnDef<Tracker>[] = [

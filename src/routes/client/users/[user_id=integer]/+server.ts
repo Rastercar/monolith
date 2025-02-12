@@ -1,10 +1,10 @@
 import { deleteOrgUserById, findOrgUserById } from '$lib/server/db/repo/user';
 import { acl } from '$lib/server/middlewares/auth';
 import { s3 } from '$lib/server/services/s3';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const DELETE: RequestHandler<RouteParams> = async ({ locals, params, cookies }) => {
+export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 	const { user: reqUser } = acl(locals, { requiredPermissions: 'DELETE_USER' });
 
 	const userToDeleteId = parseInt(params.user_id);

@@ -9,7 +9,7 @@
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -21,7 +21,8 @@
 
 	const query = createQuery(() => ({
 		queryKey: ['vehicles', pagination, filters],
-		queryFn: () => apiGetVehicles({ pagination: pagination, filters: filters })
+		queryFn: () => apiGetVehicles({ pagination: pagination, filters: filters }),
+		placeholderData: keepPreviousData
 	}));
 
 	const columns: ColumnDef<Vehicle>[] = [

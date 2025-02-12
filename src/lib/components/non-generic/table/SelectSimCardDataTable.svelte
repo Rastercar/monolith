@@ -13,7 +13,7 @@
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { showErrorToast } from '$lib/store/toast';
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -67,7 +67,8 @@
 			rowSelection = {};
 
 			return result;
-		}
+		},
+		placeholderData: keepPreviousData
 	}));
 
 	const columns: ColumnDef<SimCard>[] = [

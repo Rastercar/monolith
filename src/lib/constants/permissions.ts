@@ -26,6 +26,7 @@ export type PermissionDetailsAndKey = PermissionDetails & { key: permission };
 type PermissionByCategory = Record<permissionCategory, PermissionDetailsAndKey[]>;
 
 export const permissions = [
+	'BLOCK_USER',
 	'CREATE_USER',
 	'DELETE_USER',
 	'LOGOFF_USER',
@@ -62,6 +63,12 @@ export const permissionCategoryIcons: Record<permissionCategory, string> = {
 };
 
 export const permissionDetails: Record<permission, PermissionDetails> = {
+	BLOCK_USER: {
+		title: 'Block Users',
+		summary: 'Block and unblock users',
+		category: 'authentication',
+		description: 'Block users, logging them off and deniying access until theyre unblocked'
+	},
 	MANAGE_USER_ACCESS_LEVELS: {
 		title: 'Manage User Access Levels',
 		summary: 'Manage User Access Levels',

@@ -19,7 +19,11 @@
 	setLayoutContext();
 
 	let mounted = $state(false);
-	onMount(() => (mounted = true));
+
+	onMount(() => {
+		window.queryClient = queryClient;
+		mounted = true;
+	});
 </script>
 
 <svelte:head>

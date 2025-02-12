@@ -34,8 +34,8 @@
 
 	const query = createQuery(() => ({
 		queryKey: ['trackers', pagination, filters],
-		placeholderData: keepPreviousData,
-		queryFn: () => apiGetTrackers({ pagination, filters })
+		queryFn: () => apiGetTrackers({ pagination, filters }),
+		placeholderData: keepPreviousData
 	}));
 
 	const columns: ColumnDef<Tracker>[] = [

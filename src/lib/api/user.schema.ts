@@ -77,6 +77,7 @@ export const userSessionSchema = z.object({
 export const simpleUserSchema = z.object({
 	id: z.number(),
 	createdAt: z.date({ coerce: true }),
+	blocked: z.boolean(),
 	username: z.string(),
 	email: z.string().email(),
 	emailVerified: z.boolean(),

@@ -1,9 +1,9 @@
 import { findOrgTrackerById, findTrackerLastLocation } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
-import type { RouteParams } from './$types';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler<RouteParams> = async ({ locals, params }) => {
+export const GET: RequestHandler = async ({ locals, params }) => {
 	const { user } = acl(locals);
 
 	const trackerId = parseInt(params.tracker_id);

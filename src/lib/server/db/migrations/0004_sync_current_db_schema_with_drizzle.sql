@@ -1,0 +1,4 @@
+-- this is purposefully empty, when we started the project, we created the DB 
+-- tables and the drizzle schema by hand, but the migrator does not know, so we
+-- created this migration file with drizzle-kit migrate and removed its contents
+-- to sync the migrator and the schema

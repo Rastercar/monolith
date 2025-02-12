@@ -172,6 +172,7 @@ export function signUpUser(args: { username: string; email: string; password: st
 				email,
 				username,
 				password: hashSync(password),
+				blocked: false,
 				emailVerified: false,
 				accessLevelId: rootAccessLevel.id,
 				organizationId: createdOrg.id

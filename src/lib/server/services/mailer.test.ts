@@ -9,6 +9,7 @@ import {
 	sendConfirmEmailAddressEmail,
 	sendEmail,
 	sendRecoverPasswordEmail,
+	sendWellcomeEmail,
 	type emailTemplate
 } from './mailer';
 
@@ -65,7 +66,21 @@ test('sendRecoverPasswordEmail - just calls sendEmail with the recover password 
 	pathMock.resolve.mockReturnValueOnce('/some-path');
 	fsMock.readFileSync.mockReturnValueOnce('content');
 
-	sendRecoverPasswordEmail('test', { username: 'jhon', resetPasswordLink: 'wick' });
+	sendRecoverPasswordEmail({
+		email: 'test',
+		replacements: { username: 'jhon', resetPasswordLink: 'wick' }
+	});
+
+	expect(rmqMock.publishJsonToQueue).toHaveBeenLastCalledWith(MAILER_QUEUE, expect.anything(), {
+		type: OP_SEND_EMAIL
+	});
+});
+
+test('sendWellcomeEmail - just calls sendEmail with the wellcome email template', () => {
+	pathMock.resolve.mockReturnValueOnce('/some-path');
+	fsMock.readFileSync.mockReturnValueOnce('content');
+
+	sendWellcomeEmail({ email: 'test', replacements: { username: 'jhon' } });
 
 	expect(rmqMock.publishJsonToQueue).toHaveBeenLastCalledWith(MAILER_QUEUE, expect.anything(), {
 		type: OP_SEND_EMAIL
@@ -76,9 +91,13 @@ test('sendConfirmEmailAddressEmail - just calls sendEmail with the confirm email
 	pathMock.resolve.mockReturnValueOnce('/some-path');
 	fsMock.readFileSync.mockReturnValueOnce('content');
 
-	sendConfirmEmailAddressEmail('test', 'confirm email address', {
-		title: 'title',
-		confirmationLink: 'wick'
+	sendConfirmEmailAddressEmail({
+		email: 'test',
+		subject: 'confirm email address',
+		replacements: {
+			title: 'title',
+			confirmationLink: 'wick'
+		}
 	});
 
 	expect(rmqMock.publishJsonToQueue).toHaveBeenLastCalledWith(MAILER_QUEUE, expect.anything(), {

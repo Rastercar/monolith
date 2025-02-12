@@ -1,21 +1,21 @@
 <script lang="ts">
-	import type { Tracker } from '$lib/api/tracker.schema';
 	import { apiGetVehicle } from '$lib/api/vehicle';
 	import { route } from '$lib/ROUTES';
-	import type { Position } from '$lib/store/map.svelte';
 	import { checkMillisecondsEllapsedSinceDate, toLocaleDateString } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import type { Snippet } from 'svelte';
+	import type { TrackerAndPosition } from '../../map';
 
 	interface Props {
-		tracker: Tracker;
-		position: Position;
+		trackerWithPosition: TrackerAndPosition;
 		title?: Snippet;
 	}
 
-	let { tracker, position, title }: Props = $props();
+	let { trackerWithPosition, title }: Props = $props();
+
+	const { tracker, position } = $derived(trackerWithPosition);
 
 	const fiveMinutes = 1000 * 60 * 5;
 
@@ -28,7 +28,7 @@
 	let { data: vehicleTracker } = $derived(query);
 
 	let isOnline = $derived(
-		!!position.timestamp && !checkMillisecondsEllapsedSinceDate(position.timestamp, fiveMinutes)
+		!!position?.timestamp && !checkMillisecondsEllapsedSinceDate(position.timestamp, fiveMinutes)
 	);
 </script>
 
@@ -59,14 +59,16 @@
 			{toLocaleDateString(tracker.createdAt)}
 		</div>
 
-		<div class="flex items-center">
-			<Icon icon="mdi:map-marker" class="mr-2" />
-			{position.lat.toFixed(5)} <span class="ml-4">{position.lng.toFixed(5)}</span>
-		</div>
+		{#if position}
+			<div class="flex items-center">
+				<Icon icon="mdi:map-marker" class="mr-2" />
+				{position.lat.toFixed(5)} <span class="ml-4">{position.lng.toFixed(5)}</span>
+			</div>
 
-		<span class="opacity-80 type-scale-1 mt-4">
-			last position at {new Date(position.timestamp).toLocaleString()}
-		</span>
+			<span class="opacity-80 type-scale-1 mt-4">
+				last position at {new Date(position.timestamp).toLocaleString()}
+			</span>
+		{/if}
 
 		<a
 			class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"

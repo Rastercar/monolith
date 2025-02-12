@@ -1,8 +1,12 @@
+import type { Tracker } from '$lib/api/tracker.schema';
 import type { TrackerPosition } from '$lib/api/tracking.schema';
+import type { Position } from '$lib/store/map.svelte';
 import { type Socket, io } from 'socket.io-client';
 import type { ClientToServerEvents } from '../../../../global';
 
 export type SocketIoClient = Socket<ServerToClientEvents, ClientToServerEvents>;
+
+export type TrackerAndPosition = { tracker: Tracker; position?: Position };
 
 /**
  * events recieved by the rastercar api

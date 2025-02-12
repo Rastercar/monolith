@@ -72,11 +72,8 @@ as a workaround
 	onOpenChange={syncOpenChangeToCloseWithMapCtx}
 >
 	{#snippet content()}
-		{#if ctx.trackerToDisplay && ctx.trackerToDisplayPosition}
-			<SelectedTrackerOverlay
-				tracker={ctx.trackerToDisplay}
-				position={ctx.trackerToDisplayPosition}
-			/>
+		{#if ctx.trackerToDisplay}
+			<SelectedTrackerOverlay trackerWithPosition={ctx.trackerToDisplay} />
 		{/if}
 	{/snippet}
 </Modal>

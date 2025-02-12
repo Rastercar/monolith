@@ -1,5 +1,6 @@
 import type { Tracker } from '$lib/api/tracker.schema';
 import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/local-storage';
+import type { TrackerAndPosition } from '../../routes/client/tracking/map/map';
 import { MAP_SELECTED_TRACKERS_LS_KEY, TRACKER_POSITION_CACHE_LS_KEY } from './keys';
 
 export interface Position {
@@ -41,12 +42,7 @@ export class MapPageStore {
 	/**
 	 * Tracker to display on the selected tracker overlay
 	 */
-	trackerToDisplay = $state<Tracker | null>(null);
-
-	/**
-	 * Tracker position to display on the selected tracker overlay
-	 */
-	trackerToDisplayPosition = $state<Position | null>(null);
+	trackerToDisplay = $state<TrackerAndPosition | null>(null);
 
 	constructor() {
 		this.mapSelectedTrackers = loadFromLocalStorage(MAP_SELECTED_TRACKERS_LS_KEY, {});
@@ -79,7 +75,6 @@ export class MapPageStore {
 
 	showSelectedTrackerOverlay(tracker: Tracker, position: Position) {
 		this.mapOverlay = 'show-tracker';
-		this.trackerToDisplay = tracker;
-		this.trackerToDisplayPosition = position;
+		this.trackerToDisplay = { tracker, position };
 	}
 }

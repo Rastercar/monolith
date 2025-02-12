@@ -95,7 +95,9 @@ export const initDb = (opts?: InitDbOpts): InitDbRes => {
 
 		if (options.runMigrations) {
 			consola.info('[DB] running migrations');
-			migratePromise = migrate(db, { migrationsFolder: './src/lib/server/db/migrations' });
+			migratePromise = migrate(db, { migrationsFolder: './src/lib/server/db/migrations' }).catch(
+				console.error
+			);
 		}
 
 		// seeding should be run only after migrations have been run

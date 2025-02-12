@@ -103,3 +103,12 @@ to verify the SHA of the git commit that the build application is running you ca
 ```bash
 curl -f http://rastercar.com/healthcheck\?debug\=true
 ```
+
+## Database
+
+```bash
+# creating a database migration (first modify the schema and then call this command)
+
+# migrations are applied on the app startup sequence
+DATABASE_URL=postgres://<user>:<password>@<host>:<port>/<db_name> pnpm drizzle-kit generate --name=<migration_name>
+```

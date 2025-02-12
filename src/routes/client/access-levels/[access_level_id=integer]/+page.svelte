@@ -63,49 +63,51 @@
 		/>
 	{:else}
 		<div class="card preset-filled-surface-100-900">
-			<div class="p-4 flex items-center">
+			<div class="p-4 flex flex-col md:flex-row items-center gap-4">
 				<div class="flex items-center mr-auto type-scale-3">
 					{editMode ? 'Editing access level' : accessLevel.name}
 				</div>
 
-				{#if accessLevelIsFixed || isCurrentUserAccessLevel}
-					<Popover.Root>
-						<Popover.Trigger class="badge preset-filled-primary-200-800 mx-4">
-							{isCurrentUserAccessLevel ? 'your access level' : 'fixed access level'}
-						</Popover.Trigger>
+				<div>
+					{#if accessLevelIsFixed || isCurrentUserAccessLevel}
+						<Popover.Root>
+							<Popover.Trigger class="badge preset-filled-primary-200-800">
+								{isCurrentUserAccessLevel ? 'your access level' : 'fixed access level'}
+							</Popover.Trigger>
 
-						<Popover.Portal>
-							<Popover.Content
-								class="z-30 max-w-64 bg-surface-200-800 p-2"
-								align="end"
-								sideOffset={8}
-							>
-								<div class="type-scale-1 text-center">
-									{isCurrentUserAccessLevel
-										? 'this is your own access level and cannot be edited nor deleted'
-										: 'this is main access level of your organization and cannot be edited nor deleted'}
-								</div>
-							</Popover.Content>
-						</Popover.Portal>
-					</Popover.Root>
-				{/if}
+							<Popover.Portal>
+								<Popover.Content
+									class="z-30 max-w-64 bg-surface-200-800 p-2"
+									align="end"
+									sideOffset={8}
+								>
+									<div class="type-scale-1 text-center">
+										{isCurrentUserAccessLevel
+											? 'this is your own access level and cannot be edited nor deleted'
+											: 'this is main access level of your organization and cannot be edited nor deleted'}
+									</div>
+								</Popover.Content>
+							</Popover.Portal>
+						</Popover.Root>
+					{/if}
 
-				<LoadableButton
-					isLoading={deleteAccessLevelMutation.isPending}
-					disabled={!canEditOrDeleteAccessLevel}
-					classes="btn-icon mx-2 btn-icon-sm preset-filled-warning-200-800"
-					onclick={deleteAccessLevel}
-				>
-					<Icon icon="mdi:trash" />
-				</LoadableButton>
+					<LoadableButton
+						isLoading={deleteAccessLevelMutation.isPending}
+						disabled={!canEditOrDeleteAccessLevel}
+						classes="btn-icon mx-2 btn-icon-sm preset-filled-warning-200-800"
+						onclick={deleteAccessLevel}
+					>
+						<Icon icon="mdi:trash" />
+					</LoadableButton>
 
-				<button
-					disabled={!canEditOrDeleteAccessLevel}
-					class="btn-icon btn-icon-sm preset-filled-primary-200-800"
-					onclick={() => (editMode = !editMode)}
-				>
-					<Icon icon={editMode ? 'mdi:pencil-off' : 'mdi:pencil'} />
-				</button>
+					<button
+						disabled={!canEditOrDeleteAccessLevel}
+						class="btn-icon btn-icon-sm preset-filled-primary-200-800"
+						onclick={() => (editMode = !editMode)}
+					>
+						<Icon icon={editMode ? 'mdi:pencil-off' : 'mdi:pencil'} />
+					</button>
+				</div>
 			</div>
 
 			<div class="px-4 pb-4">

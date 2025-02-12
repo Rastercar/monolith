@@ -60,7 +60,7 @@ interface SendEmailBody {
 	enableTracking?: boolean;
 }
 
-export type emailTemplate = 'recover-password' | 'confirm-email';
+export type emailTemplate = 'recover-password' | 'confirm-email' | 'wellcome';
 
 export function loadTemplate(template: emailTemplate) {
 	const filepath = `./static/templates/email/${template}.hbs`;
@@ -73,27 +73,45 @@ export function sendEmail(body: SendEmailBody) {
 	return publishJsonToQueue(MAILER_QUEUE, body, { type: OP_SEND_EMAIL });
 }
 
-export function sendRecoverPasswordEmail(
-	email: string,
-	replacements: { username: string; resetPasswordLink: string }
-) {
+interface SendSingleEmailArgs<T extends Record<string, string>> {
+	email: string;
+	subject?: string;
+	replacements?: T;
+}
+
+export function sendRecoverPasswordEmail({
+	email,
+	replacements
+}: SendSingleEmailArgs<{ username: string; resetPasswordLink: string }>) {
 	return sendEmail({
 		uuid: randomUUID(),
 		to: [{ email, replacements }],
-		subject: 'Rastercar - account recovery',
+		subject: 'Rastercar - Account recovery',
 		bodyHtml: loadTemplate('recover-password')
 	});
 }
 
-export function sendConfirmEmailAddressEmail(
-	email: string,
-	subject: string,
-	replacements: { title: string; confirmationLink: string }
-) {
+export function sendWellcomeEmail({
+	email,
+	replacements
+}: SendSingleEmailArgs<{ username: string }>) {
 	return sendEmail({
 		uuid: randomUUID(),
 		to: [{ email, replacements }],
-		subject,
+		subject: 'Rastercar - Wellcome',
+		bodyHtml: loadTemplate('wellcome')
+	});
+}
+
+export function sendConfirmEmailAddressEmail({
+	email,
+	subject,
+	replacements
+}: SendSingleEmailArgs<{ title: string; confirmationLink: string }>) {
+	return sendEmail({
+		uuid: randomUUID(),
+		to: [{ email, replacements }],
+		subject: subject ?? 'Rastercar - Confirm your email address',
 		bodyHtml: loadTemplate('confirm-email')
 	});
 }

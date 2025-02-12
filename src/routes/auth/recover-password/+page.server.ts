@@ -23,7 +23,10 @@ export const actions = {
 
 		const resetPasswordLink = `${url.origin}${route('/auth/change-password')}?token=${token}`;
 
-		await sendRecoverPasswordEmail(user.email, { username: user.username, resetPasswordLink });
+		await sendRecoverPasswordEmail({
+			email: user.email,
+			replacements: { username: user.username, resetPasswordLink }
+		});
 
 		return message(form, { text: 'Recovery email sent', type: 'success' });
 	}

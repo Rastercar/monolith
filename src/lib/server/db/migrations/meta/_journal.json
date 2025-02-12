@@ -29,6 +29,20 @@
       "when": 1731980311461,
       "tag": "0003_create_last_position_trigger",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1739306040431,
+      "tag": "0004_sync_current_db_schema_with_drizzle",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1739306170243,
+      "tag": "0005_create_blocked_column_on_users_table",
+      "breakpoints": true
     }
   ]
 }

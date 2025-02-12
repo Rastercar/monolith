@@ -11,7 +11,7 @@
 	let { accessLevel }: Props = $props();
 </script>
 
-<div class="sm:card sm:preset-filled-surface-100-900">
+<div class="card preset-filled-surface-100-900">
 	<Accordion multiple>
 		<Accordion.Item value="access-level" panelRounded="p-0">
 			{#snippet control()}

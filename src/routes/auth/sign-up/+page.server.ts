@@ -3,6 +3,7 @@ import { route } from '$lib/ROUTES';
 import { createSession } from '$lib/server/db/repo/session';
 import { checkEmailIsInUse, findUserByUsername, signUpUser } from '$lib/server/db/repo/user';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
+import { sendWellcomeEmail } from '$lib/server/services/mailer.js';
 import { createSessionExpirationDateFromNow, setSessionCookie } from '$lib/utils/session';
 import { redirect } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
@@ -34,6 +35,8 @@ export const actions = {
 		});
 
 		setSessionCookie(cookies, session.sessionToken, maxAge);
+
+		sendWellcomeEmail({ email: user.email, replacements: { username: user.username } });
 
 		redirect(307, route('/client'));
 	}

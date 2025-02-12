@@ -50,7 +50,7 @@
 	let canChangeUserAccessLevel = $derived(currentUser?.id !== userId);
 </script>
 
-<div class="sm:card sm:preset-filled-surface-100-900 sm:rounded-lg">
+<div class="card preset-filled-surface-100-900 sm:rounded-lg">
 	<Accordion multiple>
 		<Accordion.Item value="access-level" panelRounded="p-0">
 			{#snippet control()}
@@ -62,24 +62,23 @@
 
 			{#snippet panel()}
 				<div class="py-2">
-					<div class="flex mb-4">
-						<h4 class="type-scale-3 mr-auto mt-2 flex items-center">
-							{#if !isSelectingNewAccessLevel}
-								Access Level:
-								<a
-									href={route(`/client/access-levels/[access_level_id=integer]`, {
-										access_level_id: accessLevel.id.toString()
-									})}
-									class="font-medium text-blue-600 dark:text-blue-500 hover:underline ml-2 flex items-center"
-								>
-									{accessLevel.name}
+					<div class="flex flex-col md:flex-row mb-4 gap-4">
+						{#if !isSelectingNewAccessLevel}
+							<div>Access Level:</div>
 
-									<Icon icon="mdi:link" class="ml-2" />
-								</a>
-							{:else}
-								Select the new access level
-							{/if}
-						</h4>
+							<a
+								href={route(`/client/access-levels/[access_level_id=integer]`, {
+									access_level_id: accessLevel.id.toString()
+								})}
+								class="font-medium text-blue-600 dark:text-blue-500 hover:underline flex items-center"
+							>
+								{accessLevel.name}
+
+								<Icon icon="mdi:link" class="ml-2" />
+							</a>
+						{:else}
+							Select the new access level
+						{/if}
 
 						<PermissionGuard requiredPermissions={'MANAGE_USER_ACCESS_LEVELS'}>
 							{#if canChangeUserAccessLevel}

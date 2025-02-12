@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { Tracker } from '$lib/api/tracker.schema';
+	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
 	import { getMapContext } from '$lib/store/context';
-	import type { Position } from '$lib/store/map.svelte';
 	import Icon from '@iconify/svelte';
+	import { createQuery } from '@tanstack/svelte-query';
+	import type { TrackerAndPosition } from '../../map';
 	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
 	import TrackerListItem from './TrackerListItem.svelte';
 
@@ -16,25 +17,34 @@
 
 	let imeiFilter = $state('');
 
-	let trackerAndPositionToShow = $state<{ tracker: Tracker; position: Position } | null>(null);
+	let trackerAndPositionToShow = $state<TrackerAndPosition | null>(null);
 
-	const { trackers, trackersCnt } = $derived.by(() => {
-		const selectedTrackers = Object.values(ctx.mapSelectedTrackers);
-
+	const getInitialData = (): TrackerAndPosition[] => {
 		const filter = imeiFilter.toLocaleLowerCase();
 
-		// TODO: remove duplication
-		const trckers = [
-			...selectedTrackers,
-			...selectedTrackers,
-			...selectedTrackers,
-			...selectedTrackers
-		].filter((t) => {
-			if (!imeiFilter) return true;
-			return t.imei.toLocaleLowerCase().includes(filter);
-		});
+		return Object.values(ctx.mapSelectedTrackers)
+			.map((t) => ({ tracker: t }))
+			.filter((t) => !imeiFilter || t.tracker.imei.toLowerCase().includes(filter));
+	};
 
-		return { trackers: trckers as Tracker[], trackersCnt: selectedTrackers.length };
+	const query = createQuery(() => ({
+		queryKey: ['trackers', Object.keys(ctx.mapSelectedTrackers), 'with-last-location'],
+		queryFn: async (): Promise<TrackerAndPosition[]> => {
+			const trackers = Object.values(ctx.mapSelectedTrackers);
+
+			const positions = await apiGetTrackersLastPositions(trackers.map((t) => t.id));
+
+			return trackers.map((tracker) => ({
+				tracker,
+				position: positions.find((p) => p.trackerId === tracker.id)
+			}));
+		},
+		initialData: getInitialData()
+	}));
+
+	const filteredTrackers = $derived.by(() => {
+		const filter = imeiFilter.toLocaleLowerCase();
+		return query.data.filter((t) => !imeiFilter || t.tracker.imei.toLowerCase().includes(filter));
 	});
 </script>
 
@@ -42,7 +52,7 @@
 	<div class="sticky top-0 bg-surface-100-900 z-10 p-4">
 		<h2 class="flex items-center type-scale-6 mb-4">
 			<Icon icon="mdi:list-status" class="mr-2 hidden md:block" height={32} />
-			Selected trackers ({trackersCnt})
+			Selected trackers ({query.data.length})
 
 			<Icon icon="mdi:close" onclick={onCloseClick} class="ml-auto" height={32} />
 		</h2>
@@ -51,33 +61,15 @@
 	</div>
 
 	<ul class="space-y-4 overflow-y-auto px-4">
-		<!-- TODO: remove mock hardcoded position -->
-		{#each trackers as tracker}
+		{#each filteredTrackers as trackerWithPosition}
 			<TrackerListItem
-				{tracker}
-				position={{
-					lat: 1,
-					lng: 2,
-					timestamp: new Date().toISOString()
-				}}
-				onInfoClick={() => {
-					trackerAndPositionToShow = {
-						tracker,
-						position: {
-							lat: 1,
-							lng: 2,
-							timestamp: new Date().toISOString()
-						}
-					};
-				}}
+				{trackerWithPosition}
+				onInfoClick={() => (trackerAndPositionToShow = trackerWithPosition)}
 			/>
 		{/each}
 	</ul>
 {:else}
-	<SelectedTrackerOverlay
-		tracker={trackerAndPositionToShow.tracker}
-		position={trackerAndPositionToShow.position}
-	>
+	<SelectedTrackerOverlay trackerWithPosition={trackerAndPositionToShow}>
 		{#snippet title()}
 			<div class="ml-auto">
 				<button

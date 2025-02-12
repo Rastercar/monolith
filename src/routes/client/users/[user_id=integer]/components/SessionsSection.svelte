@@ -13,7 +13,7 @@
 	let { userId, sessions = $bindable(), onSessionDeleted }: Props = $props();
 </script>
 
-<div class="sm:card sm:preset-filled-surface-100-900 sm:rounded-lg">
+<div class="card preset-filled-surface-100-900 sm:rounded-lg">
 	<Accordion multiple>
 		<Accordion.Item value="sessions" panelRounded="p-0">
 			{#snippet control()}

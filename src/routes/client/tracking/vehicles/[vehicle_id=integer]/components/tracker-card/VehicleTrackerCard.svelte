@@ -34,7 +34,7 @@
 	const setTracker = (t: Tracker) => (vehicle.vehicleTracker = t);
 </script>
 
-<div class="sm:card sm:preset-filled-surface-100-900 sm:rounded-lg mt-4">
+<div class="card preset-filled-surface-100-900 sm:rounded-lg mt-4">
 	<Accordion multiple>
 		<Accordion.Item value="access-level" panelPadding="p-0" controlPadding="p-4">
 			{#snippet control()}

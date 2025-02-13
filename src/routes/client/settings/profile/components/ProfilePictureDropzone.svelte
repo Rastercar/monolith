@@ -1,5 +1,6 @@
 <script lang="ts">
-apiRemoveUserProfilePicturee from '$lib/components/dropzone/FileDropzone.svelte';
+	import { apiRemoveUserProfilePicture, apiUpdateUserProfilePicture } from '$lib/api/user';
+	import FileDropzone from '$lib/components/dropzone/FileDropzone.svelte';
 	import { getAuthContext } from '$lib/store/context';
 	import { showSuccessToast } from '$lib/store/toast';
 	import { cloudFrontUrl } from '$lib/utils/url';
@@ -21,9 +22,8 @@ apiRemoveUserProfilePicturee from '$lib/components/dropzone/FileDropzone.svelte'
 		deleteConfirmPrompt="Are you sure you want to delete your profile picture"
 		{onDeleteSuccess}
 		{onUploadSuccess}
-		deleteMutationFn={removeUserProfilePicture}
-		uploadMutationFn={updateUserProfilePicture}
+		deleteMutationFn={apiRemoveUserProfilePicture}
+		uploadMutationFn={apiUpdateUserProfilePicture}
 		defaultSrc={user.profilePicture ? cloudFrontUrl(user.profilePicture) : undefined}
 	/>
 {/if}
-apiRemoveUserProfilePicture

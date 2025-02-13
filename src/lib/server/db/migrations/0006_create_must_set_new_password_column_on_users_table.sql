@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "must_set_new_password" boolean DEFAULT false NOT NULL;

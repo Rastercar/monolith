@@ -13,6 +13,7 @@ export const userSchema = z.object({
 	username: z.string(),
 	email: z.string().email(),
 	emailVerified: z.boolean(),
+	mustSetNewPassword: z.boolean(),
 	profilePicture: z.string().nullable(),
 	description: z.string().nullable(),
 	accessLevel: accessLevelSchema,
@@ -24,6 +25,7 @@ export const createUserSchema = z
 		email: z.string().email(),
 		username: usernameValidator,
 		description: z.string().optional().nullable(),
+		setPasswordChangeOnFirstSignIn: z.boolean().default(false),
 		accessLevelId: z.number().gt(0),
 		password: passwordValidator,
 		passwordConfirmation: z.string().min(5)
@@ -78,6 +80,7 @@ export const simpleUserSchema = z.object({
 	id: z.number(),
 	createdAt: z.date({ coerce: true }),
 	blocked: z.boolean(),
+	mustSetNewPassword: z.boolean(),
 	username: z.string(),
 	email: z.string().email(),
 	emailVerified: z.boolean(),

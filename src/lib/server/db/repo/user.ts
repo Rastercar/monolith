@@ -24,7 +24,12 @@ export async function findOrgUsersWithPagination(
 export async function createOrgUser(orgId: number, body: CreateUserBody) {
 	const [createdUser] = await getDB()
 		.insert(user)
-		.values({ ...body, password: hashSync(body.password), organizationId: orgId })
+		.values({
+			...body,
+			password: hashSync(body.password),
+			organizationId: orgId,
+			mustSetNewPassword: body.setPasswordChangeOnFirstSignIn
+		})
 		.returning();
 
 	return createdUser;
@@ -203,10 +208,17 @@ export async function updateUserProfilePicture(id: number, s3Key: string | null)
 	return updatedUser;
 }
 
-export async function updateUserPassword(id: number, hashedPassword: string) {
+export async function updateUserPassword(
+	id: number,
+	hashedPassword: string,
+	clearMustSetPasswordFlag = true
+) {
 	const [updatedUser] = await getDB()
 		.update(user)
-		.set({ password: hashedPassword })
+		.set({
+			password: hashedPassword,
+			mustSetNewPassword: clearMustSetPasswordFlag ? false : undefined
+		})
 		.where(eq(user.id, id))
 		.returning();
 

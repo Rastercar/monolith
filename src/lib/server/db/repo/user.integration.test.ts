@@ -42,7 +42,8 @@ describe('user repo', async () => {
 		username: 'testuser',
 		password: 'password123',
 		accessLevelId: 1,
-		passwordConfirmation: 'password123'
+		passwordConfirmation: 'password123',
+		setPasswordChangeOnFirstSignIn: true
 	};
 
 	const updatedUserData = {

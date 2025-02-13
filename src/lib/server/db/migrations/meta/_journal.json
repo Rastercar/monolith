@@ -43,6 +43,13 @@
       "when": 1739306170243,
       "tag": "0005_create_blocked_column_on_users_table",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1739401737796,
+      "tag": "0006_create_must_set_new_password_column_on_users_table",
+      "breakpoints": true
     }
   ]
 }

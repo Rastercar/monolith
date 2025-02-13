@@ -2,6 +2,7 @@
 	import type { AccessLevel } from '$lib/api/access-level.schema';
 	import { createUserSchema, type SimpleUser } from '$lib/api/user.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
+	import CheckboxField from '$lib/components/form/CheckboxField.svelte';
 	import PasswordField from '$lib/components/form/PasswordField.svelte';
 	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
@@ -55,6 +56,13 @@
 			name="passwordConfirmation"
 		/>
 
+		<CheckboxField
+			form={sForm}
+			classes="col-span-2 mb-2"
+			label="Force password change on first sign in"
+			name="setPasswordChangeOnFirstSignIn"
+		/>
+
 		<TextAreaField
 			form={sForm}
 			name="description"
@@ -77,6 +85,7 @@
 			}
 		}}
 	/>
+
 	{#if $errors.accessLevelId}
 		<span class="block text-error-700-300 mt-2">{$errors.accessLevelId}</span>
 	{/if}

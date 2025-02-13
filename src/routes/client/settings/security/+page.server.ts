@@ -7,9 +7,15 @@ import { error } from '@sveltejs/kit';
 import { message, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async () => ({
-	form: await superValidate(zod(changePasswordSchema))
-});
+export const load = async ({ url }) => {
+	const form = await superValidate(zod(changePasswordSchema));
+
+	const redirectHereDueToForcePasswordChange = !!url.searchParams.get(
+		'redirectHereDueToForcePasswordChange'
+	);
+
+	return { form, redirectHereDueToForcePasswordChange };
+};
 
 export const actions = {
 	changePassword: async ({ request, locals }) => {

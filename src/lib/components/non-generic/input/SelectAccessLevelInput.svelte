@@ -28,7 +28,6 @@
 
 	const query = createQuery(() => ({
 		queryKey: ['access-levels', filters],
-		placeholderData: keepPreviousData,
 		queryFn: async (): Promise<Option<AccessLevel>[]> => {
 			const { records } = await apiGetAccessLevels({
 				pagination: { page: 1, pageSize: 100 },
@@ -40,7 +39,8 @@
 				value: accessLevel.id.toString(),
 				meta: accessLevel
 			}));
-		}
+		},
+		placeholderData: keepPreviousData
 	}));
 
 	const debounce = (v: string) => {
@@ -53,7 +53,6 @@
 	bind:value
 	type="single"
 	allowDeselect
-	controlledValue
 	onValueChange={(e) => {
 		if (!e) return onItemSelected(null);
 

@@ -48,6 +48,7 @@
 	const { user: currentUser } = $derived(auth);
 
 	let canChangeUserAccessLevel = $derived(currentUser?.id !== userId);
+	let accessLevelInputValue = $derived.by(() => selectedAccessLevel?.id.toString() ?? '');
 </script>
 
 <div class="card preset-filled-surface-100-900 sm:rounded-lg">
@@ -92,7 +93,7 @@
 									</button>
 								{:else}
 									<button
-										class="btn btn-sm preset-filled-warning-200-800"
+										class="btn btn-sm preset-filled-warning-200-800 ml-auto"
 										onclick={() => {
 											selectedAccessLevel = null;
 											isSelectingNewAccessLevel = false;
@@ -109,7 +110,7 @@
 					{#if isSelectingNewAccessLevel}
 						<div class="mt-4">
 							<SelectAccessLevelInput
-								value={selectedAccessLevel?.id.toString() ?? ''}
+								value={accessLevelInputValue}
 								onItemSelected={(v) => {
 									selectedAccessLevel = v;
 								}}

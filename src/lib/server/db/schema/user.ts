@@ -25,6 +25,7 @@ export const user = pgTable(
 		emailVerified: boolean('email_verified').default(false).notNull(),
 		password: varchar({ length: 255 }).notNull(),
 		blocked: boolean().notNull().default(false),
+		mustSetNewPassword: boolean().notNull().default(false),
 
 		/**
 		 * A UUID that is sent to the user email address to so it

@@ -94,6 +94,11 @@ export const devOpentelemetryPlugin = (): PluginOption => ({
 export const svelteKitRoutePlugin = () =>
 	kitRoutes<KIT_ROUTES>({
 		PAGES: {
+			'/client/settings/security': {
+				explicit_search_params: {
+					redirectHereDueToForcePasswordChange: { required: false, type: 'boolean' }
+				}
+			},
 			'/auth/sign-in': {
 				explicit_search_params: {
 					redirect: { required: false, type: 'string' }

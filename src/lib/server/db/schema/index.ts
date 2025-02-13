@@ -1,4 +1,5 @@
 export * from './access-level';
+export * from './fleet';
 export * from './organization';
 export * from './session';
 export * from './sim-card';

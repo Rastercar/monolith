@@ -124,6 +124,9 @@ export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
 		requiredAuth: 'logged-in',
 		requiredPermissions: ['CREATE_VEHICLE']
 	},
+	'/client/tracking/fleets': {
+		requiredAuth: 'logged-in'
+	},
 	'/client/users': {
 		requiredAuth: 'logged-in'
 	},

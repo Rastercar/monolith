@@ -7,6 +7,7 @@ export type permission = (typeof permissions)[number];
 
 export type permissionCategory =
 	| 'user'
+	| 'fleets'
 	| 'access levels'
 	| 'tracker'
 	| 'vehicle'
@@ -41,6 +42,10 @@ export const permissions = [
 	'UPDATE_VEHICLE',
 	'DELETE_VEHICLE',
 	//
+	'CREATE_FLEET',
+	'UPDATE_FLEET',
+	'DELETE_FLEET',
+	//
 	'DELETE_SIM_CARD',
 	'UPDATE_SIM_CARD',
 	'CREATE_SIM_CARD',
@@ -59,10 +64,29 @@ export const permissionCategoryIcons: Record<permissionCategory, string> = {
 	tracker: 'mdi:cellphone',
 	vehicle: 'mdi:car',
 	'SIM card': 'mdi:sim',
+	fleets: 'mdi:vehicle-multiple',
 	organization: 'mdi:building'
 };
 
 export const permissionDetails: Record<permission, PermissionDetails> = {
+	UPDATE_FLEET: {
+		title: 'Update Fleets',
+		summary: 'Update',
+		category: 'fleets',
+		description: 'Allows updating a vehicle fleet'
+	},
+	DELETE_FLEET: {
+		title: 'Delete Fleets',
+		summary: 'Delete',
+		category: 'fleets',
+		description: 'Allows deleting a vehicle fleet'
+	},
+	CREATE_FLEET: {
+		title: 'Create Fleets',
+		summary: 'Create',
+		category: 'fleets',
+		description: 'Allows registering vehicle fleets to group vehicles'
+	},
 	BLOCK_USER: {
 		title: 'Block Users',
 		summary: 'Block and unblock users',

@@ -4,16 +4,16 @@
 	interface Props {
 		page: number;
 		pageSize: number;
-		count: number;
-		data: unknown[];
+		data?: unknown[];
+		count?: number;
 		extraClasses?: string;
 		withPageSizeSelector?: boolean;
 		alternativePagination?: boolean;
 	}
 
 	let {
-		data,
-		count,
+		data = [],
+		count = 0,
 		page = $bindable(),
 		pageSize = $bindable(),
 		extraClasses = '',

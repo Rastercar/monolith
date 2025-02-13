@@ -10,6 +10,7 @@ import {
 	varchar
 } from 'drizzle-orm/pg-core';
 import { accessLevel } from './access-level';
+import { fleet } from './fleet';
 import { createdAt } from './schema-helpers';
 import { simCard } from './sim-card';
 import { user } from './user';
@@ -52,6 +53,7 @@ export const organizationRelations = relations(organization, ({ one, many }) => 
 	}),
 	accessLevels: many(accessLevel),
 	vehicles: many(vehicle),
+	fleets: many(fleet),
 	vehicleTrackers: many(vehicleTracker),
 	simCards: many(simCard)
 }));

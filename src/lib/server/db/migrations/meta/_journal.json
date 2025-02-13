@@ -50,6 +50,13 @@
       "when": 1739401737796,
       "tag": "0006_create_must_set_new_password_column_on_users_table",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1739410257073,
+      "tag": "0007_create_fleet_table",
+      "breakpoints": true
     }
   ]
 }

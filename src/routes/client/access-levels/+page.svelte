@@ -98,7 +98,7 @@
 		extraClasses="mt-4"
 		bind:page={pagination.page}
 		bind:pageSize={pagination.pageSize}
-		data={query.data?.records ?? []}
-		count={query.data?.itemCount ?? 0}
+		data={query.data?.records}
+		count={query.data?.itemCount}
 	/>
 </div>

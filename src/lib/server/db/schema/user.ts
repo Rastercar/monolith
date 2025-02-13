@@ -25,7 +25,7 @@ export const user = pgTable(
 		emailVerified: boolean('email_verified').default(false).notNull(),
 		password: varchar({ length: 255 }).notNull(),
 		blocked: boolean().notNull().default(false),
-		mustSetNewPassword: boolean().notNull().default(false),
+		mustSetNewPassword: boolean('must_set_new_password').notNull().default(false),
 
 		/**
 		 * A UUID that is sent to the user email address to so it
@@ -67,17 +67,12 @@ export const user = pgTable(
 );
 
 export const userRelations = relations(user, ({ one, many }) => ({
-	accessLevel: one(accessLevel, {
-		fields: [user.accessLevelId],
-		references: [accessLevel.id]
-	}),
+	accessLevel: one(accessLevel, { fields: [user.accessLevelId], references: [accessLevel.id] }),
 	organization: one(organization, {
 		fields: [user.organizationId],
 		references: [organization.id],
 		relationName: 'user_organizationId_organization_id'
 	}),
 	sessions: many(session),
-	organizations: many(organization, {
-		relationName: 'organization_ownerId_user_id'
-	})
+	organizations: many(organization, { relationName: 'organization_ownerId_user_id' })
 }));

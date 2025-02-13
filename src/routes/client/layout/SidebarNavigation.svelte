@@ -36,6 +36,11 @@
 			icon: 'mdi:car'
 		},
 		{
+			href: '/client/tracking/fleets',
+			label: 'Fleets',
+			icon: 'mdi:car-multiple'
+		},
+		{
 			href: '/client/tracking/trackers',
 			label: 'trackers',
 			icon: 'mdi:cellphone'

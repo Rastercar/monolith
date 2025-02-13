@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { apiGetVehicles } from '$lib/api/vehicle';
-	import type { GetVehiclesFilters, Vehicle } from '$lib/api/vehicle.schema';
+	import { apiGetFleets } from '$lib/api/fleet';
+	import type { Fleet, GetFleetsFilters } from '$lib/api/fleet.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
@@ -16,48 +16,33 @@
 		renderComponent,
 		type ColumnDef
 	} from '@tanstack/svelte-table';
+	import DescriptionColumn from './components/DescriptionColumn.svelte';
 
-	const { pagination, filters } = createPaginationWithFilters<GetVehiclesFilters>({});
+	const { pagination, filters } = createPaginationWithFilters<GetFleetsFilters>({});
 
 	const query = createQuery(() => ({
-		queryKey: ['vehicles', pagination, filters],
-		queryFn: () => apiGetVehicles({ pagination: pagination, filters: filters }),
+		queryKey: ['fleets', pagination, filters],
+		queryFn: () => apiGetFleets({ pagination: pagination, filters: filters }),
 		placeholderData: keepPreviousData
 	}));
 
-	const columns: ColumnDef<Vehicle>[] = [
+	const columns: ColumnDef<Fleet>[] = [
 		{
-			accessorKey: 'model',
-			header: () => 'Model'
+			accessorKey: 'name',
+			header: () => 'Name'
 		},
 		{
-			accessorKey: 'plate',
-			header: () => 'Plate'
-		},
-		{
-			accessorKey: 'brand',
-			header: () => 'Brand'
-		},
-		{
-			accessorKey: 'color',
-			header: () => 'Color'
-		},
-		{
-			id: 'fabricationAndModelYear',
-			header: () => 'Year',
+			accessorKey: 'description',
+			header: () => 'Description',
 			cell: ({ row }) =>
-				`${row.original.fabricationYear ?? '0000'} / ${row.original.modelYear ?? '0000'}`
-		},
-		{
-			accessorKey: 'chassisNumber',
-			header: () => 'Chassis'
+				renderComponent(DescriptionColumn, { description: row.original.description })
 		},
 		{
 			id: 'actions',
 			cell: ({ row }) =>
 				renderComponent(InfoIconLink, {
-					href: route(`/client/tracking/vehicles/[vehicle_id=integer]`, {
-						vehicle_id: row.original.id.toString()
+					href: route(`/client/tracking/fleets/[fleet_id=integer]`, {
+						fleet_id: row.original.id.toString()
 					})
 				})
 		}
@@ -81,11 +66,11 @@
 
 <div class="p-6 max-w-5xl mx-auto">
 	<TitleAndBreadCrumbsPageHeader
-		title="vehicles"
+		title="fleets"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
 			{ text: 'tracking' },
-			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'vehicles' }
+			{ href: route('/client/tracking/fleets'), icon: 'mdi:car-multiple', text: 'fleets' }
 		]}
 	/>
 
@@ -93,15 +78,15 @@
 
 	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
-			placeholder="search by plate"
+			placeholder="search by name"
 			classes="w-full"
-			onChange={(v) => (filters.plate = v)}
+			onChange={(v) => (filters.name = v)}
 		/>
 
 		<CreateEntityButton
-			href={route('/client/tracking/vehicles/new')}
-			text="new vehicle"
-			requiredPermissions="CREATE_VEHICLE"
+			href={route('/client/tracking/fleets/new')}
+			text="new fleet"
+			requiredPermissions="CREATE_FLEET"
 		/>
 	</div>
 

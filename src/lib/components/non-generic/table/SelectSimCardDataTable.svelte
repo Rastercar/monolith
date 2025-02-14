@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiGetSimCards } from '$lib/api/sim-card';
+	import { apiGetSimCardsQuery } from '$lib/api/sim-card.queries';
 	import {
 		updateSimCardSchema,
 		type GetSimCardsFilters,
@@ -13,7 +13,6 @@
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { showErrorToast } from '$lib/store/toast';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -58,18 +57,11 @@
 		{ page: 1, pageSize: 3 }
 	);
 
-	const query = createQuery(() => ({
-		queryKey: ['sim-cards', pagination, filters],
-		queryFn: async () => {
-			const result = await apiGetSimCards({ pagination: pagination, filters: filters });
+	const query = apiGetSimCardsQuery(pagination, filters, { refetchOnWindowFocus: false });
 
-			// reset row selection since the dataset changed
-			rowSelection = {};
-
-			return result;
-		},
-		placeholderData: keepPreviousData
-	}));
+	$effect(() => {
+		if (query.isFetching) rowSelection = {};
+	});
 
 	const columns: ColumnDef<SimCard>[] = [
 		{ accessorKey: 'phoneNumber', header: () => 'Phone' },
@@ -95,7 +87,7 @@
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],
-			columns: columns,
+			columns,
 			manualPagination: true,
 			enableRowSelection: true,
 			enableMultiRowSelection: false,

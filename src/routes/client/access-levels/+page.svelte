@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiGetAccessLevels } from '$lib/api/access-level';
+	import { apiGetAccessLevelsQuery } from '$lib/api/access-level.queries';
 	import type { AccessLevel, GetAccessLevelFilters } from '$lib/api/access-level.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -10,7 +10,6 @@
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { toDateTime } from '$lib/utils/date';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -20,11 +19,7 @@
 
 	const { pagination, filters } = createPaginationWithFilters<GetAccessLevelFilters>({});
 
-	const query = createQuery(() => ({
-		queryKey: ['vehicles', pagination, filters],
-		queryFn: () => apiGetAccessLevels({ pagination: pagination, filters: filters }),
-		placeholderData: keepPreviousData
-	}));
+	const query = apiGetAccessLevelsQuery(pagination, filters);
 
 	const columns: ColumnDef<AccessLevel>[] = [
 		{
@@ -54,7 +49,7 @@
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],
-			columns: columns,
+			columns,
 			manualPagination: true,
 			state: {
 				pagination: {

@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { apiGetTrackersLastPositions } from '$lib/api/tracking';
+	import { apiGetTrackersLastPositionsQuery } from '$lib/api/tracking.queries';
 	import { getMapContext } from '$lib/store/context';
 	import Icon from '@iconify/svelte';
-	import { createQuery } from '@tanstack/svelte-query';
 	import type { TrackerAndPosition } from '../../map';
 	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
 	import TrackerListItem from './TrackerListItem.svelte';
@@ -19,32 +18,23 @@
 
 	let trackerAndPositionToShow = $state<TrackerAndPosition | null>(null);
 
-	const getInitialData = (): TrackerAndPosition[] => {
-		const filter = imeiFilter.toLocaleLowerCase();
+	const getMapSelectedTrackerIds = () =>
+		Object.keys(ctx.mapSelectedTrackers).map((k) => parseInt(k));
 
-		return Object.values(ctx.mapSelectedTrackers)
-			.map((t) => ({ tracker: t }))
-			.filter((t) => !imeiFilter || t.tracker.imei.toLowerCase().includes(filter));
-	};
+	const mapSelectedTrackers = $derived(Object.values(ctx.mapSelectedTrackers));
 
-	const query = createQuery(() => ({
-		queryKey: ['trackers', Object.keys(ctx.mapSelectedTrackers), 'with-last-location'],
-		queryFn: async (): Promise<TrackerAndPosition[]> => {
-			const trackers = Object.values(ctx.mapSelectedTrackers);
+	const query = apiGetTrackersLastPositionsQuery(getMapSelectedTrackerIds());
 
-			const positions = await apiGetTrackersLastPositions(trackers.map((t) => t.id));
-
-			return trackers.map((tracker) => ({
-				tracker,
-				position: positions.find((p) => p.trackerId === tracker.id)
-			}));
-		},
-		initialData: getInitialData()
-	}));
+	const queryData: TrackerAndPosition[] = $derived.by(() => {
+		return mapSelectedTrackers.map((tracker) => ({
+			tracker,
+			position: query.data?.find((p) => p.trackerId === tracker.id)
+		}));
+	});
 
 	const filteredTrackers = $derived.by(() => {
 		const filter = imeiFilter.toLocaleLowerCase();
-		return query.data.filter((t) => !imeiFilter || t.tracker.imei.toLowerCase().includes(filter));
+		return queryData.filter((t) => !imeiFilter || t.tracker.imei.toLowerCase().includes(filter));
 	});
 </script>
 
@@ -52,7 +42,7 @@
 	<div class="sticky top-0 bg-surface-100-900 z-10 p-4">
 		<h2 class="flex items-center type-scale-6 mb-4">
 			<Icon icon="mdi:list-status" class="mr-2 hidden md:block" height={32} />
-			Selected trackers ({query.data.length})
+			Selected trackers ({getMapSelectedTrackerIds().length})
 
 			<Icon icon="mdi:close" onclick={onCloseClick} class="ml-auto" height={32} />
 		</h2>

@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { apiGetTrackerLastLocation } from '$lib/api/tracker';
+	import { apiGetTrackerLastLocationQuery } from '$lib/api/tracker.queries';
 	import { checkMillisecondsEllapsedSinceDate } from '$lib/utils/date';
-	import { createQuery } from '@tanstack/svelte-query';
 	import { Tooltip } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 
@@ -16,10 +15,7 @@
 
 	let { vehicleTrackerId, children }: Props = $props();
 
-	const query = createQuery(() => ({
-		queryKey: ['tracker', vehicleTrackerId, 'last-location'],
-		queryFn: () => apiGetTrackerLastLocation(vehicleTrackerId)
-	}));
+	const query = apiGetTrackerLastLocationQuery(vehicleTrackerId);
 
 	const fiveMinutes = 1000 * 60 * 5;
 

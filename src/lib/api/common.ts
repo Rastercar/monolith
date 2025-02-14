@@ -1,3 +1,4 @@
+import type { CreateQueryOptions } from '@tanstack/svelte-query';
 import { z } from 'zod';
 
 export type PaginationParameters = {
@@ -53,6 +54,8 @@ export type Paginated<T> = {
 	 */
 	records: T[];
 };
+
+export type ApiQueryOptions<T> = Partial<Omit<CreateQueryOptions<T>, 'queryKey' | 'queryFn'>>;
 
 export function createPaginatedResponseSchema<ItemType extends z.ZodTypeAny>(itemSchema: ItemType) {
 	return z.object({

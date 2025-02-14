@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiGetSimCards } from '$lib/api/sim-card';
+	import { apiGetSimCardsQuery } from '$lib/api/sim-card.queries';
 	import type { GetSimCardsFilters, SimCard } from '$lib/api/sim-card.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -9,7 +9,6 @@
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -19,11 +18,7 @@
 
 	const { pagination, filters } = createPaginationWithFilters<GetSimCardsFilters>({});
 
-	const query = createQuery(() => ({
-		queryKey: ['sim-cards', pagination, filters],
-		queryFn: () => apiGetSimCards({ pagination: pagination, filters: filters }),
-		placeholderData: keepPreviousData
-	}));
+	const query = apiGetSimCardsQuery(pagination, filters);
 
 	const columns: ColumnDef<SimCard>[] = [
 		{ accessorKey: 'phoneNumber', header: () => 'Phone' },
@@ -43,7 +38,7 @@
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],
-			columns: columns,
+			columns,
 			manualPagination: true,
 			state: {
 				pagination: {

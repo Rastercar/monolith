@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { apiGetAccessLevels } from '$lib/api/access-level';
+	import { apiGetAccessLevelsQuery } from '$lib/api/access-level.queries';
 	import type { AccessLevel, GetAccessLevelFilters } from '$lib/api/access-level.schema';
 	import Icon from '@iconify/svelte';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import { Combobox } from 'bits-ui';
 
 	interface Props {
@@ -26,22 +25,15 @@
 
 	const filters = $state<GetAccessLevelFilters>({});
 
-	const query = createQuery(() => ({
-		queryKey: ['access-levels', filters],
-		queryFn: async (): Promise<Option<AccessLevel>[]> => {
-			const { records } = await apiGetAccessLevels({
-				pagination: { page: 1, pageSize: 100 },
-				filters
-			});
+	const query = apiGetAccessLevelsQuery({ page: 1, pageSize: 100 }, filters);
 
-			return records.map((accessLevel) => ({
-				label: accessLevel.name,
-				value: accessLevel.id.toString(),
-				meta: accessLevel
-			}));
-		},
-		placeholderData: keepPreviousData
-	}));
+	const queryData = $derived(
+		(query.data?.records ?? []).map((accessLevel) => ({
+			meta: accessLevel,
+			label: accessLevel.name,
+			value: accessLevel.id.toString()
+		}))
+	);
 
 	const debounce = (v: string) => {
 		clearTimeout(debounceTimer);
@@ -58,7 +50,7 @@
 
 		const id = parseInt(e);
 
-		const item = query.data?.find((i) => i.meta.id === id);
+		const item = queryData.find((i) => i.meta.id === id);
 		onItemSelected(item?.meta ?? null);
 	}}
 >
@@ -93,7 +85,7 @@
 			</Combobox.ScrollUpButton>
 
 			<Combobox.Viewport>
-				{#each query?.data ?? [] as option, i (i + option.value)}
+				{#each queryData as option, i (i + option.value)}
 					<Combobox.Item
 						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 type-scale-2 data-[highlighted]:bg-surface-300-700"
 						value={option.value}

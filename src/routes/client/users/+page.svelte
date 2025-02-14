@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiGetUsers } from '$lib/api/user';
+	import { apiGetUsersQuery } from '$lib/api/user.queries';
 	import type { GetUsersFilters, SimpleUser } from '$lib/api/user.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -12,7 +12,6 @@
 	import { getAuthContext } from '$lib/store/context';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
 	import { toLocaleDateString } from '$lib/utils/date';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -29,11 +28,7 @@
 
 	const canBlockUsers = auth.hasPermission('BLOCK_USER');
 
-	const query = createQuery(() => ({
-		queryKey: ['users', pagination, filters],
-		queryFn: () => apiGetUsers({ pagination: pagination, filters: filters }),
-		placeholderData: keepPreviousData
-	}));
+	const query = apiGetUsersQuery(pagination, filters);
 
 	const columns: ColumnDef<SimpleUser>[] = [
 		{
@@ -87,7 +82,7 @@
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],
-			columns: columns,
+			columns,
 			manualPagination: true,
 			state: {
 				pagination: {

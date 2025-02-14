@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiGetFleets } from '$lib/api/fleet';
+	import { apiGetFleetsQuery } from '$lib/api/fleet.queries';
 	import type { Fleet, GetFleetsFilters } from '$lib/api/fleet.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -9,7 +9,6 @@
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -21,11 +20,7 @@
 
 	const { pagination, filters } = createPaginationWithFilters<GetFleetsFilters>({});
 
-	const query = createQuery(() => ({
-		queryKey: ['fleets', pagination, filters],
-		queryFn: () => apiGetFleets({ pagination: pagination, filters: filters }),
-		placeholderData: keepPreviousData
-	}));
+	const query = apiGetFleetsQuery(pagination, filters);
 
 	const columns: ColumnDef<Fleet>[] = [
 		{
@@ -58,7 +53,7 @@
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],
-			columns: columns,
+			columns,
 			manualPagination: true,
 			state: {
 				pagination: {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { apiGetTrackers } from '$lib/api/tracker';
+	import { apiGetTrackersQuery } from '$lib/api/tracker.queries';
 	import type { GetTrackersFilters, Tracker } from '$lib/api/tracker.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
@@ -9,7 +9,6 @@
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -19,11 +18,7 @@
 
 	const { pagination, filters } = createPaginationWithFilters<GetTrackersFilters>({});
 
-	const query = createQuery(() => ({
-		queryKey: ['trackers', pagination, filters],
-		queryFn: () => apiGetTrackers({ pagination: pagination, filters: filters }),
-		placeholderData: keepPreviousData
-	}));
+	const query = apiGetTrackersQuery(pagination, filters);
 
 	const columns: ColumnDef<Tracker>[] = [
 		{
@@ -48,7 +43,7 @@
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],
-			columns: columns,
+			columns,
 			manualPagination: true,
 			state: {
 				pagination: {

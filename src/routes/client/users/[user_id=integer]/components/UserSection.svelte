@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { apiDeleteUserById } from '$lib/api/user';
+	import { apiDeleteUserByIdMutation } from '$lib/api/user.queries';
 	import type { SimpleUser } from '$lib/api/user.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import { getAuthContext } from '$lib/store/context';
-	import { showErrorToast } from '$lib/store/toast';
 	import { toDateTime } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
 	import { Avatar } from '@skeletonlabs/skeleton-svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 
 	interface Props {
 		user: SimpleUser;
@@ -18,10 +16,7 @@
 
 	let { user, onUserDeleted }: Props = $props();
 
-	const mutation = createMutation(() => ({
-		mutationFn: () => apiDeleteUserById(user.id),
-		onError: showErrorToast
-	}));
+	const mutation = apiDeleteUserByIdMutation(user.id);
 
 	const auth = getAuthContext();
 

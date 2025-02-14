@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { apiGetTrackerLastLocation } from '$lib/api/tracker';
+	import { apiGetTrackerLastLocationQuery } from '$lib/api/tracker.queries';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import { env } from '$lib/env/public-env';
 	import { route } from '$lib/ROUTES';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
 	import Icon from '@iconify/svelte';
-	import { createQuery } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 
 	interface Props {
@@ -17,30 +16,26 @@
 
 	const hasTrackerToGetLastPosition = !!vehicle.vehicleTracker?.id;
 
-	const query = createQuery(() => ({
+	const query = apiGetTrackerLastLocationQuery(vehicle.vehicleTracker?.id ?? 0, {
 		// important wait for the map to load since we
 		// create the tracker on the queryFn function
-		enabled: hasTrackerToGetLastPosition && mapHasLoaded,
-		queryKey: ['tracker', vehicle.vehicleTracker?.id, 'location-card', 'last-location'],
-		queryFn: async () => {
-			const position = await apiGetTrackerLastLocation(vehicle.vehicleTracker?.id ?? 0);
+		enabled: hasTrackerToGetLastPosition
+	});
 
-			if (window.google?.maps?.marker && map) {
-				if (!position) {
-					removeMarker();
-					return position;
-				}
+	$effect(() => {
+		const position = query.data;
 
-				marker ? updateMarkerPosition(position.point) : createMarker(position.point);
+		if (window.google?.maps?.marker && map) {
+			if (!position) return removeMarker();
 
-				map.setCenter(position.point);
-			}
+			marker ? updateMarkerPosition(position.point) : createMarker(position.point);
 
-			return position;
+			map.setCenter(position.point);
 		}
-	}));
+	});
 
 	let map = $state<InstanceType<typeof window.google.maps.Map>>();
+
 	let marker = $state<InstanceType<typeof window.google.maps.marker.AdvancedMarkerElement> | null>(
 		null
 	);
@@ -101,9 +96,9 @@
 	</div>
 
 	{#if !hasTrackerToGetLastPosition}
-		<p class="p-4 text-warning-200-800">This vehicle is not connected to a tracker</p>
+		<p class="px-4 pb-4 text-warning-200-800">This vehicle is not connected to a tracker</p>
 	{:else if !hasPositionToShow}
-		<p class="p-4 text-warning-200-800">No position found</p>
+		<p class="px-4 pb-4 text-warning-200-800">No position found</p>
 	{/if}
 
 	<div id="map" class="h-[400px] w-full" class:hidden={!hasPositionToShow}></div>

@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { apiGetTrackers } from '$lib/api/tracker';
+	import { apiGetTrackersQuery } from '$lib/api/tracker.queries';
 	import type { GetTrackersFilters, Tracker } from '$lib/api/tracker.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
 	import SimpleCheckbox from '$lib/components/input/SimpleCheckbox.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 	import {
 		createSvelteTable,
 		getCoreRowModel,
@@ -29,18 +28,11 @@
 
 	let rowSelection = $state<RowSelectionState>({});
 
-	const query = createQuery(() => ({
-		queryKey: ['trackers', pagination, filters],
-		queryFn: async () => {
-			const result = await apiGetTrackers({ pagination: pagination, filters: filters });
+	const query = apiGetTrackersQuery(pagination, filters, { refetchOnWindowFocus: false });
 
-			// reset row selection since the dataset changed
-			rowSelection = {};
-
-			return result;
-		},
-		placeholderData: keepPreviousData
-	}));
+	$effect(() => {
+		if (query.isFetching) rowSelection = {};
+	});
 
 	const columns: ColumnDef<Tracker>[] = [
 		{
@@ -73,7 +65,7 @@
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],
-			columns: columns,
+			columns,
 			manualPagination: true,
 			enableRowSelection: true,
 			enableMultiRowSelection: false,

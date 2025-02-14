@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { apiGetVehicle } from '$lib/api/vehicle';
+	import { apiGetVehicleQuery } from '$lib/api/vehicle.queries';
 	import { route } from '$lib/ROUTES';
 	import { checkMillisecondsEllapsedSinceDate, toLocaleDateString } from '$lib/utils/date';
 	import { cloudFrontUrl } from '$lib/utils/url';
 	import Icon from '@iconify/svelte';
-	import { createQuery } from '@tanstack/svelte-query';
 	import type { Snippet } from 'svelte';
 	import type { TrackerAndPosition } from '../../map';
 
@@ -19,11 +18,7 @@
 
 	const fiveMinutes = 1000 * 60 * 5;
 
-	const query = createQuery(() => ({
-		enabled: !!tracker.vehicleId,
-		queryKey: ['vehicle', tracker.vehicleId],
-		queryFn: () => apiGetVehicle(tracker.vehicleId ?? 0)
-	}));
+	const query = apiGetVehicleQuery(trackerWithPosition.tracker.vehicleId ?? 0);
 
 	let { data: vehicleTracker } = $derived(query);
 

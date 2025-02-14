@@ -35,7 +35,7 @@
 
 	{#if tp.position}
 		<div
-			class="space-y-2 hover:bg-surface-200-800 py-2 px-2"
+			class="space-y-2 hover:bg-surface-200-800 py-4 px-2"
 			onclick={() => {
 				if (!tp.position || !mapCtx.mapInstance) return;
 

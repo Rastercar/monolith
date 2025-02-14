@@ -11,19 +11,19 @@
 
 	interface Props {
 		user: SimpleUser;
-		onUserDeleted: () => void;
+		onUserDeleted: VoidFunction;
 	}
 
 	let { user, onUserDeleted }: Props = $props();
 
-	const mutation = apiDeleteUserByIdMutation(user.id);
+	const mutation = apiDeleteUserByIdMutation();
 
 	const auth = getAuthContext();
 
 	const deleteUser = async () => {
 		if (!confirm('are you sure you want to delete this user? this action cannot be undone')) return;
 
-		await mutation.mutateAsync();
+		await mutation.mutateAsync(user.id);
 		onUserDeleted();
 	};
 </script>

@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { apiDeleteFleet } from '$lib/api/fleet.js';
+	import { apiDeleteFleetMutation } from '$lib/api/fleet.queries';
 	import type { Fleet, updateFleetSchema } from '$lib/api/fleet.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import UpdateFleetForm from '$lib/components/non-generic/form/UpdateFleetForm.svelte';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import { showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	interface Props {
 		fleet: Fleet;
-		onFleetDeleted: () => void;
+		onFleetDeleted: VoidFunction;
 		updateFleetForm: SuperValidated<Infer<typeof updateFleetSchema>>;
 	}
 
@@ -18,15 +17,12 @@
 
 	let editMode = $state(false);
 
-	const deleteFleetMutation = createMutation(() => ({
-		mutationFn: () => apiDeleteFleet(fleet.id),
-		onError: showErrorToast
-	}));
+	const deleteFleetMutation = apiDeleteFleetMutation();
 
 	const deleteFleet = async () => {
 		if (!confirm('Permanently delete this fleet ?')) return;
 
-		await deleteFleetMutation.mutateAsync();
+		await deleteFleetMutation.mutateAsync(fleet.id);
 		onFleetDeleted();
 	};
 </script>

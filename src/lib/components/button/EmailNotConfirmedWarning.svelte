@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { apiRequestEmailAddressConfirmation } from '$lib/api/auth';
-	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
+	import { apiRequestEmailAddressConfirmationMutation } from '$lib/api/auth.queries';
 	import Icon from '@iconify/svelte';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import PermissionGuard from '../guard/PermissionGuard.svelte';
 
 	interface Props {
@@ -22,15 +20,7 @@
 
 	let { sendConfirmationEmailTo, extraClasses = '' }: Props = $props();
 
-	const mutation = createMutation(() => ({
-		mutationFn: () => {
-			const promise = apiRequestEmailAddressConfirmation({
-				confirmingForOrg: sendConfirmationEmailTo === 'organization'
-			});
-
-			return promiseWithMinimumTimeOf(promise, 1_500);
-		}
-	}));
+	const mutation = apiRequestEmailAddressConfirmationMutation();
 
 	let dismissed = $state(false);
 
@@ -46,7 +36,14 @@
 	<button
 		type="button"
 		class="btn preset-tonal hover:preset-filled"
-		onclick={() => (type === 'dismiss' ? (dismissed = true) : mutation.mutate())}
+		onclick={() => {
+			if (type === 'dismiss') {
+				dismissed = true;
+				return;
+			}
+
+			mutation.mutate({ confirmingForOrg: sendConfirmationEmailTo === 'organization' });
+		}}
 	>
 		{type === 'dismiss' ? 'Dismiss' : 'Verify Email'}
 	</button>

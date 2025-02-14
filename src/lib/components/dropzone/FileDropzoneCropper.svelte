@@ -15,7 +15,7 @@
 	}
 
 	interface Props {
-		onClose: () => void;
+		onClose: VoidFunction;
 		onImageCropped: (_: Blob) => void;
 		image?: string | null;
 	}

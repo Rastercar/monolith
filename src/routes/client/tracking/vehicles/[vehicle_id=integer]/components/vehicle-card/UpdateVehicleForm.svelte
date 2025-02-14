@@ -17,7 +17,7 @@
 	interface Props {
 		vehicle: Vehicle;
 		formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
-		onEditCanceled: () => void;
+		onEditCanceled: VoidFunction;
 		onVehicleUpdated: (_: Vehicle) => void;
 	}
 

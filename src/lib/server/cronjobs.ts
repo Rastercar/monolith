@@ -11,7 +11,7 @@ interface CreateCronArgs {
 	key: string;
 	description: string;
 	intervalMilliseconds: number;
-	cb: () => void;
+	cb: VoidFunction;
 }
 
 const runningCrons: Record<string, Cron | undefined> = {};

@@ -10,7 +10,7 @@
 		contentWrapperClass?: string;
 		type?: HTMLButtonAttributes['type'];
 		children: Snippet;
-		onclick?: () => void;
+		onclick?: VoidFunction;
 	}
 
 	const {

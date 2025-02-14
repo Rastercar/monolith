@@ -1,14 +1,12 @@
 <script lang="ts">
 	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
-	import { apiDeleteTracker } from '$lib/api/tracker';
+	import { apiDeleteTrackerMutation } from '$lib/api/tracker.queries';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import DeleteTrackerModal from '$lib/components/non-generic/modal/DeleteTrackerModal.svelte';
-	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	interface Props {
@@ -16,8 +14,8 @@
 		createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 		updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
 
-		onEditModeClick: () => void;
-		onTrackerDeleted: () => void;
+		onEditModeClick: VoidFunction;
+		onTrackerDeleted: VoidFunction;
 	}
 
 	let {
@@ -28,13 +26,13 @@
 		onEditModeClick
 	}: Props = $props();
 
-	const deleteTrackerMutation = createMutation(() => ({
-		mutationFn: (r: boolean) => apiDeleteTracker(tracker.id, { deleteAssociatedSimCards: r }),
-		onError: showErrorToast
-	}));
+	const deleteTrackerMutation = apiDeleteTrackerMutation();
 
 	const deleteTracker = async (deleteSimCards: boolean) => {
-		await deleteTrackerMutation.mutateAsync(deleteSimCards);
+		await deleteTrackerMutation.mutateAsync({
+			id: tracker.id,
+			deleteAssociatedSimCards: deleteSimCards
+		});
 		onTrackerDeleted();
 	};
 </script>

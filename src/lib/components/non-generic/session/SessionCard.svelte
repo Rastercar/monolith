@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { apiDeleteUserSession, apiSignOutSpecificSession } from '$lib/api/auth';
+	import { apiDeleteUserSessionMutation } from '$lib/api/auth.queries';
 	import type { UserSession } from '$lib/api/user.schema';
 	import { getAuthContext } from '$lib/store/context';
-	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import { UAParser } from 'ua-parser-js';
 
 	type deviceType = 'console' | 'mobile' | 'tablet' | 'smarttv' | 'wearable' | 'embedded';
@@ -19,7 +17,7 @@
 		 */
 		sessionOwnerId?: number;
 
-		onDeleted: () => void;
+		onDeleted: VoidFunction;
 	}
 
 	let { session, onDeleted, sessionOwnerId }: Props = $props();
@@ -42,16 +40,9 @@
 		return d.toLocaleDateString(undefined, { hour: '2-digit', minute: 'numeric' });
 	};
 
-	const mutation = createMutation(() => ({
-		mutationFn: () => {
-			const promise = sessionOwnerId
-				? apiDeleteUserSession(sessionOwnerId, session.publicId)
-				: apiSignOutSpecificSession(session.publicId);
-
-			return promiseWithMinimumTimeOf(promise, 1_000);
-		},
+	const mutation = apiDeleteUserSessionMutation({
 		onSuccess: () => onDeleted()
-	}));
+	});
 
 	const auth = getAuthContext();
 
@@ -82,7 +73,7 @@
 			disabled={mutation.isPending}
 			type="button"
 			class="btn preset-filled-warning-400-600 ml-auto"
-			onclick={() => mutation.mutate()}
+			onclick={() => mutation.mutate({ sessionOwnerId, sessionPublicId: session.publicId })}
 		>
 			<span>{mutation.isPending ? 'removing session' : 'revoke session'}</span>
 			<Icon icon="mdi:trash" />

@@ -6,7 +6,7 @@
 
 	interface Props {
 		trackerWithPosition: TrackerAndPosition;
-		onInfoClick: () => void;
+		onInfoClick: VoidFunction;
 	}
 
 	const { trackerWithPosition: tp, onInfoClick }: Props = $props();

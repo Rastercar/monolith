@@ -19,7 +19,7 @@
 	} from '@tanstack/svelte-table';
 
 	interface Props {
-		onCloseClick: () => void;
+		onCloseClick: VoidFunction;
 	}
 
 	const { onCloseClick }: Props = $props();

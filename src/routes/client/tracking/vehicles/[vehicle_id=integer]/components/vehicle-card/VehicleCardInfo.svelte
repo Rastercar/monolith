@@ -1,29 +1,26 @@
 <script lang="ts">
-	import { apiDeleteVehicle } from '$lib/api/vehicle';
+	import { apiDeleteVehicleByIdMutation } from '$lib/api/vehicle.queries';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import { route } from '$lib/ROUTES';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 
 	interface Props {
 		vehicle: Vehicle;
-		onEditClick: () => void;
-		onVehicleDelete: () => void;
+		onEditClick: VoidFunction;
+		onVehicleDelete: VoidFunction;
 	}
 
 	let { vehicle, onEditClick, onVehicleDelete }: Props = $props();
 
-	const mutation = createMutation(() => ({
-		mutationFn: () => apiDeleteVehicle(vehicle.id)
-	}));
+	const mutation = apiDeleteVehicleByIdMutation();
 
 	let year = `${vehicle.fabricationYear ?? '0000'} / ${vehicle.modelYear ?? '0000'}`;
 
 	const deleteVehicle = async () => {
 		if (!confirm('Permanently delete this vehicle ?')) return;
 
-		await mutation.mutateAsync();
+		await mutation.mutateAsync(vehicle.id);
 		onVehicleDelete();
 	};
 </script>

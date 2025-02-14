@@ -39,7 +39,7 @@ export function apiUpdateSimCard(id: number, body: UpdateSimCardBody): Promise<U
 /**
  * permanently deletes a SIM card
  */
-export function apiDeleteSimCard(id: number): Promise<string> {
+export function apiDeleteSimCardById(id: number): Promise<string> {
 	const url = route('DELETE /client/tracking/sim-cards/[sim_card_id=integer]', {
 		sim_card_id: id.toString()
 	});

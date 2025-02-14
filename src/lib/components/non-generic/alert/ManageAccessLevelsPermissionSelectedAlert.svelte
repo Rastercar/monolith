@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte';
 
 	interface Props {
-		onUndoClicked: () => void;
+		onUndoClicked: VoidFunction;
 	}
 
 	const { onUndoClicked }: Props = $props();

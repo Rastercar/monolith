@@ -4,7 +4,7 @@
 	import NavList, { type Route } from './NavList.svelte';
 
 	interface Props {
-		onRouteClick?: () => void;
+		onRouteClick?: VoidFunction;
 	}
 
 	const { onRouteClick }: Props = $props();

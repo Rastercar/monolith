@@ -1,16 +1,15 @@
 <script lang="ts">
 	import type { AccessLevel } from '$lib/api/access-level.schema';
-	import { apiChangeUserAccessLevel } from '$lib/api/user';
+	import { apiChangeUserAccessLevelMutation } from '$lib/api/user.queries';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
 	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
 	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/context';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import { showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 
 	interface Props {
 		userId: number;
@@ -24,17 +23,14 @@
 
 	let selectedAccessLevel: AccessLevel | null = $state(null);
 
-	const changeAccessLevelMutation = createMutation(() => ({
-		mutationFn: (accessLevelId: number) => apiChangeUserAccessLevel({ userId, accessLevelId }),
-		onError: showErrorToast
-	}));
+	const changeAccessLevelMutation = apiChangeUserAccessLevelMutation();
 
 	const changeAccessLevel = async () => {
 		if (!selectedAccessLevel) return;
 
 		const selectedAccessLevelCopy = selectedAccessLevel;
 
-		await changeAccessLevelMutation.mutateAsync(selectedAccessLevel.id);
+		await changeAccessLevelMutation.mutateAsync({ userId, accessLevelId: selectedAccessLevel.id });
 
 		showSuccessToast('user access level updated');
 

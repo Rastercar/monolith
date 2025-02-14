@@ -7,7 +7,7 @@
 		href: keyof KIT_ROUTES['PAGES'];
 		icon: string;
 		label: string;
-		onclick?: () => void;
+		onclick?: VoidFunction;
 	}
 
 	let { href, icon, label, onclick }: Props = $props();

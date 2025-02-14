@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte';
 
 	interface Props {
-		onclick: () => void;
+		onclick: VoidFunction;
 		label?: string;
 		disabled?: boolean;
 		isStepNextBtn?: boolean;

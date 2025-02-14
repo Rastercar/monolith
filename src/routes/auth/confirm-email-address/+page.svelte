@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { apiConfirmEmailAddress } from '$lib/api/auth';
+	import { apiConfirmEmailAddressMutation } from '$lib/api/auth.queries.js';
 	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/context';
-	import { showErrorToast } from '$lib/store/toast';
-	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
@@ -13,16 +10,11 @@
 
 	const authContext = getAuthContext();
 
-	const mutation = createMutation(() => ({
-		mutationFn: () => {
-			const promise = apiConfirmEmailAddress({ confirmingForOrg, token });
-			return promiseWithMinimumTimeOf(promise, 1_500);
-		},
-		onError: showErrorToast,
+	const mutation = apiConfirmEmailAddressMutation({
 		onSuccess: () => authContext.setUserEmailAsVerified()
-	}));
+	});
 
-	onMount(mutation.mutate);
+	onMount(() => mutation.mutate({ confirmingForOrg, token }));
 </script>
 
 {#snippet homePageLink()}

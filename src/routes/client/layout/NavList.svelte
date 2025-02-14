@@ -17,7 +17,7 @@
 	interface Props {
 		routes: Route[];
 		classes?: string;
-		onRouteClick?: () => void;
+		onRouteClick?: VoidFunction;
 	}
 
 	const auth = getAuthContext();

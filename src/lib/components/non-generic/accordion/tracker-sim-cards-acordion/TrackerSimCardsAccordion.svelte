@@ -1,14 +1,16 @@
 <script lang="ts">
-	import { apiDeleteSimCard, apiUpdateSimCard } from '$lib/api/sim-card';
+	import {
+		apiDeleteSimCardByIdMutation,
+		apiUpdateSimCardMutation
+	} from '$lib/api/sim-card.queries';
 	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import { trackerModelsDetails } from '$lib/constants/tracker-models';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import { showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import SimCardChooser from './SimCardChooser.svelte';
 
@@ -25,15 +27,9 @@
 
 	const supportedSimCards = trackerModelsDetails[tracker.model].supportedSimCards;
 
-	const removeSimCardMutation = createMutation(() => ({
-		mutationFn: (simCardId: number) => apiUpdateSimCard(simCardId, { vehicleTrackerId: null }),
-		onError: showErrorToast
-	}));
+	const updateSimCardMutation = apiUpdateSimCardMutation();
 
-	const deleteSimCardMutation = createMutation(() => ({
-		mutationFn: (simCardId: number) => apiDeleteSimCard(simCardId),
-		onError: showErrorToast
-	}));
+	const deleteSimCardMutation = apiDeleteSimCardByIdMutation();
 
 	const removeSimFromTracker = (id: number) => {
 		tracker.simCards = (tracker.simCards ?? []).filter((s) => s.id !== id);
@@ -41,7 +37,9 @@
 
 	const removeSimCard = (id: number) => {
 		if (!confirm('Remove the SIM card from the tracker ?')) return;
-		removeSimCardMutation.mutateAsync(id).then(() => removeSimFromTracker(id));
+		updateSimCardMutation
+			.mutateAsync({ id, body: { vehicleTrackerId: null } })
+			.then(() => removeSimFromTracker(id));
 	};
 
 	const deleteSimCard = (id: number) => {

@@ -1,4 +1,8 @@
-import type { CreateQueryOptions } from '@tanstack/svelte-query';
+import type {
+	CreateMutationOptions,
+	CreateQueryOptions,
+	DefaultError
+} from '@tanstack/svelte-query';
 import { z } from 'zod';
 
 export type PaginationParameters = {
@@ -56,6 +60,13 @@ export type Paginated<T> = {
 };
 
 export type ApiQueryOptions<T> = Partial<Omit<CreateQueryOptions<T>, 'queryKey' | 'queryFn'>>;
+
+export type ApiMutationOptions<
+	TData = unknown,
+	TError = DefaultError,
+	TVariables = void,
+	TContext = unknown
+> = Partial<Omit<CreateMutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'>>;
 
 export function createPaginatedResponseSchema<ItemType extends z.ZodTypeAny>(itemSchema: ItemType) {
 	return z.object({

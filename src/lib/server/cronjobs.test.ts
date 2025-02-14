@@ -21,7 +21,7 @@ test('fmt - formats seconds to their biggest date type secs, min, hour, etc', ()
 });
 
 describe('createCron', () => {
-	const createCronOptions = (cb: () => void) => ({
+	const createCronOptions = (cb: VoidFunction) => ({
 		key: 'key',
 		description: 'test',
 		cb,

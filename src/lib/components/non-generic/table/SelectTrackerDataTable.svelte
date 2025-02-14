@@ -60,8 +60,6 @@
 		}
 	];
 
-	const colspan = columns.length;
-
 	const table = $derived(
 		createSvelteTable({
 			data: query.data?.records ?? [],

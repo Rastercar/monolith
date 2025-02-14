@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { apiSetTrackerVehicle } from '$lib/api/tracker';
+	import { apiSetTrackerVehicleMutation } from '$lib/api/tracker.queries';
 	import type { Tracker, createTrackerSchema } from '$lib/api/tracker.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import CreateTrackerForm from '$lib/components/non-generic/form/CreateTrackerForm.svelte';
 	import SelectTrackerDataTable from '$lib/components/non-generic/table/SelectTrackerDataTable.svelte';
 	import OptionToggler from '$lib/components/toggler/OptionToggler.svelte';
-	import { showErrorToast } from '$lib/store/toast';
-	import { createMutation } from '@tanstack/svelte-query';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
 	let selectedTrackerForm: 'new-tracker' | 'existing-tracker' = $state('new-tracker');
@@ -24,15 +22,12 @@
 
 	let { vehicleId, formSchema, onTrackerCreated, onTrackerSelected }: Props = $props();
 
-	const selectTrackerMutation = createMutation(() => ({
-		mutationFn: (vehicleTrackerId: number) => apiSetTrackerVehicle({ vehicleId, vehicleTrackerId }),
-		onError: showErrorToast
-	}));
+	const selectTrackerMutation = apiSetTrackerVehicleMutation();
 
 	const associateTrackerToVehicle = (tracker: Tracker | null) => {
 		if (!tracker) return;
 
-		selectTrackerMutation.mutateAsync(tracker.id).then(() => {
+		selectTrackerMutation.mutateAsync({ vehicleId, vehicleTrackerId: tracker.id }).then(() => {
 			onTrackerSelected(tracker);
 		});
 	};

@@ -1,24 +1,17 @@
 <script lang="ts">
-	import { apiBlockUser, apiUnblockUser } from '$lib/api/user';
+	import { apiSetUserBlockedMutation } from '$lib/api/user.queries';
 	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
-	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 
 	interface Props {
 		userId: number;
 		isBlocked: boolean;
-		onBlockedStatusChange: () => void;
+		onBlockedStatusChange: VoidFunction;
 	}
 
 	const { userId, isBlocked, onBlockedStatusChange }: Props = $props();
 
-	const mut = createMutation(() => ({
-		mutationFn: () => {
-			const promise = isBlocked ? apiUnblockUser(userId) : apiBlockUser(userId);
-			return promiseWithMinimumTimeOf(promise, 500);
-		}
-	}));
+	const mut = apiSetUserBlockedMutation();
 
 	const blockUserConfirmMsg =
 		'block user ? the user will be logged off from all devices and their access will be denied until unblocking';
@@ -27,7 +20,7 @@
 		if (!isBlocked && !confirm(blockUserConfirmMsg)) return;
 
 		mut
-			.mutateAsync()
+			.mutateAsync({ userId, block: !isBlocked })
 			.then(() => {
 				showSuccessToast(`user ${isBlocked ? 'unblocked' : 'blocked'}`);
 				onBlockedStatusChange();

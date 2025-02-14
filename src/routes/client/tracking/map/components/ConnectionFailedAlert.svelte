@@ -3,8 +3,8 @@
 	import Icon from '@iconify/svelte';
 
 	interface Props {
-		onCloseClick: () => void;
-		onReconnectClick: () => void;
+		onCloseClick: VoidFunction;
+		onReconnectClick: VoidFunction;
 		isConnectingToApi?: boolean;
 	}
 

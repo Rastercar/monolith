@@ -3,8 +3,8 @@
 
 	interface Props {
 		type: 'deletion' | 'removal';
-		onCancel: () => void;
-		onConfirm: () => void;
+		onCancel: VoidFunction;
+		onConfirm: VoidFunction;
 	}
 
 	let { type, onCancel, onConfirm }: Props = $props();

@@ -5,7 +5,7 @@
 	import { getContext } from 'svelte';
 
 	interface Props {
-		onCreateAnotherClick: () => void;
+		onCreateAnotherClick: VoidFunction;
 	}
 
 	const { onCreateAnotherClick }: Props = $props();

@@ -7,7 +7,7 @@
 	import TrackerListItem from './TrackerListItem.svelte';
 
 	interface Props {
-		onCloseClick: () => void;
+		onCloseClick: VoidFunction;
 	}
 
 	const { onCloseClick }: Props = $props();

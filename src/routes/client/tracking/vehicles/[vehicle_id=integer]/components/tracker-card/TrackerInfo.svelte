@@ -1,13 +1,11 @@
 <script lang="ts">
 	import type { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
-	import { apiDeleteTracker, apiSetTrackerVehicle } from '$lib/api/tracker';
+	import { apiDeleteTrackerMutation, apiSetTrackerVehicleMutation } from '$lib/api/tracker.queries';
 	import type { Tracker } from '$lib/api/tracker.schema';
 	import TrackerSimCardsAccordion from '$lib/components/non-generic/accordion/tracker-sim-cards-acordion/TrackerSimCardsAccordion.svelte';
 	import TrackerStatusIndicator from '$lib/components/non-generic/indicator/TrackerStatusIndicator.svelte';
 	import { getAuthContext } from '$lib/store/context';
-	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import { DropdownMenu } from 'bits-ui';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 
@@ -16,9 +14,9 @@
 		createSimCardForm: SuperValidated<Infer<typeof createSimCardSchema>>;
 		updateSimCardForm: SuperValidated<Infer<typeof updateSimCardSchema>>;
 
-		onTrackerRemoved: () => void;
-		onTrackerDeleted: () => void;
-		onEditModeClicked: () => void;
+		onTrackerRemoved: VoidFunction;
+		onTrackerDeleted: VoidFunction;
+		onEditModeClicked: VoidFunction;
 	}
 
 	let {
@@ -30,15 +28,9 @@
 		onEditModeClicked
 	}: Props = $props();
 
-	const removeTrackerMutation = createMutation(() => ({
-		mutationFn: () => apiSetTrackerVehicle({ vehicleTrackerId: tracker.id, vehicleId: null }),
-		onError: showErrorToast
-	}));
+	const setTrackerVehicleMutation = apiSetTrackerVehicleMutation();
 
-	const deleteTrackerMutation = createMutation(() => ({
-		mutationFn: (r: boolean) => apiDeleteTracker(tracker.id, { deleteAssociatedSimCards: r }),
-		onError: showErrorToast
-	}));
+	const deleteTrackerMutation = apiDeleteTrackerMutation();
 
 	const removeTracker = async () => {
 		const ok = confirm(
@@ -47,15 +39,15 @@
 
 		if (!ok) return;
 
-		await removeTrackerMutation.mutateAsync();
+		await setTrackerVehicleMutation.mutateAsync({ vehicleId: null, vehicleTrackerId: tracker.id });
 		onTrackerRemoved();
 	};
 
-	const deleteTracker = async (deleteSimCards: boolean) => {
+	const deleteTracker = async (deleteAssociatedSimCards: boolean) => {
 		const ok = confirm('Delete the tracker ?\n\nAny positions recieved will be lost');
 		if (!ok) return;
 
-		await deleteTrackerMutation.mutateAsync(deleteSimCards);
+		await deleteTrackerMutation.mutateAsync({ id: tracker.id, deleteAssociatedSimCards });
 		onTrackerDeleted();
 	};
 

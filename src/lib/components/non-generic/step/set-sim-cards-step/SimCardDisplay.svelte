@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { apiDeleteSimCard, apiUpdateSimCard } from '$lib/api/sim-card';
+	import {
+		apiDeleteSimCardByIdMutation,
+		apiUpdateSimCardMutation
+	} from '$lib/api/sim-card.queries';
 	import type { SimCard } from '$lib/api/sim-card.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import { Tooltip } from 'bits-ui';
 	import SimDeletionOrRemovalWarning from './SimDeletionOrRemovalWarning.svelte';
 
@@ -12,34 +14,32 @@
 		simCard: SimCard;
 		additionalClasses?: string;
 
-		onSimDeleted: () => void;
-		onSimRemoved: () => void;
+		onSimDeleted: VoidFunction;
+		onSimRemoved: VoidFunction;
 	}
 
 	let { simCard, onSimDeleted, onSimRemoved, additionalClasses = '' }: Props = $props();
 
 	let warningToShow: 'deletion' | 'removal' | null = $state(null);
 
-	const removeSimCardMutation = createMutation(() => ({
-		mutationFn: () => apiUpdateSimCard(simCard.id, { vehicleTrackerId: null }),
-		onSuccess: () => showSuccessToast('SIM card removed from slot')
-	}));
+	const removeSimCardMutation = apiUpdateSimCardMutation({
+		onSuccess: () => showSuccessToast('SIM card removed')
+	});
 
-	const deleteSimMutation = createMutation(() => ({
-		mutationFn: () => apiDeleteSimCard(simCard.id),
+	const deleteSimMutation = apiDeleteSimCardByIdMutation({
 		onSuccess: () => showSuccessToast('SIM card deleted')
-	}));
+	});
 
 	const deleteSimCard = () => {
 		deleteSimMutation
-			.mutateAsync()
+			.mutateAsync(simCard.id)
 			.then(onSimDeleted)
 			.catch(() => showErrorToast('failed to delete sim card'));
 	};
 
 	const removeSimCard = () => {
 		removeSimCardMutation
-			.mutateAsync()
+			.mutateAsync({ id: simCard.id, body: { vehicleTrackerId: null } })
 			.then(onSimRemoved)
 			.catch(() => showErrorToast('failed to remove sim card'));
 	};

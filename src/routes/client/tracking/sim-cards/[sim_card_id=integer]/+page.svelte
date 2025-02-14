@@ -1,28 +1,24 @@
 <script lang="ts">
-	import { apiDeleteSimCard } from '$lib/api/sim-card';
+	import { apiDeleteSimCardByIdMutation } from '$lib/api/sim-card.queries.js';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import UpdateSimCardForm from '$lib/components/non-generic/form/UpdateSimCardForm.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { route } from '$lib/ROUTES';
-	import { showErrorToast, showSuccessToast } from '$lib/store/toast';
+	import { showSuccessToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 
 	const { data } = $props();
 
 	let simDeleted = $state(false);
 	let editMode = $state(false);
 
-	const deleteSimCardMutation = createMutation(() => ({
-		mutationFn: () => apiDeleteSimCard(data.simCard.id),
-		onError: showErrorToast
-	}));
+	const deleteSimCardMutation = apiDeleteSimCardByIdMutation();
 
 	const deleteSimCard = async () => {
 		if (!confirm('Permanently delete this SIM card ?')) return;
 
-		await deleteSimCardMutation.mutateAsync();
+		await deleteSimCardMutation.mutateAsync(data.simCard.id);
 		simDeleted = true;
 	};
 </script>

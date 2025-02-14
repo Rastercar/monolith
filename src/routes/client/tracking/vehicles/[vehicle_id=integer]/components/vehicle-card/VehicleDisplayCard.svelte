@@ -9,7 +9,7 @@
 		vehicle: Vehicle;
 		formSchema: SuperValidated<Infer<typeof updateVehicleSchema>>;
 		onVehicleUpdate: (_: Vehicle) => void;
-		onVehicleDelete: () => void;
+		onVehicleDelete: VoidFunction;
 	}
 
 	let { vehicle = $bindable(), formSchema, onVehicleUpdate, onVehicleDelete }: Props = $props();

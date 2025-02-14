@@ -1,6 +1,12 @@
-import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+import { showErrorToast } from '$lib/store/toast';
+import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
 import type { ApiQueryOptions, Paginated, PaginationParameters } from './common';
-import { apiGetTrackerLastLocation, apiGetTrackers } from './tracker';
+import {
+	apiDeleteTracker,
+	apiGetTrackerLastLocation,
+	apiGetTrackers,
+	apiSetTrackerVehicle
+} from './tracker';
 import type { GetTrackersFilters, Tracker } from './tracker.schema';
 
 export function apiGetTrackerLastLocationQuery(
@@ -24,5 +30,28 @@ export function apiGetTrackersQuery(
 		queryFn: () => apiGetTrackers({ pagination, filters }),
 		placeholderData: keepPreviousData,
 		...opts
+	}));
+}
+
+export function apiDeleteTrackerMutation() {
+	return createMutation(() => ({
+		mutationFn: ({
+			id,
+			deleteAssociatedSimCards
+		}: {
+			id: number;
+			deleteAssociatedSimCards: boolean;
+		}) => {
+			return apiDeleteTracker(id, { deleteAssociatedSimCards });
+		},
+		onError: showErrorToast
+	}));
+}
+
+export function apiSetTrackerVehicleMutation() {
+	return createMutation(() => ({
+		mutationFn: (ids: { vehicleId: number | null; vehicleTrackerId: number }) =>
+			apiSetTrackerVehicle(ids),
+		onError: showErrorToast
 	}));
 }

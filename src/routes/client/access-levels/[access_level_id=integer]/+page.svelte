@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { apiDeleteAccessLevel } from '$lib/api/access-level';
+	import { apiDeleteUserByIdMutation } from '$lib/api/access-level.queries';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/context';
-	import { showErrorToast } from '$lib/store/toast';
 	import Icon from '@iconify/svelte';
-	import { createMutation } from '@tanstack/svelte-query';
 	import { Popover } from 'bits-ui';
 	import AccessLevelInfo from './components/AccessLevelInfo.svelte';
 	import UpdateAccessLevelForm from './components/UpdateAccessLevelForm.svelte';
@@ -19,14 +17,13 @@
 	let accessLevel = $state(data.accessLevel);
 	let accessLevelDeleted = $state(false);
 
-	const deleteAccessLevelMutation = createMutation(() => ({
-		mutationFn: () => apiDeleteAccessLevel(accessLevel.id),
-		onError: showErrorToast
-	}));
+	const deleteAccessLevelMutation = apiDeleteUserByIdMutation();
 
 	const deleteAccessLevel = async () => {
 		if (!confirm('Permanently delete this access level ?')) return;
-		await deleteAccessLevelMutation.mutateAsync().then(() => (accessLevelDeleted = true));
+		await deleteAccessLevelMutation
+			.mutateAsync(data.accessLevel.id)
+			.then(() => (accessLevelDeleted = true));
 	};
 
 	const auth = getAuthContext();

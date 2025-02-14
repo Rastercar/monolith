@@ -1,4 +1,4 @@
-import { updateFleetSchema } from '$lib/api/fleet.schema.js';
+import { fleetSchema, updateFleetSchema } from '$lib/api/fleet.schema.js';
 import { findOrgFleetById } from '$lib/server/db/repo/fleet.js';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateFormWithFailOnError } from '$lib/server/middlewares/validation';
@@ -11,13 +11,13 @@ export const load = async ({ params, locals }) => {
 	const { user } = acl(locals);
 
 	const fleetId = parseInt(params.fleet_id);
-	const fleet = await findOrgFleetById(fleetId, user.organization.id);
+	const fleet = await findOrgFleetById({ id: fleetId, orgId: user.organization.id });
 
 	if (!fleet) return error(404);
 
 	const updateFleetForm = await superValidate(zod(updateFleetSchema), { defaults: fleet });
 
-	return { fleet, updateFleetForm };
+	return { fleet: fleetSchema.parse(fleet), updateFleetForm };
 };
 
 export const actions = {
@@ -28,7 +28,10 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, updateFleetSchema);
 
-		const updatedFleet = await _updateFleet(fleetId, user.organization.id, form.data);
+		const updatedFleet = await _updateFleet(
+			{ id: fleetId, orgId: user.organization.id },
+			form.data
+		);
 
 		return { form, updatedFleet };
 	}

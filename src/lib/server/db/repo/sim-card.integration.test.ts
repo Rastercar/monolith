@@ -53,13 +53,13 @@ describe('access level repo', async () => {
 	});
 
 	test('deleteOrgSimCardById / findOrgSimCardById', async () => {
-		let card = await findOrgSimCardById(orgId, id);
+		let card = await findOrgSimCardById({ orgId, id });
 		expect(card).toMatchObject({ id, organizationId: orgId });
 
-		const result = await deleteOrgSimCardById(orgId, id);
+		const result = await deleteOrgSimCardById({ orgId, id });
 		expect(result).toBeDefined();
 
-		card = await findOrgSimCardById(orgId, id);
+		card = await findOrgSimCardById({ orgId, id });
 		expect(card).toBeUndefined();
 	});
 
@@ -74,7 +74,7 @@ describe('access level repo', async () => {
 		let card = await createOrgSimCard(orgId, newCard);
 		expect(card).toMatchObject(newCard);
 
-		card = await updateOrgSimCard(card.id, orgId, updatedSimCardData);
+		card = await updateOrgSimCard({ id: card.id, orgId }, updatedSimCardData);
 		expect(card).toMatchObject(updatedSimCardData);
 	});
 
@@ -89,7 +89,10 @@ describe('access level repo', async () => {
 		let card = await createOrgSimCard(orgId, newCard);
 		expect(card).toMatchObject(newCard);
 
-		const cards = await findOrgSimCardsByVehicleTrackerId(card.vehicleTrackerId as number, orgId);
+		const cards = await findOrgSimCardsByVehicleTrackerId({
+			id: card.vehicleTrackerId as number,
+			orgId
+		});
 		expect(cards.find((c) => c.id === card.id)).toMatchObject(card);
 	});
 

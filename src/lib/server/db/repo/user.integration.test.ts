@@ -65,7 +65,7 @@ describe('user repo', async () => {
 	});
 
 	test('findOrgUserById', async () => {
-		const user = await findOrgUserById(5, orgId);
+		const user = await findOrgUserById({ id: 5, orgId });
 		expect(user).toMatchObject({ id: 5, organizationId: orgId });
 	});
 
@@ -139,7 +139,7 @@ describe('user repo', async () => {
 		const accessLevelId = 2;
 		await setOrgUserAccessLevel({ userId, orgId, accessLevelId });
 
-		const user = await findOrgUserById(userId, orgId);
+		const user = await findOrgUserById({ id: userId, orgId });
 		expect(user).toMatchObject({ accessLevelId });
 	});
 
@@ -221,25 +221,25 @@ describe('user repo', async () => {
 	});
 
 	test('blockOrgUserById', async () => {
-		await blockOrgUserById(4, orgId);
+		await blockOrgUserById({ id: 4, orgId });
 
-		const user = await findOrgUserById(4, orgId);
+		const user = await findOrgUserById({ id: 4, orgId });
 		expect(user?.blocked).toBe(true);
 	});
 
 	test('unblockOrgUserById', async () => {
-		await blockOrgUserById(3, orgId);
-		await unblockOrgUserById(3, orgId);
+		await blockOrgUserById({ id: 3, orgId });
+		await unblockOrgUserById({ id: 3, orgId });
 
-		const user = await findOrgUserById(3, orgId);
+		const user = await findOrgUserById({ id: 3, orgId });
 
 		expect(user?.blocked).toBe(false);
 	});
 
 	test('deleteOrgUserById', async () => {
-		await deleteOrgUserById(10, orgId);
+		await deleteOrgUserById({ id: 10, orgId });
 
-		const user = await findOrgUserById(10, orgId);
+		const user = await findOrgUserById({ id: 10, orgId });
 		expect(user).toBeUndefined();
 	});
 });

@@ -7,6 +7,7 @@ import { getDB } from '../db';
 import { pushIlikeFilterIdDefined } from '../helpers';
 import { paginate } from '../pagination';
 import { accessLevel, organization, session, user } from '../schema';
+import type { IdAndOrgId } from './utils';
 
 export async function findOrgUsersWithPagination(
 	orgId: number,
@@ -50,7 +51,7 @@ export function findUserById(id: number) {
 	});
 }
 
-export function findOrgUserById(id: number, orgId: number) {
+export function findOrgUserById({ id, orgId }: IdAndOrgId) {
 	return getDB().query.user.findFirst({
 		where: (user, { eq, and }) => and(eq(user.id, id), eq(user.organizationId, orgId)),
 		with: { accessLevel: true, organization: true }
@@ -225,13 +226,13 @@ export async function updateUserPassword(
 	return updatedUser;
 }
 
-export function deleteOrgUserById(id: number, orgId: number) {
+export function deleteOrgUserById({ id, orgId }: IdAndOrgId) {
 	return getDB()
 		.delete(user)
 		.where(and(eq(user.id, id), eq(user.organizationId, orgId)));
 }
 
-export function blockOrgUserById(id: number, orgId: number) {
+export function blockOrgUserById({ id, orgId }: IdAndOrgId) {
 	return getDB().transaction(async (tx) => {
 		await tx
 			.update(user)
@@ -242,7 +243,7 @@ export function blockOrgUserById(id: number, orgId: number) {
 	});
 }
 
-export function unblockOrgUserById(id: number, orgId: number) {
+export function unblockOrgUserById({ id, orgId }: IdAndOrgId) {
 	return getDB()
 		.update(user)
 		.set({ blocked: false })

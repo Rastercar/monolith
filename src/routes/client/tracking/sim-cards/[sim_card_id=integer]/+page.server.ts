@@ -11,7 +11,7 @@ export const load = async ({ params, locals }) => {
 	const { user } = acl(locals);
 
 	const simCardId = parseInt(params.sim_card_id);
-	const simCard = await findOrgSimCardByID(simCardId, user.organization.id);
+	const simCard = await findOrgSimCardByID({ id: simCardId, orgId: user.organization.id });
 
 	if (!simCard) return error(404);
 
@@ -28,7 +28,7 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, updateSimCardSchema);
 
-		const res = await _updateSimCard(simCardId, user.organization.id, form.data);
+		const res = await _updateSimCard({ id: simCardId, orgId: user.organization.id }, form.data);
 
 		if ('error' in res) {
 			if (res.error === 'SSN_IN_USE') {

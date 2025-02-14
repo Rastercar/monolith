@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 	const trackerId = parseInt(params.tracker_id);
 
 	// assert the tracker exists and belongs to the user org
-	const tracker = await findOrgTrackerById(trackerId, user.organization.id);
+	const tracker = await findOrgTrackerById({ id: trackerId, orgId: user.organization.id });
 	if (!tracker) return error(404);
 
 	const lastLocation = await findTrackerLastLocation(trackerId);

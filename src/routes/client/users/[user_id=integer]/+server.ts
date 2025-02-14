@@ -13,7 +13,10 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 		return error(400, 'cannot delete your own user');
 	}
 
-	const userToDelete = await findOrgUserById(userToDeleteId, reqUser.organization.id);
+	const userToDelete = await findOrgUserById({
+		id: userToDeleteId,
+		orgId: reqUser.organization.id
+	});
 	if (!userToDelete) {
 		return error(404);
 	}
@@ -30,7 +33,7 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 		await s3.deleteFile(userToDelete.profilePicture);
 	}
 
-	await deleteOrgUserById(userToDeleteId, reqUser.organization.id);
+	await deleteOrgUserById({ id: userToDeleteId, orgId: reqUser.organization.id });
 
 	return json('user deleted');
 };

@@ -23,7 +23,7 @@
 
 	const getPermissionsToToggleMapFromAccessLevel = () =>
 		Object.keys(permissionDetails).reduce(
-			(acc, v) => ({ ...acc, [v]: accessLevel.permissions.includes(v) }),
+			(acc, v) => ({ ...acc, [v]: (accessLevel.permissions ?? []).includes(v as permission) }),
 			{}
 		) as Record<permission, boolean>;
 

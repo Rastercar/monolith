@@ -29,7 +29,7 @@ const kitHelpersMock = vi.mocked(kitHelpers);
 
 test('checkUSerHasPermissions - returns true if the all the required permissions are included in the user access level', () => {
 	const mockUser = createUserMock();
-	mockUser.accessLevel.permissions = ['a', 'b', 'c'];
+	mockUser.accessLevel.permissions = ['a', 'b', 'c'] as unknown as permission[];
 
 	const test = (input: string[], out: boolean) => {
 		expect(checkUSerHasPermissions(mockUser, input as permission[])).toBe(out);

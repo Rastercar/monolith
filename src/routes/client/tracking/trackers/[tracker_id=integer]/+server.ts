@@ -6,6 +6,7 @@ import {
 	type UpdateTrackerRes
 } from '$lib/api/tracker.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
+import type { IdAndOrgId } from '$lib/server/db/repo/utils';
 import { findOrgVehicleById } from '$lib/server/db/repo/vehicle';
 import { deleteOrgTrackerById, updateOrgTracker } from '$lib/server/db/repo/vehicle-tracker';
 import { acl } from '$lib/server/middlewares/auth';
@@ -14,11 +15,10 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export async function _updateVehicleTracker(
-	id: number,
-	orgId: number,
+	ids: IdAndOrgId,
 	body: UpdateTrackerBody
 ): Promise<UpdateTrackerRes> {
-	return updateOrgTracker(id, orgId, body)
+	return updateOrgTracker(ids, body)
 		.then((tracker) => trackerSchema.parse(tracker))
 		.catch((e) => {
 			if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
@@ -39,7 +39,10 @@ export const DELETE: RequestHandler = async ({ params, request, locals }) => {
 		deleteTrackerSchema
 	);
 
-	await deleteOrgTrackerById(trackerId, user.organization.id, deleteAssociatedSimCards);
+	await deleteOrgTrackerById(
+		{ id: trackerId, orgId: user.organization.id },
+		deleteAssociatedSimCards
+	);
 
 	return json('tracker card deleted');
 };
@@ -52,11 +55,14 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 	const body = await validateJsonRequestBody(request, updateTrackerSchema);
 
 	if (body.vehicleId) {
-		const vehicle = await findOrgVehicleById(body.vehicleId, user.organization.id);
+		const vehicle = await findOrgVehicleById({ id: body.vehicleId, orgId: user.organization.id });
 		if (!vehicle) error(400, 'vehicle not found');
 	}
 
-	let trackerOrError = await _updateVehicleTracker(simCardId, user.organization.id, body);
+	let trackerOrError = await _updateVehicleTracker(
+		{ id: simCardId, orgId: user.organization.id },
+		body
+	);
 
 	if ('error' in trackerOrError) {
 		error(400, { message: 'invalid request body', code: trackerOrError.error });

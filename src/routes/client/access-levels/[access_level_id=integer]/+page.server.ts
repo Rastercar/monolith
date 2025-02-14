@@ -11,7 +11,10 @@ export const load = async ({ params, locals }) => {
 
 	const accessLevelId = parseInt(params.access_level_id);
 
-	const accessLevelFromDb = await findOrgAccessLevelById(accessLevelId, user.organization.id);
+	const accessLevelFromDb = await findOrgAccessLevelById({
+		id: accessLevelId,
+		orgId: user.organization.id
+	});
 
 	if (!accessLevelFromDb) return error(404);
 
@@ -36,14 +39,14 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, updateAccessLevelSchema);
 
-		const accessLevel = await findOrgAccessLevelById(alId, user.organization.id);
+		const accessLevel = await findOrgAccessLevelById({ id: alId, orgId: user.organization.id });
 		if (!accessLevel) return error(404, 'access level not found');
 
 		if (accessLevel.isFixed) {
 			return error(403, 'cannot update fixed access levels');
 		}
 
-		const al = await updateOrgAccessLevel(alId, user.organization.id, form.data);
+		const al = await updateOrgAccessLevel({ id: alId, orgId: user.organization.id }, form.data);
 
 		const updatedAccessLevel = accessLevelSchema.parse(al);
 		return { form, updatedAccessLevel };

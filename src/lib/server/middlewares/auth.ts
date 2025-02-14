@@ -56,7 +56,7 @@ export function denyAccessOnMissingPermissions(user: User, reqPerms: permission 
 }
 
 export function checkUSerHasPermissions(user: User, reqPerms: permission | permission[]): boolean {
-	return wrapToArray(reqPerms).every((p) => user.accessLevel.permissions.includes(p));
+	return wrapToArray(reqPerms).every((p) => user.accessLevel?.permissions?.includes(p));
 }
 
 interface AclOptions {

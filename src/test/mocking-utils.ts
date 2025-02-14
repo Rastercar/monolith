@@ -10,6 +10,7 @@ export const createUserMock = (): User => ({
 	description: null,
 	emailVerified: false,
 	profilePicture: null,
+	mustSetNewPassword: false,
 	accessLevel: createAccessLevelMock(),
 	organization: createOrganizationMock()
 });

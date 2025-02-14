@@ -17,7 +17,7 @@ export class AuthStore {
 	removeUserPermissions(permissionsToRemove: permission[]) {
 		if (!this.user) return;
 
-		this.user.accessLevel.permissions = this.user.accessLevel.permissions.filter(
+		this.user.accessLevel.permissions = this.user.accessLevel?.permissions?.filter(
 			(p) => !permissionsToRemove.includes(p as permission)
 		);
 	}
@@ -45,6 +45,6 @@ export class AuthStore {
 		if (!u) return false;
 
 		const requiredPermissions = wrapToArray(permission);
-		return requiredPermissions.every((p) => u.accessLevel.permissions.includes(p));
+		return requiredPermissions.every((p) => u.accessLevel?.permissions?.includes(p));
 	}
 }

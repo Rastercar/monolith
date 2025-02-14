@@ -53,12 +53,12 @@ describe('tracker repo', async () => {
 	});
 
 	test('deleteOrgTrackerById / findOrgTrackerById', async () => {
-		let tracker = await findOrgTrackerById(trackerId, orgId);
+		let tracker = await findOrgTrackerById({ id: trackerId, orgId });
 		expect(tracker).toMatchObject({ id: trackerId, organizationId: orgId });
 
-		await deleteOrgTrackerById(trackerId, orgId, false);
+		await deleteOrgTrackerById({ id: trackerId, orgId }, false);
 
-		tracker = await findOrgTrackerById(trackerId, orgId);
+		tracker = await findOrgTrackerById({ id: trackerId, orgId });
 		expect(tracker).toBeUndefined();
 	});
 
@@ -75,7 +75,7 @@ describe('tracker repo', async () => {
 		let tracker = await createOrgTracker(orgId, newTracker);
 		expect(tracker).toMatchObject(newTracker);
 
-		tracker = await updateOrgTracker(tracker.id, orgId, updatedTrackerData);
+		tracker = await updateOrgTracker({ id: tracker.id, orgId }, updatedTrackerData);
 		expect(tracker).toMatchObject(updatedTrackerData);
 	});
 

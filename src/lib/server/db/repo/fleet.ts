@@ -3,8 +3,9 @@ import type { CreateFleetBody, GetFleetsFilters, UpdateFleetBody } from '$lib/ap
 import { and, eq, type SQL } from 'drizzle-orm';
 import { getDB } from '../db';
 import { pushIlikeFilterIdDefined } from '../helpers';
-import { paginate } from '../pagination';
+import { countRecords, getLimitOffset } from '../pagination';
 import { fleet } from '../schema';
+import type { IdAndOrgId } from './utils';
 
 // TODO: create tests
 export async function findOrgFleetsWithPagination(
@@ -12,12 +13,26 @@ export async function findOrgFleetsWithPagination(
 	params: PaginationWithFilters<GetFleetsFilters>
 ) {
 	const { pagination, filters } = params;
+	const { page, pageSize } = pagination;
 
 	const sqlFilters: SQL[] = [eq(fleet.organizationId, orgId)];
 
 	pushIlikeFilterIdDefined(sqlFilters, fleet.name, filters?.name);
 
-	return paginate(fleet, { orderBy: fleet.name, pagination, where: and(...sqlFilters) });
+	const where = and(...sqlFilters);
+
+	const records = await getDB().query.fleet.findMany({
+		orderBy: (fleet, { asc }) => asc(fleet.name),
+		...getLimitOffset(pagination),
+		where,
+		with: { vehicles: true }
+	});
+
+	const itemCount = await countRecords(fleet, where);
+
+	const pageCount = Math.ceil(itemCount / pageSize);
+
+	return { page, records, pageSize, pageCount, itemCount };
 }
 
 // TODO: create tests
@@ -31,14 +46,15 @@ export async function createOrgFleet(orgId: number, body: CreateFleetBody) {
 }
 
 // TODO: create tests
-export function findOrgFleetById(id: number, orgId: number) {
+export function findOrgFleetById({ id, orgId }: IdAndOrgId) {
 	return getDB().query.fleet.findFirst({
-		where: (fleet, { eq, and }) => and(eq(fleet.organizationId, orgId), eq(fleet.id, id))
+		where: (fleet, { eq, and }) => and(eq(fleet.organizationId, orgId), eq(fleet.id, id)),
+		with: { vehicles: true }
 	});
 }
 
 // TODO: create tests
-export async function updateOrgFleet(id: number, orgId: number, body: UpdateFleetBody) {
+export async function updateOrgFleet({ id, orgId }: IdAndOrgId, body: UpdateFleetBody) {
 	const [updatedFleet] = await getDB()
 		.update(fleet)
 		.set(body)
@@ -49,7 +65,7 @@ export async function updateOrgFleet(id: number, orgId: number, body: UpdateFlee
 }
 
 // TODO: create tests
-export function deleteFleetById(id: number, orgId: number) {
+export function deleteFleetById({ id, orgId }: IdAndOrgId) {
 	return getDB()
 		.delete(fleet)
 		.where(and(eq(fleet.id, id), eq(fleet.organizationId, orgId)));

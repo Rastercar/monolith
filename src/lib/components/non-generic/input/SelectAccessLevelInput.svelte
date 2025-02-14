@@ -104,7 +104,7 @@
 								{option.label}
 
 								<div class="badge variant-filled-primary ml-8">
-									{option.meta?.permissions.length ?? 0} permissions
+									{option.meta?.permissions?.length ?? 0} permissions
 								</div>
 							</div>
 						{/snippet}

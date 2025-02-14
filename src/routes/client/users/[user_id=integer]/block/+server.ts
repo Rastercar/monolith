@@ -8,10 +8,10 @@ export const POST: RequestHandler = async ({ params, locals }) => {
 
 	const userToBeBlockedId = parseInt(params.user_id);
 
-	const user = await findOrgUserById(userToBeBlockedId, reqUser.organization.id);
+	const user = await findOrgUserById({ id: userToBeBlockedId, orgId: reqUser.organization.id });
 	if (!user) error(404, 'user to block not found');
 
-	await blockOrgUserById(userToBeBlockedId, reqUser.organization.id);
+	await blockOrgUserById({ id: userToBeBlockedId, orgId: reqUser.organization.id });
 
 	return json('user blocked');
 };

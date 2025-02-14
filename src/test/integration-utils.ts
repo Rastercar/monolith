@@ -1,4 +1,5 @@
 import { setClient, setDB, type DB, type DbClient } from '$lib/server/db/db';
+import consola from 'consola';
 import { sql, type Logger } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import type { PostgresError } from 'postgres';
@@ -60,7 +61,7 @@ export async function createAndSetTestDatabaseAsDbSingleton(
 
 	const consoleLogger: Logger = {
 		logQuery(query, params) {
-			console.log(query, params);
+			consola.log(query, params);
 		}
 	};
 

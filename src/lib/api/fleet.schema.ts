@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { vehicleSchema } from './vehicle.schema';
 
 export const getFleetsSearchParamsSchema = z.object({
 	name: z.string().optional()
@@ -9,7 +10,8 @@ export const fleetSchema = z.object({
 	organizationId: z.number(),
 	createdAt: z.date({ coerce: true }),
 	name: z.string(),
-	description: z.string()
+	description: z.string(),
+	vehicles: z.array(vehicleSchema).optional()
 });
 
 export const createFleetSchema = z.object({

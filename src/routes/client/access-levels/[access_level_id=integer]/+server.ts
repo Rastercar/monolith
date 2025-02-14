@@ -16,7 +16,10 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		return error(403, 'cannot delete your own access level');
 	}
 
-	const accessLevelToDelete = await findOrgAccessLevelById(alId, user.organization.id);
+	const accessLevelToDelete = await findOrgAccessLevelById({
+		id: alId,
+		orgId: user.organization.id
+	});
 	if (!accessLevelToDelete) return error(404);
 
 	if (accessLevelToDelete.isFixed) {
@@ -29,7 +32,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		return error(403, 'cannot delete access level with associated users');
 	}
 
-	await deleteOrgAccessLevelById(alId, user.organization.id);
+	await deleteOrgAccessLevelById({ id: alId, orgId: user.organization.id });
 
 	return json('access level deleted');
 };

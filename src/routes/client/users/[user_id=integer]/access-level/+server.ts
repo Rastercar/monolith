@@ -14,7 +14,10 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 	const { accessLevelId } = await validateJsonRequestBody(request, updateUserAccessLevelSchema);
 
 	// assert access level belongs to request user org
-	const accessLevel = await findOrgAccessLevelById(accessLevelId, reqUser.organization.id);
+	const accessLevel = await findOrgAccessLevelById({
+		id: accessLevelId,
+		orgId: reqUser.organization.id
+	});
 	if (!accessLevel) return error(404, 'access level does not exist');
 
 	await setOrgUserAccessLevel({ userId, orgId: reqUser.organization.id, accessLevelId });

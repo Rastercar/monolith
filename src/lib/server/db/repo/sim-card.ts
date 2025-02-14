@@ -9,6 +9,7 @@ import { getDB } from '../db';
 import { pushIlikeFilterIdDefined } from '../helpers';
 import { paginate } from '../pagination';
 import { simCard } from '../schema';
+import type { IdAndOrgId } from './utils';
 
 export async function findOrgSimCardsWithPagination(
 	orgId: number,
@@ -31,20 +32,20 @@ export async function findOrgSimCardsWithPagination(
 	return paginate(simCard, { pagination, where: and(...sqlFilters) });
 }
 
-export function findOrgSimCardById(id: number, orgId: number) {
+export function findOrgSimCardById({ id, orgId }: IdAndOrgId) {
 	return getDB().query.simCard.findFirst({
 		where: (simCard, { eq, and }) => and(eq(simCard.organizationId, orgId), eq(simCard.id, id))
 	});
 }
 
-export function findOrgSimCardsByVehicleTrackerId(vehicleTrackerId: number, orgId: number) {
+export function findOrgSimCardsByVehicleTrackerId({ id, orgId }: IdAndOrgId) {
 	return getDB().query.simCard.findMany({
 		where: (simCard, { eq, and }) =>
-			and(eq(simCard.vehicleTrackerId, vehicleTrackerId), eq(simCard.organizationId, orgId))
+			and(eq(simCard.vehicleTrackerId, id), eq(simCard.organizationId, orgId))
 	});
 }
 
-export async function updateOrgSimCard(id: number, orgId: number, body: UpdateSimCardBody) {
+export async function updateOrgSimCard({ id, orgId }: IdAndOrgId, body: UpdateSimCardBody) {
 	const [updatedSimCard] = await getDB()
 		.update(simCard)
 		.set(body)
@@ -63,7 +64,7 @@ export async function createOrgSimCard(orgId: number, body: CreateSimCardBody) {
 	return createdSimCard;
 }
 
-export function deleteOrgSimCardById(id: number, orgId: number) {
+export function deleteOrgSimCardById({ id, orgId }: IdAndOrgId) {
 	return getDB()
 		.delete(simCard)
 		.where(and(eq(simCard.id, id), eq(simCard.organizationId, orgId)));

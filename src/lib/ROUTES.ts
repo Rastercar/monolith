@@ -26,7 +26,7 @@ const PAGES = {
   "/client/my-profile": `/client/my-profile`,
   "/client/settings/organization": `/client/settings/organization`,
   "/client/settings/profile": `/client/settings/profile`,
-  "/client/settings/security": (params?: { redirectHereDueToForcePasswordChange?: (boolean) }) => {
+  "/client/settings/security": (params?: { redirectHereDueToForcePasswordChange?: (string) }) => {
     return `/client/settings/security${appendSp({ 'redirectHereDueToForcePasswordChange': params?.['redirectHereDueToForcePasswordChange'] })}`
   },
   "/client/settings/sessions": `/client/settings/sessions`,

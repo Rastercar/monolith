@@ -27,7 +27,7 @@ describe('AuthStore', () => {
 	test('removeUserPermissions - remove a permission from the user access level permissions', () => {
 		const permission: permission = 'CREATE_SIM_CARD';
 
-		user.accessLevel.permissions = [permission, 'other_permission'];
+		user.accessLevel.permissions = [permission, 'other_permission' as permission];
 
 		store.setUser(user);
 		expect(store.user?.accessLevel.permissions).toEqual([permission, 'other_permission']);

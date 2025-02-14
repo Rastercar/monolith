@@ -1,6 +1,6 @@
 import type { PaginationParameters } from '$lib/api/common';
 import { wrapToArray } from '$lib/utils/arrays';
-import { getTableColumns, sql, type SQL } from 'drizzle-orm';
+import { count, getTableColumns, sql, type SQL } from 'drizzle-orm';
 import type { PgColumn, PgSelect, PgTableWithColumns, TableConfig } from 'drizzle-orm/pg-core';
 import { getDB } from './db';
 
@@ -14,8 +14,9 @@ interface PaginateOptions<S extends PgSelect> {
 }
 
 /**
- * Given a table and some query options, returns
- * executs a limit offset paginated query and returns the results
+ * Given a table and some query options, executes a limit offset paginated
+ * query and returns the results, this is great for simple pagination and
+ * avoids a second query for counting all rows (thus )
  */
 export async function paginate<T extends TableConfig, S extends PgSelect>(
 	table: PgTableWithColumns<T>,
@@ -50,4 +51,19 @@ export async function paginate<T extends TableConfig, S extends PgSelect>(
 	const records = recordsWithCount.map(({ itemCount, ...rest }) => rest);
 
 	return { page, records, pageSize, pageCount, itemCount };
+}
+
+// TODO: tests
+export function getLimitOffset({ page, pageSize }: PaginationParameters) {
+	return { limit: pageSize, offset: (page - 1) * pageSize };
+}
+
+// TODO: tests
+export async function countRecords<T extends TableConfig>(
+	table: PgTableWithColumns<T>,
+	where?: SQL
+): Promise<number> {
+	const [{ count: itemCount }] = await getDB().select({ count: count() }).from(table).where(where);
+
+	return itemCount;
 }

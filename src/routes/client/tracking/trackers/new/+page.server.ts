@@ -22,10 +22,10 @@ export const actions = {
 		const form = await validateFormWithFailOnError(request, createTrackerSchema);
 
 		if (form.data.vehicleId) {
-			const vehicleToAssociate = await findOrgVehicleById(
-				form.data.vehicleId,
-				user.organization.id
-			);
+			const vehicleToAssociate = await findOrgVehicleById({
+				id: form.data.vehicleId,
+				orgId: user.organization.id
+			});
 
 			if (!vehicleToAssociate) {
 				return setError(form, 'vehicleId', 'vehicle not found');

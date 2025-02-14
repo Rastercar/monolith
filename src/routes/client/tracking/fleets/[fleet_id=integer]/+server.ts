@@ -5,17 +5,14 @@ import {
 	type UpdateFleetBody
 } from '$lib/api/fleet.schema';
 import { deleteFleetById, updateOrgFleet } from '$lib/server/db/repo/fleet';
+import type { IdAndOrgId } from '$lib/server/db/repo/utils';
 import { acl } from '$lib/server/middlewares/auth';
 import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export async function _updateFleet(
-	id: number,
-	orgId: number,
-	body: UpdateFleetBody
-): Promise<Fleet> {
-	return updateOrgFleet(id, orgId, body).then((fleet) => fleetSchema.parse(fleet));
+export async function _updateFleet(ids: IdAndOrgId, body: UpdateFleetBody): Promise<Fleet> {
+	return updateOrgFleet(ids, body).then((fleet) => fleetSchema.parse(fleet));
 }
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
@@ -23,7 +20,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 
 	const fleetId = parseInt(params.fleet_id);
 
-	await deleteFleetById(fleetId, user.organization.id);
+	await deleteFleetById({ id: fleetId, orgId: user.organization.id });
 
 	return json('fleet card deleted');
 };
@@ -35,7 +32,7 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 
 	const body = await validateJsonRequestBody(request, updateFleetSchema);
 
-	let fleet = await _updateFleet(fleetId, user.organization.id, body);
+	let fleet = await _updateFleet({ id: fleetId, orgId: user.organization.id }, body);
 
 	return json(fleet);
 };

@@ -19,7 +19,7 @@ export const PUT: RequestHandler = async ({ request, params, locals }) => {
 
 	const vehicleId = parseInt(params.vehicle_id);
 
-	const vehicle = await findOrgVehicleById(vehicleId, user.organization.id);
+	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
 	if (!vehicle) return error(404, 'vehicle not found');
 
 	const oldVehiclePhoto = vehicle.photo;
@@ -45,7 +45,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 
 	const vehicleId = parseInt(params.vehicle_id);
 
-	const vehicle = await findOrgVehicleById(vehicleId, user.organization.id);
+	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
 	if (!vehicle) return error(404, 'vehicle not found');
 
 	if (!vehicle.photo) {

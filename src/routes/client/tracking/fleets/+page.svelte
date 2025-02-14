@@ -17,6 +17,7 @@
 		type ColumnDef
 	} from '@tanstack/svelte-table';
 	import DescriptionColumn from './components/DescriptionColumn.svelte';
+	import VehicleCountColumn from './components/VehicleCountColumn.svelte';
 
 	const { pagination, filters } = createPaginationWithFilters<GetFleetsFilters>({});
 
@@ -30,6 +31,12 @@
 		{
 			accessorKey: 'name',
 			header: () => 'Name'
+		},
+		{
+			accessorKey: 'vehicles',
+			header: () => 'Vehicles',
+			cell: ({ row }) =>
+				renderComponent(VehicleCountColumn, { count: row.original.vehicles?.length ?? 0 })
 		},
 		{
 			accessorKey: 'description',

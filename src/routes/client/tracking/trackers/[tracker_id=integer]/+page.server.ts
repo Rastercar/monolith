@@ -13,7 +13,7 @@ export const load = async ({ params, locals }) => {
 	const { user } = acl(locals);
 
 	const trackerId = parseInt(params.tracker_id);
-	const dbTracker = await findOrgTrackerById(trackerId, user.organization.id);
+	const dbTracker = await findOrgTrackerById({ id: trackerId, orgId: user.organization.id });
 
 	if (!dbTracker) return error(404);
 
@@ -35,11 +35,17 @@ export const actions = {
 		const form = await validateFormWithFailOnError(request, updateTrackerSchema);
 
 		if (form.data.vehicleId) {
-			const vehicle = await findOrgVehicleById(form.data.vehicleId, user.organization.id);
+			const vehicle = await findOrgVehicleById({
+				id: form.data.vehicleId,
+				orgId: user.organization.id
+			});
 			if (!vehicle) setError(form, 'vehicleId', 'vehicle not found');
 		}
 
-		const res = await _updateVehicleTracker(trackerId, user.organization.id, form.data);
+		const res = await _updateVehicleTracker(
+			{ id: trackerId, orgId: user.organization.id },
+			form.data
+		);
 
 		if ('error' in res) {
 			if (res.error === 'IMEI_IN_USE') {

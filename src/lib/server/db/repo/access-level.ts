@@ -9,6 +9,7 @@ import { getDB } from '../db';
 import { pushIlikeFilterIdDefined } from '../helpers';
 import { paginate } from '../pagination';
 import { accessLevel, user } from '../schema';
+import type { IdAndOrgId } from './utils';
 
 export async function findOrgAccessLevelsWithPagination(
 	orgId: number,
@@ -27,7 +28,7 @@ export async function findOrgAccessLevelsWithPagination(
 	});
 }
 
-export function findOrgAccessLevelById(id: number, orgId: number) {
+export function findOrgAccessLevelById({ id, orgId }: IdAndOrgId) {
 	return getDB().query.accessLevel.findFirst({
 		where: (accessLevel, { eq, and }) =>
 			and(eq(accessLevel.organizationId, orgId), eq(accessLevel.id, id))
@@ -43,7 +44,7 @@ export async function countUsersUsingAccessLevel(id: number) {
 	return cnt;
 }
 
-export async function updateOrgAccessLevel(id: number, orgId: number, body: UpdateAccessLevelBody) {
+export async function updateOrgAccessLevel({ id, orgId }: IdAndOrgId, body: UpdateAccessLevelBody) {
 	const [updatedAccessLevel] = await getDB()
 		.update(accessLevel)
 		.set(body)
@@ -62,7 +63,7 @@ export async function createOrgAccessLevel(orgId: number, body: CreateAccessLeve
 	return createdAccessLevel;
 }
 
-export function deleteOrgAccessLevelById(id: number, orgId: number) {
+export function deleteOrgAccessLevelById({ id, orgId }: IdAndOrgId) {
 	return getDB()
 		.delete(accessLevel)
 		.where(and(eq(accessLevel.id, id), eq(accessLevel.organizationId, orgId)));

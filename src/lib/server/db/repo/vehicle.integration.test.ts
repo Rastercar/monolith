@@ -54,7 +54,7 @@ describe('vehicle repo', async () => {
 	});
 
 	test('findOrgVehicleById', async () => {
-		const vehicle = await findOrgVehicleById(vehicleId, orgId);
+		const vehicle = await findOrgVehicleById({ id: vehicleId, orgId });
 		expect(vehicle).toMatchObject({ id: vehicleId, organizationId: orgId });
 	});
 
@@ -71,7 +71,7 @@ describe('vehicle repo', async () => {
 	});
 
 	test('updateOrgVehicle', async () => {
-		const vehicle = await updateOrgVehicle(vehicleId, orgId, updatedVehicleData);
+		const vehicle = await updateOrgVehicle({ id: vehicleId, orgId }, updatedVehicleData);
 		expect(vehicle).toMatchObject(updatedVehicleData);
 	});
 
@@ -82,9 +82,9 @@ describe('vehicle repo', async () => {
 	});
 
 	test('deleteOrgVehicleById', async () => {
-		await deleteOrgVehicleById(vehicleId, orgId);
+		await deleteOrgVehicleById({ id: vehicleId, orgId });
 
-		const vehicle = await findOrgVehicleById(vehicleId, orgId);
+		const vehicle = await findOrgVehicleById({ id: vehicleId, orgId });
 		expect(vehicle).toBeUndefined();
 	});
 });

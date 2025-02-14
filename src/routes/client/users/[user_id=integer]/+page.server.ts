@@ -9,7 +9,7 @@ export const load = async ({ params, locals }) => {
 
 	const userId = parseInt(params.user_id);
 
-	const dbUser = await findOrgUserById(userId, requestUser.organization.id);
+	const dbUser = await findOrgUserById({ id: userId, orgId: requestUser.organization.id });
 	if (!dbUser) return error(404);
 
 	let sessions: UserSession[] = [];

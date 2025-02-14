@@ -43,6 +43,11 @@
 			header: () => 'Color'
 		},
 		{
+			accessorKey: 'fleet',
+			header: () => 'Fleet',
+			cell: ({ row }) => row.original.fleet?.name ?? 'n/a'
+		},
+		{
 			id: 'fabricationAndModelYear',
 			header: () => 'Year',
 			cell: ({ row }) =>

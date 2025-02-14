@@ -42,7 +42,7 @@ describe('access level repo', async () => {
 	});
 
 	test('findOrgAccessLevelById', async () => {
-		const result = await findOrgAccessLevelById(accessLevelId, orgId);
+		const result = await findOrgAccessLevelById({ id: accessLevelId, orgId });
 
 		expect(result?.id).toBe(accessLevelId);
 	});
@@ -53,13 +53,13 @@ describe('access level repo', async () => {
 	});
 
 	test('deleteOrgAccessLevelById', async () => {
-		const accessLevelBeforeDeletion = await findOrgAccessLevelById(4, orgId);
+		const accessLevelBeforeDeletion = await findOrgAccessLevelById({ id: 4, orgId });
 		expect(accessLevelBeforeDeletion).toBeDefined();
 
-		const result = await deleteOrgAccessLevelById(4, orgId);
+		const result = await deleteOrgAccessLevelById({ id: 4, orgId });
 		expect(result).toBeDefined();
 
-		const accessLevelAfterDeletion = await findOrgAccessLevelById(4, orgId);
+		const accessLevelAfterDeletion = await findOrgAccessLevelById({ id: 4, orgId });
 		expect(accessLevelAfterDeletion).toBeUndefined();
 	});
 
@@ -73,7 +73,7 @@ describe('access level repo', async () => {
 		const createdAccessLevel = await createOrgAccessLevel(orgId, input);
 		expect(createdAccessLevel).toMatchObject(input);
 
-		const accessLevel = await findOrgAccessLevelById(createdAccessLevel.id, orgId);
+		const accessLevel = await findOrgAccessLevelById({ id: createdAccessLevel.id, orgId });
 		expect(accessLevel).toBeDefined();
 	});
 
@@ -84,10 +84,10 @@ describe('access level repo', async () => {
 			permissions: ['CREATE_SIM_CARD']
 		};
 
-		const accessLevelBefore = await findOrgAccessLevelById(accessLevelId, orgId);
+		const accessLevelBefore = await findOrgAccessLevelById({ id: accessLevelId, orgId });
 		expect(accessLevelBefore).not.toMatchObject(input);
 
-		const updated = await updateOrgAccessLevel(accessLevelId, orgId, input);
+		const updated = await updateOrgAccessLevel({ id: accessLevelId, orgId }, input);
 		expect(updated).toMatchObject(input);
 	});
 });

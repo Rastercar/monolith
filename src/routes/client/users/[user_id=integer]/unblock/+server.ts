@@ -8,10 +8,10 @@ export const POST: RequestHandler = async ({ params, locals }) => {
 
 	const userToBeUnblockedId = parseInt(params.user_id);
 
-	const user = await findOrgUserById(userToBeUnblockedId, reqUser.organization.id);
+	const user = await findOrgUserById({ id: userToBeUnblockedId, orgId: reqUser.organization.id });
 	if (!user) error(404, 'user to unblock not found');
 
-	await unblockOrgUserById(userToBeUnblockedId, reqUser.organization.id);
+	await unblockOrgUserById({ id: userToBeUnblockedId, orgId: reqUser.organization.id });
 
 	return json('user unblocked');
 };

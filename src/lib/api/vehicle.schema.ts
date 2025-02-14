@@ -110,7 +110,18 @@ export const vehicleSchema = z.object({
 	fabricationYear: z.number().nullable(),
 	chassisNumber: z.string().nullable(),
 	additionalInfo: z.string().nullable(),
-	vehicleTracker: trackerSchema.nullish()
+	vehicleTracker: trackerSchema.nullish(),
+
+	// we cannot import fleetSchema here as it breaks typescript due to circular deps
+	fleet: z
+		.object({
+			id: z.number(),
+			name: z.string(),
+			createdAt: z.date({ coerce: true }),
+			description: z.string(),
+			organizationId: z.number()
+		})
+		.nullish()
 });
 
 export type GetVehiclesFilters = z.infer<typeof getVehiclesSearchParamsSchema>;

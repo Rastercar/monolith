@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ url, locals, params }) => {
 	);
 
 	// assert the tracker exists and belongs to the user org
-	const tracker = await findOrgTrackerById(trackerId, user.organization.id);
+	const tracker = await findOrgTrackerById({ id: trackerId, orgId: user.organization.id });
 	if (!tracker) return error(404);
 
 	const positions = (await findTrackerLocationList(trackerId, filters)).map((p) => ({

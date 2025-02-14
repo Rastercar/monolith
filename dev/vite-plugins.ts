@@ -96,7 +96,7 @@ export const svelteKitRoutePlugin = () =>
 		PAGES: {
 			'/client/settings/security': {
 				explicit_search_params: {
-					redirectHereDueToForcePasswordChange: { required: false, type: 'boolean' }
+					redirectHereDueToForcePasswordChange: { required: false, type: 'string' }
 				}
 			},
 			'/auth/sign-in': {

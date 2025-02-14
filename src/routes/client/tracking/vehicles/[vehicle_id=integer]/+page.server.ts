@@ -13,7 +13,7 @@ export const load = async ({ params, locals }) => {
 	const { user } = acl(locals);
 
 	const vehicleId = parseInt(params.vehicle_id);
-	const vehicleFromDb = await findOrgVehicleById(vehicleId, user.organization.id);
+	const vehicleFromDb = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
 
 	if (!vehicleFromDb) return error(404);
 
@@ -39,7 +39,7 @@ export const actions = {
 
 		const form = await validateFormWithFailOnError(request, updateVehicleSchema);
 
-		const res = await updateOrgVehicle(vehicleId, user.organization.id, form.data)
+		const res = await updateOrgVehicle({ id: vehicleId, orgId: user.organization.id }, form.data)
 			.then((vehicle) => vehicleSchema.parse(vehicle))
 			.catch((e) => {
 				if (isErrorFromUniqueConstraint(e, 'vehicle_plate_unique')) {

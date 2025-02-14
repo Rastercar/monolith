@@ -32,8 +32,8 @@
 	);
 </script>
 
-{#snippet field(xd: string, value: string | null)}
-	<div><span class="type-scale-2 opacity-80">{xd}:</span> {value ?? 'n/a'}</div>
+{#snippet field(label: string, value: string | null)}
+	<div><span class="type-scale-2 opacity-80">{label}:</span> {value ?? 'n/a'}</div>
 {/snippet}
 
 <div class="p-6">
@@ -101,11 +101,12 @@
 			/>
 		{/if}
 
-		<div>
+		<div class="space-y-1">
 			{@render field('plate', vehicleTracker.plate)}
 			{@render field('brand', vehicleTracker.brand)}
 			{@render field('model', vehicleTracker.model)}
 			{@render field('color', vehicleTracker.color)}
+			{@render field('fleet', vehicleTracker.fleet?.name ?? 'n/a')}
 
 			{#if vehicleTracker.modelYear && vehicleTracker.fabricationYear}
 				<div>

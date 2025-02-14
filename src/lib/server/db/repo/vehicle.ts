@@ -7,26 +7,42 @@ import type {
 import { and, eq, type SQL } from 'drizzle-orm';
 import { getDB } from '../db';
 import { pushIlikeFilterIdDefined, type Tx } from '../helpers';
-import { paginate } from '../pagination';
+import { countRecords, getLimitOffset } from '../pagination';
 import { vehicle } from '../schema';
+import type { IdAndOrgId } from './utils';
 
 export async function findOrgVehiclesWithPagination(
 	orgId: number,
 	params: PaginationWithFilters<GetVehiclesFilters>
 ) {
 	const { pagination, filters } = params;
+	const { page, pageSize } = pagination;
 
 	const sqlFilters: SQL[] = [eq(vehicle.organizationId, orgId)];
 
 	pushIlikeFilterIdDefined(sqlFilters, vehicle.plate, filters?.plate);
 
-	return paginate(vehicle, { pagination, where: and(...sqlFilters) });
+	const where = and(...sqlFilters);
+
+	const records = await getDB().query.vehicle.findMany({
+		orderBy: (vehicle, { asc }) => asc(vehicle.plate),
+		...getLimitOffset(pagination),
+		where,
+		with: { fleet: true }
+	});
+
+	const itemCount = await countRecords(vehicle, where);
+
+	const pageCount = Math.ceil(itemCount / pageSize);
+
+	return { page, records, pageSize, pageCount, itemCount };
 }
 
-export function findOrgVehicleById(id: number, orgId: number) {
+export function findOrgVehicleById({ id, orgId }: IdAndOrgId) {
 	return getDB().query.vehicle.findFirst({
 		where: (vehicle, { eq, and }) => and(eq(vehicle.organizationId, orgId), eq(vehicle.id, id)),
 		with: {
+			fleet: true,
 			vehicleTracker: {
 				with: { simCards: true }
 			}
@@ -47,7 +63,7 @@ export async function createOrgVehicle(
 	return createdVehicle;
 }
 
-export async function updateOrgVehicle(id: number, orgId: number, body: UpdateVehicleBody) {
+export async function updateOrgVehicle({ id, orgId }: IdAndOrgId, body: UpdateVehicleBody) {
 	const [updatedVehicle] = await getDB()
 		.update(vehicle)
 		.set(body)
@@ -67,7 +83,7 @@ export async function updateOrgVehiclePhoto(id: number, photo: string | null, tx
 	return updatedVehicle;
 }
 
-export function deleteOrgVehicleById(id: number, orgId: number) {
+export function deleteOrgVehicleById({ id, orgId }: IdAndOrgId) {
 	return getDB()
 		.delete(vehicle)
 		.where(and(eq(vehicle.id, id), eq(vehicle.organizationId, orgId)));

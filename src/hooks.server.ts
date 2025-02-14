@@ -61,7 +61,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			event.url.pathname !== '/client/settings/security'
 		) {
 			const changePasswordRoute = route('/client/settings/security', {
-				redirectHereDueToForcePasswordChange: true
+				redirectHereDueToForcePasswordChange: 'true'
 			});
 
 			return redirect(303, changePasswordRoute);

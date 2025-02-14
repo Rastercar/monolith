@@ -15,6 +15,7 @@ import {
 	vehicleTrackerLastLocation,
 	vehicleTrackerLocation
 } from '../schema';
+import type { IdAndOrgId } from './utils';
 
 /**
  * Given an array of tracker ids, return only the ones that
@@ -88,7 +89,7 @@ export async function findTrackerLastLocation(id: number) {
 	return locations.length === 0 ? null : locations[0];
 }
 
-export function findOrgTrackerById(id: number, orgId: number) {
+export function findOrgTrackerById({ id, orgId }: IdAndOrgId) {
 	return getDB().query.vehicleTracker.findFirst({
 		where: (vehicleTracker, { eq, and }) =>
 			and(eq(vehicleTracker.organizationId, orgId), eq(vehicleTracker.id, id)),
@@ -108,7 +109,7 @@ export async function createOrgTracker(orgId: number, body: CreateTrackerBody) {
 	return createdTracker;
 }
 
-export async function updateOrgTracker(id: number, orgId: number, body: UpdateTrackerBody) {
+export async function updateOrgTracker({ id, orgId }: IdAndOrgId, body: UpdateTrackerBody) {
 	const [updatedTracker] = await getDB()
 		.update(vehicleTracker)
 		.set(body)
@@ -118,7 +119,7 @@ export async function updateOrgTracker(id: number, orgId: number, body: UpdateTr
 	return updatedTracker;
 }
 
-export function deleteOrgTrackerById(id: number, orgId: number, deleteAssociatedSimCards: boolean) {
+export function deleteOrgTrackerById({ id, orgId }: IdAndOrgId, deleteAssociatedSimCards: boolean) {
 	return getDB().transaction(async (tx) => {
 		if (deleteAssociatedSimCards) {
 			await tx

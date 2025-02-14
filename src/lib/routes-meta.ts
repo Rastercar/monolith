@@ -32,6 +32,11 @@ export interface LoggedInPageMeta {
 	sidebarVisibility?: boolean;
 }
 
+const reqPerms = (requiredPermissions?: permission | permission[]): PageMeta => ({
+	requiredAuth: 'logged-in',
+	requiredPermissions
+});
+
 /**
  * metadata of every page on the application
  *
@@ -39,104 +44,37 @@ export interface LoggedInPageMeta {
  * files, API endpoints and form actions are not considered here
  */
 export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
-	'/auth/sign-in': {
-		requiredAuth: 'logged-off'
-	},
-	'/auth/sign-up': {
-		requiredAuth: 'logged-off'
-	},
-	'/auth/sign-out': {
-		requiredAuth: 'logged-in'
-	},
-	'/auth/change-password': {
-		requiredAuth: 'any'
-	},
-	'/auth/confirm-email-address': {
-		requiredAuth: 'any'
-	},
-	'/auth/recover-password': {
-		requiredAuth: 'any'
-	},
-
-	// logged-in routes
-	'/client': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/access-levels': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
-	},
-	'/client/access-levels/[access_level_id=integer]': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
-	},
-	'/client/access-levels/new': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['MANAGE_USER_ACCESS_LEVELS']
-	},
-	'/client/my-profile': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/settings/organization': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['UPDATE_ORGANIZATION']
-	},
-	'/client/settings/profile': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/settings/security': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/settings/sessions': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/map': {
-		headerVisibility: false,
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/sim-cards': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/sim-cards/[sim_card_id=integer]': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/sim-cards/new': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['CREATE_SIM_CARD']
-	},
-	'/client/tracking/trackers': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/trackers/[tracker_id=integer]': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/trackers/new': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['CREATE_TRACKER']
-	},
-	'/client/tracking/vehicles': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/vehicles/[vehicle_id=integer]': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/tracking/vehicles/new': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['CREATE_VEHICLE']
-	},
-	'/client/tracking/fleets': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/users': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/users/[user_id=integer]': {
-		requiredAuth: 'logged-in'
-	},
-	'/client/users/new': {
-		requiredAuth: 'logged-in',
-		requiredPermissions: ['CREATE_USER']
-	}
+	'/auth/sign-in': { requiredAuth: 'logged-off' },
+	'/auth/sign-up': { requiredAuth: 'logged-off' },
+	'/auth/change-password': { requiredAuth: 'any' },
+	'/auth/recover-password': { requiredAuth: 'any' },
+	'/auth/confirm-email-address': { requiredAuth: 'any' },
+	'/auth/sign-out': reqPerms(),
+	'/client': reqPerms(),
+	'/client/access-levels': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
+	'/client/access-levels/[access_level_id=integer]': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
+	'/client/access-levels/new': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
+	'/client/my-profile': reqPerms(),
+	'/client/settings/organization': reqPerms('UPDATE_ORGANIZATION'),
+	'/client/settings/profile': reqPerms(),
+	'/client/settings/security': reqPerms(),
+	'/client/settings/sessions': reqPerms(),
+	'/client/tracking/map': { headerVisibility: false, requiredAuth: 'logged-in' },
+	'/client/tracking/sim-cards': reqPerms(),
+	'/client/tracking/sim-cards/[sim_card_id=integer]': reqPerms(),
+	'/client/tracking/sim-cards/new': reqPerms('CREATE_SIM_CARD'),
+	'/client/tracking/trackers': reqPerms(),
+	'/client/tracking/trackers/[tracker_id=integer]': reqPerms(),
+	'/client/tracking/trackers/new': reqPerms('CREATE_TRACKER'),
+	'/client/tracking/vehicles': reqPerms(),
+	'/client/tracking/vehicles/[vehicle_id=integer]': reqPerms(),
+	'/client/tracking/vehicles/new': reqPerms('CREATE_VEHICLE'),
+	'/client/tracking/fleets': reqPerms(),
+	'/client/tracking/fleets/[fleet_id=integer]': reqPerms(),
+	'/client/tracking/fleets/new': reqPerms('CREATE_FLEET'),
+	'/client/users': reqPerms(),
+	'/client/users/[user_id=integer]': reqPerms(),
+	'/client/users/new': reqPerms('CREATE_USER')
 };
 
 export function getRouteMetaFromPath(path: string): PageMeta | undefined {

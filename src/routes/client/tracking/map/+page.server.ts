@@ -11,7 +11,10 @@ export async function load({ url, locals }) {
 	let tracker: Tracker | null = null;
 
 	if (trackerToLookupId && !Number.isNaN(trackerToLookupId)) {
-		const trackerFromDb = await findOrgTrackerById(trackerToLookupId, user.organization.id);
+		const trackerFromDb = await findOrgTrackerById({
+			id: trackerToLookupId,
+			orgId: user.organization.id
+		});
 		tracker = trackerSchema.parse(trackerFromDb);
 	}
 

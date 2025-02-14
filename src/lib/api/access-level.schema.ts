@@ -11,7 +11,7 @@ export const accessLevelSchema = z.object({
 	name: z.string(),
 	description: z.string(),
 	isFixed: z.boolean(),
-	permissions: z.array(z.string())
+	permissions: z.array(z.enum(permissions)).optional()
 });
 
 export const createAccessLevelSchema = z.object({

@@ -2,6 +2,7 @@
 	import { apiDeleteVehicle } from '$lib/api/vehicle';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+	import { route } from '$lib/ROUTES';
 	import Icon from '@iconify/svelte';
 	import { createMutation } from '@tanstack/svelte-query';
 
@@ -57,5 +58,24 @@
 	{@render field('Year', year)}
 	{@render field('Chassis', vehicle.chassisNumber)}
 	{@render field('Color', vehicle.color)}
+
+	<div>
+		<div class="opacity-70">Fleet:</div>
+		{#if vehicle.fleet}
+			<a
+				href={route(`/client/tracking/fleets/[fleet_id=integer]`, {
+					fleet_id: vehicle.fleet.id.toString()
+				})}
+				class="font-medium text-blue-600 dark:text-blue-500 hover:underline flex items-center"
+			>
+				{vehicle.fleet.name}
+
+				<Icon icon="mdi:link" class="ml-2" />
+			</a>
+		{:else}
+			n/a
+		{/if}
+	</div>
+
 	{@render field('Additional Information', vehicle.additionalInfo, 'col-span-2 md:col-span-4')}
 </div>

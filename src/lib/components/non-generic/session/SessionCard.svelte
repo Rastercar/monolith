@@ -41,6 +41,7 @@
 	};
 
 	const mutation = apiDeleteUserSessionMutation({
+		minTime: 500,
 		onSuccess: () => onDeleted()
 	});
 

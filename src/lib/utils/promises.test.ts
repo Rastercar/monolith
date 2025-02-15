@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { delay, promiseWithMinimumTimeOf } from './promises';
+import { delay, withMinTime } from './promises';
 
 test('delay - creates a promise that resolves in X milliseconds', async () => {
 	const nowEpoch = new Date().getTime();
@@ -19,7 +19,7 @@ test('promiseWithMinimumTimeOf - ensures a minimun time is ellapsed', async () =
 	const nowEpoch = new Date().getTime();
 
 	const minimunTime = 5;
-	await promiseWithMinimumTimeOf(delay(1), minimunTime);
+	await withMinTime(delay(1), minimunTime);
 
 	const afterDelayEpoch = new Date().getTime();
 

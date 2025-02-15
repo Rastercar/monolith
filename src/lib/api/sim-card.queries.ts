@@ -1,9 +1,10 @@
-import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
-import type {
-	ApiMutationOptions,
-	ApiQueryOptions,
-	Paginated,
-	PaginationParameters
+import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+import {
+	createApiMutation,
+	type ApiMutation,
+	type ApiQueryOptions,
+	type Paginated,
+	type PaginationParameters
 } from './common';
 import { apiDeleteSimCardById, apiGetSimCards, apiUpdateSimCard } from './sim-card';
 import type {
@@ -26,19 +27,15 @@ export function apiGetSimCardsQuery(
 	}));
 }
 
-export function apiDeleteSimCardByIdMutation(opts?: ApiMutationOptions<string, unknown, number>) {
-	return createMutation(() => ({
-		mutationFn: (id: number) => apiDeleteSimCardById(id),
-		...opts
-	}));
+export function apiDeleteSimCardByIdMutation(opts?: ApiMutation<string, number>) {
+	return createApiMutation({ fn: apiDeleteSimCardById, ...opts });
 }
 
 export function apiUpdateSimCardMutation(
-	opts?: ApiMutationOptions<UpdateSimCardRes, unknown, { id: number; body: UpdateSimCardBody }>
+	opts?: ApiMutation<UpdateSimCardRes, { id: number; body: UpdateSimCardBody }>
 ) {
-	return createMutation(() => ({
-		mutationFn: ({ id, body }: { id: number; body: UpdateSimCardBody }) =>
-			apiUpdateSimCard(id, body),
+	return createApiMutation({
+		fn: ({ id, body }: { id: number; body: UpdateSimCardBody }) => apiUpdateSimCard(id, body),
 		...opts
-	}));
+	});
 }

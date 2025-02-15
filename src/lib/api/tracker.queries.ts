@@ -1,6 +1,11 @@
-import { showErrorToast } from '$lib/store/toast';
-import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
-import type { ApiQueryOptions, Paginated, PaginationParameters } from './common';
+import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+import {
+	createApiMutation,
+	type ApiMutation,
+	type ApiQueryOptions,
+	type Paginated,
+	type PaginationParameters
+} from './common';
 import {
 	apiDeleteTracker,
 	apiGetTrackerLastLocation,
@@ -33,25 +38,17 @@ export function apiGetTrackersQuery(
 	}));
 }
 
-export function apiDeleteTrackerMutation() {
-	return createMutation(() => ({
-		mutationFn: ({
-			id,
-			deleteAssociatedSimCards
-		}: {
-			id: number;
-			deleteAssociatedSimCards: boolean;
-		}) => {
-			return apiDeleteTracker(id, { deleteAssociatedSimCards });
-		},
-		onError: showErrorToast
-	}));
+export function apiDeleteTrackerMutation(
+	opts?: ApiMutation<string, { id: number; deleteAssociatedSimCards: boolean }>
+) {
+	return createApiMutation({
+		fn: ({ id, deleteAssociatedSimCards }) => apiDeleteTracker(id, { deleteAssociatedSimCards }),
+		...opts
+	});
 }
 
-export function apiSetTrackerVehicleMutation() {
-	return createMutation(() => ({
-		mutationFn: (ids: { vehicleId: number | null; vehicleTrackerId: number }) =>
-			apiSetTrackerVehicle(ids),
-		onError: showErrorToast
-	}));
+export function apiSetTrackerVehicleMutation(
+	opts?: ApiMutation<string, { vehicleId: number | null; vehicleTrackerId: number }>
+) {
+	return createApiMutation({ fn: apiSetTrackerVehicle, ...opts });
 }

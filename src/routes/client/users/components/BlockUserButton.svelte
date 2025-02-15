@@ -11,7 +11,7 @@
 
 	const { userId, isBlocked, onBlockedStatusChange }: Props = $props();
 
-	const mut = apiSetUserBlockedMutation();
+	const mut = apiSetUserBlockedMutation({ minTime: 500 });
 
 	const blockUserConfirmMsg =
 		'block user ? the user will be logged off from all devices and their access will be denied until unblocking';

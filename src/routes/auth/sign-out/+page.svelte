@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/context';
-	import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
+	import { withMinTime } from '$lib/utils/promises';
 	import { onMount } from 'svelte';
 
 	/**
@@ -21,7 +21,7 @@
 			throw new Error('a critical error happened, please clear your browser cookies');
 		});
 
-		promiseWithMinimumTimeOf(logoutPromise, 200).then(() => goto('/auth/sign-in'));
+		withMinTime(logoutPromise, 200).then(() => goto('/auth/sign-in'));
 	});
 </script>
 

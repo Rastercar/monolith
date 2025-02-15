@@ -1,7 +1,12 @@
-import type {
-	CreateMutationOptions,
-	CreateQueryOptions,
-	DefaultError
+import { showErrorToast } from '$lib/store/toast';
+import { withMinTime } from '$lib/utils/promises';
+import {
+	createMutation,
+	type CreateMutationOptions,
+	type CreateMutationResult,
+	type CreateQueryOptions,
+	type DefaultError,
+	type MutationFunction
 } from '@tanstack/svelte-query';
 import { z } from 'zod';
 
@@ -61,7 +66,7 @@ export type Paginated<T> = {
 
 export type ApiQueryOptions<T> = Partial<Omit<CreateQueryOptions<T>, 'queryKey' | 'queryFn'>>;
 
-export type ApiMutationOptions<
+type ApiMutationOptions<
 	TData = unknown,
 	TError = DefaultError,
 	TVariables = void,
@@ -82,3 +87,34 @@ export const paginationFromSearchParamsSchema = z.object({
 	page: z.coerce.number().default(1),
 	pageSize: z.coerce.number().default(5)
 });
+
+interface CreateApiMutationArgs<TData, TVariables>
+	extends ApiMutationOptions<TData, unknown, TVariables, unknown> {
+	/**
+	 * the mutation function
+	 */
+	fn: MutationFunction<TData, TVariables>;
+
+	/**
+	 * Minimun amount of time the mutation should take,
+	 * usefull to avoid janky UIs where a loader would
+	 * be shown but fade out too quickly
+	 */
+	minTime?: number;
+}
+
+export type ApiMutation<TData, TVariables> = Omit<CreateApiMutationArgs<TData, TVariables>, 'fn'>;
+
+/**
+ * Wrapper around createMutation for easier type
+ * inference and some utilities like `minTime`
+ */
+export function createApiMutation<TData, TVariables>(
+	args: CreateApiMutationArgs<TData, TVariables>
+): CreateMutationResult<TData, unknown, TVariables, unknown> {
+	return createMutation(() => ({
+		mutationFn: (a) => (args.minTime ? withMinTime(args.fn(a), args.minTime) : args.fn(a)),
+		onError: args.onError ?? showErrorToast,
+		...args
+	}));
+}

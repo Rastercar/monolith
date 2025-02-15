@@ -1,7 +1,5 @@
-import { showErrorToast } from '$lib/store/toast';
-import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
-import { createMutation, createQuery, keepPreviousData } from '@tanstack/svelte-query';
-import type { PaginationParameters } from './common';
+import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
+import { createApiMutation, type ApiMutation, type PaginationParameters } from './common';
 import {
 	apiBlockUser,
 	apiChangeUserAccessLevel,
@@ -19,24 +17,21 @@ export function apiGetUsersQuery(pagination: PaginationParameters, filters: GetU
 	}));
 }
 
-export function apiDeleteUserByIdMutation() {
-	return createMutation(() => ({
-		mutationFn: (id: number) => apiDeleteUserById(id),
-		onError: showErrorToast
-	}));
+export function apiDeleteUserByIdMutation(opts?: ApiMutation<string, number>) {
+	return createApiMutation({ fn: apiDeleteUserById, ...opts });
 }
 
-export function apiChangeUserAccessLevelMutation() {
-	return createMutation(() => ({
-		mutationFn: (ids: { userId: number; accessLevelId: number }) => apiChangeUserAccessLevel(ids),
-		onError: showErrorToast
-	}));
+export function apiChangeUserAccessLevelMutation(
+	opts?: ApiMutation<string, { userId: number; accessLevelId: number }>
+) {
+	return createApiMutation({ fn: apiChangeUserAccessLevel, ...opts });
 }
-export function apiSetUserBlockedMutation() {
-	return createMutation(() => ({
-		mutationFn: ({ userId, block }: { userId: number; block: boolean }) => {
-			const promise = block ? apiBlockUser(userId) : apiUnblockUser(userId);
-			return promiseWithMinimumTimeOf(promise, 500);
-		}
-	}));
+
+export function apiSetUserBlockedMutation(
+	opts?: ApiMutation<string, { userId: number; block: boolean }>
+) {
+	return createApiMutation({
+		fn: ({ userId, block }) => (block ? apiBlockUser(userId) : apiUnblockUser(userId)),
+		...opts
+	});
 }

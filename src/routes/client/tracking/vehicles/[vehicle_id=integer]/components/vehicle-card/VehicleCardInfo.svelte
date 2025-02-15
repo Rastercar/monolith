@@ -2,6 +2,7 @@
 	import { apiDeleteVehicleByIdMutation } from '$lib/api/vehicle.queries';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+	import LoadableIcon from '$lib/components/icon/LoadableIcon.svelte';
 	import { route } from '$lib/ROUTES';
 	import Icon from '@iconify/svelte';
 
@@ -38,8 +39,12 @@
 	</span>
 
 	<PermissionGuard requiredPermissions={'DELETE_VEHICLE'}>
-		<button class="btn-icon preset-filled-warning-200-800" onclick={deleteVehicle}>
-			<Icon icon="mdi:trash" />
+		<button
+			class="btn-icon preset-filled-warning-200-800"
+			onclick={deleteVehicle}
+			disabled={mutation.isPending}
+		>
+			<LoadableIcon icon="mdi:trash" isLoading={mutation.isPending} />
 		</button>
 	</PermissionGuard>
 

@@ -1,6 +1,4 @@
-import { showErrorToast } from '$lib/store/toast';
-import { promiseWithMinimumTimeOf } from '$lib/utils/promises';
-import { createMutation } from '@tanstack/svelte-query';
+import { withMinTime } from '$lib/utils/promises';
 import {
 	apiConfirmEmailAddress,
 	apiDeleteUserSession,
@@ -8,27 +6,22 @@ import {
 	apiSignOutSpecificSession
 } from './auth';
 import type { ConfirmEmailAddressBody, RequestEmailConfirmationBody } from './auth.schema';
-import type { ApiMutationOptions } from './common';
+import { createApiMutation, type ApiMutation } from './common';
 
 export function apiRequestEmailAddressConfirmationMutation() {
-	return createMutation(() => ({
-		mutationFn: (body: RequestEmailConfirmationBody) =>
-			promiseWithMinimumTimeOf(apiRequestEmailAddressConfirmation(body), 1_500),
-		onError: showErrorToast
-	}));
+	return createApiMutation({
+		fn: (body: RequestEmailConfirmationBody) =>
+			withMinTime(apiRequestEmailAddressConfirmation(body), 1_500)
+	});
 }
 
 export function apiConfirmEmailAddressMutation(
-	opts?: ApiMutationOptions<string, unknown, ConfirmEmailAddressBody>
+	opts?: ApiMutation<string, ConfirmEmailAddressBody>
 ) {
-	return createMutation(() => ({
-		mutationFn: (args: ConfirmEmailAddressBody) => {
-			const promise = apiConfirmEmailAddress(args);
-			return promiseWithMinimumTimeOf(promise, 1_500);
-		},
-		onError: showErrorToast,
+	return createApiMutation({
+		fn: (args: ConfirmEmailAddressBody) => withMinTime(apiConfirmEmailAddress(args), 1_500),
 		...opts
-	}));
+	});
 }
 
 interface ApiDeleteUserSessionMutationArgs {
@@ -37,16 +30,14 @@ interface ApiDeleteUserSessionMutationArgs {
 }
 
 export function apiDeleteUserSessionMutation(
-	opts?: ApiMutationOptions<string, unknown, ApiDeleteUserSessionMutationArgs>
+	opts?: ApiMutation<string, ApiDeleteUserSessionMutationArgs>
 ) {
-	return createMutation(() => ({
-		mutationFn: ({ sessionOwnerId, sessionPublicId }: ApiDeleteUserSessionMutationArgs) => {
-			const promise = sessionOwnerId
+	return createApiMutation({
+		fn: ({ sessionOwnerId, sessionPublicId }) => {
+			return sessionOwnerId
 				? apiDeleteUserSession(sessionOwnerId, sessionPublicId)
 				: apiSignOutSpecificSession(sessionPublicId);
-
-			return promiseWithMinimumTimeOf(promise, 1_000);
 		},
 		...opts
-	}));
+	});
 }

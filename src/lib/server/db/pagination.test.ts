@@ -2,7 +2,7 @@ import type { PaginationParameters } from '$lib/api/common';
 import { eq, getTableColumns, sql } from 'drizzle-orm';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import * as dbUtils from './db';
-import { paginate } from './pagination';
+import { getLimitOffset, paginate } from './pagination';
 import { user } from './schema';
 
 class dbM {
@@ -90,4 +90,16 @@ describe('paginate', () => {
 		const res = await paginate(user, { pagination: { page, pageSize } });
 		expect(res).toStrictEqual({ page, records: [{}], pageSize, pageCount: 5, itemCount: 50 });
 	});
+});
+
+test('getLimitOffset - calculates limit and offset assuming a 1 indexed paging', () => {
+	expect(getLimitOffset({ page: -1, pageSize: 5 })).toStrictEqual({ limit: 5, offset: 0 });
+	expect(getLimitOffset({ page: 0, pageSize: 5 })).toStrictEqual({ limit: 5, offset: 0 });
+	expect(getLimitOffset({ page: 1, pageSize: 5 })).toStrictEqual({ limit: 5, offset: 0 });
+	expect(getLimitOffset({ page: 2, pageSize: 5 })).toStrictEqual({ limit: 5, offset: 5 });
+
+	expect(getLimitOffset({ page: 1, pageSize: -1 })).toStrictEqual({ limit: 1, offset: 0 });
+	expect(getLimitOffset({ page: 1, pageSize: 0 })).toStrictEqual({ limit: 1, offset: 0 });
+	expect(getLimitOffset({ page: 1, pageSize: 1 })).toStrictEqual({ limit: 1, offset: 0 });
+	expect(getLimitOffset({ page: 1, pageSize: 2 })).toStrictEqual({ limit: 2, offset: 0 });
 });

@@ -53,12 +53,13 @@ export async function paginate<T extends TableConfig, S extends PgSelect>(
 	return { page, records, pageSize, pageCount, itemCount };
 }
 
-// TODO: tests
 export function getLimitOffset({ page, pageSize }: PaginationParameters) {
+	page = Math.max(page, 1);
+	pageSize = Math.max(pageSize, 1);
+
 	return { limit: pageSize, offset: (page - 1) * pageSize };
 }
 
-// TODO: tests
 export async function countRecords<T extends TableConfig>(
 	table: PgTableWithColumns<T>,
 	where?: SQL

@@ -7,7 +7,6 @@ import { countRecords, getLimitOffset } from '../pagination';
 import { fleet } from '../schema';
 import type { IdAndOrgId } from './utils';
 
-// TODO: create tests
 export async function findOrgFleetsWithPagination(
 	orgId: number,
 	params: PaginationWithFilters<GetFleetsFilters>
@@ -35,7 +34,6 @@ export async function findOrgFleetsWithPagination(
 	return { page, records, pageSize, pageCount, itemCount };
 }
 
-// TODO: create tests
 export async function createOrgFleet(orgId: number, body: CreateFleetBody) {
 	const [createdFleet] = await getDB()
 		.insert(fleet)
@@ -45,7 +43,6 @@ export async function createOrgFleet(orgId: number, body: CreateFleetBody) {
 	return createdFleet;
 }
 
-// TODO: create tests
 export function findOrgFleetById({ id, orgId }: IdAndOrgId) {
 	return getDB().query.fleet.findFirst({
 		where: (fleet, { eq, and }) => and(eq(fleet.organizationId, orgId), eq(fleet.id, id)),
@@ -53,7 +50,6 @@ export function findOrgFleetById({ id, orgId }: IdAndOrgId) {
 	});
 }
 
-// TODO: create tests
 export async function updateOrgFleet({ id, orgId }: IdAndOrgId, body: UpdateFleetBody) {
 	const [updatedFleet] = await getDB()
 		.update(fleet)
@@ -64,7 +60,6 @@ export async function updateOrgFleet({ id, orgId }: IdAndOrgId, body: UpdateFlee
 	return updatedFleet;
 }
 
-// TODO: create tests
 export function deleteFleetById({ id, orgId }: IdAndOrgId) {
 	return getDB()
 		.delete(fleet)

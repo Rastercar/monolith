@@ -11,6 +11,6 @@ export function apiGetFleetsQuery(pagination: PaginationParameters, filters: Get
 	}));
 }
 
-export function apiDeleteFleetMutation(opts: ApiMutation<string, number>) {
+export function apiDeleteFleetMutation(opts?: ApiMutation<string, number>) {
 	return createApiMutation({ fn: apiDeleteFleet, ...opts });
 }

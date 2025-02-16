@@ -1,9 +1,18 @@
 <script lang="ts">
 	import { apiGetAccessLevelsQuery } from '$lib/api/access-level.queries';
-	import type { AccessLevel, GetAccessLevelFilters } from '$lib/api/access-level.schema';
+	import type { AccessLevel } from '$lib/api/access-level.schema';
 	import Icon from '@iconify/svelte';
 	import { Combobox } from 'bits-ui';
 	import { useDebounce } from 'runed';
+
+	// TODO: THIS COMPONENT IS DUPLICATED !
+	// create a base component that takes a query
+	// as a prop and make the input and output generic ?
+	//
+	// maybe even make a cool wraper to work with superforms, that would be bonkers
+	//
+	// TODO: also test if this works any good by having the initial value set
+	// eg loading a update form
 
 	interface Props {
 		/**
@@ -11,24 +20,21 @@
 		 */
 		value: string;
 
+		/**
+		 * Value of the searchbox
+		 */
+		searchValue: string;
+
 		onItemSelected: (_: AccessLevel | null) => void;
 	}
 
-	let { value = $bindable(), onItemSelected }: Props = $props();
+	let { value = $bindable(), searchValue = $bindable(), onItemSelected }: Props = $props();
 
-	const filters = $state<GetAccessLevelFilters>({});
-
-	const query = apiGetAccessLevelsQuery({ page: 1, pageSize: 100 }, filters);
-
-	const queryData = $derived(
-		(query.data?.records ?? []).map((accessLevel) => ({
-			meta: accessLevel,
-			label: accessLevel.name,
-			value: accessLevel.id.toString()
-		}))
+	const query = $derived(
+		apiGetAccessLevelsQuery({ page: 1, pageSize: 100 }, { name: searchValue })
 	);
 
-	const searchWithDebounce = useDebounce((v: string) => (filters.name = v), 200);
+	const searchWithDebounce = useDebounce((v: string) => (searchValue = v), 200);
 </script>
 
 <Combobox.Root
@@ -40,8 +46,8 @@
 
 		const id = parseInt(e);
 
-		const item = queryData.find((i) => i.meta.id === id);
-		onItemSelected(item?.meta ?? null);
+		const item = (query.data?.records ?? []).find((i) => i.id === id);
+		onItemSelected(item ?? null);
 	}}
 >
 	<div class="relative">
@@ -75,18 +81,18 @@
 			</Combobox.ScrollUpButton>
 
 			<Combobox.Viewport>
-				{#each queryData as option, i (i + option.value)}
+				{#each query.data?.records ?? [] as accessLevel, i (i + accessLevel.id)}
 					<Combobox.Item
 						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 type-scale-2 data-[highlighted]:bg-surface-300-700"
-						value={option.value}
-						label={option.label}
+						value={accessLevel.id.toString()}
+						label={accessLevel.name}
 					>
 						{#snippet children({ selected })}
 							<div class="flex justify-between w-full">
-								{option.label}
+								{accessLevel.name}
 
 								<div class="badge variant-filled-primary ml-8">
-									{option.meta?.permissions?.length ?? 0} permissions
+									{accessLevel?.permissions?.length ?? 0} permissions
 								</div>
 							</div>
 						{/snippet}

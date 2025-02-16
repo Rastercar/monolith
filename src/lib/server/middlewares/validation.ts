@@ -71,6 +71,9 @@ export function validateForm<T extends ZodSchema>(req: Request, schema: T) {
  */
 export async function validateFormWithFailOnError<T extends ZodSchema>(req: Request, schema: T) {
 	const form = await validateForm(req, schema);
+
+	// TODO: rm me !
+	console.log(form.data);
 	if (!form.valid) fail(400, { form });
 
 	return form;

@@ -47,6 +47,7 @@
     "express": "^4.21.2",
     "formsnap": "^1.0.1",
     "postgres": "3.4.4",
+    "runed": "^0.23.4",
     "socket.io": "4.8.1",
     "socket.io-client": "4.8.1",
     "sql-formatter": "^15.4.10",

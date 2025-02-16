@@ -7,13 +7,13 @@
 	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
 	import AccessLevelPermissionsInfo from '$lib/components/non-generic/info/AccessLevelPermissionsInfo.svelte';
-	import SelectAccessLevelInput from '$lib/components/non-generic/input/SelectAccessLevelInput.svelte';
 	import { route } from '$lib/ROUTES';
 	import { showErrorToast } from '$lib/store/toast';
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { ActionData } from '../$types';
+	import SelectAccessLevelInput from './SelectAccessLevelInput.svelte';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createUserSchema>>;
@@ -23,6 +23,7 @@
 	let { formSchema, onCreate }: Props = $props();
 
 	let selectedAccessLevel: null | AccessLevel = $state(null);
+	let selectAccessLevelSearchValue = $state('');
 
 	const sForm = superForm(formSchema, {
 		dataType: 'json',
@@ -32,6 +33,7 @@
 				const action = result.data as FormResult<ActionData>;
 
 				selectedAccessLevel = null;
+				selectAccessLevelSearchValue = '';
 
 				if (onCreate && action.createdUser) onCreate(action.createdUser);
 			}
@@ -74,6 +76,7 @@
 
 	<span class="mb-2 block">User Access Level</span>
 	<SelectAccessLevelInput
+		bind:searchValue={selectAccessLevelSearchValue}
 		value={selectedAccessLevel?.id.toString() ?? ''}
 		onItemSelected={(e) => {
 			if (e) {

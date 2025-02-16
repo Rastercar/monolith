@@ -1,8 +1,7 @@
 <script lang="ts">
+	import { useDebounce } from 'runed';
 	import { type Snippet } from 'svelte';
 	import SnippetOrString from '../svelte-specific/SnippetOrString.svelte';
-
-	let debounceTimer: ReturnType<typeof setTimeout>;
 
 	interface Props {
 		label?: string | Snippet;
@@ -14,10 +13,7 @@
 
 	const { classes, onChange, label, placeholder, debounceMilliseconds = 250 }: Props = $props();
 
-	const debounce = (v: string) => {
-		clearTimeout(debounceTimer);
-		debounceTimer = setTimeout(() => onChange(v), debounceMilliseconds);
-	};
+	const onChangeDebounced = useDebounce(onChange, debounceMilliseconds);
 </script>
 
 <label class={classes}>
@@ -29,6 +25,6 @@
 		class={`input ${label && 'mt-2'}`}
 		{placeholder}
 		type="text"
-		onkeyup={(e) => debounce(e.currentTarget.value)}
+		onkeyup={(e) => onChangeDebounced(e.currentTarget.value)}
 	/>
 </label>

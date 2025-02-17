@@ -29,15 +29,16 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 # --------- check types and build the application
 FROM base AS build
 
-# run svelte check to make sure the app has valid types
-RUN pnpm run check
-
 # get the vite commit hash env var so its used with pnpm run build
 ARG VITE_COMMIT_HASH
 ENV VITE_COMMIT_HASH=$VITE_COMMIT_HASH
 
+# build the app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
+
+# run svelte check to make sure the app has valid types
+RUN pnpm run check
 
 # --------- run the application
 FROM base

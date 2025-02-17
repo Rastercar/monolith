@@ -1,4 +1,4 @@
-# --- setup the application
+# --------- setup the application
 FROM node:lts-alpine AS base
 
 # get the git commit hash (append with VITE_ to make sure its exposed to the vite build)
@@ -17,7 +17,7 @@ COPY . /app
 
 WORKDIR /app
 
-# --- install prod dependencies in a way docker can cache it
+# --------- install prod dependencies in a way docker can cache it
 FROM base AS prod-deps
 
 # pass the args from the previous step
@@ -26,8 +26,11 @@ ENV VITE_COMMIT_HASH=$VITE_COMMIT_HASH
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-# --- build the application
+# --------- check types and build the application
 FROM base AS build
+
+# run svelte check to make sure the app has valid types
+RUN pnpm run check
 
 # get the vite commit hash env var so its used with pnpm run build
 ARG VITE_COMMIT_HASH
@@ -36,7 +39,7 @@ ENV VITE_COMMIT_HASH=$VITE_COMMIT_HASH
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
-# --- run the application
+# --------- run the application
 FROM base
 
 # add curl so the healthcheck can succeed

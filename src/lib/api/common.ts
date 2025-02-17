@@ -1,7 +1,7 @@
 import { showErrorToast } from '$lib/store/toast';
 import { withMinTime } from '$lib/utils/promises';
 import {
-	createMutation,
+	createMutation as makeMutation,
 	type CreateMutationOptions,
 	type CreateMutationResult,
 	type CreateQueryOptions,
@@ -109,10 +109,10 @@ export type ApiMutation<TData, TVariables> = Omit<CreateApiMutationArgs<TData, T
  * Wrapper around createMutation for easier type
  * inference and some utilities like `minTime`
  */
-export function createApiMutation<TData, TVariables>(
+export function createMutation<TData, TVariables>(
 	args: CreateApiMutationArgs<TData, TVariables>
 ): CreateMutationResult<TData, unknown, TVariables, unknown> {
-	return createMutation(() => ({
+	return makeMutation(() => ({
 		mutationFn: (a) => (args.minTime ? withMinTime(args.fn(a), args.minTime) : args.fn(a)),
 		onError: args.onError ?? showErrorToast,
 		...args

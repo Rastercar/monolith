@@ -1,7 +1,7 @@
 import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 import { apiDeleteAccessLevel, apiGetAccessLevels } from './access-level';
 import type { GetAccessLevelFilters } from './access-level.schema';
-import { createApiMutation, type PaginationParameters } from './common';
+import { createMutation, type PaginationParameters } from './common';
 
 export function apiGetAccessLevelsQuery(
 	pagination: PaginationParameters,
@@ -15,5 +15,5 @@ export function apiGetAccessLevelsQuery(
 }
 
 export function apiDeleteUserByIdMutation() {
-	return createApiMutation({ fn: apiDeleteAccessLevel });
+	return createMutation({ fn: apiDeleteAccessLevel });
 }

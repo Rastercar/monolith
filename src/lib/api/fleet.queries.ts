@@ -1,5 +1,5 @@
 import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
-import { createApiMutation, type ApiMutation, type PaginationParameters } from './common';
+import { createMutation, type ApiMutation, type PaginationParameters } from './common';
 import { apiDeleteFleet, apiGetFleets } from './fleet';
 import type { GetFleetsFilters } from './fleet.schema';
 
@@ -12,5 +12,5 @@ export function apiGetFleetsQuery(pagination: PaginationParameters, filters: Get
 }
 
 export function apiDeleteFleetMutation(opts?: ApiMutation<string, number>) {
-	return createApiMutation({ fn: apiDeleteFleet, ...opts });
+	return createMutation({ fn: apiDeleteFleet, ...opts });
 }

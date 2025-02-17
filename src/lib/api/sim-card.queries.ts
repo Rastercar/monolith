@@ -1,6 +1,6 @@
 import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 import {
-	createApiMutation,
+	createMutation,
 	type ApiMutation,
 	type ApiQueryOptions,
 	type Paginated,
@@ -28,13 +28,13 @@ export function apiGetSimCardsQuery(
 }
 
 export function apiDeleteSimCardByIdMutation(opts?: ApiMutation<string, number>) {
-	return createApiMutation({ fn: apiDeleteSimCardById, ...opts });
+	return createMutation({ fn: apiDeleteSimCardById, ...opts });
 }
 
 export function apiUpdateSimCardMutation(
 	opts?: ApiMutation<UpdateSimCardRes, { id: number; body: UpdateSimCardBody }>
 ) {
-	return createApiMutation({
+	return createMutation({
 		fn: ({ id, body }: { id: number; body: UpdateSimCardBody }) => apiUpdateSimCard(id, body),
 		...opts
 	});

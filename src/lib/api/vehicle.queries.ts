@@ -1,6 +1,6 @@
 import { isPositiveInteger } from '$lib/utils/number';
 import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
-import { createApiMutation, type PaginationParameters } from './common';
+import { createMutation, type PaginationParameters } from './common';
 import { apiDeleteVehicle as apiDeleteVehicleById, apiGetVehicle, apiGetVehicles } from './vehicle';
 import type { GetVehiclesFilters } from './vehicle.schema';
 
@@ -21,5 +21,5 @@ export function apiGetVehicleQuery(vehicleId: number) {
 }
 
 export function apiDeleteVehicleByIdMutation() {
-	return createApiMutation({ fn: (id: number) => apiDeleteVehicleById(id) });
+	return createMutation({ fn: (id: number) => apiDeleteVehicleById(id) });
 }

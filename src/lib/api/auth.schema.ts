@@ -1,4 +1,3 @@
-import { dev } from '$app/environment';
 import { passwordValidator, usernameValidator } from '$lib/utils/zod-validators';
 import { z } from 'zod';
 
@@ -31,10 +30,7 @@ export const signInSchema = z.object({
 });
 
 export const recoverPasswordSchema = z.object({
-	email: z
-		.string()
-		.email()
-		.default(dev ? 'rastercar.tests.002@gmail.com' : '')
+	email: z.string().email()
 });
 
 export const confirmEmailAddressSchema = z.object({

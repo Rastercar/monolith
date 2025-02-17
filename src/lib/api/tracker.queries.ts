@@ -1,6 +1,6 @@
 import { createQuery, keepPreviousData } from '@tanstack/svelte-query';
 import {
-	createApiMutation,
+	createMutation,
 	type ApiMutation,
 	type ApiQueryOptions,
 	type Paginated,
@@ -41,7 +41,7 @@ export function apiGetTrackersQuery(
 export function apiDeleteTrackerMutation(
 	opts?: ApiMutation<string, { id: number; deleteAssociatedSimCards: boolean }>
 ) {
-	return createApiMutation({
+	return createMutation({
 		fn: ({ id, deleteAssociatedSimCards }) => apiDeleteTracker(id, { deleteAssociatedSimCards }),
 		...opts
 	});
@@ -50,5 +50,5 @@ export function apiDeleteTrackerMutation(
 export function apiSetTrackerVehicleMutation(
 	opts?: ApiMutation<string, { vehicleId: number | null; vehicleTrackerId: number }>
 ) {
-	return createApiMutation({ fn: apiSetTrackerVehicle, ...opts });
+	return createMutation({ fn: apiSetTrackerVehicle, ...opts });
 }

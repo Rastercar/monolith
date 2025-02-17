@@ -6,10 +6,10 @@ import {
 	apiSignOutSpecificSession
 } from './auth';
 import type { ConfirmEmailAddressBody, RequestEmailConfirmationBody } from './auth.schema';
-import { createApiMutation, type ApiMutation } from './common';
+import { createMutation, type ApiMutation } from './common';
 
 export function apiRequestEmailAddressConfirmationMutation() {
-	return createApiMutation({
+	return createMutation({
 		fn: (body: RequestEmailConfirmationBody) =>
 			withMinTime(apiRequestEmailAddressConfirmation(body), 1_500)
 	});
@@ -18,7 +18,7 @@ export function apiRequestEmailAddressConfirmationMutation() {
 export function apiConfirmEmailAddressMutation(
 	opts?: ApiMutation<string, ConfirmEmailAddressBody>
 ) {
-	return createApiMutation({
+	return createMutation({
 		fn: (args: ConfirmEmailAddressBody) => withMinTime(apiConfirmEmailAddress(args), 1_500),
 		...opts
 	});
@@ -32,7 +32,7 @@ interface ApiDeleteUserSessionMutationArgs {
 export function apiDeleteUserSessionMutation(
 	opts?: ApiMutation<string, ApiDeleteUserSessionMutationArgs>
 ) {
-	return createApiMutation({
+	return createMutation({
 		fn: ({ sessionOwnerId, sessionPublicId }) => {
 			return sessionOwnerId
 				? apiDeleteUserSession(sessionOwnerId, sessionPublicId)

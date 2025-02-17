@@ -72,7 +72,7 @@
 						onBlockedStatusChange: query.refetch
 					});
 
-					items.unshift(blockBtn);
+					items.push(blockBtn);
 				}
 
 				return renderComponent(DataTableActioMenu, { items });

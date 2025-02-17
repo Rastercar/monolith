@@ -5,7 +5,7 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
-	const { user: reqUser } = acl(locals, { requiredPermissions: 'LOGOFF_USER' });
+	const { user: reqUser, orgId } = acl(locals, { requiredPermissions: 'LOGOFF_USER' });
 
 	const userIdOfSessionToBeDeleted = parseInt(params.user_id);
 	const sessionToBeDeletedPublicId = parseInt(params.session_id);
@@ -15,10 +15,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	}
 
 	// assert the user belongs to the request user org
-	const sessionOwner = await findOrgUserById({
-		id: userIdOfSessionToBeDeleted,
-		orgId: reqUser.organization.id
-	});
+	const sessionOwner = await findOrgUserById({ id: userIdOfSessionToBeDeleted, orgId });
 	if (!sessionOwner) return error(404);
 
 	await deleteSessionByPublicId(sessionToBeDeletedPublicId);

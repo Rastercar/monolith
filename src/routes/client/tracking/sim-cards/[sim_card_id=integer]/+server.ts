@@ -32,23 +32,23 @@ export async function _updateSimCard(
 }
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'DELETE_SIM_CARD' });
+	const { orgId } = acl(locals, { requiredPermissions: 'DELETE_SIM_CARD' });
 
 	const simCardId = parseInt(params.sim_card_id);
 
-	await deleteOrgSimCardById({ id: simCardId, orgId: user.organization.id });
+	await deleteOrgSimCardById({ id: simCardId, orgId });
 
 	return json('sim card deleted');
 };
 
 export const PUT: RequestHandler = async ({ params, request, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'UPDATE_SIM_CARD' });
+	const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_SIM_CARD' });
 
 	const simCardId = parseInt(params.sim_card_id);
 
 	const body = await validateJsonRequestBody(request, updateSimCardSchema);
 
-	let simOrError = await _updateSimCard({ id: simCardId, orgId: user.organization.id }, body);
+	let simOrError = await _updateSimCard({ id: simCardId, orgId }, body);
 
 	if ('error' in simOrError) {
 		error(400, { message: 'invalid request body', code: simOrError.error });

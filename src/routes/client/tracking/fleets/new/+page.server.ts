@@ -11,11 +11,11 @@ export const load = async () => ({
 
 export const actions = {
 	createFleet: async ({ request, locals }) => {
-		const { user } = acl(locals, { requiredPermissions: 'CREATE_FLEET' });
+		const { orgId } = acl(locals, { requiredPermissions: 'CREATE_FLEET' });
 
 		const form = await validateFormWithFailOnError(request, createFleetSchema);
 
-		const newFleet = await createOrgFleet(user.organization.id, form.data);
+		const newFleet = await createOrgFleet(orgId, form.data);
 
 		return { form, createdFleet: fleetSchema.parse(newFleet) };
 	}

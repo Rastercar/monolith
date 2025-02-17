@@ -5,11 +5,11 @@ import { acl, checkUSerHasPermissions } from '$lib/server/middlewares/auth';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, locals }) => {
-	const { user: requestUser, session: reqUserSession } = acl(locals);
+	const { user: requestUser, session: reqUserSession, orgId } = acl(locals);
 
 	const userId = parseInt(params.user_id);
 
-	const dbUser = await findOrgUserById({ id: userId, orgId: requestUser.organization.id });
+	const dbUser = await findOrgUserById({ id: userId, orgId });
 	if (!dbUser) return error(404);
 
 	let sessions: UserSession[] = [];

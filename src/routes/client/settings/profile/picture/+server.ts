@@ -7,7 +7,7 @@ import { error, json } from '@sveltejs/kit';
 import path from 'path';
 
 export const PUT = async ({ request, locals }) => {
-	const { user } = acl(locals);
+	const { user, orgId } = acl(locals);
 
 	const form = await validateForm(request, imageSchema);
 	if (!form.valid) {
@@ -20,7 +20,7 @@ export const PUT = async ({ request, locals }) => {
 
 	const key = {
 		date: new Date(),
-		organizationId: user.organization.id,
+		organizationId: orgId,
 		filenameWithExtension: `profile-pic${path.extname(image.name)}`,
 		organizationSubFolder: `user/${user.id}`
 	};

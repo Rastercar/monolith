@@ -5,7 +5,7 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
-	const { user: reqUser } = acl(locals, { requiredPermissions: 'DELETE_USER' });
+	const { user: reqUser, orgId } = acl(locals, { requiredPermissions: 'DELETE_USER' });
 
 	const userToDeleteId = parseInt(params.user_id);
 
@@ -13,10 +13,7 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 		return error(400, 'cannot delete your own user');
 	}
 
-	const userToDelete = await findOrgUserById({
-		id: userToDeleteId,
-		orgId: reqUser.organization.id
-	});
+	const userToDelete = await findOrgUserById({ id: userToDeleteId, orgId });
 	if (!userToDelete) {
 		return error(404);
 	}
@@ -33,7 +30,7 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 		await s3.deleteFile(userToDelete.profilePicture);
 	}
 
-	await deleteOrgUserById({ id: userToDeleteId, orgId: reqUser.organization.id });
+	await deleteOrgUserById({ id: userToDeleteId, orgId });
 
 	return json('user deleted');
 };

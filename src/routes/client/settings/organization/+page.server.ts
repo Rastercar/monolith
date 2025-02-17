@@ -15,10 +15,10 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	updateOrganization: async ({ request, locals }) => {
-		const { user } = acl(locals, { requiredPermissions: 'UPDATE_ORGANIZATION' });
+		const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_ORGANIZATION' });
 
 		const form = await validateFormWithFailOnError(request, updateOrganizationSchema);
-		await updateOrganization(user.organization.id, form.data);
+		await updateOrganization(orgId, form.data);
 
 		return message(form, { text: 'organization updated', type: 'success' });
 	}

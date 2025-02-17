@@ -8,7 +8,7 @@ import path from 'path';
 import type { RequestHandler } from './$types';
 
 export const PUT: RequestHandler = async ({ request, params, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
+	const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
 
 	const form = await validateForm(request, imageSchema);
 	if (!form.valid) {
@@ -19,14 +19,14 @@ export const PUT: RequestHandler = async ({ request, params, locals }) => {
 
 	const vehicleId = parseInt(params.vehicle_id);
 
-	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId });
 	if (!vehicle) return error(404, 'vehicle not found');
 
 	const oldVehiclePhoto = vehicle.photo;
 
 	const key = {
 		date: new Date(),
-		organizationId: user.organization.id,
+		organizationId: orgId,
 		filenameWithExtension: `pic${path.extname(image.name)}`,
 		organizationSubFolder: `vehicle/${vehicle.id}`
 	};
@@ -41,11 +41,11 @@ export const PUT: RequestHandler = async ({ request, params, locals }) => {
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
-	const { user } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
+	const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
 
 	const vehicleId = parseInt(params.vehicle_id);
 
-	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId });
 	if (!vehicle) return error(404, 'vehicle not found');
 
 	if (!vehicle.photo) {

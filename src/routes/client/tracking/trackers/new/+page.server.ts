@@ -17,22 +17,19 @@ export const load = async () => ({
 
 export const actions = {
 	createTracker: async ({ request, locals }) => {
-		const { user } = acl(locals, { requiredPermissions: 'CREATE_TRACKER' });
+		const { orgId } = acl(locals, { requiredPermissions: 'CREATE_TRACKER' });
 
 		const form = await validateFormWithFailOnError(request, createTrackerSchema);
 
 		if (form.data.vehicleId) {
-			const vehicleToAssociate = await findOrgVehicleById({
-				id: form.data.vehicleId,
-				orgId: user.organization.id
-			});
+			const vehicleToAssociate = await findOrgVehicleById({ id: form.data.vehicleId, orgId });
 
 			if (!vehicleToAssociate) {
 				return setError(form, 'vehicleId', 'vehicle not found');
 			}
 		}
 
-		const trackerOrError = await createOrgTracker(user.organization.id, form.data).catch((e) => {
+		const trackerOrError = await createOrgTracker(orgId, form.data).catch((e) => {
 			if (isErrorFromUniqueConstraint(e, 'vehicle_tracker_imei_unique')) {
 				return 'vehicle_tracker_imei_unique' as const;
 			}

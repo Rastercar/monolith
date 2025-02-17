@@ -6,16 +6,13 @@ import { getPaginationParamsFromSearchParams } from '$lib/utils/pagination';
 import { json } from '@sveltejs/kit';
 
 export const GET = async ({ url, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const pagination = getPaginationParamsFromSearchParams(url.searchParams);
 
 	const filters = validateRequestSearchParams(url.searchParams, getUsersSearchParamsSchema);
 
-	const users = await findOrgUsersWithPagination(user.organization.id, {
-		filters,
-		pagination
-	});
+	const users = await findOrgUsersWithPagination(orgId, { filters, pagination });
 
 	return json(users);
 };

@@ -11,7 +11,7 @@ export const load = async () => ({
 
 export const actions = {
 	createUser: async ({ request, locals }) => {
-		const { user } = acl(locals, { requiredPermissions: 'CREATE_USER' });
+		const { orgId } = acl(locals, { requiredPermissions: 'CREATE_USER' });
 
 		const form = await validateFormWithFailOnError(request, createUserSchema);
 
@@ -21,7 +21,7 @@ export const actions = {
 		const userWithUsername = await findUserByUsername(form.data.username);
 		if (userWithUsername) return setError(form, 'username', 'username not available');
 
-		const newUser = await createOrgUser(user.organization.id, form.data);
+		const newUser = await createOrgUser(orgId, form.data);
 
 		const createdUser = simpleUserSchema.parse(newUser);
 		return { form, createdUser };

@@ -4,17 +4,14 @@ import { acl } from '$lib/server/middlewares/auth';
 import type { TrackerSelection } from '$lib/store/map.svelte';
 
 export async function load({ url, locals }) {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	let trackerToLookupId = parseInt(url.searchParams.get('lookupTracker') || '0');
 
 	let tracker: Tracker | null = null;
 
 	if (trackerToLookupId && !Number.isNaN(trackerToLookupId)) {
-		const trackerFromDb = await findOrgTrackerById({
-			id: trackerToLookupId,
-			orgId: user.organization.id
-		});
+		const trackerFromDb = await findOrgTrackerById({ id: trackerToLookupId, orgId });
 		tracker = trackerSchema.parse(trackerFromDb);
 	}
 

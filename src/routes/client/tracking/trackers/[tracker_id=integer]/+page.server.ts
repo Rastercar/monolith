@@ -10,10 +10,10 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { _updateVehicleTracker } from './+server';
 
 export const load = async ({ params, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const trackerId = parseInt(params.tracker_id);
-	const dbTracker = await findOrgTrackerById({ id: trackerId, orgId: user.organization.id });
+	const dbTracker = await findOrgTrackerById({ id: trackerId, orgId });
 
 	if (!dbTracker) return error(404);
 
@@ -28,24 +28,18 @@ export const load = async ({ params, locals }) => {
 
 export const actions = {
 	updateTracker: async ({ request, locals, params }) => {
-		const { user } = acl(locals, { requiredPermissions: 'UPDATE_TRACKER' });
+		const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_TRACKER' });
 
 		const trackerId = parseInt(params.tracker_id);
 
 		const form = await validateFormWithFailOnError(request, updateTrackerSchema);
 
 		if (form.data.vehicleId) {
-			const vehicle = await findOrgVehicleById({
-				id: form.data.vehicleId,
-				orgId: user.organization.id
-			});
+			const vehicle = await findOrgVehicleById({ id: form.data.vehicleId, orgId });
 			if (!vehicle) setError(form, 'vehicleId', 'vehicle not found');
 		}
 
-		const res = await _updateVehicleTracker(
-			{ id: trackerId, orgId: user.organization.id },
-			form.data
-		);
+		const res = await _updateVehicleTracker({ id: trackerId, orgId }, form.data);
 
 		if ('error' in res) {
 			if (res.error === 'IMEI_IN_USE') {

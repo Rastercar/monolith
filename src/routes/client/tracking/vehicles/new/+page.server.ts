@@ -15,14 +15,14 @@ export const load = async () => ({
 
 export const actions = {
 	createVehicle: async ({ request, locals }) => {
-		const { user } = acl(locals, { requiredPermissions: 'CREATE_VEHICLE' });
+		const { orgId } = acl(locals, { requiredPermissions: 'CREATE_VEHICLE' });
 
 		const form = await validateFormWithFailOnError(request, createVehicleSchema);
 
 		const { photo, ...data } = form.data;
 
 		const createdVehicleOrError = await getDB().transaction(async (tx) => {
-			const vehicleOrError = await createOrgVehicle(user.organization.id, data, tx).catch((e) => {
+			const vehicleOrError = await createOrgVehicle(orgId, data, tx).catch((e) => {
 				if (isErrorFromUniqueConstraint(e, 'vehicle_plate_unique')) {
 					return 'vehicle_plate_unique' as const;
 				}
@@ -38,7 +38,7 @@ export const actions = {
 			if (photo) {
 				const key = {
 					date: new Date(),
-					organizationId: user.organization.id,
+					organizationId: orgId,
 					filenameWithExtension: `pic${path.extname(photo.name)}`,
 					organizationSubFolder: `vehicle/${vehicleOrError.id}`
 				};

@@ -6,11 +6,11 @@ import { validateJsonRequestBody } from '$lib/server/middlewares/validation';
 import { json } from '@sveltejs/kit';
 
 export const POST = async ({ request, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const { ids } = await validateJsonRequestBody(request, getTrackersPositionsSearchParamsSchema);
 
-	const validIds = await filterVehicleTrackerIdsByAssertingBelongsToOrg(ids, user.organization.id);
+	const validIds = await filterVehicleTrackerIdsByAssertingBelongsToOrg(ids, orgId);
 
 	const dbPositions = await findMultipleVehicleTrackerLastLocations(validIds);
 

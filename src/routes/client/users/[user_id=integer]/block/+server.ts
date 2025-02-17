@@ -4,14 +4,14 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ params, locals }) => {
-	const { user: reqUser } = acl(locals, { requiredPermissions: 'BLOCK_USER' });
+	const { orgId } = acl(locals, { requiredPermissions: 'BLOCK_USER' });
 
 	const userToBeBlockedId = parseInt(params.user_id);
 
-	const user = await findOrgUserById({ id: userToBeBlockedId, orgId: reqUser.organization.id });
+	const user = await findOrgUserById({ id: userToBeBlockedId, orgId });
 	if (!user) error(404, 'user to block not found');
 
-	await blockOrgUserById({ id: userToBeBlockedId, orgId: reqUser.organization.id });
+	await blockOrgUserById({ id: userToBeBlockedId, orgId });
 
 	return json('user blocked');
 };

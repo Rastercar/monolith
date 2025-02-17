@@ -8,7 +8,7 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'MANAGE_USER_ACCESS_LEVELS' });
+	const { user, orgId } = acl(locals, { requiredPermissions: 'MANAGE_USER_ACCESS_LEVELS' });
 
 	const alId = parseInt(params.access_level_id);
 
@@ -16,10 +16,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		return error(403, 'cannot delete your own access level');
 	}
 
-	const accessLevelToDelete = await findOrgAccessLevelById({
-		id: alId,
-		orgId: user.organization.id
-	});
+	const accessLevelToDelete = await findOrgAccessLevelById({ id: alId, orgId });
 	if (!accessLevelToDelete) return error(404);
 
 	if (accessLevelToDelete.isFixed) {
@@ -32,7 +29,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		return error(403, 'cannot delete access level with associated users');
 	}
 
-	await deleteOrgAccessLevelById({ id: alId, orgId: user.organization.id });
+	await deleteOrgAccessLevelById({ id: alId, orgId });
 
 	return json('access level deleted');
 };

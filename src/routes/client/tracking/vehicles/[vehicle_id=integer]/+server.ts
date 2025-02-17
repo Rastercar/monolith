@@ -6,24 +6,24 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'DELETE_VEHICLE' });
+	const { orgId } = acl(locals, { requiredPermissions: 'DELETE_VEHICLE' });
 
 	const vehicleId = parseInt(params.vehicle_id);
 
-	const vehicleToDelete = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+	const vehicleToDelete = await findOrgVehicleById({ id: vehicleId, orgId });
 	if (!vehicleToDelete) return error(404);
 
-	await deleteOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+	await deleteOrgVehicleById({ id: vehicleId, orgId });
 	if (vehicleToDelete.photo) await s3.deleteFile(vehicleToDelete.photo);
 
 	return json('vehicle deleted');
 };
 
 export const GET: RequestHandler = async ({ params, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const vehicleId = parseInt(params.vehicle_id);
-	const vehicleFromDb = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+	const vehicleFromDb = await findOrgVehicleById({ id: vehicleId, orgId });
 
 	if (!vehicleFromDb) return error(404);
 

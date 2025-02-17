@@ -10,10 +10,10 @@ import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const vehicleId = parseInt(params.vehicle_id);
-	const vehicleFromDb = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+	const vehicleFromDb = await findOrgVehicleById({ id: vehicleId, orgId });
 
 	if (!vehicleFromDb) return error(404);
 
@@ -35,13 +35,13 @@ export const load = async ({ params, locals }) => {
 
 export const actions = {
 	updateVehicle: async ({ request, locals, params }) => {
-		const { user } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
+		const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_VEHICLE' });
 
 		const vehicleId = parseInt(params.vehicle_id);
 
 		const form = await validateFormWithFailOnError(request, updateVehicleSchema);
 
-		const res = await updateOrgVehicle({ id: vehicleId, orgId: user.organization.id }, form.data)
+		const res = await updateOrgVehicle({ id: vehicleId, orgId }, form.data)
 			.then((vehicle) => vehicleSchema.parse(vehicle))
 			.catch((e) => {
 				if (isErrorFromUniqueConstraint(e, 'vehicle_plate_unique')) {
@@ -57,7 +57,7 @@ export const actions = {
 			}
 		}
 
-		const updatedVehicle = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+		const updatedVehicle = await findOrgVehicleById({ id: vehicleId, orgId });
 
 		return { form, updatedVehicle: vehicleSchema.parse(updatedVehicle) };
 	}

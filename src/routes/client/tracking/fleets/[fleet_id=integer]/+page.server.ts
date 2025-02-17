@@ -8,10 +8,10 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { _updateFleet } from './+server.js';
 
 export const load = async ({ params, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const fleetId = parseInt(params.fleet_id);
-	const fleet = await findOrgFleetById({ id: fleetId, orgId: user.organization.id });
+	const fleet = await findOrgFleetById({ id: fleetId, orgId });
 
 	if (!fleet) return error(404);
 
@@ -22,16 +22,13 @@ export const load = async ({ params, locals }) => {
 
 export const actions = {
 	updateFleet: async ({ request, locals, params }) => {
-		const { user } = acl(locals, { requiredPermissions: 'UPDATE_FLEET' });
+		const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_FLEET' });
 
 		const fleetId = parseInt(params.fleet_id);
 
 		const form = await validateFormWithFailOnError(request, updateFleetSchema);
 
-		const updatedFleet = await _updateFleet(
-			{ id: fleetId, orgId: user.organization.id },
-			form.data
-		);
+		const updatedFleet = await _updateFleet({ id: fleetId, orgId }, form.data);
 
 		return { form, updatedFleet };
 	}

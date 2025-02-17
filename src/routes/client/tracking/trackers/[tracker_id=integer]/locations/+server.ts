@@ -6,7 +6,7 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, locals, params }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const trackerId = parseInt(params.tracker_id);
 
@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ url, locals, params }) => {
 	);
 
 	// assert the tracker exists and belongs to the user org
-	const tracker = await findOrgTrackerById({ id: trackerId, orgId: user.organization.id });
+	const tracker = await findOrgTrackerById({ id: trackerId, orgId });
 	if (!tracker) return error(404);
 
 	const positions = (await findTrackerLocationList(trackerId, filters)).map((p) => ({

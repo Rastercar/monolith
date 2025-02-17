@@ -12,11 +12,11 @@ export const load = async () => ({
 
 export const actions = {
 	createSimCard: async ({ request, locals }) => {
-		const { user } = acl(locals, { requiredPermissions: 'CREATE_SIM_CARD' });
+		const { orgId } = acl(locals, { requiredPermissions: 'CREATE_SIM_CARD' });
 
 		const form = await validateFormWithFailOnError(request, createSimCardSchema);
 
-		const simOrError = await createOrgSimCard(user.organization.id, form.data).catch((e) => {
+		const simOrError = await createOrgSimCard(orgId, form.data).catch((e) => {
 			if (isErrorFromUniqueConstraint(e, 'sim_card_ssn_unique')) {
 				return 'sim_card_ssn_unique' as const;
 			}

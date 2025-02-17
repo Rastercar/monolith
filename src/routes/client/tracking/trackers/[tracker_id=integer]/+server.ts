@@ -30,7 +30,7 @@ export async function _updateVehicleTracker(
 }
 
 export const DELETE: RequestHandler = async ({ params, request, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'DELETE_TRACKER' });
+	const { orgId } = acl(locals, { requiredPermissions: 'DELETE_TRACKER' });
 
 	const trackerId = parseInt(params.tracker_id);
 
@@ -39,30 +39,24 @@ export const DELETE: RequestHandler = async ({ params, request, locals }) => {
 		deleteTrackerSchema
 	);
 
-	await deleteOrgTrackerById(
-		{ id: trackerId, orgId: user.organization.id },
-		deleteAssociatedSimCards
-	);
+	await deleteOrgTrackerById({ id: trackerId, orgId }, deleteAssociatedSimCards);
 
 	return json('tracker card deleted');
 };
 
 export const PUT: RequestHandler = async ({ params, request, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'UPDATE_TRACKER' });
+	const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_TRACKER' });
 
 	const simCardId = parseInt(params.tracker_id);
 
 	const body = await validateJsonRequestBody(request, updateTrackerSchema);
 
 	if (body.vehicleId) {
-		const vehicle = await findOrgVehicleById({ id: body.vehicleId, orgId: user.organization.id });
+		const vehicle = await findOrgVehicleById({ id: body.vehicleId, orgId });
 		if (!vehicle) error(400, 'vehicle not found');
 	}
 
-	let trackerOrError = await _updateVehicleTracker(
-		{ id: simCardId, orgId: user.organization.id },
-		body
-	);
+	let trackerOrError = await _updateVehicleTracker({ id: simCardId, orgId }, body);
 
 	if ('error' in trackerOrError) {
 		error(400, { message: 'invalid request body', code: trackerOrError.error });

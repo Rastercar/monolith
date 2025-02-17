@@ -16,23 +16,23 @@ export async function _updateFleet(ids: IdAndOrgId, body: UpdateFleetBody): Prom
 }
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'DELETE_FLEET' });
+	const { orgId } = acl(locals, { requiredPermissions: 'DELETE_FLEET' });
 
 	const fleetId = parseInt(params.fleet_id);
 
-	await deleteFleetById({ id: fleetId, orgId: user.organization.id });
+	await deleteFleetById({ id: fleetId, orgId });
 
 	return json('fleet card deleted');
 };
 
 export const PUT: RequestHandler = async ({ params, request, locals }) => {
-	const { user } = acl(locals, { requiredPermissions: 'UPDATE_FLEET' });
+	const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_FLEET' });
 
 	const fleetId = parseInt(params.fleet_id);
 
 	const body = await validateJsonRequestBody(request, updateFleetSchema);
 
-	let fleet = await _updateFleet({ id: fleetId, orgId: user.organization.id }, body);
+	let fleet = await _updateFleet({ id: fleetId, orgId }, body);
 
 	return json(fleet);
 };

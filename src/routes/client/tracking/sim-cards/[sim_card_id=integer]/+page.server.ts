@@ -8,10 +8,10 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { _updateSimCard } from './+server';
 
 export const load = async ({ params, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const simCardId = parseInt(params.sim_card_id);
-	const simCard = await findOrgSimCardByID({ id: simCardId, orgId: user.organization.id });
+	const simCard = await findOrgSimCardByID({ id: simCardId, orgId });
 
 	if (!simCard) return error(404);
 
@@ -22,13 +22,13 @@ export const load = async ({ params, locals }) => {
 
 export const actions = {
 	updateSimCard: async ({ request, locals, params }) => {
-		const { user } = acl(locals, { requiredPermissions: 'UPDATE_SIM_CARD' });
+		const { orgId } = acl(locals, { requiredPermissions: 'UPDATE_SIM_CARD' });
 
 		const simCardId = parseInt(params.sim_card_id);
 
 		const form = await validateFormWithFailOnError(request, updateSimCardSchema);
 
-		const res = await _updateSimCard({ id: simCardId, orgId: user.organization.id }, form.data);
+		const res = await _updateSimCard({ id: simCardId, orgId }, form.data);
 
 		if ('error' in res) {
 			if (res.error === 'SSN_IN_USE') {

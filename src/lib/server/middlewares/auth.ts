@@ -65,6 +65,7 @@ interface AclOptions {
 
 interface AclRes {
 	user: User;
+	orgId: number;
 	session: UserSession;
 }
 
@@ -75,5 +76,5 @@ export function acl({ user, session }: App.Locals, options?: AclOptions): AclRes
 
 	if (requiredPermissions) denyAccessOnMissingPermissions(user, requiredPermissions);
 
-	return { user, session };
+	return { user, orgId: user.organization.id, session };
 }

@@ -11,11 +11,11 @@ export const load = async () => ({
 
 export const actions = {
 	createAccessLevel: async ({ request, locals }) => {
-		const { user } = acl(locals, { requiredPermissions: 'CREATE_VEHICLE' });
+		const { orgId } = acl(locals, { requiredPermissions: 'CREATE_VEHICLE' });
 
 		const form = await validateFormWithFailOnError(request, createAccessLevelSchema);
 
-		const al = await createOrgAccessLevel(user.organization.id, form.data);
+		const al = await createOrgAccessLevel(orgId, form.data);
 
 		const createdAccessLevel = accessLevelSchema.parse(al);
 

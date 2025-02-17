@@ -6,16 +6,13 @@ import { getPaginationParamsFromSearchParams } from '$lib/utils/pagination';
 import { json } from '@sveltejs/kit';
 
 export const GET = async ({ url, locals }) => {
-	const { user } = acl(locals);
+	const { orgId } = acl(locals);
 
 	const pagination = getPaginationParamsFromSearchParams(url.searchParams);
 
 	const filters = validateRequestSearchParams(url.searchParams, getSimCardsSearchParamsSchema);
 
-	const simCards = await findOrgSimCardsWithPagination(user.organization.id, {
-		pagination,
-		filters
-	});
+	const simCards = await findOrgSimCardsWithPagination(orgId, { pagination, filters });
 
 	return json(simCards);
 };

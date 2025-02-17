@@ -1,10 +1,12 @@
 <script lang="ts">
+	import type { Fleet } from '$lib/api/fleet.schema';
 	import { createVehicleSchema, type Vehicle } from '$lib/api/vehicle.schema';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import FileInputField from '$lib/components/form/FileInputField.svelte';
 	import MaskedTextField from '$lib/components/form/MaskedTextField.svelte';
 	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
+	import SelectFleetInput from '$lib/components/non-generic/input/SelectFleetInput.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';
 	import { route } from '$lib/ROUTES';
 	import { showErrorToast } from '$lib/store/toast';
@@ -20,7 +22,11 @@
 
 	let { formSchema, onCreate }: Props = $props();
 
+	let selectedFleet: null | Fleet = $state(null);
+	let selectFleetSearchValue = $state('');
+
 	const sForm = superForm(formSchema, {
+		dataType: 'json',
 		validators: zodClient(createVehicleSchema),
 		onUpdate: ({ form, result }) => {
 			if (form.valid) {
@@ -33,7 +39,7 @@
 
 	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
 
-	const { submitting: isLoading } = sForm;
+	const { submitting: isLoading, form } = sForm;
 </script>
 
 <form
@@ -43,6 +49,15 @@
 	action={route('createVehicle /client/tracking/vehicles/new')}
 	use:sForm.enhance
 >
+	<div>
+		<span class="mb-1 block">Fleet</span>
+		<SelectFleetInput
+			bind:searchValue={selectFleetSearchValue}
+			value={$form.fleetId?.toString() ?? ''}
+			onItemSelected={(e) => ($form.fleetId = e?.id ?? null)}
+		/>
+	</div>
+
 	<MaskedTextField
 		form={sForm}
 		classes="col-span-1"
@@ -106,7 +121,7 @@
 
 	<FileInputField
 		form={sForm}
-		classes="col-span-1"
+		classes="col-span-1 sm:col-span-2 md:col-span-3"
 		name="photo"
 		label="Photo"
 		accept="image/png, image/jpeg, image/webp"

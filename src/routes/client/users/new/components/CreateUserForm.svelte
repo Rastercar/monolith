@@ -13,7 +13,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { ActionData } from '../$types';
-	import SelectAccessLevelInput from './SelectAccessLevelInput.svelte';
+	import SelectAccessLevelInput from '../../../../../lib/components/non-generic/input/SelectAccessLevelInput.svelte';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createUserSchema>>;

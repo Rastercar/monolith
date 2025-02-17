@@ -1,17 +1,8 @@
 <script lang="ts" generics="T">
 	import Icon from '@iconify/svelte';
-	import { createQuery, type CreateQueryOptions } from '@tanstack/svelte-query';
+	import { type CreateQueryResult } from '@tanstack/svelte-query';
 	import { Combobox } from 'bits-ui';
 	import { useDebounce } from 'runed';
-
-	// TODO: THIS COMPONENT IS DUPLICATED !
-	// create a base component that takes a query
-	// as a prop and make the input and output generic ?
-	//
-	// maybe even make a cool wraper to work with superforms, that would be bonkers
-	//
-	// TODO: also test if this works any good by having the initial value set
-	// eg loading a update form
 
 	interface Item<T> {
 		label: string;
@@ -30,25 +21,12 @@
 		 */
 		searchValue: string;
 
-		queryFn: (_filter: string) => Promise<Item<T>[]>;
-
-		queryKey: (_filter: string) => CreateQueryOptions['queryKey'];
+		query: CreateQueryResult<Item<T>[]>;
 
 		onItemSelected: (_: Item<T> | null) => void;
 	}
 
-	let {
-		value = $bindable(),
-		searchValue = $bindable(),
-		queryFn,
-		queryKey,
-		onItemSelected
-	}: Props = $props();
-
-	const query = createQuery(() => ({
-		queryKey: queryKey(searchValue),
-		queryFn: () => queryFn(searchValue)
-	}));
+	let { value = $bindable(), searchValue = $bindable(), query, onItemSelected }: Props = $props();
 
 	const queryData = $derived(query.data ?? []);
 
@@ -69,7 +47,9 @@
 	<div class="relative">
 		<Combobox.Input
 			class="input"
+			defaultValue={searchValue}
 			placeholder="search by name"
+			clearOnDeselect
 			oninput={(e) => {
 				const v = e.currentTarget.value;
 
@@ -83,7 +63,11 @@
 		/>
 
 		<Combobox.Trigger class="absolute end-2 top-[8px]">
-			<Icon icon="mdi:caret-down" height={28} />
+			<Icon
+				icon={query.isPending ? 'mdi:loading' : 'mdi:caret-down'}
+				class={`${query.isPending ? 'animate-spin' : ''}`}
+				height={28}
+			/>
 		</Combobox.Trigger>
 	</div>
 
@@ -108,7 +92,7 @@
 						{/snippet}
 					</Combobox.Item>
 				{:else}
-					<span class="block px-5 py-2 text-sm text-muted-foreground"> No items found. </span>
+					<span class="block px-5 py-2 text-sm text-muted-foreground">No items found.</span>
 				{/each}
 			</Combobox.Viewport>
 

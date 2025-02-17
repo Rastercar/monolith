@@ -8,8 +8,21 @@ export function apiGetAccessLevelsQuery(
 	filters: GetAccessLevelFilters
 ) {
 	return createQuery(() => ({
-		queryKey: ['fleets', pagination, filters],
+		queryKey: ['access-level', pagination, filters],
 		queryFn: () => apiGetAccessLevels({ pagination, filters }),
+		placeholderData: keepPreviousData
+	}));
+}
+
+export function apiGetAccessLevelsAsSelectOptionsQuery(name: string) {
+	const pagination = { page: 1, pageSize: 100 };
+
+	return createQuery(() => ({
+		queryKey: ['access-level', 'select-options', name],
+		queryFn: async () => {
+			const { records } = await apiGetAccessLevels({ pagination, filters: { name } });
+			return records.map((i) => ({ label: i.name, value: i.id.toString(), original: i }));
+		},
 		placeholderData: keepPreviousData
 	}));
 }

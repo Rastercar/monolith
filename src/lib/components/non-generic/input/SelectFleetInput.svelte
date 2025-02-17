@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { apiGetAccessLevelsAsSelectOptionsQuery } from '$lib/api/access-level.queries';
-	import type { AccessLevel } from '$lib/api/access-level.schema';
+	import { apiGetFleetsAsSelectOptionsQuery } from '$lib/api/fleet.queries';
+	import type { Fleet } from '$lib/api/fleet.schema';
 	import ServerSideSelectInput from '$lib/components/input/ServerSideSelectInput.svelte';
 
 	interface Props {
 		value: string;
 		searchValue: string;
-
-		onItemSelected: (_: AccessLevel | null) => void;
+		onItemSelected: (_: Fleet | null) => void;
 	}
 
 	let { value = $bindable(), searchValue = $bindable(), onItemSelected }: Props = $props();
 
-	const query = apiGetAccessLevelsAsSelectOptionsQuery(searchValue);
+	const query = apiGetFleetsAsSelectOptionsQuery(searchValue);
 </script>
 
 <ServerSideSelectInput

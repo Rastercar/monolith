@@ -29,6 +29,7 @@ export const getVehiclesSearchParamsSchema = z.object({
 
 export const createVehicleSchema = z.object({
 	plate: z.string().refine(isMercosulOrBrPlate, 'invalid vehicle plate'),
+	fleetId: z.number().gt(0).nullable(),
 
 	photo: z
 		.instanceof(File, { message: 'Please upload a file.' })
@@ -67,6 +68,7 @@ export const createVehicleSchema = z.object({
 
 export const updateVehicleSchema = z.object({
 	plate: z.string().refine(isMercosulOrBrPlate, 'invalid vehicle plate'),
+	fleetId: z.number().gt(0).nullable(),
 
 	brand: z
 		.string()

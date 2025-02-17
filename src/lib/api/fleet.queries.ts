@@ -11,6 +11,19 @@ export function apiGetFleetsQuery(pagination: PaginationParameters, filters: Get
 	}));
 }
 
+export function apiGetFleetsAsSelectOptionsQuery(name: string) {
+	const pagination = { page: 1, pageSize: 100 };
+
+	return createQuery(() => ({
+		queryKey: ['fleets', 'select-options', name],
+		queryFn: async () => {
+			const { records } = await apiGetFleets({ pagination, filters: { name } });
+			return records.map((i) => ({ label: i.name, value: i.id.toString(), original: i }));
+		},
+		placeholderData: keepPreviousData
+	}));
+}
+
 export function apiDeleteFleetMutation(opts?: ApiMutation<string, number>) {
 	return createMutation({ fn: apiDeleteFleet, ...opts });
 }

@@ -1,6 +1,6 @@
 import { createSimCardSchema, updateSimCardSchema } from '$lib/api/sim-card.schema';
 import { createTrackerSchema, updateTrackerSchema } from '$lib/api/tracker.schema';
-import { updateVehicleSchema, vehicleSchema, type Vehicle } from '$lib/api/vehicle.schema';
+import { updateVehicleSchema, vehicleSchema } from '$lib/api/vehicle.schema';
 import { isErrorFromUniqueConstraint } from '$lib/server/db/error';
 import { findOrgVehicleById, updateOrgVehicle } from '$lib/server/db/repo/vehicle';
 import { acl } from '$lib/server/middlewares/auth';
@@ -21,7 +21,9 @@ export const load = async ({ params, locals }) => {
 
 	return {
 		vehicle,
-		updateVehicleForm: await superValidate(zod(updateVehicleSchema), { defaults: vehicle }),
+		updateVehicleForm: await superValidate(zod(updateVehicleSchema), {
+			defaults: { ...vehicle, fleetId: vehicle.fleet?.id ?? null }
+		}),
 		createTrackerForm: await superValidate(zod(createTrackerSchema)),
 		updateTrackerForm: await superValidate(zod(updateTrackerSchema), {
 			defaults: vehicle.vehicleTracker ?? undefined
@@ -55,6 +57,8 @@ export const actions = {
 			}
 		}
 
-		return { form, updatedVehicle: res as Vehicle };
+		const updatedVehicle = await findOrgVehicleById({ id: vehicleId, orgId: user.organization.id });
+
+		return { form, updatedVehicle: vehicleSchema.parse(updatedVehicle) };
 	}
 };

@@ -5,6 +5,7 @@
 	import MaskedTextField from '$lib/components/form/MaskedTextField.svelte';
 	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
+	import SelectFleetInput from '$lib/components/non-generic/input/SelectFleetInput.svelte';
 	import { carBrands } from '$lib/constants/data/car-brands';
 	import { route } from '$lib/ROUTES';
 	import { showErrorToast } from '$lib/store/toast';
@@ -23,19 +24,10 @@
 
 	let { vehicle, formSchema, onEditCanceled, onVehicleUpdated }: Props = $props();
 
-	const getValuesFromVehicle = (v: Vehicle) => ({
-		plate: v.plate,
-		color: v.color ?? '',
-		model: v.model ?? '',
-		brand: v.brand ?? '',
-		chassisNumber: v.chassisNumber ?? '',
-		additionalInfo: v.additionalInfo ?? '',
-
-		modelYear: v.modelYear,
-		fabricationYear: v.fabricationYear
-	});
+	let selectFleetSearchValue = $state(vehicle.fleet?.name ?? '');
 
 	const sForm = superForm(formSchema, {
+		dataType: 'json',
 		validators: zodClient(updateVehicleSchema),
 		onUpdate: ({ form, result }) => {
 			if (form.valid) {
@@ -45,7 +37,7 @@
 		},
 		onError: showErrorToast
 	});
-	const { submitting: isLoading } = sForm;
+	const { submitting: isLoading, form } = sForm;
 
 	const brandOptions = carBrands.map((brand) => ({ value: brand, label: brand }));
 </script>
@@ -67,6 +59,15 @@
 	})}
 	use:sForm.enhance
 >
+	<div>
+		<span class="mb-1 block">Fleet</span>
+		<SelectFleetInput
+			bind:searchValue={selectFleetSearchValue}
+			value={$form.fleetId?.toString() ?? ''}
+			onItemSelected={(e) => ($form.fleetId = e?.id ?? null)}
+		/>
+	</div>
+
 	<MaskedTextField
 		form={sForm}
 		classes="col-span-1"

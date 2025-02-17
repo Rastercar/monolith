@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { SimCard } from '$lib/api/sim-card.schema';
 	import type { Tracker } from '$lib/api/tracker.schema';
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import SetSimCardsStep from '$lib/components/non-generic/step/set-sim-cards-step/SetSimCardsStep.svelte';
 	import Step from '$lib/components/stepper/Step.svelte';
 	import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -21,8 +22,8 @@
 	let createdTracker: Tracker | null = $state(null);
 </script>
 
-<div class="p-6 max-w-5xl mx-auto">
-	<TitleAndBreadCrumbsPageHeader
+<PageContainer>
+	<PageHeader
 		title="create tracker"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
@@ -76,4 +77,4 @@
 			<TrackerCreatedStep onCreateAnotherClick={() => (createdTracker = null)} />
 		</Step>
 	</Stepper>
-</div>
+</PageContainer>

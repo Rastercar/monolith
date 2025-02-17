@@ -11,13 +11,13 @@ export function apiGetFleetsQuery(pagination: PaginationParameters, filters: Get
 	}));
 }
 
-export function apiGetFleetsAsSelectOptionsQuery(name: string) {
+export function apiGetFleetsAsSelectOptionsQuery(filters: GetFleetsFilters) {
 	const pagination = { page: 1, pageSize: 100 };
 
 	return createQuery(() => ({
-		queryKey: ['fleets', 'select-options', name],
+		queryKey: ['fleets', 'select-options', filters],
 		queryFn: async () => {
-			const { records } = await apiGetFleets({ pagination, filters: { name } });
+			const { records } = await apiGetFleets({ pagination, filters });
 			return records.map((i) => ({ label: i.name, value: i.id.toString(), original: i }));
 		},
 		placeholderData: keepPreviousData

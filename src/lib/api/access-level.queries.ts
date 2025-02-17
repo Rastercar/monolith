@@ -14,13 +14,13 @@ export function apiGetAccessLevelsQuery(
 	}));
 }
 
-export function apiGetAccessLevelsAsSelectOptionsQuery(name: string) {
+export function apiGetAccessLevelsAsSelectOptionsQuery(filters: GetAccessLevelFilters) {
 	const pagination = { page: 1, pageSize: 100 };
 
 	return createQuery(() => ({
-		queryKey: ['access-level', 'select-options', name],
+		queryKey: ['access-level', 'select-options', filters],
 		queryFn: async () => {
-			const { records } = await apiGetAccessLevels({ pagination, filters: { name } });
+			const { records } = await apiGetAccessLevels({ pagination, filters });
 			return records.map((i) => ({ label: i.name, value: i.id.toString(), original: i }));
 		},
 		placeholderData: keepPreviousData

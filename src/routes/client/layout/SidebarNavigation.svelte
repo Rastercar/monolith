@@ -11,6 +11,11 @@
 
 	const routes: Route[] = [
 		{
+			href: '/client',
+			label: 'home',
+			icon: 'mdi:home'
+		},
+		{
 			href: '/client/tracking/map',
 			label: 'map',
 			icon: 'mdi:map'

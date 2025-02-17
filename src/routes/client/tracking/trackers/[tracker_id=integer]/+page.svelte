@@ -1,5 +1,6 @@
 <script lang="ts">
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import UpdateTrackerForm from '$lib/components/non-generic/form/UpdateTrackerForm.svelte';
 	import TrackerPositionList from '$lib/components/non-generic/list/TrackerPositionList.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
@@ -14,8 +15,8 @@
 	let editMode = $state(false);
 </script>
 
-<div class="p-6 max-w-5xl mx-auto">
-	<TitleAndBreadCrumbsPageHeader
+<PageContainer>
+	<PageHeader
 		title="tracker info"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
@@ -71,4 +72,4 @@
 			/>
 		</div>
 	{/if}
-</div>
+</PageContainer>

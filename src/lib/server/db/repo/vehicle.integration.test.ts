@@ -28,14 +28,16 @@ describe('vehicle repo', async () => {
 		brand: 'toyota',
 		fabricationYear: null,
 		chassisNumber: null,
-		additionalInfo: null
+		additionalInfo: null,
+		fleetId: null
 	};
 
 	const updatedVehicleData: UpdateVehicleBody = {
 		plate: 'XYZ5678',
 		model: 'Tesla Model X',
 		modelYear: 2022,
-		color: 'Blue'
+		color: 'Blue',
+		fleetId: null
 	};
 
 	beforeAll(async () => {

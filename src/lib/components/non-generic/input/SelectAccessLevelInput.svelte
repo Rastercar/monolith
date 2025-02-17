@@ -6,13 +6,16 @@
 	interface Props {
 		value: string;
 		searchValue: string;
-
 		onItemSelected: (_: AccessLevel | null) => void;
 	}
 
 	let { value = $bindable(), searchValue = $bindable(), onItemSelected }: Props = $props();
 
-	const query = apiGetAccessLevelsAsSelectOptionsQuery(searchValue);
+	const query = apiGetAccessLevelsAsSelectOptionsQuery({
+		get name() {
+			return searchValue;
+		}
+	});
 </script>
 
 <ServerSideSelectInput

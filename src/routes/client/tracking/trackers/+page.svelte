@@ -2,7 +2,8 @@
 	import { apiGetTrackersQuery } from '$lib/api/tracker.queries';
 	import type { GetTrackersFilters, Tracker } from '$lib/api/tracker.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
@@ -56,8 +57,8 @@
 	);
 </script>
 
-<div class="p-6 max-w-5xl mx-auto">
-	<TitleAndBreadCrumbsPageHeader
+<PageContainer>
+	<PageHeader
 		title="trackers"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
@@ -91,4 +92,4 @@
 		data={query.data?.records}
 		count={query.data?.itemCount}
 	/>
-</div>
+</PageContainer>

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { route } from '$lib/ROUTES';
 	import type { Vehicle } from '$lib/api/vehicle.schema';
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import VehicleLocationCard from './components/VehicleLocationCard.svelte';
 	import VehiclePhoto from './components/VehiclePhoto.svelte';
@@ -22,8 +23,8 @@
 	};
 </script>
 
-<div class="p-6 max-w-5xl mx-auto">
-	<TitleAndBreadCrumbsPageHeader
+<PageContainer>
+	<PageHeader
 		title="vehicle info"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
@@ -66,4 +67,4 @@
 
 		<VehicleLocationCard {vehicle} />
 	{/if}
-</div>
+</PageContainer>

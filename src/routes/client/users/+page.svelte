@@ -2,7 +2,8 @@
 	import { apiGetUsersQuery } from '$lib/api/user.queries';
 	import type { GetUsersFilters, SimpleUser } from '$lib/api/user.schema';
 	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import InfoIconButton from '$lib/components/link/InfoIconButton.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
@@ -95,8 +96,8 @@
 	);
 </script>
 
-<div class="p-6 max-w-5xl mx-auto">
-	<TitleAndBreadCrumbsPageHeader
+<PageContainer>
+	<PageHeader
 		title="users"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
@@ -129,4 +130,4 @@
 		data={query.data?.records}
 		count={query.data?.itemCount}
 	/>
-</div>
+</PageContainer>

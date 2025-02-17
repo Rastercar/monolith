@@ -22,6 +22,7 @@
 	let isSelectingNewAccessLevel = $state(false);
 
 	let selectedAccessLevel: AccessLevel | null = $state(null);
+	let selectAccessLevelSearchValue = $state('');
 
 	const changeAccessLevelMutation = apiChangeUserAccessLevelMutation();
 
@@ -106,6 +107,7 @@
 					{#if isSelectingNewAccessLevel}
 						<div class="mt-4">
 							<SelectAccessLevelInput
+								bind:searchValue={selectAccessLevelSearchValue}
 								value={accessLevelInputValue}
 								onItemSelected={(v) => {
 									selectedAccessLevel = v;

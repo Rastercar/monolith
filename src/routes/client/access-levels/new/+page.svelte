@@ -3,7 +3,7 @@
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
 	import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 	import TextField from '$lib/components/form/TextField.svelte';
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import AccessLevelPermissionTogglers from '$lib/components/non-generic/form/AccessLevelPermissionTogglers.svelte';
 	import { permissionDetails, type permission } from '$lib/constants/permissions';
 	import { route } from '$lib/ROUTES';
@@ -52,7 +52,7 @@
 	action={route('createAccessLevel /client/access-levels/new')}
 	use:sForm.enhance
 >
-	<TitleAndBreadCrumbsPageHeader
+	<PageHeader
 		title="create access level"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },

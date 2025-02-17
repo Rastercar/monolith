@@ -1,5 +1,6 @@
 <script lang="ts">
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import { route } from '$lib/ROUTES';
 	import { showSuccessToast } from '$lib/store/toast';
 	import CreateVehicleForm from './components/CreateVehicleForm.svelte';
@@ -7,8 +8,8 @@
 	let { data } = $props();
 </script>
 
-<div class="p-6 max-w-5xl mx-auto">
-	<TitleAndBreadCrumbsPageHeader
+<PageContainer>
+	<PageHeader
 		title="create vehicle"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
@@ -26,4 +27,4 @@
 			showSuccessToast('vehicle created');
 		}}
 	/>
-</div>
+</PageContainer>

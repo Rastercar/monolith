@@ -86,5 +86,5 @@ export function getRouteMetaFromPath(path: string): PageMeta | undefined {
  */
 export function redirectToStartingPage(event: RequestEvent) {
 	const isLoggedIn = !!event.locals.user;
-	return redirect(303, isLoggedIn ? route('/client/my-profile') : route('/auth/sign-in'));
+	return redirect(303, isLoggedIn ? route('/client') : route('/auth/sign-in'));
 }

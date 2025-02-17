@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PermissionGuard from '$lib/components/guard/PermissionGuard.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { route } from '$lib/ROUTES';
 	import AccessLevelSection from './components/AccessLevelSection.svelte';
@@ -13,7 +14,7 @@
 	let userDeleted = $state(false);
 </script>
 
-<div class="p-6 max-w-5xl mx-auto space-y-6">
+<PageContainer extraClasses="space-y-6">
 	{#if userDeleted}
 		<DeletionSuccessMessage title="User deleted" href={route('/client/users')} />
 	{:else}
@@ -37,4 +38,4 @@
 			/>
 		</PermissionGuard>
 	{/if}
-</div>
+</PageContainer>

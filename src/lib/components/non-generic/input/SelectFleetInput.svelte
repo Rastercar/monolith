@@ -11,7 +11,11 @@
 
 	let { value = $bindable(), searchValue = $bindable(), onItemSelected }: Props = $props();
 
-	const query = apiGetFleetsAsSelectOptionsQuery(searchValue);
+	const query = apiGetFleetsAsSelectOptionsQuery({
+		get name() {
+			return searchValue;
+		}
+	});
 </script>
 
 <ServerSideSelectInput

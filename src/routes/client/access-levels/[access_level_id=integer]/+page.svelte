@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { apiDeleteUserByIdMutation } from '$lib/api/access-level.queries';
 	import LoadableButton from '$lib/components/button/LoadableButton.svelte';
-	import TitleAndBreadCrumbsPageHeader from '$lib/components/layout/TitleAndBreadCrumbsPageHeader.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
 	import DeletionSuccessMessage from '$lib/components/non-generic/message/DeletionSuccessMessage.svelte';
 	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/context';
@@ -36,8 +37,8 @@
 	let canEditOrDeleteAccessLevel = $derived(!accessLevelIsFixed && !isCurrentUserAccessLevel);
 </script>
 
-<div class="p-6 max-w-5xl mx-auto">
-	<TitleAndBreadCrumbsPageHeader
+<PageContainer>
+	<PageHeader
 		title="Access Level"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
@@ -123,4 +124,4 @@
 			</div>
 		</div>
 	{/if}
-</div>
+</PageContainer>

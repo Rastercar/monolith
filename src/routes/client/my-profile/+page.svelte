@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
 	import { getAuthContext } from '$lib/store/context';
 	import AccessLevelSection from './components/AccessLevelSection.svelte';
 	import OrgSection from './components/OrgSection.svelte';
@@ -8,7 +9,7 @@
 </script>
 
 {#if auth.user}
-	<div class="p-6 max-w-5xl mx-auto space-y-6">
+	<PageContainer extraClasses="space-y-6">
 		<UserSection user={auth.user} />
 
 		<div class="sm:hidden">
@@ -22,5 +23,5 @@
 		</div>
 
 		<AccessLevelSection accessLevel={auth.user.accessLevel} />
-	</div>
+	</PageContainer>
 {/if}

@@ -12,6 +12,7 @@ env/*.env
 # env (allowed)
 !.env.example
 !env/.env.example
+!env/.env.test
 
 # vite
 vite.config.js.timestamp-*

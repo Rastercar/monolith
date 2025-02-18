@@ -51,8 +51,6 @@ When build for production this Monolith exposes a single port for all HTTP traff
 | DATABASE_NOTICE_LOGGING          | If notices should be logged to stdout                                   |
 | DATABASE_SEED_ON_STARTUP         | If the database should be seeded on startup                             |
 | AWS_REGION                       | AWS region                                                              |
-| AWS_ACCESS_KEY_ID                | (Optional) AWS access key identifier                                    |
-| AWS_SECRET_ACCESS_KEY            | (Optional) AWS secret access key                                        |
 | AWS_S3_BUCKET                    | S3 bucket where all files will be uploaded                              |
 | OTEL_DIAG_LOG_LEVEL              | OpenTelemetry diagnostic debugging level                                |
 | OTEL_EXPORT_SPANS_TO_STDOUT      | If OpenTelemetry spans should be exported to stdout                     |

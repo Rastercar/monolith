@@ -28,8 +28,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run unit and integration tests
-        run: pnpm test
+      - name: Check TS types
+        run: pnpm check
+
+      - name: Run unit tests
+        run: pnpm test:unit
+
+      - name: Run browser unit tests
+        run: pnpm test:unit-browser
+
+      - name: Run integration tests
+        run: pnpm test:integration
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3

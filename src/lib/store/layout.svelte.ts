@@ -10,6 +10,7 @@ export class LayoutStore {
 
 	selectedTheme = $state('');
 
+	// [PROD-TODO]: remove all themes
 	availableThemes = $state([DEFAULT_THEME_NAME]);
 
 	constructor() {

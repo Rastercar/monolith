@@ -36,10 +36,10 @@ describe('redirectToStartingPage', () => {
 		expect(userLessRedirectError?.location).toBe('/auth/sign-in');
 	});
 
-	test('redirects to profile page if request contains a user', () => {
+	test('redirects to home page if request contains a user', () => {
 		const userFullRedirectError = catchRedirectionError({ locals: { user: 'not-null' } });
 
 		expect(userFullRedirectError?.status).toBe(303);
-		expect(userFullRedirectError?.location).toBe('/client/my-profile');
+		expect(userFullRedirectError?.location).toBe('/client');
 	});
 });

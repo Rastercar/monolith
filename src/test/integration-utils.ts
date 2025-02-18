@@ -6,7 +6,12 @@ import type { PostgresError } from 'postgres';
 import postgres from 'postgres';
 import { Socket as ClientSocket } from 'socket.io-client';
 import * as schema from '../lib/server/db/schema';
-import { TEST_TEMPLATE_DB_NAME } from './integration-global-setup';
+import {
+	TEST_DB_PASS,
+	TEST_DB_PORT,
+	TEST_DB_USER,
+	TEST_TEMPLATE_DB_NAME
+} from './integration-global-setup';
 import { mainTestDb } from './integration-setup';
 
 /**
@@ -65,7 +70,9 @@ export async function createAndSetTestDatabaseAsDbSingleton(
 		}
 	};
 
-	const client = postgres(`postgres://raster_user:raster_pass@localhost:5435/${dbName}`);
+	const client = postgres(
+		`postgres://${TEST_DB_USER}:${TEST_DB_PASS}@localhost:${TEST_DB_PORT}/${dbName}`
+	);
 
 	const db = drizzle<typeof schema>({
 		client,

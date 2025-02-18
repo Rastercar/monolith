@@ -13,6 +13,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run unit and integration tests
+        run: pnpm test
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -49,14 +67,14 @@ jobs:
           container-name: rastercar-monolith
           image: ${{ steps.build-image.outputs.image }}
 
-      # deploy the new task definition to homolog
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ secrets.ECS_MONOLITH_HOMOLOG_SERVICE }}
-          cluster: ${{ secrets.ECS_HOMOLOG_CLUSTER }}
+      # deploy the new task definition to homolog [PROD-TODO]
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     service: ${{ secrets.ECS_MONOLITH_HOMOLOG_SERVICE }}
+      #     cluster: ${{ secrets.ECS_HOMOLOG_CLUSTER }}
 
-      - name: Verify ECS deployment
-        run: |
-          echo "Deployment to ECS completed successfully!"
+      # - name: Verify ECS deployment
+      #   run: |
+      #     echo "Deployment to ECS completed successfully!"

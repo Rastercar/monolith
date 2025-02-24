@@ -18,10 +18,13 @@ export const loadMapLibraries = async () => {
 	if (!markerAlreadyLoaded) {
 		await window.google.maps.importLibrary('marker');
 	}
+
+	console.log({ googleMapsAlreadyLoaded, markerAlreadyLoaded });
 };
 
 // https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
-const loadGoogleMaps = (g: { key: string; v: string }) => {
+/* istanbul ignore next */
+export const loadGoogleMaps = (g: { key: string; v: string }) => {
 	var h,
 		a,
 		k,

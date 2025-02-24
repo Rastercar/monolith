@@ -22,26 +22,6 @@ import {
 } from './faker';
 import { apns, colors, vehicleModels } from './seed-data';
 
-async function createMasterUser(tx: Tx) {
-	const [al] = await tx
-		.insert(accessLevel)
-		.values({
-			name: 'master access level',
-			isFixed: true,
-			description: 'fixed master access level for the master user',
-			permissions: allPermissions
-		})
-		.returning();
-
-	await tx.insert(user).values({
-		username: 'test_master_user',
-		email: 'rastercar.tests.001@gmail.com',
-		emailVerified: true,
-		password: hashSync('Contafake3!'),
-		accessLevelId: al.id
-	});
-}
-
 async function createTestUser(tx: Tx) {
 	const [org] = await tx
 		.insert(organization)
@@ -222,9 +202,7 @@ async function createEntitiesForOrg(orgId: number, tx: Tx) {
 
 export async function seedDatabase(db: DB) {
 	return db.transaction(async (tx) => {
-		await createMasterUser(tx);
 		const testUser = await createTestUser(tx);
-
-		await createEntitiesForOrg(testUser.organizationId as number, tx);
+		await createEntitiesForOrg(testUser.organizationId, tx);
 	});
 }

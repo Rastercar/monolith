@@ -41,7 +41,7 @@ export const user = pgTable(
 		confirmEmailToken: uuid(),
 		profilePicture: varchar('profile_picture', { length: 255 }),
 		description: text(),
-		organizationId: integer('organization_id'),
+		organizationId: integer('organization_id').notNull(),
 		accessLevelId: integer('access_level_id').notNull()
 	},
 	(table) => ({

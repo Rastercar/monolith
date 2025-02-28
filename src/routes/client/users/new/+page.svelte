@@ -10,11 +10,11 @@
 
 <PageContainer>
 	<PageHeader
-		title="create user"
+		title="cadastrar usuário"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ href: route('/client/users'), icon: 'mdi:account-multiple', text: 'users' },
-			{ href: route('/client/users/new'), text: 'new' }
+			{ href: route('/client/users'), icon: 'mdi:account-multiple', text: 'usuário' },
+			{ href: route('/client/users/new'), text: 'cadastro' }
 		]}
 	/>
 
@@ -23,7 +23,7 @@
 	<CreateUserForm
 		formSchema={data.createUserForm}
 		onCreate={() => {
-			showSuccessToast('user created');
+			showSuccessToast('usuário cadastrado');
 		}}
 	/>
 </PageContainer>

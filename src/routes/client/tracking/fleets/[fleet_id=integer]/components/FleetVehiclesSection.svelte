@@ -17,14 +17,14 @@
 </script>
 
 <h3 class="h3 mb-2 mt-8 flex items-center justify-between">
-	Vehicles
+	Veículos
 
 	{#if vehicles?.length}
 		({vehicles.length})
 
 		{#if filteredVehicles.length !== vehicles.length}
 			<span class="type-scale-2">
-				{vehicles.length - filteredVehicles.length} filtered out
+				{vehicles.length - filteredVehicles.length} filtrados
 			</span>
 		{/if}
 	{/if}
@@ -38,7 +38,7 @@
 			<li class="card p-4 preset-filled-surface-100-900">
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 					<div>
-						<div class="opacity-70">Plate:</div>
+						<div class="opacity-70">Placa:</div>
 						<a
 							class="flex items-center text-blue-600 dark:text-blue-500 hover:underline"
 							href={route('/client/tracking/vehicles/[vehicle_id=integer]', {
@@ -50,18 +50,18 @@
 						</a>
 					</div>
 
-					{@render field('Model', v.model || 'no model')}
-					{@render field('Brand', v.brand)}
-					{@render field('Year', `${v.fabricationYear ?? '0000'} / ${v.modelYear ?? '0000'}`)}
-					{@render field('Chassis', v.chassisNumber)}
-					{@render field('Color', v.color)}
-					{@render field('Additional Information', v.additionalInfo, 'col-span-2 md:col-span-4')}
+					{@render field('Modelo', v.model || 'no model')}
+					{@render field('Marca', v.brand)}
+					{@render field('Ano', `${v.fabricationYear ?? '0000'} / ${v.modelYear ?? '0000'}`)}
+					{@render field('Chassi', v.chassisNumber)}
+					{@render field('Cor', v.color)}
+					{@render field('Informação Adicional', v.additionalInfo, 'col-span-2 md:col-span-4')}
 				</div>
 			</li>
 		{/each}
 	</ul>
 {:else}
-	<p>This fleet has no vehicles</p>
+	<p>Essa frota não tem veículos</p>
 {/if}
 
 {#snippet field(label: string, value: string | null, classes?: string)}

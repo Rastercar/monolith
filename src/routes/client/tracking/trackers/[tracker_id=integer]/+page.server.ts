@@ -36,15 +36,13 @@ export const actions = {
 
 		if (form.data.vehicleId) {
 			const vehicle = await findOrgVehicleById({ id: form.data.vehicleId, orgId });
-			if (!vehicle) setError(form, 'vehicleId', 'vehicle not found');
+			if (!vehicle) setError(form, 'vehicleId', 'veículo não encontrado');
 		}
 
 		const res = await _updateVehicleTracker({ id: trackerId, orgId }, form.data);
 
-		if ('error' in res) {
-			if (res.error === 'IMEI_IN_USE') {
-				return setError(form, 'imei', 'IMEI in use by another tracker');
-			}
+		if ('error' in res && res.error === 'IMEI_IN_USE') {
+			return setError(form, 'imei', 'IMEI em uso por outro rastreador');
 		}
 
 		return { form, updatedTracker: res as Tracker };

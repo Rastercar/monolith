@@ -21,14 +21,14 @@
 			if (!valid) return;
 
 			auth.updateUserOrg(data);
-			showSuccessToast('organization updated');
+			showSuccessToast('organização atualizada');
 		}
 	});
 
 	const { submitting: isLoading } = sForm;
 </script>
 
-<SettingsPageTitle>My Organization</SettingsPageTitle>
+<SettingsPageTitle>Minha Organização</SettingsPageTitle>
 
 <form
 	class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4"
@@ -40,7 +40,7 @@
 		form={sForm}
 		classes="sm:col-span-1 col-span-2"
 		name="billingEmail"
-		label="Billing Email"
+		label="Email de cobrança"
 	/>
 
 	<TextField
@@ -48,7 +48,7 @@
 		classes="sm:col-span-1 col-span-2"
 		maxlength={32}
 		name="name"
-		label="Name"
+		label="Nome"
 	/>
 
 	{#if auth.user && !auth.user.organization.billingEmailVerified}
@@ -63,7 +63,7 @@
 			disabled={$isLoading}
 			isLoading={$isLoading}
 		>
-			update
+			atualizar
 		</LoadableButton>
 	</div>
 </form>

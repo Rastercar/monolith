@@ -15,10 +15,9 @@
 	<Icon class="mr-2 text-white" icon="mdi:error" height={32} />
 
 	<div class="text-white">
-		<h4 class="type-scale-3">Failed to connect to tracking service</h4>
+		<h4 class="type-scale-3">Erro ao se conectar com o serviço de rastreamento</h4>
 		<p class="type-scale-1">
-			Realtime updates wont work and any tracker being shown on the map might have outdated
-			positions
+			Atualizações em tempo real não esta habilitado e posições no mapa podem não ser a mais recente
 		</p>
 	</div>
 
@@ -29,12 +28,12 @@
 			contentWrapperClass="flex items-center gap-2"
 			onclick={onReconnectClick}
 		>
-			reconnect
+			reconectar
 			<Icon icon="mdi:reload" />
 		</LoadableButton>
 
 		<button class="btn preset-filled-secondary-200-800" onclick={onCloseClick}>
-			close
+			fechar
 			<Icon icon="mdi:close" />
 		</button>
 	</div>

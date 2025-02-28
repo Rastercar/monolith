@@ -35,20 +35,20 @@
 </script>
 
 <form method="POST" action={route('createFleet /client/tracking/fleets/new')} use:sForm.enhance>
-	<TextField form={sForm} name="name" label="Name *" maxlength={30} />
+	<TextField form={sForm} name="name" label="Nome *" maxlength={30} />
 
 	<TextAreaField
 		form={sForm}
 		classes="my-4"
 		name="description"
-		label="Description *"
+		label="Descrição *"
 		rows={3}
 		maxlength={500}
 	/>
 
 	<div class="flex justify-end">
 		<LoadableButton classes="btn preset-filled-primary-200-800" isLoading={$isLoading}>
-			create
+			cadastrar
 		</LoadableButton>
 	</div>
 </form>

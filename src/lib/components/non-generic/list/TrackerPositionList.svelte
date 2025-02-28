@@ -48,10 +48,10 @@
 </script>
 
 <div class="p-4 flex flex-col sm:flex-row">
-	<div class="type-scale-4 mr-auto mb-2 sm:mb-0">Positions:</div>
+	<div class="type-scale-4 mr-auto mb-2 sm:mb-0">Posições:</div>
 
 	<div class="max-w-xs">
-		<label for="positions-date-start-filter" class="type-scale-2 mb-2 block">search after</label>
+		<label for="positions-date-start-filter" class="type-scale-2 mb-2 block">buscar após</label>
 		<input
 			bind:value={startFilter}
 			class="input"
@@ -69,11 +69,11 @@
 
 		{#if startFilter === ''}
 			<p class="type-scale-2">
-				this tracker has no positions, meaning it is either inactive and/or has never successfully
-				communicated with the rastercar platform.
+				esse rastreador não tem nenhuma posição, ou seja ou ele está inativo ou nunca teve sucesso
+				ao se comunicar com a plataforma
 			</p>
 		{:else}
-			<p class="type-scale-2">no positions found</p>
+			<p class="type-scale-2">nenhuma posição encontrada</p>
 		{/if}
 	</div>
 {:else if query.data}
@@ -109,7 +109,7 @@
 						disabled={!query.hasNextPage || query.isFetchingNextPage}
 					>
 						<Icon icon="mdi:plus" />
-						load more
+						carregar mais
 					</LoadableButton>
 				</li>
 			{/if}

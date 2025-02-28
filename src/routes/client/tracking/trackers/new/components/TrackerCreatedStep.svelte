@@ -17,7 +17,7 @@
 	<div class="flex flex-col-reverse md:flex-row gap-4 ml-0">
 		<StepperNavigationBtn
 			isStepNextBtn={false}
-			label="adjust SIM cards"
+			label="editar cartões SIM"
 			onclick={() => {
 				stepperState.current--;
 			}}
@@ -31,11 +31,11 @@
 					onCreateAnotherClick();
 				}}
 			>
-				create another
+				cadastrar outro
 			</button>
 
 			<a href={route('/client/tracking/trackers')}>
-				<button class="btn preset-filled-secondary-500">see trackers</button>
+				<button class="btn preset-filled-secondary-500">ver rastreadores</button>
 			</a>
 		</div>
 	</div>

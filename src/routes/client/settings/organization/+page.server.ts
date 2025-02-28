@@ -20,6 +20,6 @@ export const actions = {
 		const form = await validateFormWithFailOnError(request, updateOrganizationSchema);
 		await updateOrganization(orgId, form.data);
 
-		return message(form, { text: 'organization updated', type: 'success' });
+		return message(form, { text: 'organização atualizada', type: 'success' });
 	}
 };

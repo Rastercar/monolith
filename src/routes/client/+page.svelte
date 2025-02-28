@@ -14,63 +14,65 @@
 
 		<Card
 			icon="mdi:car"
-			title="Vehicles"
+			title="Veículos"
 			topBorderColor="border-t-green-800 hover:border-green-800"
 		>
-			<CardDescription>Register, update, delete and manage your vehicles</CardDescription>
-			<CardLink href="/client/tracking/vehicles">go to vehicles page</CardLink>
+			<CardDescription>Cadastro e gerência seus veículos</CardDescription>
+			<CardLink href="/client/tracking/vehicles">ir a página de veículos</CardLink>
 		</Card>
 
 		<Card
 			icon="mdi:car-multiple"
-			title="Fleets"
+			title="Frotas"
 			topBorderColor="border-t-green-800 hover:border-green-800"
 		>
-			<CardDescription>Create and manage fleets to group vehicles</CardDescription>
-			<CardLink href="/client/tracking/fleets">go to fleets page</CardLink>
+			<CardDescription>Cadastro e gerência de frotas</CardDescription>
+			<CardLink href="/client/tracking/fleets">ir a página de frotas</CardLink>
 		</Card>
 
 		<Card
 			icon="mdi:cellphone"
-			title="Trackers"
+			title="Rastreadores"
+			topBorderColor="border-t-blue-800 hover:border-blue-800"
+		>
+			<CardDescription>Cadastro e gerência de rastreadores</CardDescription>
+
+			<CardLink href="/client/tracking/trackers">ir a página de rastreadores</CardLink>
+		</Card>
+
+		<Card
+			icon="mdi:sim"
+			title="Cartões SIM"
 			topBorderColor="border-t-blue-800 hover:border-blue-800"
 		>
 			<CardDescription>
-				Register, update, configure delete and manage your vehicle trackers
+				Cadastro e gerência de cartões SIM utilizados pelos rastreadores
 			</CardDescription>
 
-			<CardLink href="/client/tracking/trackers">go to trackers page</CardLink>
-		</Card>
-
-		<Card icon="mdi:sim" title="Sim Cards" topBorderColor="border-t-blue-800 hover:border-blue-800">
-			<CardDescription>
-				Register, update delete and manage SIM cards used within trackers trackers
-			</CardDescription>
-
-			<CardLink href="/client/tracking/sim-cards">go to sim cards page</CardLink>
+			<CardLink href="/client/tracking/sim-cards">ir a página de cartões SIM</CardLink>
 		</Card>
 
 		<Card
 			icon="mdi:user"
-			title="Users"
+			title="Usuários"
 			topBorderColor="border-t-orange-800 hover:border-orange-800"
 		>
-			<CardDescription>Manage users within your organization</CardDescription>
+			<CardDescription>Gerência de usuários de sua organização</CardDescription>
 
-			<CardLink href="/client/tracking/sim-cards">go to users page</CardLink>
+			<CardLink href="/client/tracking/sim-cards">ir a página de usuários</CardLink>
 		</Card>
 
 		<Card
 			icon="mdi:shield"
-			title="Access Levels"
+			title="Níveis de acesso"
 			topBorderColor="border-t-orange-800 hover:border-orange-800"
 		>
 			<CardDescription>
-				Manage the access levels of users within your organization, granting or limiting access to
-				platform features
+				Gerência dos níveis de acesso da sua organização, para conceder ou limitar acesso de
+				usuários a funcionalidades da plataforma
 			</CardDescription>
 
-			<CardLink href="/client/access-levels">go to access levels page</CardLink>
+			<CardLink href="/client/access-levels">ir a página de níveis de acesso</CardLink>
 		</Card>
 	</div>
 </PageContainer>

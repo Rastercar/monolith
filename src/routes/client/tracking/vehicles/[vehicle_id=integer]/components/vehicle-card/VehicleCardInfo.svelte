@@ -19,7 +19,7 @@
 	let year = `${vehicle.fabricationYear ?? '0000'} / ${vehicle.modelYear ?? '0000'}`;
 
 	const deleteVehicle = async () => {
-		if (!confirm('Permanently delete this vehicle ?')) return;
+		if (!confirm('Permanentemente deletar esse veículo ?')) return;
 
 		await mutation.mutateAsync(vehicle.id);
 		onVehicleDelete();
@@ -35,7 +35,7 @@
 
 <div class="flex items-center mb-4">
 	<span class="text-lg mr-auto">
-		{vehicle.model || 'no model'} / Plate: {vehicle.plate.toLocaleUpperCase()}
+		{vehicle.model || 'sem modelo'} / Plate: {vehicle.plate.toLocaleUpperCase()}
 	</span>
 
 	<PermissionGuard requiredPermissions={'DELETE_VEHICLE'}>
@@ -56,13 +56,13 @@
 </div>
 
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-	{@render field('Brand', vehicle.brand)}
-	{@render field('Year', year)}
-	{@render field('Chassis', vehicle.chassisNumber)}
-	{@render field('Color', vehicle.color)}
+	{@render field('Marca', vehicle.brand)}
+	{@render field('Ano', year)}
+	{@render field('Chassi', vehicle.chassisNumber)}
+	{@render field('Cor', vehicle.color)}
 
 	<div>
-		<div class="opacity-70">Fleet:</div>
+		<div class="opacity-70">Frota:</div>
 		{#if vehicle.fleet}
 			<a
 				href={route(`/client/tracking/fleets/[fleet_id=integer]`, {
@@ -79,5 +79,5 @@
 		{/if}
 	</div>
 
-	{@render field('Additional Information', vehicle.additionalInfo, 'col-span-2 md:col-span-4')}
+	{@render field('Informação Adicional', vehicle.additionalInfo, 'col-span-2 md:col-span-4')}
 </div>

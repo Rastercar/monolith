@@ -29,11 +29,11 @@ export const actions = {
 		});
 
 		if (simOrError === 'sim_card_phone_number_unique') {
-			return setError(form, 'phoneNumber', 'Phone number in use by another SIM card');
+			return setError(form, 'phoneNumber', 'Telefone em uso por outro cartão SIM');
 		}
 
 		if (simOrError === 'sim_card_ssn_unique') {
-			return setError(form, 'ssn', 'SSN in use by another SIM card');
+			return setError(form, 'ssn', 'SSN em uso por outro cartão SIM');
 		}
 
 		const createdSim = simCardSchema.parse(simOrError);

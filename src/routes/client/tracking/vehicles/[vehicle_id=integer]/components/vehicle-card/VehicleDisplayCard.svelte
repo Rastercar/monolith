@@ -27,7 +27,7 @@
 			onVehicleUpdated={(v) => {
 				editMode = false;
 
-				showSuccessToast('vehicle updated');
+				showSuccessToast('veículo atualizado');
 				onVehicleUpdate(v);
 			}}
 			onEditCanceled={() => (editMode = false)}

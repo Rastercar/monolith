@@ -47,7 +47,7 @@
 		form={sForm}
 		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
 		name="model"
-		label="Model *"
+		label="Modelo *"
 	/>
 
 	{#if vehicleIdToAssociate}
@@ -59,7 +59,7 @@
 	{:else}
 		<div class="col-span-2 flex justify-end">
 			<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500">
-				create tracker
+				cadastrar rastreador
 			</LoadableButton>
 		</div>
 	{/if}

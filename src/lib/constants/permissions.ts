@@ -10,7 +10,7 @@ export type permissionCategory =
 	| 'fleets'
 	| 'access levels'
 	| 'tracker'
-	| 'vehicle'
+	| 'veículo'
 	| 'SIM card'
 	| 'organization'
 	| 'authentication';
@@ -62,133 +62,133 @@ export const permissionCategoryIcons: Record<permissionCategory, string> = {
 	authentication: 'mdi:lock',
 	'access levels': 'mdi:shield',
 	tracker: 'mdi:cellphone',
-	vehicle: 'mdi:car',
+	veículo: 'mdi:car',
 	'SIM card': 'mdi:sim',
-	fleets: 'mdi:vehicle-multiple',
+	fleets: 'mdi:veículo-multiple',
 	organization: 'mdi:building'
 };
 
 export const permissionDetails: Record<permission, PermissionDetails> = {
 	UPDATE_FLEET: {
-		title: 'Update Fleets',
-		summary: 'Update',
+		title: 'Atualizar Frotas',
+		summary: 'Atualizar',
 		category: 'fleets',
-		description: 'Allows updating a vehicle fleet'
+		description: 'Permite atualizar frotas'
 	},
 	DELETE_FLEET: {
-		title: 'Delete Fleets',
-		summary: 'Delete',
+		title: 'Deletar Frotas',
+		summary: 'Deletar',
 		category: 'fleets',
-		description: 'Allows deleting a vehicle fleet'
+		description: 'Permite deletar frotas'
 	},
 	CREATE_FLEET: {
-		title: 'Create Fleets',
-		summary: 'Create',
+		title: 'Cadastrar Frotas',
+		summary: 'Cadastrar',
 		category: 'fleets',
-		description: 'Allows registering vehicle fleets to group vehicles'
+		description: 'Permite cadastrar frotas'
 	},
 	BLOCK_USER: {
-		title: 'Block Users',
-		summary: 'Block and unblock users',
+		title: 'Bloquear Usuários',
+		summary: 'Bloquear e desbloquear usuários',
 		category: 'authentication',
-		description: 'Block users, logging them off and deniying access until theyre unblocked'
+		description: 'Bloquear usuários, deslogando-os e negando acesso até serem desbloquados'
 	},
 	MANAGE_USER_ACCESS_LEVELS: {
-		title: 'Manage User Access Levels',
-		summary: 'Manage User Access Levels',
+		title: 'Gerenciar Níveis de Acesso',
+		summary: 'Gerenciar Níveis de Acesso',
 		category: 'authentication',
-		description: 'Control over users access levels and their permissions.'
+		description: 'Gerenciar níveis de acesso de usuários e suas permissões'
 	},
 	LOGOFF_USER: {
-		title: 'Log Off Other Users',
-		summary: 'Logoff users',
+		title: 'Deslogar Usuários',
+		summary: 'Deslogar Usuários',
 		category: 'authentication',
-		description: 'Destroy sessions of other users, logging off their devices'
+		description: 'Deletar sessões de outros usuários, deslogando-os'
 	},
 	LIST_USER_SESSIONS: {
-		title: 'List User Sessions',
-		summary: 'List Sessions',
+		title: 'Visualizar Sessões',
+		summary: 'Visualizar Sessões',
 		category: 'authentication',
-		description: 'List the logged in devices of another user.'
+		description: 'Visualizar sessões de outros usuários'
 	},
 	//
 	CREATE_USER: {
-		title: 'Create User',
-		summary: 'Create',
+		title: 'Cadastrar Usuário',
+		summary: 'Cadastrar',
 		category: 'user',
-		description: 'Allows registering new users.'
+		description: 'Permite cadastrar usuários'
 	},
 	DELETE_USER: {
-		title: 'Delete User',
-		summary: 'Delete',
+		title: 'Deletar Usuário',
+		summary: 'Deletar',
 		category: 'user',
-		description: 'Allows deleting a user'
+		description: 'Permite deletar usuários'
 	},
 
 	//
 	CREATE_TRACKER: {
-		title: 'Create Tracker',
-		summary: 'Create',
+		title: 'Cadastrar Rastreador',
+		summary: 'Cadastrar',
 		category: 'tracker',
-		description: 'Allows registering tracking devices.'
+		description: 'Permite cadastrar rastreadores'
 	},
 	UPDATE_TRACKER: {
-		title: 'Update Tracker',
-		summary: 'Update',
+		title: 'Atualizar Rastreador',
+		summary: 'Atualizar',
 		category: 'tracker',
-		description: 'Allows updating tracking devices.'
+		description: 'Permite atualizar rastreadores'
 	},
 	DELETE_TRACKER: {
-		title: 'Delete Tracker',
-		summary: 'Delete',
+		title: 'Deletar Rastreador',
+		summary: 'Deletar',
 		category: 'tracker',
-		description: 'Allows permanently deleting tracking devices.'
+		description: 'Permite deletar rastreadores'
 	},
 	//
 	CREATE_VEHICLE: {
-		title: 'Create Vehicle',
-		summary: 'Create',
-		category: 'vehicle',
-		description: 'Allows registering new vehicles.'
+		title: 'Cadastrar Veículo',
+		summary: 'Cadastrar',
+		category: 'veículo',
+		description: 'Permite cadastrar veículos'
 	},
 	UPDATE_VEHICLE: {
-		title: 'Update Vehicle',
-		summary: 'Update',
-		category: 'vehicle',
-		description: 'Allows updating vehicle info such as plate number, model, etc.'
+		title: 'Atualizar Veículo',
+		summary: 'Atualizar',
+		category: 'veículo',
+		description: 'Permite atualizar veículos'
 	},
 	DELETE_VEHICLE: {
-		title: 'Delete Vehicle',
-		summary: 'Delete',
-		category: 'vehicle',
-		description: 'Allows permanently deleting vehicles.'
+		title: 'Deletar Veículo',
+		summary: 'Deletar',
+		category: 'veículo',
+		description: 'Permite deletar veículos'
 	},
 	//
 	CREATE_SIM_CARD: {
-		title: 'Create SIM Card',
-		summary: 'Create',
+		title: 'Cadastrar Cartão SIM',
+		summary: 'Cadastrar',
 		category: 'SIM card',
-		description: 'Allows registering SIM cards.'
+		description: 'Permite cadastrar cartões SIM'
 	},
 	UPDATE_SIM_CARD: {
-		title: 'Update SIM Card',
-		summary: 'Update',
+		title: 'Atualizar Cartão SIM',
+		summary: 'Atualizar',
 		category: 'SIM card',
-		description: 'Allows updating SIM cards.'
+		description: 'Permite atualizar cartões SIM'
 	},
 	DELETE_SIM_CARD: {
-		title: 'Delete SIM Card',
-		summary: 'Delete',
+		title: 'Deletar Cartão SIM',
+		summary: 'Deletar',
 		category: 'SIM card',
-		description: 'Allows permanently deleting SIM cards.'
+		description: 'Permite deletar cartões SIM'
 	},
 	//
 	UPDATE_ORGANIZATION: {
-		title: 'Update Organization',
-		summary: 'Update',
+		title: 'Atualizar Organização',
+		summary: 'Atualizar',
 		category: 'organization',
 		description:
-			'Allows updating the organization the user belongs to, such as the billing email, and name.'
+			'Permite atualizar a organização que o usuário pertence, inclusive o endereço de cobrança'
 	}
 };
 

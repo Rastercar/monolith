@@ -14,7 +14,7 @@
 	<h3 class="mb-2 text-lg flex items-center justify-between">
 		<span class="flex items-center">
 			<Icon icon="mdi:company" width="32" height="32" class="mr-2" />
-			My Organization
+			Minha Organização
 		</span>
 
 		<CreatedAtText date={organization.createdAt} />
@@ -23,7 +23,7 @@
 	<h1 class="text-2xl mb-1">{organization.name}</h1>
 
 	<div class="mt-4 flex items-center">
-		<span class="opacity-80 mr-2">billing email:</span>
+		<span class="opacity-80 mr-2">email de cobrança:</span>
 		{organization.billingEmail}
 	</div>
 </div>

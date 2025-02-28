@@ -26,10 +26,10 @@
 </script>
 
 <div class="mb-2 flex justify-between">
-	<span>Permissions: </span>
+	<span>Permissões: </span>
 
 	<span class="flex items-center">
-		<span>show details</span>
+		<span>exibir detalhes</span>
 		<Switch name="showDetailsInput" bind:checked={showDetails} classes="ml-4" />
 	</span>
 </div>
@@ -58,5 +58,5 @@
 		<hr class="hr my-4" />
 	{/if}
 {:else}
-	no permissions found
+	nenhuma permissão encontrada
 {/each}

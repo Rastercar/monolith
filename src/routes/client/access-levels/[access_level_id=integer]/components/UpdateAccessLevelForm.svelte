@@ -42,7 +42,7 @@
 		dataType: 'json',
 		onSubmit({ jsonData, cancel }) {
 			const ok = confirm(
-				'all users within this access level will have their permissions changed, do you wish to proceed ?'
+				'todos os usuários com esse nível de acesso terão as novas permissões, prosseguir?'
 			);
 			if (!ok) return cancel();
 
@@ -54,7 +54,7 @@
 		},
 		onUpdate: ({ form, result }) => {
 			if (form.valid && result.type === 'success') {
-				showSuccessToast('access level updated');
+				showSuccessToast('nível de acesso atualizado');
 				const action = result.data as FormResult<ActionData>;
 				if (form.valid && action.updatedAccessLevel) onUpdate(action.updatedAccessLevel);
 			}
@@ -76,9 +76,9 @@
 	})}
 	use:sForm.enhance
 >
-	<TextField name="name" label="Name" form={sForm} />
+	<TextField name="name" label="Nome" form={sForm} />
 
-	<TextAreaField name="description" label="Description" form={sForm} />
+	<TextAreaField name="description" label="Descrição" form={sForm} />
 
 	<AccessLevelPermissionTogglers
 		{permissionToToggleStatus}
@@ -87,7 +87,7 @@
 
 	<div class="flex justify-end mt-4">
 		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-200-800 mt-auto">
-			update
+			atualizar
 		</LoadableButton>
 	</div>
 </form>

@@ -23,22 +23,22 @@ export const POST = async ({ locals, request, url }) => {
 	const confirmationLink = `${url.origin}${route('/auth/confirm-email-address')}?token=${token}&confirmingForOrg=${confirmingForOrg}`;
 
 	const subject = confirmingForOrg
-		? 'Rastercar - Confirm organization email address'
-		: 'Rastercar - Confirm your email address';
+		? 'Rastercar - Confirmação de email de sua organização'
+		: 'Rastercar - Confirmação de endereço de email';
 
 	if (confirmingForOrg) {
-		if (organization.billingEmailVerified) return json('email already verified');
+		if (organization.billingEmailVerified) return json('email já verificado');
 		await setConfirmBillingEmailToken(organization.id, token);
 	} else {
-		if (emailVerified) return json('email already verified');
+		if (emailVerified) return json('email já verificado');
 		await setConfirmEmailToken(id, token);
 	}
 
 	await sendConfirmEmailAddressEmail({
 		email,
 		subject,
-		replacements: { title: `Hello ${username}`, confirmationLink }
+		replacements: { title: `Olá ${username}`, confirmationLink }
 	});
 
-	return json('confirmation email sent');
+	return json('email de confirmação enviado');
 };

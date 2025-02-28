@@ -20,7 +20,7 @@
 	const deleteFleetMutation = apiDeleteFleetMutation();
 
 	const deleteFleet = async () => {
-		if (!confirm('Permanently delete this fleet ?')) return;
+		if (!confirm('Deletar frota permanentemente?')) return;
 
 		await deleteFleetMutation.mutateAsync(fleet.id);
 		onFleetDeleted();
@@ -30,12 +30,12 @@
 {#if !editMode}
 	<div class="card preset-filled-surface-100-900 p-4">
 		<div>
-			<div class="opacity-70">Name</div>
+			<div class="opacity-70">Nome</div>
 			{fleet.name}
 		</div>
 
 		<div class="mt-4">
-			<div class="opacity-70">Description</div>
+			<div class="opacity-70">Descrição</div>
 			{fleet.description}
 		</div>
 
@@ -43,7 +43,7 @@
 			<PermissionGuard requiredPermissions="DELETE_FLEET">
 				<button class="btn preset-filled-error-200-800" onclick={deleteFleet}>
 					<Icon icon="mdi:trash" />
-					delete
+					deletar
 				</button>
 			</PermissionGuard>
 
@@ -55,7 +55,7 @@
 					}}
 				>
 					<Icon icon="mdi:pencil" />
-					edit
+					editar
 				</button>
 			</PermissionGuard>
 		</div>
@@ -65,7 +65,7 @@
 		<div class="flex mb-2 justify-end">
 			<button class="btn preset-filled-warning-200-800" onclick={() => (editMode = false)}>
 				<Icon icon="mdi:pencil-off" />
-				cancel edit
+				cancelar
 			</button>
 		</div>
 
@@ -73,7 +73,7 @@
 			fleetId={fleet.id}
 			formSchema={updateFleetForm}
 			onUpdate={() => {
-				showSuccessToast('fleet updated');
+				showSuccessToast('frota atualizada');
 				editMode = false;
 			}}
 		/>

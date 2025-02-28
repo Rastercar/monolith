@@ -17,7 +17,7 @@
 	const deleteSimCardMutation = apiDeleteSimCardByIdMutation();
 
 	const deleteSimCard = async () => {
-		if (!confirm('Permanently delete this SIM card ?')) return;
+		if (!confirm('deletar cartão SIM permanentemente?')) return;
 
 		await deleteSimCardMutation.mutateAsync(data.simCard.id);
 		simDeleted = true;
@@ -36,7 +36,7 @@
 		title="sim card info"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
+			{ text: 'rastreamento' },
 			{ href: route('/client/tracking/sim-cards'), icon: 'mdi:sim', text: 'sim cards' },
 			{ text: data.simCard.ssn }
 		]}

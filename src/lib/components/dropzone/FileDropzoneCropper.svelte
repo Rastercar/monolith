@@ -114,7 +114,7 @@
 	<div class="flex justify-end p-4">
 		<button type="button" class="btn preset-filled-primary-300-700" onclick={onCropClick}>
 			<Icon icon="mdi:camera" />
-			looks good !
+			parece bom !
 		</button>
 	</div>
 </div>

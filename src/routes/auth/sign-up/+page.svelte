@@ -15,7 +15,7 @@
 	const { submitting: isLoading } = sForm;
 </script>
 
-<AuthPagesLayout title="Sign Up." subtitle="Join best car tracking app in seconds!">
+<AuthPagesLayout title="Cadastre-se" subtitle="Tenha sua própria plataforma de rastreamento!">
 	<form method="POST" action={route('signUp /auth/sign-up')} use:sForm.enhance class="space-y-4">
 		<TextField
 			form={sForm}
@@ -25,14 +25,14 @@
 			disabled={$isLoading}
 		/>
 
-		<TextField form={sForm} name="username" label="Username" disabled={$isLoading} />
+		<TextField form={sForm} name="username" label="Nome de Usuário" disabled={$isLoading} />
 
-		<PasswordField form={sForm} name="password" label="Password" disabled={$isLoading} />
+		<PasswordField form={sForm} name="password" label="Senha" disabled={$isLoading} />
 
 		<PasswordField
 			form={sForm}
 			name="passwordConfirmation"
-			label="Confirm Password"
+			label="Confime sua senha"
 			disabled={$isLoading}
 		/>
 
@@ -41,13 +41,9 @@
 			disabled={$isLoading}
 			isLoading={$isLoading}
 		>
-			sign up
+			cadastrar
 		</LoadableButton>
 	</form>
 
-	<AuthRedirectLink
-		linkLabel="sign-in"
-		href={route('/auth/sign-in')}
-		question="Already have an account?"
-	/>
+	<AuthRedirectLink linkLabel="login" href={route('/auth/sign-in')} question="Já tem uma conta?" />
 </AuthPagesLayout>

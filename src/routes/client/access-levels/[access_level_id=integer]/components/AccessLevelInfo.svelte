@@ -9,7 +9,7 @@
 	let { accessLevel }: Props = $props();
 </script>
 
-<span class="block mt-2">Description:</span>
+<span class="block mt-2">Descrição:</span>
 
 <p class="opacity-90 line-clamp-4 mb-2">
 	{accessLevel.description}

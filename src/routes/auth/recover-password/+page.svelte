@@ -27,12 +27,13 @@
 		<h1 class="mb-1 text-center h1 mt-12">{success ? 'Success !' : 'Recover Password'}</h1>
 		<p class="type-scale-3 text-center text-surface-700-300 mb-8">
 			{success
-				? 'Follow the instructions sent to your email address'
-				: 'Inform your account email address to receive password recovery instructions'}
+				? 'Siga as instruções enviadas ao seu email'
+				: 'Informe o email de sua conta para receber as instruções de recuperação de senha'}
 		</p>
 
 		{#if success}
-			<a href="/" class="btn preset-filled-primary-200-800 mt-4 w-full">back to home</a>
+			<a href="/" class="btn preset-filled-primary-200-800 mt-4 w-full">voltar a página principal</a
+			>
 		{:else}
 			<form
 				method="post"
@@ -42,7 +43,7 @@
 				<TextField
 					form={sForm}
 					name="email"
-					label="Your account email"
+					label="Email da sua conta"
 					placeholder="email address"
 				/>
 
@@ -50,21 +51,21 @@
 					isLoading={$submitting}
 					classes="btn preset-filled-primary-200-800 mt-4 w-full"
 				>
-					recover password
+					recuperar senha
 				</LoadableButton>
 			</form>
 
 			{#if data.user}
 				<AuthRedirectLink
-					linkLabel="go to home page"
-					href={route('/client/my-profile')}
-					question="False alert?"
+					linkLabel="voltar a página principal"
+					href={route('/client')}
+					question="Alerta falso?"
 				/>
 			{:else}
 				<AuthRedirectLink
-					linkLabel="sign-in"
+					linkLabel="login"
 					href={route('/auth/sign-in')}
-					question="False alert?"
+					question="Alerta falso?"
 				/>
 			{/if}
 		{/if}

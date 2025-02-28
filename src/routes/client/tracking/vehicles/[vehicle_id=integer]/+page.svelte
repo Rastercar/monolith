@@ -25,11 +25,11 @@
 
 <PageContainer>
 	<PageHeader
-		title="vehicle info"
+		title="veículo"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'vehicles' },
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'veículos' },
 			{
 				href: route('/client/tracking/vehicles/[vehicle_id=integer]', {
 					vehicle_id: vehicle.id.toString()

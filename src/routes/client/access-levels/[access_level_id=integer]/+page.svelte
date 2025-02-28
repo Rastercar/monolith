@@ -21,7 +21,7 @@
 	const deleteAccessLevelMutation = apiDeleteUserByIdMutation();
 
 	const deleteAccessLevel = async () => {
-		if (!confirm('Permanently delete this access level ?')) return;
+		if (!confirm('deletar nível de acesso permanentemente?')) return;
 		await deleteAccessLevelMutation
 			.mutateAsync(data.accessLevel.id)
 			.then(() => (accessLevelDeleted = true));
@@ -39,10 +39,10 @@
 
 <PageContainer>
 	<PageHeader
-		title="Access Level"
+		title="Nível de acesso"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'access levels' },
+			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'níveis de acesso' },
 			{
 				href: route(`/client/access-levels/[access_level_id=integer]`, {
 					access_level_id: accessLevel.id.toString()
@@ -56,21 +56,21 @@
 
 	{#if accessLevelDeleted}
 		<DeletionSuccessMessage
-			title="Access level deleted successfully"
+			title="Nível de acesso deletado"
 			href={route('/client/access-levels')}
 		/>
 	{:else}
 		<div class="card preset-filled-surface-100-900">
 			<div class="p-4 flex flex-col md:flex-row items-center gap-4">
 				<div class="flex items-center mr-auto type-scale-3">
-					{editMode ? 'Editing access level' : accessLevel.name}
+					{editMode ? 'Editando nível de acesso' : accessLevel.name}
 				</div>
 
 				<div>
 					{#if accessLevelIsFixed || isCurrentUserAccessLevel}
 						<Popover.Root>
 							<Popover.Trigger class="badge preset-filled-primary-200-800">
-								{isCurrentUserAccessLevel ? 'your access level' : 'fixed access level'}
+								{isCurrentUserAccessLevel ? 'seu nível de acesso' : 'nível de acesso fixo'}
 							</Popover.Trigger>
 
 							<Popover.Portal>
@@ -81,8 +81,8 @@
 								>
 									<div class="type-scale-1 text-center">
 										{isCurrentUserAccessLevel
-											? 'this is your own access level and cannot be edited nor deleted'
-											: 'this is main access level of your organization and cannot be edited nor deleted'}
+											? 'esse é seu nível de acesso e não pode ser editado ou deletado'
+											: 'esse é o nível de acesso principal de sua organização e não pode ser editado ou deletado'}
 									</div>
 								</Popover.Content>
 							</Popover.Portal>

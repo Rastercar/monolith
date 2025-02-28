@@ -30,7 +30,7 @@
 			</a>
 		</span>
 
-		<div>Model: {tp.tracker.model}</div>
+		<div>Modelo: {tp.tracker.model}</div>
 	</div>
 
 	{#if tp.position}
@@ -61,7 +61,7 @@
 	{:else}
 		<div class="chip preset-filled-warning-200-800">
 			<Icon icon="mdi:warning" class="mr-2" />
-			No position found
+			Nenhuma posição encontrada
 		</div>
 	{/if}
 

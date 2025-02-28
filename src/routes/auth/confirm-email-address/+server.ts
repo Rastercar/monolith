@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		confirmEmailAddressSchema
 	);
 
-	const sendInvalidTokenError = () => error(404, 'invalid or expired token');
+	const sendInvalidTokenError = () => error(404, 'token inválido ou expirado');
 
 	if (confirmingForOrg) {
 		const org = await findOrganizationByConfirmBillingEmailToken(token);
@@ -30,5 +30,5 @@ export const POST: RequestHandler = async ({ request }) => {
 		await setEmailVerifiedAndClearConfirmEmailToken(token);
 	}
 
-	return json('email address confirmed');
+	return json('endereço de email confirmado');
 };

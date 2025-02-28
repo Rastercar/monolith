@@ -37,14 +37,14 @@ export function configureSocketIoServer(io: SocketIoServer) {
 		if (sessionId) sessionId = sessionId.replaceAll('sid=', '');
 
 		if (!sessionId) {
-			socket.emit('error', 'session id cookie not found, disconnecting');
+			socket.emit('error', 'session id cookie não encontrado, desconectando');
 			socket.disconnect();
 			return;
 		}
 
 		const user = await findUserBySessionToken(sessionId);
 		if (!user) {
-			socket.emit('error', 'didnt find a user with the given session cookie, disconnecting');
+			socket.emit('error', 'usuário com o session cookie não encontrado, desconectando');
 			socket.disconnect();
 			return;
 		}

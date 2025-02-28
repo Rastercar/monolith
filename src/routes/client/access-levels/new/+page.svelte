@@ -53,19 +53,19 @@
 	use:sForm.enhance
 >
 	<PageHeader
-		title="create access level"
+		title="novo nível de acesso"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'access levels' },
-			{ href: route('/client/access-levels/new'), text: 'new' }
+			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'níveis de acesso' },
+			{ href: route('/client/access-levels/new'), text: 'cadastro' }
 		]}
 	/>
 
 	<hr class="hr my-6" />
 
-	<TextField form={sForm} classes="mb-4" name="name" label="Name" />
+	<TextField form={sForm} classes="mb-4" name="name" label="Nome" />
 
-	<TextAreaField form={sForm} name="description" label="Description" />
+	<TextAreaField form={sForm} name="description" label="Descrição" />
 
 	<AccessLevelPermissionTogglers {permissionToToggleStatus} />
 
@@ -74,7 +74,7 @@
 			isLoading={$isLoading}
 			classes="btn preset-filled-primary-200-800 ml-auto mt-auto"
 		>
-			create access level
+			cadastrar nível de acesso
 		</LoadableButton>
 	</div>
 </form>

@@ -33,7 +33,7 @@
 	{:else}
 		<span class="flex items-center py-4">
 			<Icon icon="mdi:info" class="mr-2" />
-			no sessions found
+			nenhuma sessão encontrada
 		</span>
 	{/each}
 </div>

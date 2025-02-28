@@ -22,6 +22,7 @@
 
 			{email}
 		</Tooltip.Trigger>
+
 		<Tooltip.Content class="card py-1 px-3 bg-surface-200-800">
 			{verified ? 'email verified' : 'verification pending'}
 		</Tooltip.Content>

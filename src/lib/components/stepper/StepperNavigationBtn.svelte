@@ -10,7 +10,7 @@
 
 	let { onclick, disabled = false, label, isStepNextBtn = true }: Props = $props();
 
-	const lbl = $derived(label ? label : isStepNextBtn ? 'Next' : 'Previous');
+	const lbl = $derived(label ? label : isStepNextBtn ? 'Próximo' : 'Anterior');
 </script>
 
 <button class="btn preset-filled-primary-500" {disabled} {onclick}>

@@ -8,7 +8,7 @@
 	const auth = getAuthContext();
 
 	const onUploadSuccess = (profilePicture: string) => {
-		showSuccessToast('profile picture changed successfully');
+		showSuccessToast('foto de perfil alterada');
 		auth.updateUser({ profilePicture });
 	};
 
@@ -19,7 +19,7 @@
 
 {#if user}
 	<FileDropzone
-		deleteConfirmPrompt="Are you sure you want to delete your profile picture"
+		deleteConfirmPrompt="Deseja mesmo deletar sua foto de perfil?"
 		{onDeleteSuccess}
 		{onUploadSuccess}
 		deleteMutationFn={apiRemoveUserProfilePicture}

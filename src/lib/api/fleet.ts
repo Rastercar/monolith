@@ -20,7 +20,7 @@ export const apiGetFleets = (
 		.then(createPaginatedResponseSchema(fleetSchema).parse);
 
 /**
- * permanently deletes a fleet
+ * deletes a fleet
  */
 export function apiDeleteFleet(id: number): Promise<string> {
 	const url = route('DELETE /client/tracking/fleets/[fleet_id=integer]', {

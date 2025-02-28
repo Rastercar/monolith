@@ -23,7 +23,7 @@
 			if (!valid) return;
 
 			auth.updateUser(data);
-			showSuccessToast('profile updated');
+			showSuccessToast('perfil atualizado');
 		}
 	});
 	const { submitting: isLoading } = sForm;
@@ -42,7 +42,7 @@
 	>
 		<TextField form={sForm} name="email" label="Email" />
 
-		<TextField form={sForm} maxlength={32} name="username" label="Username" />
+		<TextField form={sForm} maxlength={32} name="username" label="Nome de Usuário" />
 
 		{#if !auth.user.emailVerified}
 			<EmailNotConfirmedWarning
@@ -65,7 +65,7 @@
 				disabled={$isLoading}
 				isLoading={$isLoading}
 			>
-				update
+				atualizar
 			</LoadableButton>
 		</div>
 	</form>

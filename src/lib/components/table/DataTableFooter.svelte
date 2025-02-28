@@ -26,7 +26,7 @@
 	{#if withPageSizeSelector}
 		<select name="size" class="select max-w-full sm:max-w-[150px]" bind:value={pageSize}>
 			{#each [3, 5, 10] as v}
-				<option value={v}>{v} Items</option>
+				<option value={v}>{v} Itens</option>
 			{/each}
 		</select>
 	{/if}

@@ -35,13 +35,13 @@
 	<div>
 		<h2 class="flex items-center text-2xl">
 			<Icon icon="mdi:cellphone-marker" class="mr-2" height={24} />
-			Tracker Information
+			Informações do Rastreador
 
 			{@render title?.()}
 		</h2>
 
 		<div class="mt-4 mb-1">imei: {tracker.imei}</div>
-		<div class="mb-1">model: {tracker.model}</div>
+		<div class="mb-1">modelo: {tracker.model}</div>
 
 		<div class="flex items-center mb-2">
 			status: {isOnline ? 'online' : 'offline'}
@@ -49,7 +49,7 @@
 
 		<div class="mb-2 flex items-center">
 			<Icon icon="mdi:calendar" class="mr-2" />
-			<span class="mr-2">created at:</span>
+			<span class="mr-2">data de cadastro:</span>
 
 			{toLocaleDateString(tracker.createdAt)}
 		</div>
@@ -61,7 +61,7 @@
 			</div>
 
 			<span class="opacity-80 type-scale-1 mt-4">
-				last position at {new Date(position.timestamp).toLocaleString()}
+				data da ultima posição {new Date(position.timestamp).toLocaleString()}
 			</span>
 		{/if}
 
@@ -82,7 +82,7 @@
 
 			<span class="flex items-center">
 				<Icon icon="mdi:car" class="mr-2" />
-				vehicle
+				veículo
 			</span>
 
 			<hr class="w-full ml-2 hr" />
@@ -97,25 +97,25 @@
 		{/if}
 
 		<div class="space-y-1">
-			{@render field('plate', vehicleTracker.plate)}
-			{@render field('brand', vehicleTracker.brand)}
-			{@render field('model', vehicleTracker.model)}
-			{@render field('color', vehicleTracker.color)}
-			{@render field('fleet', vehicleTracker.fleet?.name ?? 'n/a')}
+			{@render field('placa', vehicleTracker.plate)}
+			{@render field('marca', vehicleTracker.brand)}
+			{@render field('modelo', vehicleTracker.model)}
+			{@render field('cor', vehicleTracker.color)}
+			{@render field('frota', vehicleTracker.fleet?.name ?? 'n/a')}
 
 			{#if vehicleTracker.modelYear && vehicleTracker.fabricationYear}
 				<div>
-					<span class="type-scale-2 opacity-80">year:</span>
+					<span class="type-scale-2 opacity-80">ano:</span>
 					{vehicleTracker.modelYear} / {vehicleTracker.fabricationYear}
 				</div>
 			{:else}
 				<div>
-					<span class="type-scale-2 opacity-80">year: n/a</span>
+					<span class="type-scale-2 opacity-80">ano: n/a</span>
 				</div>
 			{/if}
 
 			<div>
-				<span class="type-scale-2 opacity-80">chassis:</span>
+				<span class="type-scale-2 opacity-80">chassi:</span>
 				{vehicleTracker.chassisNumber ?? 'n/a'}
 			</div>
 		</div>
@@ -131,12 +131,12 @@
 			})}
 		>
 			<Icon icon="mdi:link" class="mr-2" />
-			see details
+			ver detalhes
 		</a>
 	{:else}
 		<div class="p-4 mt-4 type-scale-2 flex items-center text-warning-600-300-token">
 			<Icon icon="mdi:warning" class="mr-2" />
-			This tracker is not installed on a vehicle
+			Esse rastreador não esta associado a um veículo
 		</div>
 	{/if}
 </div>

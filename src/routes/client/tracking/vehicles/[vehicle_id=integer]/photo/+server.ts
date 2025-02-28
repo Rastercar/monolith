@@ -12,7 +12,7 @@ export const PUT: RequestHandler = async ({ request, params, locals }) => {
 
 	const form = await validateForm(request, imageSchema);
 	if (!form.valid) {
-		error(400, { message: form.errors.image?.[0] ?? 'invalid image' });
+		error(400, { message: form.errors.image?.[0] ?? 'imagem inválida' });
 	}
 
 	const { image } = form.data;
@@ -20,7 +20,7 @@ export const PUT: RequestHandler = async ({ request, params, locals }) => {
 	const vehicleId = parseInt(params.vehicle_id);
 
 	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId });
-	if (!vehicle) return error(404, 'vehicle not found');
+	if (!vehicle) return error(404, 'veículo não encontrado');
 
 	const oldVehiclePhoto = vehicle.photo;
 
@@ -46,14 +46,14 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const vehicleId = parseInt(params.vehicle_id);
 
 	const vehicle = await findOrgVehicleById({ id: vehicleId, orgId });
-	if (!vehicle) return error(404, 'vehicle not found');
+	if (!vehicle) return error(404, 'veóculo não encontrado');
 
 	if (!vehicle.photo) {
-		return json('vehicle does not have a photo to delete');
+		return json('veículo sem foto para deletar');
 	}
 
 	await s3.deleteFile(vehicle.photo);
 	await updateOrgVehiclePhoto(vehicleId, null);
 
-	return json('photo deleted');
+	return json('foto deletada');
 };

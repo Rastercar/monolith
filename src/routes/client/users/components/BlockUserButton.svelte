@@ -14,7 +14,7 @@
 	const mut = apiSetUserBlockedMutation({ minTime: 500 });
 
 	const blockUserConfirmMsg =
-		'block user ? the user will be logged off from all devices and their access will be denied until unblocking';
+		'bloquear usuário ? o usuário será deslogado de todos os dispositivos e seu acesso será negado até desbloqueá-lo';
 
 	const toggleUserBlocked = () => {
 		if (!isBlocked && !confirm(blockUserConfirmMsg)) return;
@@ -22,7 +22,7 @@
 		mut
 			.mutateAsync({ userId, block: !isBlocked })
 			.then(() => {
-				showSuccessToast(`user ${isBlocked ? 'unblocked' : 'blocked'}`);
+				showSuccessToast(`usuário ${isBlocked ? 'desbloqueado' : 'bloqueado'}`);
 				onBlockedStatusChange();
 			})
 			.catch(showErrorToast);
@@ -35,11 +35,11 @@
 	const msg = $derived(
 		isBlocked
 			? mut.isPending
-				? 'unblocking'
-				: 'unblock user'
+				? 'desloqueando'
+				: 'desbloquear usuário'
 			: mut.isPending
-				? 'blocking'
-				: 'block user'
+				? 'bloqueando'
+				: 'bloquear usuário'
 	);
 </script>
 

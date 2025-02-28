@@ -64,12 +64,12 @@
 	});
 
 	const columns: ColumnDef<SimCard>[] = [
-		{ accessorKey: 'phoneNumber', header: () => 'Phone' },
+		{ accessorKey: 'phoneNumber', header: () => 'Telefone' },
 		{ accessorKey: 'ssn', header: () => 'SSN' },
 		{ accessorKey: 'apnAddress', header: () => 'APN' },
 		{
 			accessorKey: 'createdAt',
-			header: () => 'Created at',
+			header: () => 'Data de cadastro',
 			cell: ({ cell }) => new Date(cell.row.original.createdAt).toLocaleDateString()
 		},
 		{
@@ -114,7 +114,7 @@
 
 <DebouncedTextField
 	classes="label my-4"
-	placeholder="Filter by phone number"
+	placeholder="Filtrar por telefone"
 	onChange={(v) => (filters.phoneNumber = v)}
 />
 
@@ -131,7 +131,7 @@
 <Popover.Root>
 	<Popover.Trigger class="flex items-center mt-2 justify-end w-full">
 		<button type="button" class="btn p-0 text-primary-800-200 ml-auto">
-			not finding your sim card ?
+			Não está encontrando seu cartão SIM?
 		</button>
 	</Popover.Trigger>
 
@@ -142,8 +142,8 @@
 			sideOffset={8}
 		>
 			<p>
-				Only SIM cards that are not associated with a tracker can be selected, if you wish to use a
-				SIM card that is already installed on a tracker, please uninstall the SIM card.
+				Apenas cartões SIM que não estão associados com um rastreador podem ser selecionados, se
+				deseja usar um cartão que já esta associado a um rastreador, remova ele do rastreador.
 			</p>
 		</Popover.Content>
 	</Popover.Portal>
@@ -161,7 +161,7 @@
 		<input type="hidden" name="vehicleTrackerId" value={trackerIdToAssociate} />
 
 		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500 ml-auto mt-auto">
-			select SIM card
+			selecionar cartão SIM
 		</LoadableButton>
 	</form>
 {/if}

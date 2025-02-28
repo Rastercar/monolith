@@ -7,6 +7,6 @@
 </script>
 
 <div class="text-sm">
-	<p class="opacity-80">created at</p>
+	<p class="opacity-80">data de cadastro</p>
 	{date instanceof Date ? date.toLocaleDateString() : new Date(date).toLocaleDateString()}
 </div>

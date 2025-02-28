@@ -7,5 +7,5 @@ export const POST: RequestHandler = async ({ cookies }) => {
 	cookies.delete(SESSION_ID_COOKIE_KEY, { path: '/' });
 
 	if (sessionId) await deleteSessionByToken(sessionId);
-	return new Response('session deleted');
+	return new Response('sessão removida');
 };

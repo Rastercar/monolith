@@ -54,7 +54,7 @@
 		>
 			<a href={route('/client/tracking/map')} class="flex items-center">
 				<Icon icon="mdi:arrow-left" height={20} class="mr-2" />
-				<span class="type-scale-2">go to tracking page</span>
+				<span class="type-scale-2">ir ao mapa de rastreamento</span>
 			</a>
 		</div>
 	</div>

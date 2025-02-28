@@ -99,12 +99,12 @@
 	<div class="w-full max-w-2xl p-4">
 		<h2 class="flex items-center mb-4 type-scale-6">
 			<Icon icon="mdi:satellite" class="mr-2 hidden md:block" height={32} />
-			Trackers to show
+			Rastreadores a exibir
 
 			{#if reachedSelectionLimit}
 				<span class="ml-auto flex items-center bg-warning-200-800 p-2 rounded-md type-scale-1">
 					<Icon icon="mdi:warning" class="mr-2" />
-					cannot select over {TRACKER_SUBSCRIPTION_PER_USER_LIMIT} trackers
+					não é possível selecionar mais de {TRACKER_SUBSCRIPTION_PER_USER_LIMIT} rastreadores
 				</span>
 			{/if}
 
@@ -127,14 +127,16 @@
 
 		<div class="flex items-center mt-4">
 			<span class="mr-auto">
-				{selectedTrackersCnt || 'no'} selected trackers
+				{selectedTrackersCnt
+					? `${selectedTrackersCnt} rastreadores selecionados`
+					: 'nenhum rastreador selecionado'}
 			</span>
 
 			<button
 				class="btn btn-sm preset-filled-primary-200-800"
 				onclick={() => (mapContext.mapSelectedTrackers = {})}
 			>
-				clear all
+				desselecionar
 				<Icon icon="mdi:trash" />
 			</button>
 		</div>

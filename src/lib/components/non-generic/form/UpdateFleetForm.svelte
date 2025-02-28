@@ -47,13 +47,13 @@
 	})}
 	use:sForm.enhance
 >
-	<TextField form={sForm} name="name" label="Name *" maxlength={50} />
+	<TextField form={sForm} name="name" label="Nome *" maxlength={50} />
 
-	<TextAreaField form={sForm} name="description" label="Description *" maxlength={500} />
+	<TextAreaField form={sForm} name="description" label="Descrição *" maxlength={500} />
 
 	<div class="mt-6 flex justify-end">
 		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500 ml-auto mt-auto">
-			update fleet
+			atualizar frota
 		</LoadableButton>
 	</div>
 </form>

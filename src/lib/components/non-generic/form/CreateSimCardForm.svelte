@@ -59,16 +59,16 @@
 	<TextField
 		form={sForm}
 		name="phoneNumber"
-		label="Phone Number *"
+		label="Telefone *"
 		placeholder="+5599999999"
 		maxlength={20}
 	/>
 
-	<TextField form={sForm} name="apnUser" label="APN User *" maxlength={50} />
+	<TextField form={sForm} name="apnUser" label="APN Usuário *" maxlength={50} />
 
-	<TextField form={sForm} name="apnPassword" label="APN Password *" maxlength={50} />
+	<TextField form={sForm} name="apnPassword" label="APN Senha *" maxlength={50} />
 
-	<TextField form={sForm} name="apnAddress" label="APN Address *" maxlength={50} />
+	<TextField form={sForm} name="apnAddress" label="APN Endereço *" maxlength={50} />
 
 	<TextField form={sForm} name="pin" label="PIN 1" placeholder="0000" maxlength={8} />
 
@@ -88,7 +88,7 @@
 				isLoading={$isLoading}
 				classes="btn preset-filled-primary-500 ml-auto mt-auto"
 			>
-				create SIM card
+				cadastrar cartão SIM
 			</LoadableButton>
 		</div>
 	{/if}

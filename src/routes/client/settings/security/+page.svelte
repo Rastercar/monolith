@@ -15,7 +15,7 @@
 		validators: zodClient(changePasswordSchema),
 		onUpdated({ form: { valid } }) {
 			if (!valid) return;
-			showSuccessToast('password updated');
+			showSuccessToast('senha atualizada');
 		},
 		onError: showErrorToast
 	});
@@ -23,29 +23,29 @@
 	const { submitting: isLoading } = sForm;
 </script>
 
-<SettingsPageTitle>Change Password</SettingsPageTitle>
+<SettingsPageTitle>Alterar Senha</SettingsPageTitle>
 
 {#if data.redirectHereDueToForcePasswordChange}
 	<div class="card preset-outlined-warning-200-800 p-4 mb-6">
 		<div class="flex items-center">
 			<Icon icon="mdi:lock" height={24} class="mr-2" />
-			<h2>You <span class="font-bold">must</span> change your password</h2>
+			<h2>Você <span class="font-bold">precisa</span> alterar sua senha</h2>
 		</div>
 
 		<p class="type-scale-2 mt-4">
-			For security reasons your organization owner requires new users to change their passwords
-			before being able to use the rastercar platform.
+			Por razões de segurança o dono de sua organização requer que novos usuários alterem sua senha
+			para acessar a plataforma.
 		</p>
 	</div>
 {/if}
 
 <form method="POST" action={route('changePassword /client/settings/security')} use:sForm.enhance>
 	<div class="space-y-4">
-		<PasswordField form={sForm} name="oldPassword" label="Old Password" />
+		<PasswordField form={sForm} name="oldPassword" label="Senha antiga" />
 
-		<PasswordField form={sForm} name="newPassword" label="New Password" />
+		<PasswordField form={sForm} name="newPassword" label="Senha nova" />
 
-		<PasswordField form={sForm} name="newPasswordConfirmation" label="Confirm new Password" />
+		<PasswordField form={sForm} name="newPasswordConfirmation" label="Confirmar senha nova" />
 	</div>
 
 	<div class="flex items-center mt-8">
@@ -54,12 +54,12 @@
 				href={route('/auth/recover-password')}
 				class="text-sm text-primary-800-200 underline-offset-4 hover:underline"
 			>
-				forgot your password?
+				esqueceu sua senha?
 			</a>
 		{/if}
 
 		<LoadableButton classes="btn preset-filled-primary-400-600 ml-auto" isLoading={$isLoading}>
-			change password
+			alterar senha
 		</LoadableButton>
 	</div>
 </form>

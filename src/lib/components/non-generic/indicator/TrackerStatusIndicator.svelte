@@ -38,8 +38,8 @@
 		<Tooltip.Content sideOffset={8} class="card py-1 px-3 bg-surface-200-800">
 			<span class="type-scale-1">
 				{isOnline
-					? 'this tracker has communicated with the rastercar platform under the last 5 minutes'
-					: 'its been over 5 minutes since a position has been recieved from this tracker'}
+					? 'esse rastreador se comunicou com a plataforma nos ultimos 5 minutos'
+					: 'esse rastreador não se comunicou com a plataforma nos ultimos 5 minutos'}
 			</span>
 		</Tooltip.Content>
 	</Tooltip.Root>

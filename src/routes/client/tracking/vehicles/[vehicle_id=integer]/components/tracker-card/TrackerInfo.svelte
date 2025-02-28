@@ -34,7 +34,7 @@
 
 	const removeTracker = async () => {
 		const ok = confirm(
-			'Remove the tracker from the vehicle ?\n\nAny positions received by the tracker will NOT be associated with the vehicle'
+			'Remover o rastreador do veículo?\n\nQualquer posição recebida pelo rastreador não sera associada a ele'
 		);
 
 		if (!ok) return;
@@ -44,7 +44,7 @@
 	};
 
 	const deleteTracker = async (deleteAssociatedSimCards: boolean) => {
-		const ok = confirm('Delete the tracker ?\n\nAny positions recieved will be lost');
+		const ok = confirm('Deletar o rastreador?\n\nSeu histórico de posições também será deletado');
 		if (!ok) return;
 
 		await deleteTrackerMutation.mutateAsync({ id: tracker.id, deleteAssociatedSimCards });
@@ -63,19 +63,19 @@
 		{
 			id: 'edit',
 			icon: 'mdi:pencil',
-			text: 'Edit',
+			text: 'Editar',
 			requiredPermission: 'UPDATE_TRACKER' as const
 		},
 		{
 			id: 'delete',
 			icon: 'mdi:trash',
-			text: 'Permanently delete',
+			text: 'Deletar permanentemente',
 			requiredPermission: 'DELETE_TRACKER' as const
 		},
 		{
 			id: 'remove',
 			icon: 'mdi:close',
-			text: 'Remove from vehicle',
+			text: 'Remover do veículo',
 			requiredPermission: 'UPDATE_TRACKER' as const
 		}
 	].filter((opt) => auth.hasPermission(opt.requiredPermission));
@@ -94,7 +94,7 @@
 			</TrackerStatusIndicator>
 		</div>
 
-		<div><span class="type-scale-1 opacity-80">model:</span> {tracker.model}</div>
+		<div><span class="type-scale-1 opacity-80">modelo:</span> {tracker.model}</div>
 		<div><span class="type-scale-1 opacity-80">imei:</span> {tracker.imei}</div>
 	</div>
 

@@ -47,6 +47,6 @@ that are in the guard or check the authorization yourself
 		class="flex items-center space-x-2 p-2 border-dashed border-error-600-400 text-error-600-400"
 	>
 		<Icon icon="mdi:error" height={20} />
-		<p>access denied</p>
+		<p>acesso negado</p>
 	</div>
 {/if}

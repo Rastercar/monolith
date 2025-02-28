@@ -15,5 +15,5 @@
 		{title}
 	</div>
 
-	<a {href} class="ml-auto font-medium text-primary-800-200 hover:underline">go back</a>
+	<a {href} class="ml-auto font-medium text-primary-800-200 hover:underline">voltar</a>
 </div>

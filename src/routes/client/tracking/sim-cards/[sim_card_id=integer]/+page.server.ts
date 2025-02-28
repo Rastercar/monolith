@@ -32,11 +32,11 @@ export const actions = {
 
 		if ('error' in res) {
 			if (res.error === 'SSN_IN_USE') {
-				return setError(form, 'ssn', 'SSN in use by another SIM card');
+				return setError(form, 'ssn', 'SSN em uso por outro cartão SIM');
 			}
 
 			if (res.error === 'PHONE_IN_USE') {
-				return setError(form, 'phoneNumber', 'Phone number in use by another SIM card');
+				return setError(form, 'phoneNumber', 'telefone em uso por outro cartão SIM');
 			}
 		}
 

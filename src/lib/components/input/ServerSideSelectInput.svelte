@@ -48,7 +48,7 @@
 		<Combobox.Input
 			class="input"
 			defaultValue={searchValue}
-			placeholder="search by name"
+			placeholder="buscar por nome"
 			clearOnDeselect
 			oninput={(e) => {
 				const v = e.currentTarget.value;

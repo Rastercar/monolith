@@ -16,7 +16,10 @@ export async function handleChangeTrackersToListenEvent(
 	session: SocketIoSession
 ) {
 	if (trackerIds.length > TRACKER_SUBSCRIPTION_PER_USER_LIMIT) {
-		socket.emit('error', `cannot listen to over ${TRACKER_SUBSCRIPTION_PER_USER_LIMIT} trackers`);
+		socket.emit(
+			'error',
+			`não é possível escutar mais de ${TRACKER_SUBSCRIPTION_PER_USER_LIMIT} rastreadores`
+		);
 		return;
 	}
 
@@ -27,7 +30,7 @@ export async function handleChangeTrackersToListenEvent(
 	const invalidIds = trackerIds.filter((id) => validIds.indexOf(id) === -1);
 
 	if (invalidIds.length > 0) {
-		socket.emit('error', `not allowed to listen to ids: ${invalidIds.join(',')}`);
+		socket.emit('error', `não é permitido escutar aos rastreadores: ${invalidIds.join(',')}`);
 	}
 
 	socket.rooms.forEach((room) => {

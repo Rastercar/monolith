@@ -15,9 +15,9 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 
 	// assert access level belongs to request user org
 	const accessLevel = await findOrgAccessLevelById({ id: accessLevelId, orgId });
-	if (!accessLevel) return error(404, 'access level does not exist');
+	if (!accessLevel) return error(404, 'nível de acesso atualizado');
 
 	await setOrgUserAccessLevel({ userId, orgId, accessLevelId });
 
-	return json('access level changed');
+	return json('nível de acesso alterado');
 };

@@ -10,12 +10,12 @@
 
 <PageContainer>
 	<PageHeader
-		title="create sim card"
+		title="cadastrar cartão SIM"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/sim-cards'), icon: 'mdi:sim', text: 'sim cards' },
-			{ href: route('/client/tracking/sim-cards/new'), text: 'new' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/sim-cards'), icon: 'mdi:sim', text: 'cartões SIM' },
+			{ href: route('/client/tracking/sim-cards/new'), text: 'cadastro' }
 		]}
 	/>
 
@@ -23,6 +23,6 @@
 
 	<CreateSimCardForm
 		formSchema={data.createSimCardForm}
-		onCreate={() => showSuccessToast('sim card created')}
+		onCreate={() => showSuccessToast('cartão SIM cadastrado')}
 	/>
 </PageContainer>

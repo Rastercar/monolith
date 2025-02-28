@@ -57,18 +57,18 @@
 		<div class="flex flex-col ml-4">
 			<span>{uap.getOS().name ?? ''} {uap.getBrowser().name ?? ''} {session.ip}</span>
 			<span class="text-surface-600-400 type-scale-1">
-				created: {toDateStr(session.createdAt)}
+				data: {toDateStr(session.createdAt)}
 			</span>
 			<span class="text-surface-600-400 type-scale-1">
-				expires: {toDateStr(session.expiresAt)}
+				expira em: {toDateStr(session.expiresAt)}
 			</span>
 		</div>
 	</div>
 
 	{#if session.sameAsFromRequest}
-		<span class="chip preset-filled-primary-500 ml-auto py-1">your current session</span>
+		<span class="chip preset-filled-primary-500 ml-auto py-1">sua sessão atual</span>
 	{:else if mutation.isError}
-		<span class="chip preset-filled-error-400-600 ml-auto py-1">failed to delete session</span>
+		<span class="chip preset-filled-error-400-600 ml-auto py-1">erro ao deletar sessão</span>
 	{:else if canRemoveSessions}
 		<button
 			disabled={mutation.isPending}
@@ -76,7 +76,7 @@
 			class="btn preset-filled-warning-400-600 ml-auto"
 			onclick={() => mutation.mutate({ sessionOwnerId, sessionPublicId: session.publicId })}
 		>
-			<span>{mutation.isPending ? 'removing session' : 'revoke session'}</span>
+			<span>{mutation.isPending ? 'removendo sessão' : 'revogar sessão'}</span>
 			<Icon icon="mdi:trash" />
 		</button>
 	{/if}

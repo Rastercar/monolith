@@ -34,14 +34,14 @@
 		deleteSimMutation
 			.mutateAsync(simCard.id)
 			.then(onSimDeleted)
-			.catch(() => showErrorToast('failed to delete sim card'));
+			.catch(() => showErrorToast('erro ao deletar cartão SIM'));
 	};
 
 	const removeSimCard = () => {
 		removeSimCardMutation
 			.mutateAsync({ id: simCard.id, body: { vehicleTrackerId: null } })
 			.then(onSimRemoved)
-			.catch(() => showErrorToast('failed to remove sim card'));
+			.catch(() => showErrorToast('erro ao remover cartão SIM'));
 	};
 </script>
 
@@ -59,7 +59,7 @@
 
 <div class={`card preset-filled-surface-100-900 p-4 ${additionalClasses}`}>
 	<div class="flex items-center mb-2">
-		<span class="text-md">phone number: {simCard.phoneNumber}</span>
+		<span class="text-md">telefone: {simCard.phoneNumber}</span>
 
 		<!-- Remove SIM button -->
 		<PermissionGuard requiredPermissions={'UPDATE_SIM_CARD'}>
@@ -74,8 +74,9 @@
 							{@render loaderOrCloseBtn(removeSimCardMutation.isPending, 'mdi:close')}
 						</button>
 					</Tooltip.Trigger>
+
 					<Tooltip.Content sideOffset={8} class="card p-2 bg-surface-400-600">
-						{removeSimCardMutation.isPending ? 'removing SIM card' : 'remove SIM card from tracker'}
+						{removeSimCardMutation.isPending ? 'removendo...' : 'remover cartão SIM do rastreador'}
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Tooltip.Provider>
@@ -94,8 +95,9 @@
 							{@render loaderOrCloseBtn(removeSimCardMutation.isPending, 'mdi:trash')}
 						</button>
 					</Tooltip.Trigger>
+
 					<Tooltip.Content sideOffset={8} class="card p-2 bg-surface-400-600">
-						{removeSimCardMutation.isPending ? 'deleting SIM card' : 'delete SIM card'}
+						{removeSimCardMutation.isPending ? 'deletando...' : 'deletar cartão SIM'}
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Tooltip.Provider>
@@ -117,9 +119,9 @@
 
 	<div class="text-sm grid grid-cols-1 md:grid-cols-2 gap-2">
 		{@render field('SSN', simCard.ssn)}
-		{@render field('APN Address', simCard.apnAddress)}
-		{@render field('APN User', simCard.apnUser)}
-		{@render field('APN Password', simCard.apnPassword)}
+		{@render field('APN Endereço', simCard.apnAddress)}
+		{@render field('APN Usuário', simCard.apnUser)}
+		{@render field('APN Senha', simCard.apnPassword)}
 		{@render field('PIN', simCard.pin)}
 		{@render field('PIN 2', simCard.pin2)}
 		{@render field('PUK', simCard.puk)}

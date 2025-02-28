@@ -37,7 +37,7 @@
 	const columns: ColumnDef<Tracker>[] = [
 		{
 			accessorKey: 'model',
-			header: () => 'Model'
+			header: () => 'Modelo'
 		},
 		{
 			accessorKey: 'imei',
@@ -45,7 +45,7 @@
 		},
 		{
 			accessorKey: 'createdAt',
-			header: () => 'Created at',
+			header: () => 'Data de cadastro',
 			cell: ({ cell }) => new Date(cell.row.original.createdAt).toLocaleDateString()
 		},
 		{
@@ -90,7 +90,7 @@
 
 <DebouncedTextField
 	classes="label my-4"
-	placeholder="Filter by IMEI"
+	placeholder="Filtrar por IMEI"
 	onChange={(v) => (filters.imei = v)}
 />
 
@@ -108,7 +108,7 @@
 	<Popover.Root>
 		<Popover.Trigger>
 			<button type="button" class="btn p-0 text-primary-800-200 ml-auto">
-				not finding your tracker ?
+				não está encontrando seu rastreador?
 			</button>
 		</Popover.Trigger>
 
@@ -119,8 +119,8 @@
 				sideOffset={8}
 			>
 				<p>
-					Only trackers that are not associated with a vehicle can be selected, if you wish to use a
-					tracker that is already installed in a vehicle, please uninstall the tracker.
+					Somente rastreadores não associados a um veículo podem ser selecionados, se deseja
+					utilizar um rastreador já instalado em um veículo desinstale-o primeiro.
 				</p>
 			</Popover.Content>
 		</Popover.Portal>

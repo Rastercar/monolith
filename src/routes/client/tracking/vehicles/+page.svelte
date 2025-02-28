@@ -24,34 +24,34 @@
 	const columns: ColumnDef<Vehicle>[] = [
 		{
 			accessorKey: 'model',
-			header: () => 'Model'
+			header: () => 'Modelo'
 		},
 		{
 			accessorKey: 'plate',
-			header: () => 'Plate'
+			header: () => 'Placa'
 		},
 		{
 			accessorKey: 'brand',
-			header: () => 'Brand'
+			header: () => 'Marca'
 		},
 		{
 			accessorKey: 'color',
-			header: () => 'Color'
+			header: () => 'Cor'
 		},
 		{
 			accessorKey: 'fleet',
-			header: () => 'Fleet',
+			header: () => 'Frota',
 			cell: ({ row }) => row.original.fleet?.name ?? 'n/a'
 		},
 		{
 			id: 'fabricationAndModelYear',
-			header: () => 'Year',
+			header: () => 'Ano',
 			cell: ({ row }) =>
 				`${row.original.fabricationYear ?? '0000'} / ${row.original.modelYear ?? '0000'}`
 		},
 		{
 			accessorKey: 'chassisNumber',
-			header: () => 'Chassis'
+			header: () => 'Chassi'
 		},
 		{
 			id: 'actions',
@@ -85,8 +85,8 @@
 		title="vehicles"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'vehicles' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'veículos' }
 		]}
 	/>
 
@@ -94,14 +94,14 @@
 
 	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
-			placeholder="search by plate"
+			placeholder="buscar por placa"
 			classes="w-full"
 			onChange={(v) => (filters.plate = v)}
 		/>
 
 		<CreateEntityButton
 			href={route('/client/tracking/vehicles/new')}
-			text="new vehicle"
+			text="novo veículo"
 			requiredPermissions="CREATE_VEHICLE"
 		/>
 	</div>

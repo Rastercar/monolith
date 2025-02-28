@@ -13,11 +13,11 @@
 
 <PageContainer>
 	<PageHeader
-		title="fleet info"
+		title="frota"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/fleets'), icon: 'mdi:vehicle-multiple', text: 'fleets' },
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/fleets'), icon: 'mdi:vehicle-multiple', text: 'frotas' },
 			{ text: data.fleet.name }
 		]}
 	/>
@@ -25,7 +25,7 @@
 	<hr class="hr my-4" />
 
 	{#if fleetDeleted}
-		<DeletionSuccessMessage title="Fleet deleted" href={route('/client/tracking/fleets')} />
+		<DeletionSuccessMessage title="Frota deletada" href={route('/client/tracking/fleets')} />
 	{:else}
 		<FleetInfoSection
 			fleet={data.fleet}

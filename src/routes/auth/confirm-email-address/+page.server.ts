@@ -10,7 +10,7 @@ export const load = async ({ url }) => {
 	const confirmingForOrg = url.searchParams.get('confirmingForOrg') === 'true';
 
 	if (!token) {
-		return error(500, { message: 'no confirm email token found' });
+		return error(500, { message: 'token de confirmação não encontrado' });
 	}
 
 	return { token, confirmingForOrg };

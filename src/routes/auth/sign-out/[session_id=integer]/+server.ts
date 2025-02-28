@@ -12,11 +12,11 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 	const sessionToDelete = await findSessionByPublicId(sessionPublicId);
 
 	if (!sessionToDelete) {
-		return error(400, { message: 'session not found' });
+		return error(400, { message: 'sessão não encontrada' });
 	}
 
 	if (sessionToDelete.userId !== user.id) {
-		return error(403, { message: 'session does not belong to the request user' });
+		return error(403, { message: 'sessão não pertence ao requisitante' });
 	}
 
 	await deleteSessionByPublicId(sessionPublicId);
@@ -26,5 +26,5 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 		cookies.delete(SESSION_ID_COOKIE_KEY, { path: '/' });
 	}
 
-	return json('session deleted');
+	return json('sessão removida');
 };

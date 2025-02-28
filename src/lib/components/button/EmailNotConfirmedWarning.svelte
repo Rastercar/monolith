@@ -45,7 +45,7 @@
 			mutation.mutate({ confirmingForOrg: sendConfirmationEmailTo === 'organization' });
 		}}
 	>
-		{type === 'dismiss' ? 'Dismiss' : 'Verify Email'}
+		{type === 'dismiss' ? 'Fechar' : 'Confirmar Email'}
 	</button>
 {/snippet}
 
@@ -60,20 +60,20 @@
 
 			{#if mutation.status === 'pending'}
 				<div>
-					sending confirmation email
+					enviando email de confirmação
 					<Progress value={null} classes="mt-1" />
 				</div>
 				{@render btn('dismiss')}
 			{:else if mutation.status === 'success'}
-				confirmation email sent to your inbox
+				email de confirmação enviado
 				{@render btn('dismiss')}
 			{:else if mutation.status === 'error'}
-				error verifying your email address
+				erro ao enviar email de confirmação
 				{@render btn('dismiss')}
 			{:else}
 				<div>
-					<p class="font-bold">Your email address is not confirmed</p>
-					<p class="type-scale-1 opacity-60">Please take a minute to confirm your email address.</p>
+					<p class="font-bold">Seu endereço de email não foi verificado</p>
+					<p class="type-scale-1 opacity-60">Por favor confirme seu endereço de email.</p>
 				</div>
 
 				{@render btn('download')}

@@ -26,17 +26,17 @@
 	const columns: ColumnDef<Fleet>[] = [
 		{
 			accessorKey: 'name',
-			header: () => 'Name'
+			header: () => 'Nome'
 		},
 		{
 			accessorKey: 'vehicles',
-			header: () => 'Vehicles',
+			header: () => 'Veículos',
 			cell: ({ row }) =>
 				renderComponent(VehicleCountColumn, { count: row.original.vehicles?.length ?? 0 })
 		},
 		{
 			accessorKey: 'description',
-			header: () => 'Description',
+			header: () => 'Descrição',
 			cell: ({ row }) =>
 				renderComponent(DescriptionColumn, { description: row.original.description })
 		},
@@ -69,11 +69,11 @@
 
 <PageContainer>
 	<PageHeader
-		title="fleets"
+		title="frotas"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/fleets'), icon: 'mdi:car-multiple', text: 'fleets' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/fleets'), icon: 'mdi:car-multiple', text: 'frotas' }
 		]}
 	/>
 
@@ -81,14 +81,14 @@
 
 	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
-			placeholder="search by name"
+			placeholder="buscar por nome"
 			classes="w-full"
 			onChange={(v) => (filters.name = v)}
 		/>
 
 		<CreateEntityButton
 			href={route('/client/tracking/fleets/new')}
-			text="new fleet"
+			text="nova frota"
 			requiredPermissions="CREATE_FLEET"
 		/>
 	</div>

@@ -51,7 +51,7 @@ export const actions = {
 		});
 
 		if (createdVehicleOrError === 'vehicle_plate_unique') {
-			return setError(form, 'plate', 'Plate in use by another vehicle');
+			return setError(form, 'plate', 'Placa em uso por outro veículo');
 		}
 
 		const createdVehicle = vehicleSchema.parse(createdVehicleOrError);

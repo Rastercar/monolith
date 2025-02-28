@@ -29,11 +29,11 @@ export const actions = {
 		const { password } = userWithPassword;
 
 		const oldPasswordIsValid = compareSync(form.data.oldPassword, password);
-		if (!oldPasswordIsValid) return setError(form, 'oldPassword', 'invalid password');
+		if (!oldPasswordIsValid) return setError(form, 'oldPassword', 'senha inválida');
 
 		const newPasswordHash = hashSync(form.data.newPassword);
 		await updateUserPassword(user.id, newPasswordHash);
 
-		return message(form, { text: 'password updated', type: 'success' });
+		return message(form, { text: 'senha atualizada', type: 'success' });
 	}
 };

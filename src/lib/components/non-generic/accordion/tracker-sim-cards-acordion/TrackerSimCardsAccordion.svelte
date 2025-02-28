@@ -36,14 +36,14 @@
 	};
 
 	const removeSimCard = (id: number) => {
-		if (!confirm('Remove the SIM card from the tracker ?')) return;
+		if (!confirm('Remover cartão SIM do rastreador?')) return;
 		updateSimCardMutation
 			.mutateAsync({ id, body: { vehicleTrackerId: null } })
 			.then(() => removeSimFromTracker(id));
 	};
 
 	const deleteSimCard = (id: number) => {
-		if (!confirm('Permanently delete this SIM card ?')) return;
+		if (!confirm('Permanentemente deletar cartão SIM?')) return;
 		deleteSimCardMutation.mutateAsync(id).then(() => removeSimFromTracker(id));
 	};
 
@@ -58,7 +58,7 @@
 {/snippet}
 
 <div class="flex mb-4 justify-between items-center px-4">
-	<span>SIM cards:</span>
+	<span>Cartões SIM:</span>
 	<span class="type-scale-1 opacity-70">
 		{tracker.simCards?.length || 0} / {supportedSimCards} Slots
 	</span>
@@ -84,7 +84,7 @@
 								<span class="block">{simForSlot.apnAddress}</span>
 							</div>
 						{:else}
-							Empty slot
+							Slot vazio
 						{/if}
 					</div>
 
@@ -99,14 +99,17 @@
 							<div class="px-4 py-4">
 								<div class="grid grid-cols-2 md:grid-cols-4 mb-4 gap-2 text-sm">
 									{@render field('SSN', simForSlot.ssn)}
-									{@render field('APN User', simForSlot.apnUser)}
-									{@render field('APN Address', simForSlot.apnAddress)}
-									{@render field('APN Password', simForSlot.apnPassword)}
+									{@render field('APN Usuário', simForSlot.apnUser)}
+									{@render field('APN Endereço', simForSlot.apnAddress)}
+									{@render field('APN Senha', simForSlot.apnPassword)}
 									{@render field('PIN 1', simForSlot.pin)}
 									{@render field('PIN 2', simForSlot.pin2)}
 									{@render field('PUK 1', simForSlot.puk)}
 									{@render field('PUK 2', simForSlot.puk2)}
-									{@render field('Created At', new Date(simForSlot.createdAt).toLocaleDateString())}
+									{@render field(
+										'Data de cadastro',
+										new Date(simForSlot.createdAt).toLocaleDateString()
+									)}
 								</div>
 
 								<div class="flex flex-col-reverse md:flex-row gap-4">
@@ -118,7 +121,7 @@
 											}}
 										>
 											<Icon icon="mdi:trash" />
-											delete
+											deletar
 										</button>
 									</PermissionGuard>
 
@@ -128,7 +131,7 @@
 											onclick={() => removeSimCard(simForSlot.id)}
 										>
 											<Icon icon="mdi:close" />
-											remove
+											remover
 										</button>
 									</PermissionGuard>
 
@@ -140,7 +143,7 @@
 											}}
 										>
 											<Icon icon="mdi:pencil" />
-											edit
+											editar
 										</button>
 									</PermissionGuard>
 								</div>
@@ -154,7 +157,7 @@
 									}}
 								>
 									<Icon icon="mdi:pencil-off" />
-									cancel edit
+									cancelar edição
 								</button>
 							</div>
 
@@ -194,7 +197,7 @@
 
 								{#snippet denied()}
 									<span class="text-error-300-700">
-										you lack the permissions to set or create a tracker sim card
+										você não tem permissão para definir ou cadastrar o cartão SIM de um rastreador
 									</span>
 								{/snippet}
 							</PermissionGuard>

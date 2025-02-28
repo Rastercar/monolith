@@ -28,9 +28,9 @@
 {#if stepIndex === state.current}
 	<!-- Slot: Header -->
 	<header class={classes}>
-		{#if header}{@render header()}{:else}step {stepIndex + 1}{/if}
+		{#if header}{@render header()}{:else}etapa {stepIndex + 1}{/if}
 	</header>
 
 	<!-- Slot: Default -->
-	{#if children}{@render children()}{:else}(step {stepIndex + 1} Content){/if}
+	{#if children}{@render children()}{:else}(etapa {stepIndex + 1} sem conteúdo){/if}
 {/if}

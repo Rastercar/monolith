@@ -10,12 +10,12 @@
 
 <PageContainer>
 	<PageHeader
-		title="create fleet"
+		title="cadastrar frota"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/fleets'), icon: 'mdi:car-multiple', text: 'fleets' },
-			{ href: route('/client/tracking/fleets/new'), text: 'new' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/fleets'), icon: 'mdi:car-multiple', text: 'frota' },
+			{ href: route('/client/tracking/fleets/new'), text: 'cadastro' }
 		]}
 	/>
 
@@ -24,7 +24,7 @@
 	<CreateFleetForm
 		formSchema={data.createFleetForm}
 		onCreate={() => {
-			showSuccessToast('fleet created');
+			showSuccessToast('frota cadastrada');
 		}}
 	/>
 </PageContainer>

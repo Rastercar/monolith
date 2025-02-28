@@ -61,14 +61,14 @@
 	<SelectField
 		form={sForm}
 		name="model"
-		label="Model *"
+		label="Modelo *"
 		options={[{ label: 'H02', value: TRACKER_MODEL_H02 }]}
 	/>
 
 	<!--
 		Important: if we dont provide a vehicle field it will be sent as
 		null and unintentionally dissasociate the tracker with its vehicle
-		-->
+	-->
 	<input type="hidden" name="vehicleId" value={$form.vehicleId} />
 
 	{#if children}
@@ -76,7 +76,7 @@
 	{:else}
 		<div class="col-span-1 md:col-span-2 flex justify-end">
 			<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-500">
-				update tracker
+				atualizar rastreador
 			</LoadableButton>
 		</div>
 	{/if}

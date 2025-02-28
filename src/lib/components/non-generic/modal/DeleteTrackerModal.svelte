@@ -33,21 +33,22 @@
 		>
 			<Dialog.Title class="h5 flex items-center p-4">
 				<Icon icon="mdi:info" class="mr-2" />
-				Delete tracker ?
+				Deletar rastreador?
 			</Dialog.Title>
 
 			<Dialog.Description class="type-scale-2 px-4">
-				By deleting the tracker, new positions will not be recieved by the platform.
+				Ao deletar o rastreador, seu histórico de posições também é deletado e qualquer nova posição
+				não será recebida pela plataforma.
 			</Dialog.Description>
 
 			<label class="flex items-center px-4 my-4 space-x-2">
 				<input class="checkbox" type="checkbox" bind:checked={deleteSimCards} />
-				<p>also delete tracker SIM cards</p>
+				<p>deletar também cartões SIM associados</p>
 			</label>
 
 			<div class="p-4 flex">
 				<Dialog.Close>
-					<button class="btn preset-filled-primary-200-800">cancel</button>
+					<button class="btn preset-filled-primary-200-800">cancelar</button>
 				</Dialog.Close>
 
 				<button
@@ -58,7 +59,7 @@
 					}}
 				>
 					<Icon icon="mdi:trash" />
-					delete
+					deletar
 				</button>
 			</div>
 		</Dialog.Content>

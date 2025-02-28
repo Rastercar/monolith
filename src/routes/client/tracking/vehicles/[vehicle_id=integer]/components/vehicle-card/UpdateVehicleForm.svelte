@@ -43,7 +43,7 @@
 </script>
 
 <div class="flex mb-4">
-	<span class="type-scale-3">Editing vehicle</span>
+	<span class="type-scale-3">Editando veículo</span>
 
 	<button class="btn-icon ml-auto preset-filled-secondary-200-800" onclick={() => onEditCanceled()}>
 		<Icon icon="mdi:pencil-off" />
@@ -60,7 +60,7 @@
 	use:sForm.enhance
 >
 	<div>
-		<span class="mb-1 block">Fleet</span>
+		<span class="mb-1 block">Frota</span>
 		<SelectFleetInput
 			bind:searchValue={selectFleetSearchValue}
 			value={$form.fleetId?.toString() ?? ''}
@@ -82,14 +82,14 @@
 			}
 		}}
 		name="plate"
-		label="Plate *"
+		label="Placa *"
 	/>
 
 	<TextField
 		form={sForm}
 		classes="col-span-1"
 		name="brand"
-		label="Brand *"
+		label="Marca *"
 		maxlength={30}
 		list="brandSuggestions"
 	/>
@@ -99,21 +99,15 @@
 		{/each}
 	</datalist>
 
-	<TextField form={sForm} classes="col-span-1" name="model" label="Model *" maxlength={30} />
+	<TextField form={sForm} classes="col-span-1" name="model" label="Modelo *" maxlength={30} />
 
-	<TextField
-		form={sForm}
-		classes="col-span-1"
-		name="chassisNumber"
-		label="Chassis Number"
-		maxlength={30}
-	/>
+	<TextField form={sForm} classes="col-span-1" name="chassisNumber" label="Chassi" maxlength={30} />
 
 	<TextField
 		form={sForm}
 		classes="col-span-1"
 		name="fabricationYear"
-		label="Fabrication Year"
+		label="Ano Fabricação"
 		type="text"
 		maxlength={4}
 	/>
@@ -122,7 +116,7 @@
 		form={sForm}
 		classes="col-span-1"
 		name="modelYear"
-		label="Model Year"
+		label="Ano Modelo"
 		type="text"
 		maxlength={4}
 	/>
@@ -133,14 +127,14 @@
 		form={sForm}
 		classes="col-span-1 sm:col-span-2 md:col-span-3"
 		name="additionalInfo"
-		label="Additional Info"
+		label="Informação adicional"
 		rows={2}
 		maxlength={500}
 	/>
 
 	<div class="flex justify-end col-span-1 sm:col-span-3">
 		<LoadableButton isLoading={$isLoading} classes="btn preset-filled-primary-200-800">
-			update
+			atualizar
 		</LoadableButton>
 	</div>
 </form>

@@ -28,7 +28,7 @@
 <div class="h-full flex justify-center px-6 bg-surface-100-900">
 	<div class="w-96">
 		{#if formStatus === 'not-sent'}
-			<h1 class="mb-4 text-center h2 mt-12">Change Password</h1>
+			<h1 class="mb-4 text-center h2 mt-12">Alterar Senha</h1>
 
 			<form action={route('changePassword /auth/change-password')} method="POST" use:sForm.enhance>
 				<TextField
@@ -39,11 +39,11 @@
 					class="hidden"
 				/>
 
-				<PasswordField form={sForm} label="New Password" name="newPassword" />
+				<PasswordField form={sForm} label="Nova Senha" name="newPassword" />
 
 				<PasswordField
 					form={sForm}
-					label="Confirm new password"
+					label="Confirmar Nova Senha"
 					name="passwordConfirmation"
 					labelExtraClasses="mt-4"
 				/>
@@ -52,10 +52,10 @@
 					isLoading={$isLoading}
 					classes="btn preset-filled-primary-300-700 mt-4 w-full"
 				>
-					change password
+					alterar senha
 				</LoadableButton>
 
-				<AuthRedirectLink linkLabel="go back" href="/client" question="False alert?" />
+				<AuthRedirectLink linkLabel="go back" href="/client" question="Alerta Falso?" />
 			</form>
 		{:else if formStatus === 'error'}
 			<aside class="preset-filled-error-100-900 p-4 rounded mt-4 mb-2">
@@ -63,32 +63,32 @@
 					<Icon icon="mdi:alert" width="32" height="32" />
 
 					<p>
-						{formErrorMsg ?? 'A unknown error happened'}
+						{formErrorMsg ?? 'Um erro desconhecido ocorreu'}
 					</p>
 				</div>
 
 				{#if formErrorCode === 'ERR_TOKEN_NOT_FOUND'}
 					<span class="text-sm">
-						Please
+						Por favor
 						<a
 							href={route('/auth/recover-password')}
 							class="text-primary-700-300 underline-offset-4 hover:underline"
 						>
-							follow this link
+							siga esse link
 						</a>
-						to recover your password
+						para recuperar sua senha
 					</span>
 				{/if}
 			</aside>
 		{:else if formStatus === 'success'}
 			<div class="flex flex-col">
-				<h1 class="mb-4 text-center h2 mt-12">password changed !</h1>
+				<h1 class="mb-4 text-center h2 mt-12">senha alterada !</h1>
 
 				<button
 					class="btn preset-filled-primary-300-700 mt-4 mx-auto flex items-center"
 					onclick={() => goto(route('/client/my-profile'))}
 				>
-					go to home page
+					ir a página principal
 					<Icon icon="mdi:home" />
 				</button>
 			</div>

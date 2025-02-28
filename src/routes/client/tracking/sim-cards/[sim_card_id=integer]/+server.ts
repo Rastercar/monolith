@@ -38,7 +38,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 
 	await deleteOrgSimCardById({ id: simCardId, orgId });
 
-	return json('sim card deleted');
+	return json('cartão SIM deletado');
 };
 
 export const PUT: RequestHandler = async ({ params, request, locals }) => {
@@ -51,7 +51,7 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 	let simOrError = await _updateSimCard({ id: simCardId, orgId }, body);
 
 	if ('error' in simOrError) {
-		error(400, { message: 'invalid request body', code: simOrError.error });
+		error(400, { message: 'corpo da requisição inválido', code: simOrError.error });
 	}
 
 	return json(simOrError);

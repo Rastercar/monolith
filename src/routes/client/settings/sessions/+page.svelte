@@ -11,11 +11,10 @@
 	};
 </script>
 
-<SettingsPageTitle>My Sessions</SettingsPageTitle>
+<SettingsPageTitle>Minhas Sessões</SettingsPageTitle>
 
 <p class="mb-6 text-surface-700-200-token type-scale-2">
-	This is a list of devices that have logged into your account. Revoke any sessions that you do not
-	recognize.
+	Essa é uma lista de dispositivos logados a sua conta. Revogue qualquer sessão que não reconheçe.
 </p>
 
 <SessionList {sessions} {onSessionDeleted} classes="rounded preset-filled-surface-100-900" />

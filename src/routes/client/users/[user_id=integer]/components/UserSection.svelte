@@ -21,7 +21,7 @@
 	const auth = getAuthContext();
 
 	const deleteUser = async () => {
-		if (!confirm('are you sure you want to delete this user? this action cannot be undone')) return;
+		if (!confirm('tem certeza que deseja deletar este usuário? essa ação não é reversível')) return;
 
 		await mutation.mutateAsync(user.id);
 		onUserDeleted();
@@ -48,7 +48,7 @@
 
 					{#if auth.user?.id === user.id}
 						<div>
-							<span class="badge preset-filled-secondary-200-800">that's you!</span>
+							<span class="badge preset-filled-secondary-200-800">é você!</span>
 						</div>
 					{:else}
 						<PermissionGuard requiredPermissions={'DELETE_USER'}>
@@ -64,10 +64,10 @@
 				</div>
 
 				{#if user.description}
-					<span class="opacity-80">About:</span>
+					<span class="opacity-80">Sobre:</span>
 					<p>{user.description}</p>
 				{:else}
-					<p>no description informed</p>
+					<p>descrição não informada</p>
 				{/if}
 			</div>
 		</div>
@@ -85,13 +85,13 @@
 					class={`h-2 w-2 mr-2 rounded-full ${user.emailVerified ? 'bg-success-500' : 'bg-error-500'}`}
 				></div>
 				<span class="type-scale-1">
-					{user.emailVerified ? 'email verified' : 'email not verified'}
+					{user.emailVerified ? 'email verificado' : 'email não verificado'}
 				</span>
 			</div>
 		</div>
 
 		<span class="type-scale-1 hidden sm:block mt-auto">
-			Created at: {toDateTime(user.createdAt)}
+			Cadastrado em: {toDateTime(user.createdAt)}
 		</span>
 	</div>
 </div>

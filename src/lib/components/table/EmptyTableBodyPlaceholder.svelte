@@ -9,8 +9,8 @@
 	let {
 		colspan = 1,
 		isLoading = false,
-		loadingText = 'loading',
-		noItemsText = 'no items found'
+		loadingText = 'carregando',
+		noItemsText = 'nenhum item encontrado'
 	}: Props = $props();
 </script>
 

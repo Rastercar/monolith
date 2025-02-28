@@ -13,23 +13,23 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const alId = parseInt(params.access_level_id);
 
 	if (user.accessLevel.id === alId) {
-		return error(403, 'cannot delete your own access level');
+		return error(403, 'não é possível deletar seu nível de acesso');
 	}
 
 	const accessLevelToDelete = await findOrgAccessLevelById({ id: alId, orgId });
 	if (!accessLevelToDelete) return error(404);
 
 	if (accessLevelToDelete.isFixed) {
-		return error(403, 'cannot delete a fixed access level');
+		return error(403, 'não é possível deletar um nível de acesso fixo');
 	}
 
 	const userCount = await countUsersUsingAccessLevel(alId);
 
 	if (userCount > 0) {
-		return error(403, 'cannot delete access level with associated users');
+		return error(403, 'não é possível deletar um nível de acesso com usuários associados');
 	}
 
 	await deleteOrgAccessLevelById({ id: alId, orgId });
 
-	return json('access level deleted');
+	return json('nível de acesso deletado');
 };

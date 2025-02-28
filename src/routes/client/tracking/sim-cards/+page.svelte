@@ -22,9 +22,9 @@
 	const query = apiGetSimCardsQuery(pagination, filters);
 
 	const columns: ColumnDef<SimCard>[] = [
-		{ accessorKey: 'phoneNumber', header: () => 'Phone' },
+		{ accessorKey: 'phoneNumber', header: () => 'Telefone' },
 		{ accessorKey: 'ssn', header: () => 'SSN' },
-		{ accessorKey: 'apnAddress', header: () => 'APN Address' },
+		{ accessorKey: 'apnAddress', header: () => 'APN Endereço' },
 		{
 			id: 'actions',
 			cell: ({ row }) =>
@@ -54,11 +54,11 @@
 
 <PageContainer>
 	<PageHeader
-		title="sim cards"
+		title="cartões SIM"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/sim-cards'), icon: 'mdi:sim', text: 'sim cards' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/sim-cards'), icon: 'mdi:sim', text: 'cartões SIM' }
 		]}
 	/>
 
@@ -66,14 +66,14 @@
 
 	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
-			placeholder="search by phone number"
+			placeholder="procurar por telefone"
 			classes="w-full"
 			onChange={(v) => (filters.phoneNumber = v)}
 		/>
 
 		<CreateEntityButton
 			href={route('/client/tracking/sim-cards/new')}
-			text="new sim card"
+			text="novo cartão SIM"
 			requiredPermissions="CREATE_SIM_CARD"
 		/>
 	</div>

@@ -7,7 +7,7 @@
 	import InfoIconButton from '$lib/components/link/InfoIconButton.svelte';
 	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
 	import DataTable from '$lib/components/table/DataTable.svelte';
-	import DataTableActioMenu from '$lib/components/table/DataTableActioMenu.svelte';
+	import DataTableActioMenu from '$lib/components/table/DataTableActionMenu.svelte';
 	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
 	import { route } from '$lib/ROUTES';
 	import { getAuthContext } from '$lib/store/context';
@@ -34,7 +34,7 @@
 	const columns: ColumnDef<SimpleUser>[] = [
 		{
 			accessorKey: 'username',
-			header: () => 'Username'
+			header: () => 'Usuário'
 		},
 		{
 			accessorKey: 'email',
@@ -45,14 +45,14 @@
 			}
 		},
 		{
-			accessorKey: 'createdAt',
-			header: () => 'Created At',
-			cell: ({ row }) => toLocaleDateString(row.original.createdAt)
+			accessorKey: 'blocked',
+			header: () => 'Acesso',
+			cell: ({ row }) => renderComponent(BlockStatusColumn, { isBlocked: row.original.blocked })
 		},
 		{
-			accessorKey: 'blocked',
-			header: () => 'App Access',
-			cell: ({ row }) => renderComponent(BlockStatusColumn, { isBlocked: row.original.blocked })
+			accessorKey: 'createdAt',
+			header: () => 'Data Criação',
+			cell: ({ row }) => toLocaleDateString(row.original.createdAt)
 		},
 		{
 			id: 'actions',
@@ -98,10 +98,10 @@
 
 <PageContainer>
 	<PageHeader
-		title="users"
+		title="usuários"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ href: route('/client/users'), icon: 'mdi:account-multiple', text: 'users' }
+			{ href: route('/client/users'), icon: 'mdi:account-multiple', text: 'usuários' }
 		]}
 	/>
 
@@ -109,14 +109,14 @@
 
 	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
-			placeholder="search by email"
+			placeholder="procurar por email"
 			classes="w-full"
 			onChange={(v) => (filters.email = v)}
 		/>
 
 		<CreateEntityButton
 			href={route('/client/users/new')}
-			text="new user"
+			text="novo usuário"
 			requiredPermissions="CREATE_USER"
 		/>
 	</div>

@@ -6,6 +6,7 @@
 	<Icon icon="mdi:info" height={24} />
 
 	<p class="type-scale-1">
-		Users <b>cannot</b> create other users with a access level containing a permission they do not have.
+		Usuários <b>não podem</b> cadastrar outros usuários com um nível de acesso contendo permissões que
+		não possuem.
 	</p>
 </aside>

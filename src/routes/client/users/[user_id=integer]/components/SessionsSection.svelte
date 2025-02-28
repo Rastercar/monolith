@@ -19,14 +19,14 @@
 			{#snippet control()}
 				<div class="flex items-center py-2">
 					<Icon icon="mdi:access-point" width="32" height="32" class="mr-2" />
-					Sessions
+					Sessões
 				</div>
 			{/snippet}
 
 			{#snippet panel()}
 				<p class="mt-2 opacity-80">
-					All devices the user is currently logged in. Revoking any sessions will log off the user
-					for that specific device.
+					Todos os dispositivos do usuário logados na plataforma. Revogar qualquer sessão desloga o
+					usuário para o dispositivo específico.
 				</p>
 
 				<SessionList {sessions} sessionsOwnerId={userId} {onSessionDeleted} />

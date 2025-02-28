@@ -31,16 +31,16 @@ export const actions = {
 		const alId = parseInt(params.access_level_id);
 
 		if (user.accessLevel.id === alId) {
-			return error(403, 'cannot update your own access level');
+			return error(403, 'não é possível atualizar seu nível de acesso');
 		}
 
 		const form = await validateFormWithFailOnError(request, updateAccessLevelSchema);
 
 		const accessLevel = await findOrgAccessLevelById({ id: alId, orgId });
-		if (!accessLevel) return error(404, 'access level not found');
+		if (!accessLevel) return error(404, 'nível de acesso não encontrado');
 
 		if (accessLevel.isFixed) {
-			return error(403, 'cannot update fixed access levels');
+			return error(403, 'não é possível atualizar níveis de acesso fixos');
 		}
 
 		const al = await updateOrgAccessLevel({ id: alId, orgId }, form.data);

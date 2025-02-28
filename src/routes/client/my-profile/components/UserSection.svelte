@@ -34,16 +34,16 @@
 					<a href={route('/client/settings/profile')} class="hidden sm:block">
 						<button type="button" class="btn preset-filled-primary-200-800">
 							<Icon icon="mdi:pencil" />
-							Edit
+							Editar
 						</button>
 					</a>
 				</div>
 
 				{#if user.description}
-					<span class="opacity-80 block mb-1">About me:</span>
+					<span class="opacity-80 block mb-1">Sobre:</span>
 					<p>{user.description}</p>
 				{:else}
-					<p>no description informed</p>
+					<p>nenhuma descrição informada</p>
 				{/if}
 			</div>
 		</div>

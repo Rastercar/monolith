@@ -18,10 +18,10 @@ export const actions = {
 		const form = await validateFormWithFailOnError(request, signInSchema);
 
 		const user = await findUserByEmail(form.data.email);
-		if (!user) return setError(form, 'email', 'user not found');
+		if (!user) return setError(form, 'email', 'usuário não encontrado');
 
 		const isValidPassword = compareSync(form.data.password, user.password);
-		if (!isValidPassword) return setError(form, 'password', 'invalid password');
+		if (!isValidPassword) return setError(form, 'password', 'senha inválida');
 
 		const { maxAge, expiresAt } = createSessionExpirationDateFromNow();
 
@@ -39,8 +39,8 @@ export const actions = {
 		const redirectRoute =
 			// this would cause a loop (sign-in -> sign-out -> sign-in)
 			redirectRouteFromQuery === '/auth/sign-out'
-				? route('/client/my-profile')
-				: (redirectRouteFromQuery ?? route('/client/my-profile'));
+				? route('/client')
+				: (redirectRouteFromQuery ?? route('/client'));
 
 		redirect(307, redirectRoute);
 	}

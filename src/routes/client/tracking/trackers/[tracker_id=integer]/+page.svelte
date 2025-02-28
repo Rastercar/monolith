@@ -17,11 +17,11 @@
 
 <PageContainer>
 	<PageHeader
-		title="tracker info"
+		title="rastreador"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/trackers'), icon: 'mdi:cellphone', text: 'trackers' },
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/trackers'), icon: 'mdi:cellphone', text: 'rastreadores' },
 			{
 				href: route('/client/tracking/trackers/[tracker_id=integer]', {
 					tracker_id: data.tracker.id.toString()
@@ -34,7 +34,7 @@
 	<hr class="hr my-4" />
 
 	{#if trackerDeleted}
-		<DeletionSuccessMessage title="Tracker deleted" href={route('/client/tracking/trackers')} />
+		<DeletionSuccessMessage title="Rastreador deletado" href={route('/client/tracking/trackers')} />
 	{:else if !editMode}
 		<div class="card preset-filled-surface-100-900">
 			<TrackerInfo
@@ -52,7 +52,7 @@
 	{:else}
 		<div class="card preset-filled-surface-100-900 p-4">
 			<div class="flex justify-between items-center">
-				<span>Updating vehicle tracker</span>
+				<span>Atualizando rastreador do veículo</span>
 
 				<button class="btn-icon preset-filled-primary-500" onclick={() => (editMode = false)}>
 					<Icon icon="mdi:pencil-off" />

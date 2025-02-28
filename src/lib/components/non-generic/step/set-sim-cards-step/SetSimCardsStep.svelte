@@ -41,8 +41,8 @@
 
 <span class="text-sm">
 	{supportedSimCards > 1
-		? `Choose up to ${supportedSimCards} SIM cards for the vehicle tracker`
-		: 'Choose the SIM card for your vehicle tracker'}
+		? `Escolha até ${supportedSimCards} cartões SIM para seu rastreador`
+		: 'Escolha o cartão SIM para seu rastreador'}
 </span>
 
 <Accordion collapsible multiple>

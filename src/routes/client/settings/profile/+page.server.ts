@@ -21,7 +21,7 @@ export const actions = {
 		const { email, username, password } = await updateUser(user.id, form.data);
 		user = { ...user, ...{ email, username, password } };
 
-		return message(form, { text: 'user updated', type: 'success' });
+		return message(form, { text: 'usuário atualizado', type: 'success' });
 	},
 
 	updateProfilePicture: async ({ request, locals }) => {
@@ -31,6 +31,6 @@ export const actions = {
 
 		await updateUser(user.id, form.data);
 
-		return message(form, { text: 'user updated', type: 'success' });
+		return message(form, { text: 'foto atualizada', type: 'success' });
 	}
 };

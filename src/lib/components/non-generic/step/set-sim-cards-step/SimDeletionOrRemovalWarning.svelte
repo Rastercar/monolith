@@ -17,17 +17,17 @@
 	<div>
 		<p class="type-scale-2">
 			{type === 'deletion'
-				? 'Do you wish to delete this SIM card permanently ?'
-				: 'Do you wish to remove this SIM card from the tracker ?'}
+				? 'Deseja deletar esse cartão SIM permanentemente?'
+				: 'Deseja remover esse cartão SIM do rastreador?'}
 		</p>
 	</div>
 	<div class="flex gap-1">
 		<button type="button" class="btn btn-sm preset-tonal hover:preset-filled" onclick={onCancel}>
-			No
+			Não
 		</button>
 
 		<button type="button" class="btn btn-sm preset-tonal hover:preset-filled" onclick={onConfirm}>
-			Yes
+			Sim
 		</button>
 	</div>
 </div>

@@ -14,14 +14,14 @@ export const load = async () => ({
 });
 
 export const actions = {
-	signUp: async ({ cookies, request, getClientAddress, url }) => {
+	signUp: async ({ cookies, request, getClientAddress }) => {
 		const form = await validateFormWithFailOnError(request, signUpSchema);
 
 		const emailIsInUse = await checkEmailIsInUse(form.data.email);
-		if (emailIsInUse) return setError(form, 'email', 'email address not available');
+		if (emailIsInUse) return setError(form, 'email', 'email indisponível');
 
 		const userWithUsername = await findUserByUsername(form.data.username);
-		if (userWithUsername) return setError(form, 'username', 'username not available');
+		if (userWithUsername) return setError(form, 'username', 'nome de usuário indisponível');
 
 		const { user } = await signUpUser(form.data);
 

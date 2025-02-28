@@ -16,7 +16,7 @@ export const actions = {
 		const form = await validateFormWithFailOnError(request, recoverPasswordSchema);
 
 		const user = await findUserByEmail(form.data.email);
-		if (!user) return setError(form, 'email', 'user not found with this email');
+		if (!user) return setError(form, 'email', 'usuário não encontrado com este email');
 
 		const token = randomUUID();
 		await setUserResetPasswordToken(user.id, token);
@@ -28,6 +28,6 @@ export const actions = {
 			replacements: { username: user.username, resetPasswordLink }
 		});
 
-		return message(form, { text: 'Recovery email sent', type: 'success' });
+		return message(form, { text: 'Email de recuperação enviado', type: 'success' });
 	}
 };

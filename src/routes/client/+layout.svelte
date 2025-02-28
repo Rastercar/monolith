@@ -17,7 +17,7 @@
 	// on previous versions we loaded the route meta on +layout.server.ts
 	// and accessed it on $props().data, but on a client side page navigation
 	// the layout load function would not run and the route meta would be the route of
-	// the previous page, this whacky is not ideal as we load every route meta
+	// the previous page, this is not ideal as we load every route meta
 	// just to get the one of the current page, but at least it works
 	const { headerVisibility = true, sidebarVisibility = true } = $derived.by(() => {
 		const currentPageMeta = routesMeta[page.url.pathname as keyof typeof routesMeta] as
@@ -32,6 +32,7 @@
 	auth.setUser(data.user);
 </script>
 
+<!-- [TODO-PROD] Fix  me -->
 <svelte:head>{@html data.orgThemeStyleTag}</svelte:head>
 
 <div

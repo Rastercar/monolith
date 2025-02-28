@@ -24,7 +24,7 @@
 	const columns: ColumnDef<Tracker>[] = [
 		{
 			accessorKey: 'model',
-			header: () => 'Model'
+			header: () => 'Modelo'
 		},
 		{
 			accessorKey: 'imei',
@@ -59,11 +59,11 @@
 
 <PageContainer>
 	<PageHeader
-		title="trackers"
+		title="rastreadores"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/trackers'), icon: 'mdi:cellphone', text: 'trackers' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/trackers'), icon: 'mdi:cellphone', text: 'rastreadores' }
 		]}
 	/>
 
@@ -71,14 +71,14 @@
 
 	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
-			placeholder="search by imei"
+			placeholder="buscar por imei"
 			classes="w-full"
 			onChange={(v) => (filters.imei = v)}
 		/>
 
 		<CreateEntityButton
 			href={route('/client/tracking/trackers/new')}
-			text="new tracker"
+			text="novo rastreador"
 			requiredPermissions="CREATE_TRACKER"
 		/>
 	</div>

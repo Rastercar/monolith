@@ -83,12 +83,12 @@
 
 <div class="card preset-filled-surface-100-900 mt-4">
 	<div class="p-4 flex items-center justify-between">
-		Last location:
+		Ultima Localização:
 
 		{#if hasPositionToShow}
 			<a href={route('/client/tracking/map', { lookupTracker: vehicle?.vehicleTracker?.id })}>
 				<button class="btn preset-filled-primary-200-800">
-					see on map
+					ver no mapa principal
 					<Icon icon="mdi:map" />
 				</button>
 			</a>
@@ -96,9 +96,9 @@
 	</div>
 
 	{#if !hasTrackerToGetLastPosition}
-		<p class="px-4 pb-4 text-warning-200-800">This vehicle is not connected to a tracker</p>
+		<p class="px-4 pb-4 text-warning-200-800">Esse veículo não esta associado a um rastreador</p>
 	{:else if !hasPositionToShow}
-		<p class="px-4 pb-4 text-warning-200-800">No position found</p>
+		<p class="px-4 pb-4 text-warning-200-800">Nenhuma posição encontrada</p>
 	{/if}
 
 	<div id="map" class="h-[400px] w-full" class:hidden={!hasPositionToShow}></div>

@@ -16,7 +16,7 @@
 
 <PageContainer extraClasses="space-y-6">
 	{#if userDeleted}
-		<DeletionSuccessMessage title="User deleted" href={route('/client/users')} />
+		<DeletionSuccessMessage title="Usuário deletado" href={route('/client/users')} />
 	{:else}
 		<UserSection {user} onUserDeleted={() => (userDeleted = true)} />
 

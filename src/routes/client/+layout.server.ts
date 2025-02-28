@@ -20,7 +20,10 @@ function createStyleTagWithCssVarsOfThemes(themes: Theme[]) {
 
 export async function load({ locals }) {
 	if (!locals.user) {
-		return error(400, { message: 'You must be logged in to see this page', code: MISSING_SESSION });
+		return error(400, {
+			message: 'Você deve estar logado para ver esta página',
+			code: MISSING_SESSION
+		});
 	}
 
 	// [PROD-TODO] on error we are just ignoring the malformated themes and using the

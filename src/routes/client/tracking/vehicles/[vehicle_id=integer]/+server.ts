@@ -16,7 +16,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	await deleteOrgVehicleById({ id: vehicleId, orgId });
 	if (vehicleToDelete.photo) await s3.deleteFile(vehicleToDelete.photo);
 
-	return json('vehicle deleted');
+	return json('veículo deletado');
 };
 
 export const GET: RequestHandler = async ({ params, locals }) => {

@@ -23,7 +23,7 @@
 			<div class="flex justify-end">
 				<a href={route('/auth/sign-out')}>
 					<button class="btn preset-filled-primary-100-900 flex items-center">
-						Sign Out
+						Sair
 						<Icon icon="mdi:sign-out" />
 					</button>
 				</a>

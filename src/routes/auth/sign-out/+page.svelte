@@ -26,5 +26,5 @@
 </script>
 
 <div class="min-h-screen text-center pt-12 bg-surface-100-800-token">
-	<h1>signing out...</h1>
+	<h1>realizando logout...</h1>
 </div>

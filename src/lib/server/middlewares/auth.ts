@@ -65,7 +65,12 @@ interface AclOptions {
 
 interface AclRes {
 	user: User;
+
+	/**
+	 * organization ID of the user, shorthand to avoid typing `user.organization.id` everytime
+	 */
 	orgId: number;
+
 	session: UserSession;
 }
 

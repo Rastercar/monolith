@@ -81,7 +81,7 @@
 		{#each Array.from(Array(state.total).keys()) as step}
 			<div class="-mt-[15px] transition-all duration-300" class:flex-1={isActive(step)}>
 				<span class="badge {classesBadge(step)}">
-					{isActive(step) ? `step ${step + 1}` : step + 1}
+					{isActive(step) ? `etapa ${step + 1}` : step + 1}
 				</span>
 			</div>
 		{/each}

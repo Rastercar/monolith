@@ -16,10 +16,10 @@ export const actions = {
 		const form = await validateFormWithFailOnError(request, createUserSchema);
 
 		const emailIsInUse = await checkEmailIsInUse(form.data.email);
-		if (emailIsInUse) return setError(form, 'email', 'email address not available');
+		if (emailIsInUse) return setError(form, 'email', 'email indisponível');
 
 		const userWithUsername = await findUserByUsername(form.data.username);
-		if (userWithUsername) return setError(form, 'username', 'username not available');
+		if (userWithUsername) return setError(form, 'username', 'nome de usuário indisponível');
 
 		const newUser = await createOrgUser(orgId, form.data);
 

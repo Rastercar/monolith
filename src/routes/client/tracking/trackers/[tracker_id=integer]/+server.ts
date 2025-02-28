@@ -41,7 +41,7 @@ export const DELETE: RequestHandler = async ({ params, request, locals }) => {
 
 	await deleteOrgTrackerById({ id: trackerId, orgId }, deleteAssociatedSimCards);
 
-	return json('tracker card deleted');
+	return json('cartão SIM deletado');
 };
 
 export const PUT: RequestHandler = async ({ params, request, locals }) => {
@@ -53,13 +53,13 @@ export const PUT: RequestHandler = async ({ params, request, locals }) => {
 
 	if (body.vehicleId) {
 		const vehicle = await findOrgVehicleById({ id: body.vehicleId, orgId });
-		if (!vehicle) error(400, 'vehicle not found');
+		if (!vehicle) error(400, 'veículo não encontrado');
 	}
 
 	let trackerOrError = await _updateVehicleTracker({ id: simCardId, orgId }, body);
 
 	if ('error' in trackerOrError) {
-		error(400, { message: 'invalid request body', code: trackerOrError.error });
+		error(400, { message: 'corpo da requisição inválido', code: trackerOrError.error });
 	}
 
 	return json(trackerOrError);

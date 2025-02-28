@@ -18,7 +18,7 @@
 	const uploadMutationFn = (file: File) => updateVehiclePhoto(vehicleId, file);
 
 	const onUploadSuccess = (newPhoto: string) => {
-		showSuccessToast('photo changed');
+		showSuccessToast('foto alterada');
 		onPhotoChange(newPhoto);
 	};
 
@@ -34,7 +34,7 @@
 {#if auth.hasPermission('UPDATE_VEHICLE')}
 	<FileDropzone
 		border=""
-		deleteConfirmPrompt="Are you sure you want to remove the vehicle photo ?"
+		deleteConfirmPrompt="Deseja mesmo remover a foto ?"
 		{onDeleteSuccess}
 		{onUploadSuccess}
 		{deleteMutationFn}
@@ -49,5 +49,5 @@
 		{/snippet}
 	</FileDropzone>
 {:else}
-	<img class={imgClasses} src={photo ? cloudFrontUrl(photo) : ''} alt="vehicle" />
+	<img class={imgClasses} src={photo ? cloudFrontUrl(photo) : ''} alt="veículo" />
 {/if}

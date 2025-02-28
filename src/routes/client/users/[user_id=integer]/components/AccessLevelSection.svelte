@@ -33,7 +33,7 @@
 
 		await changeAccessLevelMutation.mutateAsync({ userId, accessLevelId: selectedAccessLevel.id });
 
-		showSuccessToast('user access level updated');
+		showSuccessToast('nível de acesso do usuário atualizado');
 
 		onAccessLevelChanged(selectedAccessLevelCopy);
 
@@ -54,7 +54,7 @@
 			{#snippet control()}
 				<div class="flex items-center py-2">
 					<Icon icon="mdi:shield" width="32" height="32" class="mr-2" />
-					Role and Permissions
+					Níveis de Acesso e Permissões
 				</div>
 			{/snippet}
 
@@ -62,7 +62,7 @@
 				<div class="py-2">
 					<div class="flex flex-col md:flex-row mb-4 gap-4">
 						{#if !isSelectingNewAccessLevel}
-							<div>Access Level:</div>
+							<div>Nível de Acesso:</div>
 
 							<a
 								href={route(`/client/access-levels/[access_level_id=integer]`, {
@@ -75,7 +75,7 @@
 								<Icon icon="mdi:link" class="ml-2" />
 							</a>
 						{:else}
-							Select the new access level
+							Selecione o novo nível de acesso
 						{/if}
 
 						<PermissionGuard requiredPermissions={'MANAGE_USER_ACCESS_LEVELS'}>
@@ -86,7 +86,7 @@
 										onclick={() => (isSelectingNewAccessLevel = true)}
 									>
 										<Icon icon="mdi:cog" />
-										change access level
+										alterar nível de acesso
 									</button>
 								{:else}
 									<button
@@ -97,7 +97,7 @@
 										}}
 									>
 										<Icon icon="mdi:cog-off" />
-										cancel
+										cancelar
 									</button>
 								{/if}
 							{/if}
@@ -116,7 +116,7 @@
 
 							{#if selectedAccessLevel}
 								<span class="block mt-4 text-lg">
-									New Access Level: {selectedAccessLevel.name}
+									Novo Nível de Acesso: {selectedAccessLevel.name}
 								</span>
 
 								<p class="opacity-90 text-sm line-clamp-4 my-2">
@@ -133,7 +133,7 @@
 										classes="btn  preset-filled-primary-200-800"
 										onclick={changeAccessLevel}
 									>
-										change access level
+										alterar nível de acesso
 									</LoadableButton>
 								</div>
 							{/if}

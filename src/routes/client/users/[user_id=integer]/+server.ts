@@ -4,13 +4,13 @@ import { s3 } from '$lib/server/services/s3';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
+export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const { user: reqUser, orgId } = acl(locals, { requiredPermissions: 'DELETE_USER' });
 
 	const userToDeleteId = parseInt(params.user_id);
 
 	if (reqUser.id === userToDeleteId) {
-		return error(400, 'cannot delete your own user');
+		return error(400, 'não pode deletar seu próprio usuário');
 	}
 
 	const userToDelete = await findOrgUserById({ id: userToDeleteId, orgId });
@@ -19,11 +19,11 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 	}
 
 	if (!userToDelete.organization) {
-		return error(500, 'failed to verify user to delete org');
+		return error(500, 'erro ao verificar organização de usuário a deletar');
 	}
 
 	if (userToDelete.organization.ownerId === userToDelete.id) {
-		return error(403, 'cannot delete the owner of your organization');
+		return error(403, 'não pode deletar o dono de sua organização');
 	}
 
 	if (userToDelete.profilePicture) {
@@ -32,5 +32,5 @@ export const DELETE: RequestHandler = async ({ locals, params, cookies }) => {
 
 	await deleteOrgUserById({ id: userToDeleteId, orgId });
 
-	return json('user deleted');
+	return json('usuário deletado');
 };

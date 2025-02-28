@@ -53,7 +53,7 @@ export const actions = {
 
 		if ('error' in res) {
 			if (res.error === 'PLATE_IN_USE') {
-				return setError(form, 'plate', 'Plate in use by another vehicle');
+				return setError(form, 'plate', 'Placa em uso por outro veículo');
 			}
 		}
 

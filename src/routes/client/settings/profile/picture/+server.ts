@@ -11,7 +11,7 @@ export const PUT = async ({ request, locals }) => {
 
 	const form = await validateForm(request, imageSchema);
 	if (!form.valid) {
-		error(400, { message: form.errors.image?.[0] ?? 'invalid image' });
+		error(400, { message: form.errors.image?.[0] ?? 'imagem inválida' });
 	}
 
 	const { image } = form.data;
@@ -37,12 +37,10 @@ export const PUT = async ({ request, locals }) => {
 export const DELETE = async ({ locals }) => {
 	const { user } = acl(locals);
 
-	if (!user.profilePicture) {
-		return json('user does not have a profile picture to delete');
-	}
+	if (!user.profilePicture) return json('usuário não tem foto para deletar');
 
 	await s3.deleteFile(user.profilePicture);
 	await updateUserProfilePicture(user.id, null);
 
-	return json('profile picture deleted');
+	return json('foto deletada');
 };

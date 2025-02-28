@@ -50,7 +50,7 @@
 	use:sForm.enhance
 >
 	<div>
-		<span class="mb-1 block">Fleet</span>
+		<span class="mb-1 block">Frota</span>
 		<SelectFleetInput
 			bind:searchValue={selectFleetSearchValue}
 			value={$form.fleetId?.toString() ?? ''}
@@ -72,14 +72,14 @@
 			}
 		}}
 		name="plate"
-		label="Plate *"
+		label="Placa *"
 	/>
 
 	<TextField
 		form={sForm}
 		classes="col-span-1"
 		name="brand"
-		label="Brand *"
+		label="Marca *"
 		maxlength={30}
 		list="brandSuggestions"
 	/>
@@ -89,21 +89,15 @@
 		{/each}
 	</datalist>
 
-	<TextField form={sForm} classes="col-span-1" name="model" label="Model *" maxlength={30} />
+	<TextField form={sForm} classes="col-span-1" name="model" label="Modelo *" maxlength={30} />
 
-	<TextField
-		form={sForm}
-		classes="col-span-1"
-		name="chassisNumber"
-		label="Chassis Number"
-		maxlength={30}
-	/>
+	<TextField form={sForm} classes="col-span-1" name="chassisNumber" label="Chassi" maxlength={30} />
 
 	<TextField
 		form={sForm}
 		classes="col-span-1"
 		name="modelYear"
-		label="Model Year"
+		label="Ano Modelo"
 		type="text"
 		maxlength={4}
 	/>
@@ -112,7 +106,7 @@
 		form={sForm}
 		classes="col-span-1"
 		name="fabricationYear"
-		label="Fabrication Year"
+		label="Ano Fabricação"
 		type="text"
 		maxlength={4}
 	/>
@@ -123,7 +117,7 @@
 		form={sForm}
 		classes="col-span-1 sm:col-span-2 md:col-span-3"
 		name="photo"
-		label="Photo"
+		label="Foto"
 		accept="image/png, image/jpeg, image/webp"
 	/>
 
@@ -131,14 +125,14 @@
 		form={sForm}
 		classes="col-span-1 sm:col-span-2 md:col-span-3"
 		name="additionalInfo"
-		label="Additional Info"
+		label="Informação Adicional"
 		rows={3}
 		maxlength={500}
 	/>
 
 	<div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-end">
 		<LoadableButton classes="btn preset-filled-primary-200-800" isLoading={$isLoading}>
-			create
+			cadastrar
 		</LoadableButton>
 	</div>
 </form>

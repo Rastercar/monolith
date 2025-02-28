@@ -55,7 +55,7 @@
 	};
 
 	const loadPreview = (file?: File) => {
-		if (!file) return showErrorToast('file is not a valid image');
+		if (!file) return showErrorToast('arquivo não é uma imagem válida');
 
 		showCropperOnFileSelection ? openCropperModal(file) : previewFile(file);
 	};
@@ -118,7 +118,7 @@
 		deleteMutation
 			.mutateAsync()
 			.then((deletionResult) => onDeleteSuccess(deletionResult))
-			.catch(() => showErrorToast('failed to remove picture'))
+			.catch(() => showErrorToast('erro ao remover foto'))
 			.finally(() => {
 				newPhoto = null;
 			});
@@ -166,7 +166,7 @@
 		<div
 			class="w-full items-center justify-center flex flex-col h-48 pointer-events-none border-surface-300-700 border-2 border-dashed rounded"
 		>
-			no picture
+			sem foto
 		</div>
 	{/if}
 

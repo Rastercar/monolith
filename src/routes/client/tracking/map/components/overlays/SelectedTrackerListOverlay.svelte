@@ -42,12 +42,12 @@
 	<div class="sticky top-0 bg-surface-100-900 z-10 p-4">
 		<h2 class="flex items-center type-scale-6 mb-4">
 			<Icon icon="mdi:list-status" class="mr-2 hidden md:block" height={32} />
-			Selected trackers ({getMapSelectedTrackerIds().length})
+			Rastreadores selecionados ({getMapSelectedTrackerIds().length})
 
 			<Icon icon="mdi:close" onclick={onCloseClick} class="ml-auto" height={32} />
 		</h2>
 
-		<input class="input" placeholder="filter by imei" type="text" bind:value={imeiFilter} />
+		<input class="input" placeholder="filtrar por IMEI" type="text" bind:value={imeiFilter} />
 	</div>
 
 	<ul class="space-y-4 overflow-y-auto px-4">
@@ -68,7 +68,7 @@
 						trackerAndPositionToShow = null;
 					}}
 				>
-					Go back
+					Voltar
 					<Icon icon="mdi:arrow-left" />
 				</button>
 			</div>

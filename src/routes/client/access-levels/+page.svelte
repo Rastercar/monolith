@@ -25,15 +25,15 @@
 	const columns: ColumnDef<AccessLevel>[] = [
 		{
 			accessorKey: 'name',
-			header: () => 'Name'
+			header: () => 'Nome'
 		},
 		{
 			accessorKey: 'description',
-			header: () => 'Description'
+			header: () => 'Descrição'
 		},
 		{
 			accessorKey: 'createdAt',
-			header: () => 'Created At',
+			header: () => 'Data de cadastro',
 			cell: ({ row }) => toDateTime(row.original.createdAt)
 		},
 		{
@@ -65,10 +65,10 @@
 
 <PageContainer>
 	<PageHeader
-		title="access levels"
+		title="níveis de acesso"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'access levels' }
+			{ href: route('/client/access-levels'), icon: 'mdi:shield', text: 'níveis de acesso' }
 		]}
 	/>
 
@@ -76,14 +76,14 @@
 
 	<div class="flex mb-4 items-center space-x-4">
 		<DebouncedTextField
-			placeholder="search by name"
+			placeholder="buscar por nome"
 			classes="w-full"
 			onChange={(v) => (filters.name = v)}
 		/>
 
 		<CreateEntityButton
 			href={route('/client/access-levels/new')}
-			text="new access level"
+			text="novo nível de acesso"
 			requiredPermissions="MANAGE_USER_ACCESS_LEVELS"
 		/>
 	</div>

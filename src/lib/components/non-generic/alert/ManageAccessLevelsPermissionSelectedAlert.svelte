@@ -13,15 +13,15 @@
 		<Icon icon="mdi:warning" height={24} />
 
 		<p class="text-sm">
-			Be warned! Allowing a access level to manage permissions will make every user within this
-			access level to be "admin like".
+			Importante! Conceder a um nível de acesso a permissão de gerar permissões torna todo usuário
+			que utiliza esse nível de acesso um administrador.
 		</p>
 
 		<button
 			class="btn btn-sm ml-auto preset-filled-secondary-200-800"
 			onclick={() => onUndoClicked()}
 		>
-			undo
+			desfazer
 		</button>
 	</div>
 </aside>

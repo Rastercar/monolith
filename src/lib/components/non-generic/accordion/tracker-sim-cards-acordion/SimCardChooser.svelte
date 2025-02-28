@@ -46,12 +46,12 @@
 	options={[
 		{
 			value: 'new-sim-card',
-			label: 'create a new SIM',
+			label: 'cadastrar novo cartão SIM',
 			classes: 'btn w-full preset-filled-primary-200-800'
 		},
 		{
 			value: 'existing-sim-card',
-			label: 'use a existing SIM',
+			label: 'usar cartão SIM existente',
 			classes: 'btn w-full preset-filled-secondary-200-800'
 		}
 	]}

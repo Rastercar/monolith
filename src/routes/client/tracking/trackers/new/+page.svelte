@@ -24,12 +24,12 @@
 
 <PageContainer>
 	<PageHeader
-		title="create tracker"
+		title="cadastrar rastreador"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/trackers'), icon: 'mdi:cellphone', text: 'trackers' },
-			{ href: route('/client/tracking/trackers/new'), text: 'new' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/trackers'), icon: 'mdi:cellphone', text: 'rastreadores' },
+			{ href: route('/client/tracking/trackers/new'), text: 'cadastro' }
 		]}
 	/>
 
@@ -38,7 +38,7 @@
 
 		<Step>
 			{#snippet header()}
-				Tracker Information
+				Informações do Rastreador
 			{/snippet}
 
 			<CreateTrackerStep
@@ -52,7 +52,7 @@
 		{#if auth.hasPermission(['UPDATE_TRACKER', 'CREATE_SIM_CARD'])}
 			<Step>
 				{#snippet header()}
-					Tracker SIM cards
+					Cartões SIM do rastreador
 				{/snippet}
 
 				{#if createdTracker}
@@ -70,7 +70,7 @@
 			{#snippet header()}
 				<div class="flex items-center">
 					<Icon icon="mdi:check" class="mr-2 text-success-400-600" height={24} />
-					Tracker created
+					Rastreador cadastrado
 				</div>
 			{/snippet}
 

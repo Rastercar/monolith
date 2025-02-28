@@ -17,15 +17,18 @@
 {/snippet}
 
 <div class="h-screen flex items-center justify-center flex-col">
-	<h1 class="h1">An error has occoured:</h1>
+	<h1 class="h1 flex items-center space-x-4">
+		<Icon icon="mdi:truck-alert" />
+		<div>um erro ocorreu</div>
+	</h1>
 
 	<h2 class="h2 text-primary-200-800 mb-4">
 		{page.error?.message}
 	</h2>
 
 	{#if errorCode === MISSING_SESSION}
-		{@render linkBtn(route('/auth/sign-out'), 'mdi:sign-out', 'click here to sign out')}
+		{@render linkBtn(route('/auth/sign-out'), 'mdi:sign-out', 'clique aqui pare sair')}
 	{:else if errorCode === NO_SID_COOKIE}
-		{@render linkBtn(route('/auth/sign-in'), 'mdi:sign-in', 'click here to sign in')}
+		{@render linkBtn(route('/auth/sign-in'), 'mdi:sign-in', 'clique aqui para realizar login')}
 	{/if}
 </div>

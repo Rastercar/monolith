@@ -17,14 +17,14 @@
 			{#snippet control()}
 				<div class="flex items-center py-2">
 					<Icon icon="mdi:shield" width="32" height="32" class="mr-2" />
-					Role and Permissions
+					Nível de Acesso e Permissões
 				</div>
 			{/snippet}
 
 			{#snippet panel()}
 				<div class="sm:px-0 py-1">
 					<h4 class="text-lg">
-						<span class="opacity-80 mt-2">Access Level:</span>
+						<span class="opacity-80 mt-2">Nível de Acesso:</span>
 						{accessLevel.name}
 					</h4>
 

@@ -22,7 +22,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 
 	await deleteFleetById({ id: fleetId, orgId });
 
-	return json('fleet card deleted');
+	return json('frota deletada');
 };
 
 export const PUT: RequestHandler = async ({ params, request, locals }) => {

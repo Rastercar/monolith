@@ -19,26 +19,28 @@
 
 {#snippet homePageLink()}
 	<a href={route('/client')} class="text-primary-700-200-token underline-offset-4 hover:underline">
-		go to home page
+		ir a página principal
 	</a>
 {/snippet}
 
 <div class="h-full flex justify-center pt-12">
 	<div>
 		{#if mutation.isPending}
-			<h1 class="mb-1 text-center text-xl text-secondary-600-400">confirming your email address</h1>
+			<h1 class="mb-1 text-center text-xl text-secondary-600-400">
+				confirmando seu endereço de email
+			</h1>
 			<Progress value={null} classes="mt-4" />
 		{:else if mutation.isSuccess}
 			<h1 class="mb-1 text-center text-xl text-success-600-400">
 				{data.confirmingForOrg
-					? 'organization billing email address confirmed'
-					: 'email address confirmed'}
+					? 'endereço de email de cobrança da organização confirmado'
+					: 'endereço de email confirmado'}
 			</h1>
 
 			{@render homePageLink()}
 		{:else if mutation.isError}
 			<h1 class="mb-1 text-center text-xl text-error-600-400">
-				error confirming your email address
+				erro ao confirmar seu endereço de email
 			</h1>
 
 			{@render homePageLink()}

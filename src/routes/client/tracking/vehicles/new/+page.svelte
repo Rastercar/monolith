@@ -10,12 +10,12 @@
 
 <PageContainer>
 	<PageHeader
-		title="create vehicle"
+		title="cadastrar veículo"
 		breadCrumbs={[
 			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
-			{ text: 'tracking' },
-			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'vehicles' },
-			{ href: route('/client/tracking/vehicles/new'), text: 'new' }
+			{ text: 'rastreamento' },
+			{ href: route('/client/tracking/vehicles'), icon: 'mdi:car', text: 'veículos' },
+			{ href: route('/client/tracking/vehicles/new'), text: 'cadastro' }
 		]}
 	/>
 
@@ -24,7 +24,7 @@
 	<CreateVehicleForm
 		formSchema={data.createVehicleForm}
 		onCreate={() => {
-			showSuccessToast('vehicle created');
+			showSuccessToast('veículo cadastrado');
 		}}
 	/>
 </PageContainer>

@@ -9,9 +9,9 @@ export const POST: RequestHandler = async ({ params, locals }) => {
 	const userToBeUnblockedId = parseInt(params.user_id);
 
 	const user = await findOrgUserById({ id: userToBeUnblockedId, orgId });
-	if (!user) error(404, 'user to unblock not found');
+	if (!user) error(404, 'usuário para desbloquear não encontrado');
 
 	await unblockOrgUserById({ id: userToBeUnblockedId, orgId });
 
-	return json('user unblocked');
+	return json('usuário desbloqueado');
 };

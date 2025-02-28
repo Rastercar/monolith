@@ -14,7 +14,7 @@
 			<UserAvatar wrapperClass="w-16" />
 
 			<div class="max-w-48 pl-4">
-				welcome
+				bem vindo
 				<p class="text-ellipsis overflow-hidden line-clamp-2">
 					{auth?.user.username}
 				</p>

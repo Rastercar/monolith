@@ -13,5 +13,5 @@
 		icon={isBlocked ? 'mdi:denied' : 'mdi:check'}
 		class={`${isBlocked ? 'text-error-200-800' : 'text-success-200-800'} mr-2`}
 	/>
-	{isBlocked ? 'blocked' : 'not blocked'}
+	{isBlocked ? 'bloqueado' : 'não bloqueado'}
 </div>

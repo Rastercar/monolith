@@ -25,7 +25,7 @@ export const actions = {
 			const vehicleToAssociate = await findOrgVehicleById({ id: form.data.vehicleId, orgId });
 
 			if (!vehicleToAssociate) {
-				return setError(form, 'vehicleId', 'vehicle not found');
+				return setError(form, 'vehicleId', 'veículo não encontrado');
 			}
 		}
 
@@ -38,7 +38,7 @@ export const actions = {
 		});
 
 		if (trackerOrError === 'vehicle_tracker_imei_unique') {
-			return setError(form, 'imei', 'IMEI in use by another tracker');
+			return setError(form, 'imei', 'IMEI em uso por outro rastreador');
 		}
 
 		const createdTracker = trackerSchema.parse(trackerOrError);

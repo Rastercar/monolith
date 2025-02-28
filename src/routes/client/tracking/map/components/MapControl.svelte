@@ -24,6 +24,6 @@
 
 <div bind:this={slotRef}>
 	{#if children}{@render children()}{:else}
-		<div class="m-2 p-2 bg-white text-red-600 text-md rounded-md">error</div>
+		<div class="m-2 p-2 bg-white text-red-600 text-md rounded-md">erro</div>
 	{/if}
 </div>

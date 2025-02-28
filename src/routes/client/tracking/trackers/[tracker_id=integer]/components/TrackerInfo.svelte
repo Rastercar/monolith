@@ -38,7 +38,7 @@
 </script>
 
 <h2 class="p-4 flex items-center">
-	<span class="type-scale-4 mr-auto">General Info</span>
+	<span class="type-scale-4 mr-auto">Informações</span>
 
 	<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
 		{#snippet children({ isOnline })}
@@ -52,7 +52,7 @@
 <div class="px-4">
 	<div class="md:flex md:items-center">
 		<div class="flex items-center md:mr-auto">
-			<span class="mr-4">model: {tracker.model}</span>
+			<span class="mr-4">modelo: {tracker.model}</span>
 			<span class="mr-auto">imei: {tracker.imei}</span>
 		</div>
 
@@ -60,7 +60,7 @@
 			<PermissionGuard requiredPermissions={'DELETE_TRACKER'}>
 				<DeleteTrackerModal onDeleteConfirmed={(withSimCards) => deleteTracker(withSimCards)}>
 					<button class="btn preset-filled-warning-200-800">
-						<Icon icon="mdi:trash" />delete
+						<Icon icon="mdi:trash" />deletar
 					</button>
 				</DeleteTrackerModal>
 			</PermissionGuard>
@@ -68,7 +68,7 @@
 			<PermissionGuard requiredPermissions={'UPDATE_TRACKER'}>
 				<button class="btn preset-filled-primary-200-800 ml-3" onclick={onEditModeClick}>
 					<Icon icon="mdi:pencil" />
-					edit
+					editar
 				</button>
 			</PermissionGuard>
 		</div>

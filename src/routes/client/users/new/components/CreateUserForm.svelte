@@ -45,36 +45,31 @@
 
 <form method="POST" action={route('createUser /client/users/new')} use:sForm.enhance>
 	<div class="grid grid-cols-2 gap-4 mb-4">
-		<TextField form={sForm} name="email" label="Email" placeholder="email address" />
+		<TextField form={sForm} name="email" label="Email" />
 
-		<TextField form={sForm} name="username" label="Username" placeholder="username" />
+		<TextField form={sForm} name="username" label="Nome de Usuário" />
 
-		<PasswordField form={sForm} name="password" label="Password" />
+		<PasswordField form={sForm} name="password" label="Senha" />
 
-		<PasswordField
-			form={sForm}
-			label="Confirm Password"
-			placeholder="Confirm Password"
-			name="passwordConfirmation"
-		/>
+		<PasswordField form={sForm} label="Confirmar Senha" name="passwordConfirmation" />
 
 		<CheckboxField
 			form={sForm}
 			classes="col-span-2 mb-2"
-			label="Force password change on first sign in"
+			label="Forçar mudança de senha no primeiro login"
 			name="setPasswordChangeOnFirstSignIn"
 		/>
 
 		<TextAreaField
 			form={sForm}
 			name="description"
-			label="Description / Bio"
-			placeholder="description"
+			label="Descrição / Biografia"
+			placeholder="Descrição"
 			classes="col-span-2"
 		/>
 	</div>
 
-	<span class="mb-2 block">User Access Level</span>
+	<span class="mb-2 block">Nível de Acesso do Usuário</span>
 	<SelectAccessLevelInput
 		bind:searchValue={selectAccessLevelSearchValue}
 		value={selectedAccessLevel?.id.toString() ?? ''}
@@ -109,7 +104,7 @@
 
 	<div class="flex justify-end mt-4">
 		<LoadableButton classes="btn preset-filled-primary-200-800" isLoading={$isLoading}>
-			create user
+			cadastrar usuário
 		</LoadableButton>
 	</div>
 </form>

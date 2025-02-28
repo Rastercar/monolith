@@ -14,7 +14,7 @@ export const load = async ({ url }) => {
 	const passwordRecoveryToken = url.searchParams.get('token');
 
 	if (!passwordRecoveryToken) {
-		return error(500, { message: 'no password recovery token found' });
+		return error(500, { message: 'token não encontrado' });
 	}
 
 	const user = await findUserByResetPasswordToken(passwordRecoveryToken);
@@ -29,7 +29,7 @@ export const actions = {
 		const user = await findUserByResetPasswordToken(form.data.token);
 		if (!user) {
 			return message(form, {
-				text: 'invalid recovery token',
+				text: 'token inválido',
 				type: 'error',
 				code: 'ERR_TOKEN_NOT_FOUND'
 			});
@@ -39,6 +39,6 @@ export const actions = {
 
 		await setPasswordAndClearResetPasswordToken(hashedPassword, form.data.token);
 
-		return message(form, { text: 'password changed', type: 'success' });
+		return message(form, { text: 'senha alterada', type: 'success' });
 	}
 };

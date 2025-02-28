@@ -8,7 +8,7 @@
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import type { ActionData } from '../../../../routes/client/tracking/sim-cards/new/$types';
+	import type { ActionData } from '../../../../routes/client/rastreamento/cartoes-sim/novo/$types';
 
 	interface Props {
 		formSchema: SuperValidated<Infer<typeof createSimCardSchema>>;
@@ -51,7 +51,7 @@
 <form
 	class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
 	method="POST"
-	action={route('createSimCard /client/tracking/sim-cards/new')}
+	action={route('createSimCard /client/rastreamento/cartoes-sim/novo')}
 	use:sForm.enhance
 >
 	<TextField form={sForm} name="ssn" label="SSN *" placeholder="A123BC678Z" maxlength={50} />

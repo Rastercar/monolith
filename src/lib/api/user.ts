@@ -15,7 +15,7 @@ export const apiGetUsers = (
 ): Promise<Paginated<SimpleUser>> =>
 	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get(route('/client/users'))
+		.get(route('/client/usuarios'))
 		.json<Paginated<SimpleUser>>()
 		.then(createPaginatedResponseSchema(simpleUserSchema).parse);
 
@@ -24,7 +24,7 @@ export const apiGetUsers = (
  */
 export const apiDeleteUserById = (id: number): Promise<string> =>
 	api
-		.delete(route('DELETE /client/users/[user_id=integer]', { user_id: id.toString() }))
+		.delete(route('DELETE /client/usuarios/[user_id=integer]', { user_id: id.toString() }))
 		.json<string>();
 
 /**
@@ -34,7 +34,7 @@ export const apiChangeUserAccessLevel = (ids: {
 	userId: number;
 	accessLevelId: number;
 }): Promise<string> => {
-	const url = route('PUT /client/users/[user_id=integer]/access-level', {
+	const url = route('PUT /client/usuarios/[user_id=integer]/nivel-acesso', {
 		user_id: ids.userId.toString()
 	});
 
@@ -47,21 +47,21 @@ export const apiChangeUserAccessLevel = (ids: {
 export const apiUpdateUserProfilePicture = (image: File): Promise<string> =>
 	api
 		.formData({ image })
-		.put(undefined, route('PUT /client/settings/profile/picture'))
+		.put(undefined, route('PUT /client/configuracoes/perfil/foto'))
 		.json<string>();
 
 /**
  * deletes the current user profile picture
  */
 export const apiRemoveUserProfilePicture = (): Promise<string> =>
-	api.delete(route('DELETE /client/settings/profile/picture')).json<string>();
+	api.delete(route('DELETE /client/configuracoes/perfil/foto')).json<string>();
 
 /**
  * block a user by id, marking them as blocked and destroying their sessions
  */
 export const apiBlockUser = (id: number): Promise<string> =>
 	api
-		.post({}, route('POST /client/users/[user_id=integer]/block', { user_id: id.toString() }))
+		.post({}, route('POST /client/usuarios/[user_id=integer]/bloquear', { user_id: id.toString() }))
 		.json<string>();
 
 /**
@@ -69,5 +69,8 @@ export const apiBlockUser = (id: number): Promise<string> =>
  */
 export const apiUnblockUser = (id: number): Promise<string> =>
 	api
-		.post({}, route('POST /client/users/[user_id=integer]/unblock', { user_id: id.toString() }))
+		.post(
+			{},
+			route('POST /client/usuarios/[user_id=integer]/desbloquear', { user_id: id.toString() })
+		)
 		.json<string>();

@@ -29,11 +29,11 @@ describe('redirectToStartingPage', () => {
 		return null;
 	};
 
-	test('redirects to sign-in page if request does not contain a user', () => {
+	test('redirects to login page if request does not contain a user', () => {
 		const userLessRedirectError = catchRedirectionError({ locals: { user: null } });
 
 		expect(userLessRedirectError?.status).toBe(303);
-		expect(userLessRedirectError?.location).toBe('/auth/sign-in');
+		expect(userLessRedirectError?.location).toBe('/auth/login');
 	});
 
 	test('redirects to home page if request contains a user', () => {

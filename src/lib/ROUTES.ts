@@ -9,129 +9,129 @@
  * PAGES
  */
 const PAGES = {
-  "/auth/change-password": `/auth/change-password`,
-  "/auth/confirm-email-address": `/auth/confirm-email-address`,
-  "/auth/recover-password": `/auth/recover-password`,
-  "/auth/sign-in": (params?: { redirect?: (string) }) => {
-    return `/auth/sign-in${appendSp({ 'redirect': params?.['redirect'] })}`
+  "/auth/alterar-senha": `/auth/alterar-senha`,
+  "/auth/cadastro": `/auth/cadastro`,
+  "/auth/confirmar-email": `/auth/confirmar-email`,
+  "/auth/login": (params?: { redirect?: (string) }) => {
+    return `/auth/login${appendSp({ 'redirect': params?.['redirect'] })}`
   },
-  "/auth/sign-out": `/auth/sign-out`,
-  "/auth/sign-up": `/auth/sign-up`,
+  "/auth/logout": `/auth/logout`,
+  "/auth/recuperar-senha": `/auth/recuperar-senha`,
   "/client": `/client`,
-  "/client/access-levels": `/client/access-levels`,
-  "/client/access-levels/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/access-levels/${params['access_level_id']}`
+  "/client/configuracoes/organizacao": `/client/configuracoes/organizacao`,
+  "/client/configuracoes/perfil": `/client/configuracoes/perfil`,
+  "/client/configuracoes/seguranca": (params?: { redirectHereDueToForcePasswordChange?: (string) }) => {
+    return `/client/configuracoes/seguranca${appendSp({ 'redirectHereDueToForcePasswordChange': params?.['redirectHereDueToForcePasswordChange'] })}`
   },
-  "/client/access-levels/new": `/client/access-levels/new`,
-  "/client/my-profile": `/client/my-profile`,
-  "/client/settings/organization": `/client/settings/organization`,
-  "/client/settings/profile": `/client/settings/profile`,
-  "/client/settings/security": (params?: { redirectHereDueToForcePasswordChange?: (string) }) => {
-    return `/client/settings/security${appendSp({ 'redirectHereDueToForcePasswordChange': params?.['redirectHereDueToForcePasswordChange'] })}`
+  "/client/configuracoes/sessoes": `/client/configuracoes/sessoes`,
+  "/client/meu-perfil": `/client/meu-perfil`,
+  "/client/niveis-acesso": `/client/niveis-acesso`,
+  "/client/niveis-acesso/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/niveis-acesso/${params['access_level_id']}`
   },
-  "/client/settings/sessions": `/client/settings/sessions`,
-  "/client/tracking/fleets": `/client/tracking/fleets`,
-  "/client/tracking/fleets/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/fleets/${params['fleet_id']}`
+  "/client/niveis-acesso/novo": `/client/niveis-acesso/novo`,
+  "/client/rastreamento/cartoes-sim": `/client/rastreamento/cartoes-sim`,
+  "/client/rastreamento/cartoes-sim/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/cartoes-sim/${params['sim_card_id']}`
   },
-  "/client/tracking/fleets/new": `/client/tracking/fleets/new`,
-  "/client/tracking/map": (params?: { lookupTracker?: (number) }) => {
-    return `/client/tracking/map${appendSp({ 'lookupTracker': params?.['lookupTracker'] })}`
+  "/client/rastreamento/cartoes-sim/novo": `/client/rastreamento/cartoes-sim/novo`,
+  "/client/rastreamento/frotas": `/client/rastreamento/frotas`,
+  "/client/rastreamento/frotas/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/frotas/${params['fleet_id']}`
   },
-  "/client/tracking/sim-cards": `/client/tracking/sim-cards`,
-  "/client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/sim-cards/${params['sim_card_id']}`
+  "/client/rastreamento/frotas/novo": `/client/rastreamento/frotas/novo`,
+  "/client/rastreamento/mapa": (params?: { lookupTracker?: (number) }) => {
+    return `/client/rastreamento/mapa${appendSp({ 'lookupTracker': params?.['lookupTracker'] })}`
   },
-  "/client/tracking/sim-cards/new": `/client/tracking/sim-cards/new`,
-  "/client/tracking/trackers": `/client/tracking/trackers`,
-  "/client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/trackers/${params['tracker_id']}`
+  "/client/rastreamento/rastreadores": `/client/rastreamento/rastreadores`,
+  "/client/rastreamento/rastreadores/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/rastreadores/${params['tracker_id']}`
   },
-  "/client/tracking/trackers/new": `/client/tracking/trackers/new`,
-  "/client/tracking/vehicles": `/client/tracking/vehicles`,
-  "/client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/vehicles/${params['vehicle_id']}`
+  "/client/rastreamento/rastreadores/novo": `/client/rastreamento/rastreadores/novo`,
+  "/client/rastreamento/veiculos": `/client/rastreamento/veiculos`,
+  "/client/rastreamento/veiculos/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/veiculos/${params['vehicle_id']}`
   },
-  "/client/tracking/vehicles/new": `/client/tracking/vehicles/new`,
-  "/client/users": `/client/users`,
-  "/client/users/[user_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/users/${params['user_id']}`
+  "/client/rastreamento/veiculos/novo": `/client/rastreamento/veiculos/novo`,
+  "/client/usuarios": `/client/usuarios`,
+  "/client/usuarios/[user_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/usuarios/${params['user_id']}`
   },
-  "/client/users/new": `/client/users/new`
+  "/client/usuarios/novo": `/client/usuarios/novo`
 }
 
 /**
  * SERVERS
  */
 const SERVERS = {
-  "POST /auth/confirm-email-address": `/auth/confirm-email-address`,
-  "POST /auth/request-email-confirmation": `/auth/request-email-confirmation`,
-  "POST /auth/sign-out": `/auth/sign-out`,
-  "DELETE /auth/sign-out/[session_id=integer]": (params: { session_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/auth/sign-out/${params['session_id']}`
+  "POST /auth/confirmar-email": `/auth/confirmar-email`,
+  "POST /auth/logout": `/auth/logout`,
+  "DELETE /auth/logout/[session_id=integer]": (params: { session_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/auth/logout/${params['session_id']}`
   },
-  "GET /client/access-levels": `/client/access-levels`,
-  "DELETE /client/access-levels/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/access-levels/${params['access_level_id']}`
+  "POST /auth/requisitar-email-de-confirmacao": `/auth/requisitar-email-de-confirmacao`,
+  "PUT /client/configuracoes/perfil/foto": `/client/configuracoes/perfil/foto`,
+  "DELETE /client/configuracoes/perfil/foto": `/client/configuracoes/perfil/foto`,
+  "GET /client/niveis-acesso": `/client/niveis-acesso`,
+  "DELETE /client/niveis-acesso/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/niveis-acesso/${params['access_level_id']}`
   },
-  "PUT /client/settings/profile/picture": `/client/settings/profile/picture`,
-  "DELETE /client/settings/profile/picture": `/client/settings/profile/picture`,
-  "GET /client/tracking/fleets": `/client/tracking/fleets`,
-  "DELETE /client/tracking/fleets/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/fleets/${params['fleet_id']}`
+  "GET /client/rastreamento/cartoes-sim": `/client/rastreamento/cartoes-sim`,
+  "DELETE /client/rastreamento/cartoes-sim/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/cartoes-sim/${params['sim_card_id']}`
   },
-  "PUT /client/tracking/fleets/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/fleets/${params['fleet_id']}`
+  "PUT /client/rastreamento/cartoes-sim/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/cartoes-sim/${params['sim_card_id']}`
   },
-  "GET /client/tracking/sim-cards": `/client/tracking/sim-cards`,
-  "DELETE /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/sim-cards/${params['sim_card_id']}`
+  "GET /client/rastreamento/frotas": `/client/rastreamento/frotas`,
+  "DELETE /client/rastreamento/frotas/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/frotas/${params['fleet_id']}`
   },
-  "PUT /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/sim-cards/${params['sim_card_id']}`
+  "PUT /client/rastreamento/frotas/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/frotas/${params['fleet_id']}`
   },
-  "GET /client/tracking/trackers": `/client/tracking/trackers`,
-  "DELETE /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/trackers/${params['tracker_id']}`
+  "GET /client/rastreamento/rastreadores": `/client/rastreamento/rastreadores`,
+  "DELETE /client/rastreamento/rastreadores/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/rastreadores/${params['tracker_id']}`
   },
-  "PUT /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/trackers/${params['tracker_id']}`
+  "PUT /client/rastreamento/rastreadores/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/rastreadores/${params['tracker_id']}`
   },
-  "GET /client/tracking/trackers/[tracker_id=integer]/last-location": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/trackers/${params['tracker_id']}/last-location`
+  "GET /client/rastreamento/rastreadores/[tracker_id=integer]/localizacoes": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/rastreadores/${params['tracker_id']}/localizacoes`
   },
-  "GET /client/tracking/trackers/[tracker_id=integer]/locations": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/trackers/${params['tracker_id']}/locations`
+  "GET /client/rastreamento/rastreadores/[tracker_id=integer]/ultima-localizacao": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/rastreadores/${params['tracker_id']}/ultima-localizacao`
   },
-  "POST /client/tracking/trackers/positions": `/client/tracking/trackers/positions`,
-  "GET /client/tracking/vehicles": `/client/tracking/vehicles`,
-  "DELETE /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/vehicles/${params['vehicle_id']}`
+  "POST /client/rastreamento/rastreadores/posicoes": `/client/rastreamento/rastreadores/posicoes`,
+  "GET /client/rastreamento/veiculos": `/client/rastreamento/veiculos`,
+  "DELETE /client/rastreamento/veiculos/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/veiculos/${params['vehicle_id']}`
   },
-  "GET /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/vehicles/${params['vehicle_id']}`
+  "GET /client/rastreamento/veiculos/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/veiculos/${params['vehicle_id']}`
   },
-  "PUT /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/vehicles/${params['vehicle_id']}/photo`
+  "PUT /client/rastreamento/veiculos/[vehicle_id=integer]/foto": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/veiculos/${params['vehicle_id']}/foto`
   },
-  "DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/vehicles/${params['vehicle_id']}/photo`
+  "DELETE /client/rastreamento/veiculos/[vehicle_id=integer]/foto": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/veiculos/${params['vehicle_id']}/foto`
   },
-  "GET /client/users": `/client/users`,
-  "DELETE /client/users/[user_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/users/${params['user_id']}`
+  "GET /client/usuarios": `/client/usuarios`,
+  "DELETE /client/usuarios/[user_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/usuarios/${params['user_id']}`
   },
-  "PUT /client/users/[user_id=integer]/access-level": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/users/${params['user_id']}/access-level`
+  "POST /client/usuarios/[user_id=integer]/bloquear": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/usuarios/${params['user_id']}/bloquear`
   },
-  "POST /client/users/[user_id=integer]/block": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/users/${params['user_id']}/block`
+  "POST /client/usuarios/[user_id=integer]/desbloquear": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/usuarios/${params['user_id']}/desbloquear`
   },
-  "DELETE /client/users/[user_id=integer]/sessions/[session_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>), session_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/users/${params['user_id']}/sessions/${params['session_id']}`
+  "PUT /client/usuarios/[user_id=integer]/nivel-acesso": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/usuarios/${params['user_id']}/nivel-acesso`
   },
-  "POST /client/users/[user_id=integer]/unblock": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/users/${params['user_id']}/unblock`
+  "DELETE /client/usuarios/[user_id=integer]/sessoes/[session_id=integer]": (params: { user_id: (ExtractParamType<typeof import('../params/integer.ts').match>), session_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/usuarios/${params['user_id']}/sessoes/${params['session_id']}`
   },
   "GET /healthcheck": `/healthcheck`
 }
@@ -140,35 +140,35 @@ const SERVERS = {
  * ACTIONS
  */
 const ACTIONS = {
-  "changePassword /auth/change-password": `/auth/change-password?/changePassword`,
-  "recoverPassword /auth/recover-password": `/auth/recover-password?/recoverPassword`,
-  "signIn /auth/sign-in": `/auth/sign-in?/signIn`,
-  "signUp /auth/sign-up": `/auth/sign-up?/signUp`,
-  "updateAccessLevel /client/access-levels/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/access-levels/${params['access_level_id']}?/updateAccessLevel`
+  "changePassword /auth/alterar-senha": `/auth/alterar-senha?/changePassword`,
+  "signUp /auth/cadastro": `/auth/cadastro?/signUp`,
+  "signIn /auth/login": `/auth/login?/signIn`,
+  "recoverPassword /auth/recuperar-senha": `/auth/recuperar-senha?/recoverPassword`,
+  "updateOrganization /client/configuracoes/organizacao": `/client/configuracoes/organizacao?/updateOrganization`,
+  "updateProfile /client/configuracoes/perfil": `/client/configuracoes/perfil?/updateProfile`,
+  "updateProfilePicture /client/configuracoes/perfil": `/client/configuracoes/perfil?/updateProfilePicture`,
+  "changePassword /client/configuracoes/seguranca": `/client/configuracoes/seguranca?/changePassword`,
+  "updateAccessLevel /client/niveis-acesso/[access_level_id=integer]": (params: { access_level_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/niveis-acesso/${params['access_level_id']}?/updateAccessLevel`
   },
-  "createAccessLevel /client/access-levels/new": `/client/access-levels/new?/createAccessLevel`,
-  "updateOrganization /client/settings/organization": `/client/settings/organization?/updateOrganization`,
-  "updateProfile /client/settings/profile": `/client/settings/profile?/updateProfile`,
-  "updateProfilePicture /client/settings/profile": `/client/settings/profile?/updateProfilePicture`,
-  "changePassword /client/settings/security": `/client/settings/security?/changePassword`,
-  "updateFleet /client/tracking/fleets/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/fleets/${params['fleet_id']}?/updateFleet`
+  "createAccessLevel /client/niveis-acesso/novo": `/client/niveis-acesso/novo?/createAccessLevel`,
+  "updateSimCard /client/rastreamento/cartoes-sim/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/cartoes-sim/${params['sim_card_id']}?/updateSimCard`
   },
-  "createFleet /client/tracking/fleets/new": `/client/tracking/fleets/new?/createFleet`,
-  "updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]": (params: { sim_card_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/sim-cards/${params['sim_card_id']}?/updateSimCard`
+  "createSimCard /client/rastreamento/cartoes-sim/novo": `/client/rastreamento/cartoes-sim/novo?/createSimCard`,
+  "updateFleet /client/rastreamento/frotas/[fleet_id=integer]": (params: { fleet_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/frotas/${params['fleet_id']}?/updateFleet`
   },
-  "createSimCard /client/tracking/sim-cards/new": `/client/tracking/sim-cards/new?/createSimCard`,
-  "updateTracker /client/tracking/trackers/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/trackers/${params['tracker_id']}?/updateTracker`
+  "createFleet /client/rastreamento/frotas/novo": `/client/rastreamento/frotas/novo?/createFleet`,
+  "updateTracker /client/rastreamento/rastreadores/[tracker_id=integer]": (params: { tracker_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/rastreadores/${params['tracker_id']}?/updateTracker`
   },
-  "createTracker /client/tracking/trackers/new": `/client/tracking/trackers/new?/createTracker`,
-  "updateVehicle /client/tracking/vehicles/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
-    return `/client/tracking/vehicles/${params['vehicle_id']}?/updateVehicle`
+  "createTracker /client/rastreamento/rastreadores/novo": `/client/rastreamento/rastreadores/novo?/createTracker`,
+  "updateVehicle /client/rastreamento/veiculos/[vehicle_id=integer]": (params: { vehicle_id: (ExtractParamType<typeof import('../params/integer.ts').match>) }) => {
+    return `/client/rastreamento/veiculos/${params['vehicle_id']}?/updateVehicle`
   },
-  "createVehicle /client/tracking/vehicles/new": `/client/tracking/vehicles/new?/createVehicle`,
-  "createUser /client/users/new": `/client/users/new?/createUser`
+  "createVehicle /client/rastreamento/veiculos/novo": `/client/rastreamento/veiculos/novo?/createVehicle`,
+  "createUser /client/usuarios/novo": `/client/usuarios/novo?/createUser`
 }
 
 /**
@@ -287,9 +287,9 @@ type ExtractParamType<T extends (param: any) => any> = ExtractFnPredicate<T> ext
 * ```
 */
 export type KIT_ROUTES = {
-  PAGES: { '/auth/change-password': never, '/auth/confirm-email-address': never, '/auth/recover-password': never, '/auth/sign-in': never, '/auth/sign-out': never, '/auth/sign-up': never, '/client': never, '/client/access-levels': never, '/client/access-levels/[access_level_id=integer]': 'access_level_id', '/client/access-levels/new': never, '/client/my-profile': never, '/client/settings/organization': never, '/client/settings/profile': never, '/client/settings/security': never, '/client/settings/sessions': never, '/client/tracking/fleets': never, '/client/tracking/fleets/[fleet_id=integer]': 'fleet_id', '/client/tracking/fleets/new': never, '/client/tracking/map': never, '/client/tracking/sim-cards': never, '/client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', '/client/tracking/sim-cards/new': never, '/client/tracking/trackers': never, '/client/tracking/trackers/[tracker_id=integer]': 'tracker_id', '/client/tracking/trackers/new': never, '/client/tracking/vehicles': never, '/client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', '/client/tracking/vehicles/new': never, '/client/users': never, '/client/users/[user_id=integer]': 'user_id', '/client/users/new': never }
-  SERVERS: { 'POST /auth/confirm-email-address': never, 'POST /auth/request-email-confirmation': never, 'POST /auth/sign-out': never, 'DELETE /auth/sign-out/[session_id=integer]': 'session_id', 'GET /client/access-levels': never, 'DELETE /client/access-levels/[access_level_id=integer]': 'access_level_id', 'PUT /client/settings/profile/picture': never, 'DELETE /client/settings/profile/picture': never, 'GET /client/tracking/fleets': never, 'DELETE /client/tracking/fleets/[fleet_id=integer]': 'fleet_id', 'PUT /client/tracking/fleets/[fleet_id=integer]': 'fleet_id', 'GET /client/tracking/sim-cards': never, 'DELETE /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'PUT /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'GET /client/tracking/trackers': never, 'DELETE /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'PUT /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/last-location': 'tracker_id', 'GET /client/tracking/trackers/[tracker_id=integer]/locations': 'tracker_id', 'POST /client/tracking/trackers/positions': never, 'GET /client/tracking/vehicles': never, 'DELETE /client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', 'GET /client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', 'PUT /client/tracking/vehicles/[vehicle_id=integer]/photo': 'vehicle_id', 'DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo': 'vehicle_id', 'GET /client/users': never, 'DELETE /client/users/[user_id=integer]': 'user_id', 'PUT /client/users/[user_id=integer]/access-level': 'user_id', 'POST /client/users/[user_id=integer]/block': 'user_id', 'DELETE /client/users/[user_id=integer]/sessions/[session_id=integer]': 'user_id' | 'session_id', 'POST /client/users/[user_id=integer]/unblock': 'user_id', 'GET /healthcheck': never }
-  ACTIONS: { 'changePassword /auth/change-password': never, 'recoverPassword /auth/recover-password': never, 'signIn /auth/sign-in': never, 'signUp /auth/sign-up': never, 'updateAccessLevel /client/access-levels/[access_level_id=integer]': 'access_level_id', 'createAccessLevel /client/access-levels/new': never, 'updateOrganization /client/settings/organization': never, 'updateProfile /client/settings/profile': never, 'updateProfilePicture /client/settings/profile': never, 'changePassword /client/settings/security': never, 'updateFleet /client/tracking/fleets/[fleet_id=integer]': 'fleet_id', 'createFleet /client/tracking/fleets/new': never, 'updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]': 'sim_card_id', 'createSimCard /client/tracking/sim-cards/new': never, 'updateTracker /client/tracking/trackers/[tracker_id=integer]': 'tracker_id', 'createTracker /client/tracking/trackers/new': never, 'updateVehicle /client/tracking/vehicles/[vehicle_id=integer]': 'vehicle_id', 'createVehicle /client/tracking/vehicles/new': never, 'createUser /client/users/new': never }
+  PAGES: { '/auth/alterar-senha': never, '/auth/cadastro': never, '/auth/confirmar-email': never, '/auth/login': never, '/auth/logout': never, '/auth/recuperar-senha': never, '/client': never, '/client/configuracoes/organizacao': never, '/client/configuracoes/perfil': never, '/client/configuracoes/seguranca': never, '/client/configuracoes/sessoes': never, '/client/meu-perfil': never, '/client/niveis-acesso': never, '/client/niveis-acesso/[access_level_id=integer]': 'access_level_id', '/client/niveis-acesso/novo': never, '/client/rastreamento/cartoes-sim': never, '/client/rastreamento/cartoes-sim/[sim_card_id=integer]': 'sim_card_id', '/client/rastreamento/cartoes-sim/novo': never, '/client/rastreamento/frotas': never, '/client/rastreamento/frotas/[fleet_id=integer]': 'fleet_id', '/client/rastreamento/frotas/novo': never, '/client/rastreamento/mapa': never, '/client/rastreamento/rastreadores': never, '/client/rastreamento/rastreadores/[tracker_id=integer]': 'tracker_id', '/client/rastreamento/rastreadores/novo': never, '/client/rastreamento/veiculos': never, '/client/rastreamento/veiculos/[vehicle_id=integer]': 'vehicle_id', '/client/rastreamento/veiculos/novo': never, '/client/usuarios': never, '/client/usuarios/[user_id=integer]': 'user_id', '/client/usuarios/novo': never }
+  SERVERS: { 'POST /auth/confirmar-email': never, 'POST /auth/logout': never, 'DELETE /auth/logout/[session_id=integer]': 'session_id', 'POST /auth/requisitar-email-de-confirmacao': never, 'PUT /client/configuracoes/perfil/foto': never, 'DELETE /client/configuracoes/perfil/foto': never, 'GET /client/niveis-acesso': never, 'DELETE /client/niveis-acesso/[access_level_id=integer]': 'access_level_id', 'GET /client/rastreamento/cartoes-sim': never, 'DELETE /client/rastreamento/cartoes-sim/[sim_card_id=integer]': 'sim_card_id', 'PUT /client/rastreamento/cartoes-sim/[sim_card_id=integer]': 'sim_card_id', 'GET /client/rastreamento/frotas': never, 'DELETE /client/rastreamento/frotas/[fleet_id=integer]': 'fleet_id', 'PUT /client/rastreamento/frotas/[fleet_id=integer]': 'fleet_id', 'GET /client/rastreamento/rastreadores': never, 'DELETE /client/rastreamento/rastreadores/[tracker_id=integer]': 'tracker_id', 'PUT /client/rastreamento/rastreadores/[tracker_id=integer]': 'tracker_id', 'GET /client/rastreamento/rastreadores/[tracker_id=integer]/localizacoes': 'tracker_id', 'GET /client/rastreamento/rastreadores/[tracker_id=integer]/ultima-localizacao': 'tracker_id', 'POST /client/rastreamento/rastreadores/posicoes': never, 'GET /client/rastreamento/veiculos': never, 'DELETE /client/rastreamento/veiculos/[vehicle_id=integer]': 'vehicle_id', 'GET /client/rastreamento/veiculos/[vehicle_id=integer]': 'vehicle_id', 'PUT /client/rastreamento/veiculos/[vehicle_id=integer]/foto': 'vehicle_id', 'DELETE /client/rastreamento/veiculos/[vehicle_id=integer]/foto': 'vehicle_id', 'GET /client/usuarios': never, 'DELETE /client/usuarios/[user_id=integer]': 'user_id', 'POST /client/usuarios/[user_id=integer]/bloquear': 'user_id', 'POST /client/usuarios/[user_id=integer]/desbloquear': 'user_id', 'PUT /client/usuarios/[user_id=integer]/nivel-acesso': 'user_id', 'DELETE /client/usuarios/[user_id=integer]/sessoes/[session_id=integer]': 'user_id' | 'session_id', 'GET /healthcheck': never }
+  ACTIONS: { 'changePassword /auth/alterar-senha': never, 'signUp /auth/cadastro': never, 'signIn /auth/login': never, 'recoverPassword /auth/recuperar-senha': never, 'updateOrganization /client/configuracoes/organizacao': never, 'updateProfile /client/configuracoes/perfil': never, 'updateProfilePicture /client/configuracoes/perfil': never, 'changePassword /client/configuracoes/seguranca': never, 'updateAccessLevel /client/niveis-acesso/[access_level_id=integer]': 'access_level_id', 'createAccessLevel /client/niveis-acesso/novo': never, 'updateSimCard /client/rastreamento/cartoes-sim/[sim_card_id=integer]': 'sim_card_id', 'createSimCard /client/rastreamento/cartoes-sim/novo': never, 'updateFleet /client/rastreamento/frotas/[fleet_id=integer]': 'fleet_id', 'createFleet /client/rastreamento/frotas/novo': never, 'updateTracker /client/rastreamento/rastreadores/[tracker_id=integer]': 'tracker_id', 'createTracker /client/rastreamento/rastreadores/novo': never, 'updateVehicle /client/rastreamento/veiculos/[vehicle_id=integer]': 'vehicle_id', 'createVehicle /client/rastreamento/veiculos/novo': never, 'createUser /client/usuarios/novo': never }
   LINKS: Record<string, never>
-  Params: { 'redirect': never, 'access_level_id': never, 'redirectHereDueToForcePasswordChange': never, 'fleet_id': never, 'lookupTracker': never, 'sim_card_id': never, 'tracker_id': never, 'vehicle_id': never, 'user_id': never, 'session_id': never }
+  Params: { 'redirect': never, 'redirectHereDueToForcePasswordChange': never, 'access_level_id': never, 'sim_card_id': never, 'fleet_id': never, 'lookupTracker': never, 'tracker_id': never, 'vehicle_id': never, 'user_id': never, 'session_id': never }
 }

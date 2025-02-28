@@ -31,7 +31,7 @@ export async function setUserLocalsFromSessionCookie(event: RequestEvent) {
 	// somehow the user got a invalid session cookie so delete it
 	if (!sessionFromDb) {
 		event.cookies.delete(SESSION_ID_COOKIE_KEY, { path: '/' });
-		return redirect(302, route('/auth/sign-out'));
+		return redirect(302, route('/auth/logout'));
 	}
 
 	const userFromDb = await findUserByIdWithOrgAndAccessLevel(sessionFromDb.userId);

@@ -8,7 +8,7 @@
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import type { ActionData } from '../../../../routes/client/tracking/sim-cards/[sim_card_id=integer]/$types';
+	import type { ActionData } from '../../../../routes/client/rastreamento/cartoes-sim/[sim_card_id=integer]/$types';
 
 	interface Props {
 		simCardId: number;
@@ -41,7 +41,7 @@
 <form
 	class={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ${extraClasses}`}
 	method="POST"
-	action={route('updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]', {
+	action={route('updateSimCard /client/rastreamento/cartoes-sim/[sim_card_id=integer]', {
 		sim_card_id: simCardId.toString()
 	})}
 	use:sForm.enhance

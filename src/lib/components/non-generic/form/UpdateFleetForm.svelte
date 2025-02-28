@@ -9,7 +9,7 @@
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import type { ActionData } from '../../../../routes/client/tracking/fleets/[fleet_id=integer]/$types';
+	import type { ActionData } from '../../../../routes/client/rastreamento/frotas/[fleet_id=integer]/$types';
 
 	interface Props {
 		fleetId: number;
@@ -42,7 +42,7 @@
 <form
 	class={extraClasses}
 	method="POST"
-	action={route('updateFleet /client/tracking/fleets/[fleet_id=integer]', {
+	action={route('updateFleet /client/rastreamento/frotas/[fleet_id=integer]', {
 		fleet_id: fleetId.toString()
 	})}
 	use:sForm.enhance

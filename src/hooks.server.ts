@@ -47,7 +47,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (isLoadingPageWithMeta && pageMeta?.requiredAuth === 'logged-in') {
 		// deny access if the user is not logged in
 		if (!event.locals.user) {
-			return redirect(303, route('/auth/sign-in', { redirect: event.url.pathname }));
+			return redirect(303, route('/auth/login', { redirect: event.url.pathname }));
 		}
 
 		// deny access if the user does not have the required permissions
@@ -58,9 +58,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		// redirect to the change password page if the user must change his password before accessing the app
 		if (
 			event.locals.user.mustSetNewPassword &&
-			event.url.pathname !== '/client/settings/security'
+			event.url.pathname !== '/client/configuracoes/seguranca'
 		) {
-			const changePasswordRoute = route('/client/settings/security', {
+			const changePasswordRoute = route('/client/configuracoes/seguranca', {
 				redirectHereDueToForcePasswordChange: 'true'
 			});
 

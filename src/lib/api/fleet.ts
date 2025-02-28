@@ -15,7 +15,7 @@ export const apiGetFleets = (
 ): Promise<Paginated<Fleet>> =>
 	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get(route('/client/tracking/fleets'))
+		.get(route('/client/rastreamento/frotas'))
 		.json<Paginated<Fleet>>()
 		.then(createPaginatedResponseSchema(fleetSchema).parse);
 
@@ -23,7 +23,7 @@ export const apiGetFleets = (
  * deletes a fleet
  */
 export function apiDeleteFleet(id: number): Promise<string> {
-	const url = route('DELETE /client/tracking/fleets/[fleet_id=integer]', {
+	const url = route('DELETE /client/rastreamento/frotas/[fleet_id=integer]', {
 		fleet_id: id.toString()
 	});
 

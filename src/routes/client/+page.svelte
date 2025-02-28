@@ -18,7 +18,7 @@
 			topBorderColor="border-t-green-800 hover:border-green-800"
 		>
 			<CardDescription>Cadastro e gerência seus veículos</CardDescription>
-			<CardLink href="/client/tracking/vehicles">ir a página de veículos</CardLink>
+			<CardLink href="/client/rastreamento/veiculos">ir a página de veículos</CardLink>
 		</Card>
 
 		<Card
@@ -27,7 +27,7 @@
 			topBorderColor="border-t-green-800 hover:border-green-800"
 		>
 			<CardDescription>Cadastro e gerência de frotas</CardDescription>
-			<CardLink href="/client/tracking/fleets">ir a página de frotas</CardLink>
+			<CardLink href="/client/rastreamento/frotas">ir a página de frotas</CardLink>
 		</Card>
 
 		<Card
@@ -37,7 +37,7 @@
 		>
 			<CardDescription>Cadastro e gerência de rastreadores</CardDescription>
 
-			<CardLink href="/client/tracking/trackers">ir a página de rastreadores</CardLink>
+			<CardLink href="/client/rastreamento/rastreadores">ir a página de rastreadores</CardLink>
 		</Card>
 
 		<Card
@@ -49,7 +49,7 @@
 				Cadastro e gerência de cartões SIM utilizados pelos rastreadores
 			</CardDescription>
 
-			<CardLink href="/client/tracking/sim-cards">ir a página de cartões SIM</CardLink>
+			<CardLink href="/client/rastreamento/cartoes-sim">ir a página de cartões SIM</CardLink>
 		</Card>
 
 		<Card
@@ -59,7 +59,7 @@
 		>
 			<CardDescription>Gerência de usuários de sua organização</CardDescription>
 
-			<CardLink href="/client/tracking/sim-cards">ir a página de usuários</CardLink>
+			<CardLink href="/client/usuarios">ir a página de usuários</CardLink>
 		</Card>
 
 		<Card
@@ -72,7 +72,7 @@
 				usuários a funcionalidades da plataforma
 			</CardDescription>
 
-			<CardLink href="/client/access-levels">ir a página de níveis de acesso</CardLink>
+			<CardLink href="/client/niveis-acesso">ir a página de níveis de acesso</CardLink>
 		</Card>
 	</div>
 </PageContainer>

@@ -27,8 +27,8 @@
 	</h2>
 
 	{#if errorCode === MISSING_SESSION}
-		{@render linkBtn(route('/auth/sign-out'), 'mdi:sign-out', 'clique aqui pare sair')}
+		{@render linkBtn(route('/auth/logout'), 'mdi:sign-out', 'clique aqui pare sair')}
 	{:else if errorCode === NO_SID_COOKIE}
-		{@render linkBtn(route('/auth/sign-in'), 'mdi:sign-in', 'clique aqui para realizar login')}
+		{@render linkBtn(route('/auth/login'), 'mdi:sign-in', 'clique aqui para realizar login')}
 	{/if}
 </div>

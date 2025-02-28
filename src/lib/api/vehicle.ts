@@ -9,7 +9,9 @@ import { vehicleSchema, type GetVehiclesFilters, type Vehicle } from './vehicle.
 
 export const apiGetVehicle = (id: number): Promise<Vehicle> =>
 	api
-		.get(route('GET /client/tracking/vehicles/[vehicle_id=integer]', { vehicle_id: id.toString() }))
+		.get(
+			route('GET /client/rastreamento/veiculos/[vehicle_id=integer]', { vehicle_id: id.toString() })
+		)
 		.json<Paginated<Vehicle>>()
 		.then(vehicleSchema.parse);
 
@@ -21,7 +23,7 @@ export const apiGetVehicles = (
 ): Promise<Paginated<Vehicle>> =>
 	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get(route('/client/tracking/vehicles'))
+		.get(route('/client/rastreamento/veiculos'))
 		.json<Paginated<Vehicle>>()
 		.then(createPaginatedResponseSchema(vehicleSchema).parse);
 
@@ -29,7 +31,7 @@ export const apiGetVehicles = (
  * Delete vehicle by ID
  */
 export const apiDeleteVehicle = (id: number): Promise<string> => {
-	const url = route('DELETE /client/tracking/vehicles/[vehicle_id=integer]', {
+	const url = route('DELETE /client/rastreamento/veiculos/[vehicle_id=integer]', {
 		vehicle_id: id.toString()
 	});
 
@@ -40,7 +42,7 @@ export const apiDeleteVehicle = (id: number): Promise<string> => {
  * change a vehicle photo
  */
 export const updateVehiclePhoto = (id: number, image: File): Promise<string> => {
-	const url = route('PUT /client/tracking/vehicles/[vehicle_id=integer]/photo', {
+	const url = route('PUT /client/rastreamento/veiculos/[vehicle_id=integer]/foto', {
 		vehicle_id: id.toString()
 	});
 
@@ -51,7 +53,7 @@ export const updateVehiclePhoto = (id: number, image: File): Promise<string> => 
  * delete a vehicle photo
  */
 export const removeVehiclePhoto = (id: number): Promise<string> => {
-	const url = route('DELETE /client/tracking/vehicles/[vehicle_id=integer]/photo', {
+	const url = route('DELETE /client/rastreamento/veiculos/[vehicle_id=integer]/foto', {
 		vehicle_id: id.toString()
 	});
 

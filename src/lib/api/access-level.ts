@@ -19,7 +19,7 @@ export const apiGetAccessLevels = (
 ): Promise<Paginated<AccessLevel>> =>
 	api
 		.query(stripUndefined({ ...query?.pagination, ...query?.filters }))
-		.get(route('/client/access-levels'))
+		.get(route('/client/niveis-acesso'))
 		.json<Paginated<AccessLevel>>()
 		.then(createPaginatedResponseSchema(accessLevelSchema).parse);
 
@@ -27,7 +27,7 @@ export const apiGetAccessLevels = (
  * delete a access level by id
  */
 export const apiDeleteAccessLevel = (id: number): Promise<string> => {
-	const url = route('DELETE /client/access-levels/[access_level_id=integer]', {
+	const url = route('DELETE /client/niveis-acesso/[access_level_id=integer]', {
 		access_level_id: id.toString()
 	});
 

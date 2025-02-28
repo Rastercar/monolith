@@ -24,7 +24,7 @@ export const apiGetTrackers = (
 ): Promise<Paginated<Tracker>> =>
 	api
 		.query(stripUndefined({ ...query?.filters, ...query?.pagination }))
-		.get(route('/client/tracking/trackers'))
+		.get(route('/client/rastreamento/rastreadores'))
 		.json<Paginated<Tracker>>()
 		.then(createPaginatedResponseSchema(trackerSchema).parse);
 
@@ -32,7 +32,7 @@ export const apiGetTrackers = (
  * Delete a tracker by id
  */
 export const apiDeleteTracker = (trackerId: number, opts?: DeleteTrackerBody) => {
-	const url = route('DELETE /client/tracking/trackers/[tracker_id=integer]', {
+	const url = route('DELETE /client/rastreamento/rastreadores/[tracker_id=integer]', {
 		tracker_id: trackerId.toString()
 	});
 
@@ -49,7 +49,7 @@ export const apiSetTrackerVehicle = (ids: {
 	vehicleId: number | null;
 	vehicleTrackerId: number;
 }): Promise<string> => {
-	const url = route('PUT /client/tracking/trackers/[tracker_id=integer]', {
+	const url = route('PUT /client/rastreamento/rastreadores/[tracker_id=integer]', {
 		tracker_id: ids.vehicleTrackerId.toString()
 	});
 
@@ -60,9 +60,12 @@ export const apiSetTrackerVehicle = (ids: {
  * get the last known tracker location
  */
 export const apiGetTrackerLastLocation = async (id: number) => {
-	const url = route('GET /client/tracking/trackers/[tracker_id=integer]/last-location', {
-		tracker_id: id.toString()
-	});
+	const url = route(
+		'GET /client/rastreamento/rastreadores/[tracker_id=integer]/ultima-localizacao',
+		{
+			tracker_id: id.toString()
+		}
+	);
 
 	const data = await api.get(url).json<TrackerLocation | null>();
 	return trackerLocationSchema.nullable().parse(data);
@@ -72,7 +75,7 @@ export const apiGetTrackerLastLocation = async (id: number) => {
  * get a list of tracker locations after a start date and a limit
  */
 export const apiGetTrackerLocations = async (id: number, filters?: GetTrackerLocationsFilters) => {
-	const url = route('GET /client/tracking/trackers/[tracker_id=integer]/locations', {
+	const url = route('GET /client/rastreamento/rastreadores/[tracker_id=integer]/localizacoes', {
 		tracker_id: id.toString()
 	});
 

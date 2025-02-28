@@ -1,0 +1,90 @@
+<script lang="ts">
+	import { apiGetSimCardsQuery } from '$lib/api/sim-card.queries';
+	import type { GetSimCardsFilters, SimCard } from '$lib/api/sim-card.schema';
+	import DebouncedTextField from '$lib/components/input/DebouncedTextField.svelte';
+	import PageContainer from '$lib/components/layout/PageContainer.svelte';
+	import PageHeader from '$lib/components/layout/PageHeader.svelte';
+	import InfoIconLink from '$lib/components/link/InfoIconLink.svelte';
+	import CreateEntityButton from '$lib/components/non-generic/button/CreateEntityButton.svelte';
+	import DataTable from '$lib/components/table/DataTable.svelte';
+	import DataTableFooter from '$lib/components/table/DataTableFooter.svelte';
+	import { route } from '$lib/ROUTES';
+	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
+	import {
+		createSvelteTable,
+		getCoreRowModel,
+		renderComponent,
+		type ColumnDef
+	} from '@tanstack/svelte-table';
+
+	const { pagination, filters } = createPaginationWithFilters<GetSimCardsFilters>({});
+
+	const query = apiGetSimCardsQuery(pagination, filters);
+
+	const columns: ColumnDef<SimCard>[] = [
+		{ accessorKey: 'phoneNumber', header: () => 'Telefone' },
+		{ accessorKey: 'ssn', header: () => 'SSN' },
+		{ accessorKey: 'apnAddress', header: () => 'APN Endereço' },
+		{
+			id: 'actions',
+			cell: ({ row }) =>
+				renderComponent(InfoIconLink, {
+					href: route('/client/rastreamento/cartoes-sim/[sim_card_id=integer]', {
+						sim_card_id: row.original.id.toString()
+					})
+				})
+		}
+	];
+
+	const table = $derived(
+		createSvelteTable({
+			data: query.data?.records ?? [],
+			columns,
+			manualPagination: true,
+			state: {
+				pagination: {
+					pageIndex: pagination.page,
+					pageSize: pagination.pageSize
+				}
+			},
+			getCoreRowModel: getCoreRowModel()
+		})
+	);
+</script>
+
+<PageContainer>
+	<PageHeader
+		title="cartões SIM"
+		breadCrumbs={[
+			{ href: route('/client'), icon: 'mdi:home', text: 'home' },
+			{ text: 'rastreamento' },
+			{ href: route('/client/rastreamento/cartoes-sim'), icon: 'mdi:sim', text: 'cartões SIM' }
+		]}
+	/>
+
+	<hr class="hr mt-4 mb-8" />
+
+	<div class="flex mb-4 items-center space-x-4">
+		<DebouncedTextField
+			placeholder="procurar por telefone"
+			classes="w-full"
+			onChange={(v) => (filters.phoneNumber = v)}
+		/>
+
+		<CreateEntityButton
+			href={route('/client/rastreamento/cartoes-sim/novo')}
+			text="novo cartão SIM"
+			requiredPermissions="CREATE_SIM_CARD"
+		/>
+	</div>
+
+	<DataTable {table} isLoading={query.isFetching} />
+
+	<DataTableFooter
+		extraClasses="mt-4"
+		bind:page={pagination.page}
+		bind:pageSize={pagination.pageSize}
+		data={query.data?.records}
+		count={query.data?.itemCount}
+	/>
+</PageContainer>

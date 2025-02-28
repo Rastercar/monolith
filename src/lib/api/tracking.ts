@@ -8,6 +8,6 @@ import { api } from './utils';
  */
 export const apiGetTrackersLastPositions = (trackerIds: number[]): Promise<TrackerPosition[]> =>
 	api
-		.post({ ids: trackerIds }, route('POST /client/tracking/trackers/positions'))
+		.post({ ids: trackerIds }, route('POST /client/rastreamento/rastreadores/posicoes'))
 		.json<TrackerPosition[]>()
 		.then((a) => z.array(positionSchema).parse(a));

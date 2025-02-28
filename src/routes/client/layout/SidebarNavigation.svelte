@@ -16,42 +16,42 @@
 			icon: 'mdi:home'
 		},
 		{
-			href: '/client/tracking/map',
+			href: '/client/rastreamento/mapa',
 			label: 'mapa',
 			icon: 'mdi:map'
 		},
 		{
-			href: '/client/my-profile',
+			href: '/client/meu-perfil',
 			label: 'meu perfil',
 			icon: 'mdi:account'
 		},
 		{
-			href: '/client/users',
+			href: '/client/usuarios',
 			label: 'usuários',
 			icon: 'mdi:account-multiple'
 		},
 		{
-			href: '/client/access-levels',
+			href: '/client/niveis-acesso',
 			label: 'níveis de acesso',
 			icon: 'mdi:shield'
 		},
 		{
-			href: '/client/tracking/vehicles',
+			href: '/client/rastreamento/veiculos',
 			label: 'veículos',
 			icon: 'mdi:car'
 		},
 		{
-			href: '/client/tracking/fleets',
+			href: '/client/rastreamento/frotas',
 			label: 'frotas',
 			icon: 'mdi:car-multiple'
 		},
 		{
-			href: '/client/tracking/trackers',
+			href: '/client/rastreamento/rastreadores',
 			label: 'rastreadores',
 			icon: 'mdi:cellphone'
 		},
 		{
-			href: '/client/tracking/sim-cards',
+			href: '/client/rastreamento/cartoes-sim',
 			label: 'cartões SIM',
 			icon: 'mdi:sim'
 		}
@@ -59,28 +59,28 @@
 
 	const settingsRoutes: Route[] = [
 		{
-			href: '/client/settings/profile',
+			href: '/client/configuracoes/perfil',
 			label: 'perfil',
 			icon: 'mdi:account-edit'
 		},
 		{
-			href: '/client/settings/organization',
+			href: '/client/configuracoes/organizacao',
 			label: 'organização',
 			icon: 'mdi:building'
 		},
 		{
-			href: '/client/settings/sessions',
+			href: '/client/configuracoes/sessoes',
 			label: 'sessões',
 			icon: 'mdi:access-point'
 		},
 		{
-			href: '/client/settings/security',
+			href: '/client/configuracoes/seguranca',
 			label: 'credenciais / segurança',
 			icon: 'mdi:shield-account'
 		}
 	];
 
-	let isInSettingsRoute = $derived(page.url.pathname.includes('/settings'));
+	let isInSettingsRoute = $derived(page.url.pathname.includes('/configuracoes'));
 </script>
 
 <aside>
@@ -97,7 +97,7 @@
 		/>
 
 		<div class="flex justify-end">
-			<a href="/client/my-profile" class="btn preset-filled-primary-500 mx-4 my-4">
+			<a href="/client/meu-perfil" class="btn preset-filled-primary-500 mx-4 my-4">
 				<Icon icon="mdi:arrow-left" />
 				sair das configurações
 			</a>
@@ -110,7 +110,9 @@
 		</div>
 
 		<NavList
-			routes={[{ href: '/client/settings/profile', icon: 'mdi:settings', label: 'configurações' }]}
+			routes={[
+				{ href: '/client/configuracoes/perfil', icon: 'mdi:settings', label: 'configurações' }
+			]}
 		/>
 	{/if}
 </aside>

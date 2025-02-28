@@ -6,7 +6,7 @@ import { api } from './utils';
  * Deletes (signs out) of the current user session by its public id
  */
 export const apiSignOutSpecificSession = (publicId: number): Promise<string> => {
-	const url = route('DELETE /auth/sign-out/[session_id=integer]', {
+	const url = route('DELETE /auth/logout/[session_id=integer]', {
 		session_id: publicId.toString()
 	});
 
@@ -14,11 +14,11 @@ export const apiSignOutSpecificSession = (publicId: number): Promise<string> => 
 };
 
 /**
- * Deletes a session by its public id, unlike the `/auth/sign-out/:sid` endpoint
+ * Deletes a session by its public id, unlike the `/auth/logout/:sid` endpoint
  * this endpoint can be used to remove sessions owned by other users
  */
 export const apiDeleteUserSession = (userId: number, sessionPublicId: number): Promise<string> => {
-	const url = route('DELETE /client/users/[user_id=integer]/sessions/[session_id=integer]', {
+	const url = route('DELETE /client/usuarios/[user_id=integer]/sessoes/[session_id=integer]', {
 		user_id: userId.toString(),
 		session_id: sessionPublicId.toString()
 	});
@@ -33,11 +33,11 @@ export const apiDeleteUserSession = (userId: number, sessionPublicId: number): P
  * only be retrieved by someone with access to said email address
  */
 export const apiConfirmEmailAddress = (body: ConfirmEmailAddressBody): Promise<string> =>
-	api.post(body, route('POST /auth/confirm-email-address')).json();
+	api.post(body, route('POST /auth/confirmar-email')).json();
 
 /**
  * Request a email to confirm a email address of a user or organization to be sent
  */
 export const apiRequestEmailAddressConfirmation = (
 	body: RequestEmailConfirmationBody
-): Promise<string> => api.post(body, route('POST /auth/request-email-confirmation')).json();
+): Promise<string> => api.post(body, route('POST /auth/requisitar-email-de-confirmacao')).json();

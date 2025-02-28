@@ -1,6 +1,6 @@
 import type { Tracker } from '$lib/api/tracker.schema';
 import { loadFromLocalStorage, setLocalStorage } from '$lib/utils/local-storage';
-import type { TrackerAndPosition } from '../../routes/client/tracking/map/map';
+import type { TrackerAndPosition } from '../../routes/client/rastreamento/mapa/map';
 import { MAP_SELECTED_TRACKERS_LS_KEY, TRACKER_POSITION_CACHE_LS_KEY } from './keys';
 
 export interface Position {

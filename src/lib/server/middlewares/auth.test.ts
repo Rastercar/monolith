@@ -112,7 +112,7 @@ describe('setUserLocalsFromSessionCookie', () => {
 		expect(requestEventMock.cookies.delete).toHaveBeenLastCalledWith(SESSION_ID_COOKIE_KEY, {
 			path: '/'
 		});
-		expect(kitHelpersMock.redirect).toHaveBeenLastCalledWith(302, '/auth/sign-out');
+		expect(kitHelpersMock.redirect).toHaveBeenLastCalledWith(302, '/auth/logout');
 	});
 
 	test('throws a internal server error if the session somehow points to a unexisting user', async () => {

@@ -44,37 +44,37 @@ const reqPerms = (requiredPermissions?: permission | permission[]): PageMeta => 
  * files, API endpoints and form actions are not considered here
  */
 export const routesMeta: Record<keyof KIT_ROUTES['PAGES'], PageMeta> = {
-	'/auth/sign-in': { requiredAuth: 'logged-off' },
-	'/auth/sign-up': { requiredAuth: 'logged-off' },
-	'/auth/change-password': { requiredAuth: 'any' },
-	'/auth/recover-password': { requiredAuth: 'any' },
-	'/auth/confirm-email-address': { requiredAuth: 'any' },
-	'/auth/sign-out': reqPerms(),
+	'/auth/login': { requiredAuth: 'logged-off' },
+	'/auth/cadastro': { requiredAuth: 'logged-off' },
+	'/auth/alterar-senha': { requiredAuth: 'any' },
+	'/auth/recuperar-senha': { requiredAuth: 'any' },
+	'/auth/confirmar-email': { requiredAuth: 'any' },
+	'/auth/logout': reqPerms(),
 	'/client': reqPerms(),
-	'/client/access-levels': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
-	'/client/access-levels/[access_level_id=integer]': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
-	'/client/access-levels/new': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
-	'/client/my-profile': reqPerms(),
-	'/client/settings/organization': reqPerms('UPDATE_ORGANIZATION'),
-	'/client/settings/profile': reqPerms(),
-	'/client/settings/security': reqPerms(),
-	'/client/settings/sessions': reqPerms(),
-	'/client/tracking/map': { headerVisibility: false, requiredAuth: 'logged-in' },
-	'/client/tracking/sim-cards': reqPerms(),
-	'/client/tracking/sim-cards/[sim_card_id=integer]': reqPerms(),
-	'/client/tracking/sim-cards/new': reqPerms('CREATE_SIM_CARD'),
-	'/client/tracking/trackers': reqPerms(),
-	'/client/tracking/trackers/[tracker_id=integer]': reqPerms(),
-	'/client/tracking/trackers/new': reqPerms('CREATE_TRACKER'),
-	'/client/tracking/vehicles': reqPerms(),
-	'/client/tracking/vehicles/[vehicle_id=integer]': reqPerms(),
-	'/client/tracking/vehicles/new': reqPerms('CREATE_VEHICLE'),
-	'/client/tracking/fleets': reqPerms(),
-	'/client/tracking/fleets/[fleet_id=integer]': reqPerms(),
-	'/client/tracking/fleets/new': reqPerms('CREATE_FLEET'),
-	'/client/users': reqPerms(),
-	'/client/users/[user_id=integer]': reqPerms(),
-	'/client/users/new': reqPerms('CREATE_USER')
+	'/client/niveis-acesso': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
+	'/client/niveis-acesso/[access_level_id=integer]': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
+	'/client/niveis-acesso/novo': reqPerms('MANAGE_USER_ACCESS_LEVELS'),
+	'/client/meu-perfil': reqPerms(),
+	'/client/configuracoes/organizacao': reqPerms('UPDATE_ORGANIZATION'),
+	'/client/configuracoes/perfil': reqPerms(),
+	'/client/configuracoes/seguranca': reqPerms(),
+	'/client/configuracoes/sessoes': reqPerms(),
+	'/client/rastreamento/mapa': { headerVisibility: false, requiredAuth: 'logged-in' },
+	'/client/rastreamento/cartoes-sim': reqPerms(),
+	'/client/rastreamento/cartoes-sim/[sim_card_id=integer]': reqPerms(),
+	'/client/rastreamento/cartoes-sim/novo': reqPerms('CREATE_SIM_CARD'),
+	'/client/rastreamento/rastreadores': reqPerms(),
+	'/client/rastreamento/rastreadores/[tracker_id=integer]': reqPerms(),
+	'/client/rastreamento/rastreadores/novo': reqPerms('CREATE_TRACKER'),
+	'/client/rastreamento/veiculos': reqPerms(),
+	'/client/rastreamento/veiculos/[vehicle_id=integer]': reqPerms(),
+	'/client/rastreamento/veiculos/novo': reqPerms('CREATE_VEHICLE'),
+	'/client/rastreamento/frotas': reqPerms(),
+	'/client/rastreamento/frotas/[fleet_id=integer]': reqPerms(),
+	'/client/rastreamento/frotas/novo': reqPerms('CREATE_FLEET'),
+	'/client/usuarios': reqPerms(),
+	'/client/usuarios/[user_id=integer]': reqPerms(),
+	'/client/usuarios/novo': reqPerms('CREATE_USER')
 };
 
 export function getRouteMetaFromPath(path: string): PageMeta | undefined {
@@ -86,5 +86,5 @@ export function getRouteMetaFromPath(path: string): PageMeta | undefined {
  */
 export function redirectToStartingPage(event: RequestEvent) {
 	const isLoggedIn = !!event.locals.user;
-	return redirect(303, isLoggedIn ? route('/client') : route('/auth/sign-in'));
+	return redirect(303, isLoggedIn ? route('/client') : route('/auth/login'));
 }

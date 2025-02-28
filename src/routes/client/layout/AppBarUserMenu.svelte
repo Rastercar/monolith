@@ -21,7 +21,7 @@
 			<hr class="hr my-4 border-t-2" />
 
 			<div class="flex justify-end">
-				<a href={route('/auth/sign-out')}>
+				<a href={route('/auth/logout')}>
 					<button class="btn preset-filled-primary-100-900 flex items-center">
 						Sair
 						<Icon icon="mdi:sign-out" />

@@ -3,7 +3,7 @@
 	import SidebarNavigation from './SidebarNavigation.svelte';
 	import UserDisplay from './UserDisplay.svelte';
 
-	let isInSettingsRoute = $derived(page.url.pathname.includes('/settings'));
+	let isInSettingsRoute = $derived(page.url.pathname.includes('/configuracoes'));
 </script>
 
 <aside class="hidden lg:block bg-surface-100-900 w-72">

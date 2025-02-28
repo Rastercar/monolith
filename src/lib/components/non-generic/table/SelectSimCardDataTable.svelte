@@ -153,7 +153,7 @@
 	<form
 		class="flex justify-end mt-4"
 		method="POST"
-		action={route('updateSimCard /client/tracking/sim-cards/[sim_card_id=integer]', {
+		action={route('updateSimCard /client/rastreamento/cartoes-sim/[sim_card_id=integer]', {
 			sim_card_id: selectedSimCard.id.toString()
 		})}
 		use:sForm.enhance

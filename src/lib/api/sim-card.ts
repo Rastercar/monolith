@@ -21,7 +21,7 @@ export const apiGetSimCards = (
 ): Promise<Paginated<SimCard>> =>
 	api
 		.query(stripUndefined({ ...query?.filters, ...query?.pagination }))
-		.get(route('/client/tracking/sim-cards'))
+		.get(route('/client/rastreamento/cartoes-sim'))
 		.json<Paginated<SimCard>>()
 		.then(createPaginatedResponseSchema(simCardSchema).parse);
 
@@ -29,7 +29,7 @@ export const apiGetSimCards = (
  * update a sim card
  */
 export function apiUpdateSimCard(id: number, body: UpdateSimCardBody): Promise<UpdateSimCardRes> {
-	const url = route('PUT /client/tracking/sim-cards/[sim_card_id=integer]', {
+	const url = route('PUT /client/rastreamento/cartoes-sim/[sim_card_id=integer]', {
 		sim_card_id: id.toString()
 	});
 
@@ -40,7 +40,7 @@ export function apiUpdateSimCard(id: number, body: UpdateSimCardBody): Promise<U
  * deletes a SIM card
  */
 export function apiDeleteSimCardById(id: number): Promise<string> {
-	const url = route('DELETE /client/tracking/sim-cards/[sim_card_id=integer]', {
+	const url = route('DELETE /client/rastreamento/cartoes-sim/[sim_card_id=integer]', {
 		sim_card_id: id.toString()
 	});
 

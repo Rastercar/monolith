@@ -9,7 +9,7 @@
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import type { ActionData } from '../../../../routes/client/tracking/trackers/[tracker_id=integer]/$types';
+	import type { ActionData } from '../../../../routes/client/rastreamento/rastreadores/[tracker_id=integer]/$types';
 
 	interface Props {
 		trackerId: number;
@@ -51,7 +51,7 @@
 <form
 	class={`grid grid-cols-1 md:grid-cols-2 gap-4 ${extraClasses}`}
 	method="POST"
-	action={route('updateTracker /client/tracking/trackers/[tracker_id=integer]', {
+	action={route('updateTracker /client/rastreamento/rastreadores/[tracker_id=integer]', {
 		tracker_id: trackerId.toString()
 	})}
 	use:sForm.enhance

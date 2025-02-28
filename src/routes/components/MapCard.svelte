@@ -52,7 +52,7 @@
 			bind:this={seeTrackingMapRef}
 			class="m-3 p-3 bg-white hover:bg-slate-50 text-black rounded border-2 border-surface-300 shadow-lg"
 		>
-			<a href={route('/client/tracking/map')} class="flex items-center">
+			<a href={route('/client/rastreamento/mapa')} class="flex items-center">
 				<Icon icon="mdi:arrow-left" height={20} class="mr-2" />
 				<span class="type-scale-2">ir ao mapa de rastreamento</span>
 			</a>

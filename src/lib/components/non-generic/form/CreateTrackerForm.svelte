@@ -9,7 +9,7 @@
 	import type { FormResult, Infer, SuperValidated } from 'sveltekit-superforms';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import type { ActionData } from '../../../../routes/client/tracking/trackers/new/$types';
+	import type { ActionData } from '../../../../routes/client/rastreamento/rastreadores/novo/$types';
 
 	interface Props {
 		/**
@@ -38,7 +38,7 @@
 <form
 	class="grid grid-cols-2 gap-4"
 	method="POST"
-	action={route('createTracker /client/tracking/trackers/new')}
+	action={route('createTracker /client/rastreamento/rastreadores/novo')}
 	use:sForm.enhance
 >
 	<TextField form={sForm} name="imei" label="IMEI *" maxlength={50} />

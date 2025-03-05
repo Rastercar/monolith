@@ -59,7 +59,7 @@
 
 <div class="flex mb-4 justify-between items-center px-4">
 	<span>Cartões SIM:</span>
-	<span class="type-scale-1 opacity-70">
+	<span class="text-sm opacity-70">
 		{tracker.simCards?.length || 0} / {supportedSimCards} Slots
 	</span>
 </div>
@@ -88,7 +88,7 @@
 						{/if}
 					</div>
 
-					<span class="type-scale-2 ml-auto opacity-75">SLOT {i + 1}</span>
+					<span class="ml-auto opacity-75">SLOT {i + 1}</span>
 				</div>
 			{/snippet}
 

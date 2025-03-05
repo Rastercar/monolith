@@ -6,12 +6,22 @@ export const updateOrganizationSchema = z.object({
 });
 
 export const organizationSkeletonTheme = z.object({
-	name: z.string(),
-	properties: z.record(z.string()),
-	metadata: z.object({
-		version: z.string(),
-		emoji: z.string().optional()
-	})
+	/**
+	 * @example
+	 * ```css
+	 * [data-theme='theme'] {
+	 * 	--text-scaling: 1.067;
+	 * 	--base-font-color: var(--color-surface-950);
+	 * 	--base-font-color-dark: var(--color-surface-50);
+	 * 	--base-font-family: system-ui, sans-serif;
+	 * 	--base-font-size: inherit;
+	 * 	--base-line-height: inherit;
+	 * 	...
+	 * }
+	 * ```
+	 */
+	css: z.string(),
+	name: z.string()
 });
 
 export const organizationSchema = z.object({

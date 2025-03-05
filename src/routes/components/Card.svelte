@@ -27,7 +27,7 @@
 	<div class="flex flex-col h-full">
 		<div class="flex items-center mb-2">
 			<Icon {icon} height={32} class="mr-2" />
-			<span class="type-scale-3">{title}</span>
+			<span class="text-lg">{title}</span>
 		</div>
 
 		{@render children()}

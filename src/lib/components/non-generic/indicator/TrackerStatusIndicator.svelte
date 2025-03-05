@@ -36,7 +36,7 @@
 	<Tooltip.Root delayDuration={100}>
 		<Tooltip.Trigger class="h-2 w-2 ${iconColor} rounded-full" />
 		<Tooltip.Content sideOffset={8} class="card py-1 px-3 bg-surface-200-800">
-			<span class="type-scale-1">
+			<span class="text-sm">
 				{isOnline
 					? 'esse rastreador se comunicou com a plataforma nos ultimos 5 minutos'
 					: 'esse rastreador não se comunicou com a plataforma nos ultimos 5 minutos'}

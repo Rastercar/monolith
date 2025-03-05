@@ -18,7 +18,7 @@
 	}: Props = $props();
 </script>
 
-<li class="type-scale-4 text-nowrap">
+<li class="text-lg text-nowrap">
 	{#if href}
 		<a class={`flex items-center anchor no-underline ${linkTextColor}`} {href}>
 			{#if icon}

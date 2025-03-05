@@ -32,7 +32,7 @@
 			<h2>Você <span class="font-bold">precisa</span> alterar sua senha</h2>
 		</div>
 
-		<p class="type-scale-2 mt-4">
+		<p class="mt-4">
 			Por razões de segurança o dono de sua organização requer que novos usuários alterem sua senha
 			para acessar a plataforma.
 		</p>

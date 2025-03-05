@@ -25,7 +25,7 @@
 
 			{#snippet panel()}
 				<p class="mt-2 opacity-80">
-					Todos os dispositivos do usuário logados na plataforma. Revogar qualquer sessão desloga o
+					Os dispositivos do usuário logados na plataforma. Revogar qualquer sessão desloga o
 					usuário para o dispositivo específico.
 				</p>
 

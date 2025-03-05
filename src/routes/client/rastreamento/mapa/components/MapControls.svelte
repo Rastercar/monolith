@@ -22,7 +22,7 @@
 			class="m-[10px] h-[60px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
 		>
 			<div class="my-auto">
-				<div class="flex items-center type-scale-3">
+				<div class="flex items-center text-lg">
 					<Icon icon="mdi:cellphone" class="mr-1" />Rastreadores
 				</div>
 

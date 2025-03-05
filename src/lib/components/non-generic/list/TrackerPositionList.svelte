@@ -48,10 +48,10 @@
 </script>
 
 <div class="p-4 flex flex-col sm:flex-row">
-	<div class="type-scale-4 mr-auto mb-2 sm:mb-0">Posições:</div>
+	<div class="text-lg mr-auto mb-2 sm:mb-0">Posições:</div>
 
 	<div class="max-w-xs">
-		<label for="positions-date-start-filter" class="type-scale-2 mb-2 block">buscar após</label>
+		<label for="positions-date-start-filter" class="mb-2 block">buscar após</label>
 		<input
 			bind:value={startFilter}
 			class="input"
@@ -68,12 +68,12 @@
 		<Icon icon="mdi:info" class=" mr-3 hidden md:block" height={32} />
 
 		{#if startFilter === ''}
-			<p class="type-scale-2">
+			<p>
 				esse rastreador não tem nenhuma posição, ou seja ou ele está inativo ou nunca teve sucesso
 				ao se comunicar com a plataforma
 			</p>
 		{:else}
-			<p class="type-scale-2">nenhuma posição encontrada</p>
+			<p>nenhuma posição encontrada</p>
 		{/if}
 	</div>
 {:else if query.data}

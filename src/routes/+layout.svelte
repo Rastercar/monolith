@@ -5,7 +5,7 @@
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount, type Snippet } from 'svelte';
-	import '../app.postcss';
+	import '../app.css';
 
 	const { children }: { children: Snippet } = $props();
 

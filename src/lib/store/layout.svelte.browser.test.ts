@@ -29,12 +29,12 @@ describe('LayoutStore', () => {
 		});
 	});
 
-	test('loads the selected theme by the data-theme attribute on document.body, falling back to DEFAULT_THEME_NAME if nil', () => {
+	test('loads the selected theme by the data-theme attribute on document.documentElement, falling back to DEFAULT_THEME_NAME if nil', () => {
 		$effect.root(() => {
 			let store = new LayoutStore();
 			expect(store.selectedTheme).toEqual(DEFAULT_THEME_NAME);
 
-			document.body.setAttribute('data-theme', 'other-theme');
+			document.documentElement.setAttribute('data-theme', 'other-theme');
 			localStorage.clear();
 
 			store = new LayoutStore();
@@ -62,16 +62,16 @@ describe('LayoutStore', () => {
 		});
 	});
 
-	test('sets the data-theme attribute on the document body on change', () => {
+	test('sets the data-theme attribute on the document documentElement on change', () => {
 		$effect.root(() => {
-			const themeAttributeBefore = document.body.getAttribute('data-theme');
+			const themeAttributeBefore = document.documentElement.getAttribute('data-theme');
 
 			let store = new LayoutStore();
 			store.selectedTheme = 'another';
 
 			flushSync();
 
-			const themeAttributeAfter = document.body.getAttribute('data-theme');
+			const themeAttributeAfter = document.documentElement.getAttribute('data-theme');
 			expect(themeAttributeAfter).toEqual(store.selectedTheme);
 
 			expect(themeAttributeBefore).not.toEqual(themeAttributeAfter);

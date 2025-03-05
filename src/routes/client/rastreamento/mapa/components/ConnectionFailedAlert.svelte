@@ -15,8 +15,8 @@
 	<Icon class="mr-2 text-white" icon="mdi:error" height={32} />
 
 	<div class="text-white">
-		<h4 class="type-scale-3">Erro ao se conectar com o serviço de rastreamento</h4>
-		<p class="type-scale-1">
+		<h4 class="text-lg">Erro ao se conectar com o serviço de rastreamento</h4>
+		<p class="text-sm">
 			Atualizações em tempo real não esta habilitado e posições no mapa podem não ser a mais recente
 		</p>
 	</div>

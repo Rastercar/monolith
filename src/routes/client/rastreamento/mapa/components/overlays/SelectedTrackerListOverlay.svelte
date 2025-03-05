@@ -40,7 +40,7 @@
 
 {#if trackerAndPositionToShow == null}
 	<div class="sticky top-0 bg-surface-100-900 z-10 p-4">
-		<h2 class="flex items-center type-scale-6 mb-4">
+		<h2 class="flex items-center text-xl mb-4">
 			<Icon icon="mdi:list-status" class="mr-2 hidden md:block" height={32} />
 			Rastreadores selecionados ({getMapSelectedTrackerIds().length})
 
@@ -63,7 +63,7 @@
 		{#snippet title()}
 			<div class="ml-auto">
 				<button
-					class="type-scale-1 btn preset-filled-secondary-200-800"
+					class="text-sm btn preset-filled-secondary-200-800"
 					onclick={() => {
 						trackerAndPositionToShow = null;
 					}}

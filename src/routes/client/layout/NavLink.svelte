@@ -16,7 +16,7 @@
 <a
 	{href}
 	{onclick}
-	class="flex items-center text-lg px-5 py-2"
+	class="flex items-center px-5 py-2"
 	class:bg-surface-200-700-token={page.url.pathname === href}
 >
 	<Icon {icon} class="mr-2" />

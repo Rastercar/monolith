@@ -97,12 +97,12 @@
 
 <div class="flex justify-center">
 	<div class="w-full max-w-2xl p-4">
-		<h2 class="flex items-center mb-4 type-scale-6">
+		<h2 class="flex items-center mb-4 text-xl">
 			<Icon icon="mdi:satellite" class="mr-2 hidden md:block" height={32} />
 			Rastreadores a exibir
 
 			{#if reachedSelectionLimit}
-				<span class="ml-auto flex items-center bg-warning-200-800 p-2 rounded-md type-scale-1">
+				<span class="ml-auto flex items-center bg-warning-200-800 p-2 rounded-md text-sm">
 					<Icon icon="mdi:warning" class="mr-2" />
 					não é possível selecionar mais de {TRACKER_SUBSCRIPTION_PER_USER_LIMIT} rastreadores
 				</span>

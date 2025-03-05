@@ -9,7 +9,6 @@
 	let { children, data } = $props();
 
 	const layoutContext = getLayoutContext();
-
 	layoutContext.availableThemes = data.availableThemes;
 
 	const defaultLoggedInRouteMeta: LoggedInPageMeta = { requiredAuth: 'logged-in' };
@@ -32,7 +31,6 @@
 	auth.setUser(data.user);
 </script>
 
-<!-- [TODO-PROD] Fix  me -->
 <svelte:head>{@html data.orgThemeStyleTag}</svelte:head>
 
 <div

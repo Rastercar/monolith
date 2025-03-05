@@ -1,7 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import tailwindcss from "@tailwindcss/vite";
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, type UserConfig } from 'vite';
-import { purgeCss } from 'vite-plugin-tailwind-purgecss';
 import {
 	devOpentelemetryPlugin,
 	devServerSocketIoPlugin,
@@ -22,11 +22,11 @@ export const viteConfig: UserConfig = {
 		// attaches SocketIO to the vite dev server
 		devServerSocketIoPlugin(),
 
+		// tailwind v4 plugin
+		tailwindcss(),
+
 		// bundles sveltekit app
 		sveltekit(),
-
-		// removes duplicated CSS from skeleton and tailwind
-		purgeCss(),
 
 		// creates TS types for sveltekit routes
 		svelteKitRoutePlugin(),

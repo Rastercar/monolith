@@ -15,7 +15,7 @@
 >
 	<Icon icon="mdi:alert" width="24" height="24" />
 	<div>
-		<p class="type-scale-2">
+		<p>
 			{type === 'deletion'
 				? 'Deseja deletar esse cartão SIM permanentemente?'
 				: 'Deseja remover esse cartão SIM do rastreador?'}

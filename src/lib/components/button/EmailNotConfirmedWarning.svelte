@@ -73,7 +73,7 @@
 			{:else}
 				<div>
 					<p class="font-bold">Seu endereço de email não foi verificado</p>
-					<p class="type-scale-1 opacity-60">Por favor confirme seu endereço de email.</p>
+					<p class="text-sm opacity-60">Por favor confirme seu endereço de email.</p>
 				</div>
 
 				{@render btn('download')}

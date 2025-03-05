@@ -6,14 +6,14 @@
 export type permission = (typeof permissions)[number];
 
 export type permissionCategory =
-	| 'user'
-	| 'fleets'
-	| 'access levels'
-	| 'tracker'
+	| 'usuário'
+	| 'frotas'
+	| 'níveis de acesso'
+	| 'rastreadores'
 	| 'veículo'
-	| 'SIM card'
-	| 'organization'
-	| 'authentication';
+	| 'cartões SIM'
+	| 'organização'
+	| 'autenticação';
 
 export interface PermissionDetails {
 	title: string;
@@ -58,70 +58,70 @@ export const permissions = [
 export const allPermissions = [...permissions] as permission[];
 
 export const permissionCategoryIcons: Record<permissionCategory, string> = {
-	user: 'mdi:user',
-	authentication: 'mdi:lock',
-	'access levels': 'mdi:shield',
-	tracker: 'mdi:cellphone',
+	usuário: 'mdi:user',
+	autenticação: 'mdi:lock',
+	'níveis de acesso': 'mdi:shield',
+	rastreadores: 'mdi:cellphone',
 	veículo: 'mdi:car',
-	'SIM card': 'mdi:sim',
-	fleets: 'mdi:veículo-multiple',
-	organization: 'mdi:building'
+	'cartões SIM': 'mdi:sim',
+	frotas: 'mdi:car-multiple',
+	organização: 'mdi:building'
 };
 
 export const permissionDetails: Record<permission, PermissionDetails> = {
 	UPDATE_FLEET: {
 		title: 'Atualizar Frotas',
 		summary: 'Atualizar',
-		category: 'fleets',
+		category: 'frotas',
 		description: 'Permite atualizar frotas'
 	},
 	DELETE_FLEET: {
 		title: 'Deletar Frotas',
 		summary: 'Deletar',
-		category: 'fleets',
+		category: 'frotas',
 		description: 'Permite deletar frotas'
 	},
 	CREATE_FLEET: {
 		title: 'Cadastrar Frotas',
 		summary: 'Cadastrar',
-		category: 'fleets',
+		category: 'frotas',
 		description: 'Permite cadastrar frotas'
 	},
 	BLOCK_USER: {
 		title: 'Bloquear Usuários',
 		summary: 'Bloquear e desbloquear usuários',
-		category: 'authentication',
+		category: 'autenticação',
 		description: 'Bloquear usuários, deslogando-os e negando acesso até serem desbloquados'
 	},
 	MANAGE_USER_ACCESS_LEVELS: {
 		title: 'Gerenciar Níveis de Acesso',
 		summary: 'Gerenciar Níveis de Acesso',
-		category: 'authentication',
+		category: 'autenticação',
 		description: 'Gerenciar níveis de acesso de usuários e suas permissões'
 	},
 	LOGOFF_USER: {
 		title: 'Deslogar Usuários',
 		summary: 'Deslogar Usuários',
-		category: 'authentication',
+		category: 'autenticação',
 		description: 'Deletar sessões de outros usuários, deslogando-os'
 	},
 	LIST_USER_SESSIONS: {
 		title: 'Visualizar Sessões',
 		summary: 'Visualizar Sessões',
-		category: 'authentication',
+		category: 'autenticação',
 		description: 'Visualizar sessões de outros usuários'
 	},
 	//
 	CREATE_USER: {
 		title: 'Cadastrar Usuário',
 		summary: 'Cadastrar',
-		category: 'user',
+		category: 'usuário',
 		description: 'Permite cadastrar usuários'
 	},
 	DELETE_USER: {
 		title: 'Deletar Usuário',
 		summary: 'Deletar',
-		category: 'user',
+		category: 'usuário',
 		description: 'Permite deletar usuários'
 	},
 
@@ -129,19 +129,19 @@ export const permissionDetails: Record<permission, PermissionDetails> = {
 	CREATE_TRACKER: {
 		title: 'Cadastrar Rastreador',
 		summary: 'Cadastrar',
-		category: 'tracker',
+		category: 'rastreadores',
 		description: 'Permite cadastrar rastreadores'
 	},
 	UPDATE_TRACKER: {
 		title: 'Atualizar Rastreador',
 		summary: 'Atualizar',
-		category: 'tracker',
+		category: 'rastreadores',
 		description: 'Permite atualizar rastreadores'
 	},
 	DELETE_TRACKER: {
 		title: 'Deletar Rastreador',
 		summary: 'Deletar',
-		category: 'tracker',
+		category: 'rastreadores',
 		description: 'Permite deletar rastreadores'
 	},
 	//
@@ -167,26 +167,26 @@ export const permissionDetails: Record<permission, PermissionDetails> = {
 	CREATE_SIM_CARD: {
 		title: 'Cadastrar Cartão SIM',
 		summary: 'Cadastrar',
-		category: 'SIM card',
+		category: 'cartões SIM',
 		description: 'Permite cadastrar cartões SIM'
 	},
 	UPDATE_SIM_CARD: {
 		title: 'Atualizar Cartão SIM',
 		summary: 'Atualizar',
-		category: 'SIM card',
+		category: 'cartões SIM',
 		description: 'Permite atualizar cartões SIM'
 	},
 	DELETE_SIM_CARD: {
 		title: 'Deletar Cartão SIM',
 		summary: 'Deletar',
-		category: 'SIM card',
+		category: 'cartões SIM',
 		description: 'Permite deletar cartões SIM'
 	},
 	//
 	UPDATE_ORGANIZATION: {
 		title: 'Atualizar Organização',
 		summary: 'Atualizar',
-		category: 'organization',
+		category: 'organização',
 		description:
 			'Permite atualizar a organização que o usuário pertence, inclusive o endereço de cobrança'
 	}

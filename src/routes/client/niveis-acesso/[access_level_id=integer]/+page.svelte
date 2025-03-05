@@ -62,7 +62,7 @@
 	{:else}
 		<div class="card preset-filled-surface-100-900">
 			<div class="p-4 flex flex-col md:flex-row items-center gap-4">
-				<div class="flex items-center mr-auto type-scale-3">
+				<div class="flex items-center mr-auto text-lg">
 					{editMode ? 'Editando nível de acesso' : accessLevel.name}
 				</div>
 
@@ -79,7 +79,7 @@
 									align="end"
 									sideOffset={8}
 								>
-									<div class="type-scale-1 text-center">
+									<div class="text-sm text-center">
 										{isCurrentUserAccessLevel
 											? 'esse é seu nível de acesso e não pode ser editado ou deletado'
 											: 'esse é o nível de acesso principal de sua organização e não pode ser editado ou deletado'}

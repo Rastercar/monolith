@@ -10,7 +10,7 @@
 		children?: Snippet;
 	}
 
-	let { classes = 'type-scale-6 mb-2', header, children }: Props = $props();
+	let { classes = 'text-xl mb-2', header, children }: Props = $props();
 
 	const state = getContext<StepperState>('state');
 

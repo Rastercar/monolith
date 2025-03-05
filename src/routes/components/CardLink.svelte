@@ -11,7 +11,7 @@
 </script>
 
 <a
-	class="flex items-center justify-end text-blue-600 dark:text-blue-500 type-scale-1 underline mt-auto"
+	class="flex items-center justify-end text-blue-600 dark:text-blue-500 text-sm underline mt-auto"
 	href={route(href)}
 >
 	{@render children()}

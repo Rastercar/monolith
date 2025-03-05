@@ -20,7 +20,7 @@
 
 <li class="flex items-center justify-between bg-surface-300-700 shadow card px-4">
 	<div class="space-y-1">
-		<span class="type-scale-2 flex" title="imei">
+		<span class="flex" title="imei">
 			{tp.tracker.imei}
 			<a
 				href={trackerDetailsHref}

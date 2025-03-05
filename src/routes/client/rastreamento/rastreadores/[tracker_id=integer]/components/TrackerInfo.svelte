@@ -38,7 +38,7 @@
 </script>
 
 <h2 class="p-4 flex items-center">
-	<span class="type-scale-4 mr-auto">Informações</span>
+	<span class="text-lg mr-auto">Informações</span>
 
 	<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
 		{#snippet children({ isOnline })}

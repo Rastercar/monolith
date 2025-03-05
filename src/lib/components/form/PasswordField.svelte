@@ -42,7 +42,7 @@
 				bind:value={$formData[name]}
 			/>
 
-			<button type="button" class="input-group-cell" onclick={toggleInputType}>
+			<button type="button" class="px-4" onclick={toggleInputType}>
 				<Icon icon={inputType === 'password' ? 'mdi:eye' : 'mdi:eye-off'} />
 			</button>
 		</div>

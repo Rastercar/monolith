@@ -42,7 +42,7 @@
 		dataType: 'json',
 		onSubmit({ jsonData, cancel }) {
 			const ok = confirm(
-				'todos os usuários com esse nível de acesso terão as novas permissões, prosseguir?'
+				'os usuários com esse nível de acesso terão as novas permissões, prosseguir?'
 			);
 			if (!ok) return cancel();
 

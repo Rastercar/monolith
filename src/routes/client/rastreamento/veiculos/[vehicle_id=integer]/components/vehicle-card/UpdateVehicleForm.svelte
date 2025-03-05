@@ -43,7 +43,7 @@
 </script>
 
 <div class="flex mb-4">
-	<span class="type-scale-3">Editando veículo</span>
+	<span class="text-lg">Editando veículo</span>
 
 	<button class="btn-icon ml-auto preset-filled-secondary-200-800" onclick={() => onEditCanceled()}>
 		<Icon icon="mdi:pencil-off" />

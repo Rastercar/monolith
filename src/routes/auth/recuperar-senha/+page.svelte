@@ -24,8 +24,8 @@
 
 <div class="h-full flex justify-center px-6">
 	<div class="max-w-xl">
-		<h1 class="mb-1 text-center h1 mt-12">{success ? 'Success !' : 'Recover Password'}</h1>
-		<p class="type-scale-3 text-center text-surface-700-300 mb-8">
+		<h1 class="mb-3 text-center h1 mt-12">{success ? 'Sucesso !' : 'Recuperar Senha'}</h1>
+		<p class="text-lg text-center text-surface-700-300 mb-8">
 			{success
 				? 'Siga as instruções enviadas ao seu email'
 				: 'Informe o email de sua conta para receber as instruções de recuperação de senha'}

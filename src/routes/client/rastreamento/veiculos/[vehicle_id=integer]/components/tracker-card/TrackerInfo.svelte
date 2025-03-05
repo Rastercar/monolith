@@ -84,7 +84,7 @@
 <div class="flex mb-4 px-4 mt-4">
 	<div class="flex-grow space-y-2">
 		<div class="flex items-center">
-			<span class="type-scale-1 opacity-80">status:</span>
+			<span class="text-sm opacity-80">status:</span>
 			<TrackerStatusIndicator vehicleTrackerId={tracker.id}>
 				{#snippet children({ isOnline })}
 					<div class="mx-1">
@@ -94,8 +94,8 @@
 			</TrackerStatusIndicator>
 		</div>
 
-		<div><span class="type-scale-1 opacity-80">modelo:</span> {tracker.model}</div>
-		<div><span class="type-scale-1 opacity-80">imei:</span> {tracker.imei}</div>
+		<div><span class="text-sm opacity-80">modelo:</span> {tracker.model}</div>
+		<div><span class="text-sm opacity-80">imei:</span> {tracker.imei}</div>
 	</div>
 
 	{#if menuOptions.length > 0}

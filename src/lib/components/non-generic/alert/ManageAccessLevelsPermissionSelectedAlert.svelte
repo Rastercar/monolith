@@ -13,7 +13,7 @@
 		<Icon icon="mdi:warning" height={24} />
 
 		<p class="text-sm">
-			Importante! Conceder a um nível de acesso a permissão de gerar permissões torna todo usuário
+			Importante! Conceder a um nível de acesso a permissão de gerar permissões torna seus usuário
 			que utiliza esse nível de acesso um administrador.
 		</p>
 

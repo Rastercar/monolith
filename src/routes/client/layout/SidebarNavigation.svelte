@@ -85,7 +85,7 @@
 
 <aside>
 	{#if isInSettingsRoute}
-		<span class="block mt-8 px-5 type-scale-4">Configurações da Conta</span>
+		<span class="block mt-8 px-5 text-lg">Configurações da Conta</span>
 
 		<div class="px-5">
 			<hr class="hr border-t-2 mt-6 mb-8" />

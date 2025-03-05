@@ -28,7 +28,7 @@
 </script>
 
 {#snippet field(label: string, value: string | null)}
-	<div><span class="type-scale-2 opacity-80">{label}:</span> {value ?? 'n/a'}</div>
+	<div><span class="opacity-80">{label}:</span> {value ?? 'n/a'}</div>
 {/snippet}
 
 <div class="p-6">
@@ -60,7 +60,7 @@
 				{position.lat.toFixed(5)} <span class="ml-4">{position.lng.toFixed(5)}</span>
 			</div>
 
-			<span class="opacity-80 type-scale-1 mt-4">
+			<span class="opacity-80 text-sm mt-4">
 				data da ultima posição {new Date(position.timestamp).toLocaleString()}
 			</span>
 		{/if}
@@ -105,17 +105,17 @@
 
 			{#if vehicleTracker.modelYear && vehicleTracker.fabricationYear}
 				<div>
-					<span class="type-scale-2 opacity-80">ano:</span>
+					<span class="opacity-80">ano:</span>
 					{vehicleTracker.modelYear} / {vehicleTracker.fabricationYear}
 				</div>
 			{:else}
 				<div>
-					<span class="type-scale-2 opacity-80">ano: n/a</span>
+					<span class="opacity-80">ano: n/a</span>
 				</div>
 			{/if}
 
 			<div>
-				<span class="type-scale-2 opacity-80">chassi:</span>
+				<span class="opacity-80">chassi:</span>
 				{vehicleTracker.chassisNumber ?? 'n/a'}
 			</div>
 		</div>
@@ -134,7 +134,7 @@
 			ver detalhes
 		</a>
 	{:else}
-		<div class="p-4 mt-4 type-scale-2 flex items-center text-warning-600-300-token">
+		<div class="p-4 mt-4 flex items-center text-warning-600-300-token">
 			<Icon icon="mdi:warning" class="mr-2" />
 			Esse rastreador não esta associado a um veículo
 		</div>

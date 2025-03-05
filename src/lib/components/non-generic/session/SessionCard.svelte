@@ -56,10 +56,10 @@
 
 		<div class="flex flex-col ml-4">
 			<span>{uap.getOS().name ?? ''} {uap.getBrowser().name ?? ''} {session.ip}</span>
-			<span class="text-surface-600-400 type-scale-1">
+			<span class="text-surface-600-400 text-sm">
 				data: {toDateStr(session.createdAt)}
 			</span>
-			<span class="text-surface-600-400 type-scale-1">
+			<span class="text-surface-600-400 text-sm">
 				expira em: {toDateStr(session.expiresAt)}
 			</span>
 		</div>

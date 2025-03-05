@@ -14,7 +14,7 @@
 	const mut = apiSetUserBlockedMutation({ minTime: 500 });
 
 	const blockUserConfirmMsg =
-		'bloquear usuário ? o usuário será deslogado de todos os dispositivos e seu acesso será negado até desbloqueá-lo';
+		'bloquear usuário ? o usuário será deslogado e seu acesso será negado até desbloqueá-lo';
 
 	const toggleUserBlocked = () => {
 		if (!isBlocked && !confirm(blockUserConfirmMsg)) return;

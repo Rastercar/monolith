@@ -10,7 +10,6 @@ export class LayoutStore {
 
 	selectedTheme = $state('');
 
-	// [PROD-TODO]: remove all themes
 	availableThemes = $state([DEFAULT_THEME_NAME]);
 
 	constructor() {
@@ -21,7 +20,7 @@ export class LayoutStore {
 		this.darkMode = loadFromLocalStorage(DARK_MODE_LS_KEY, prefersDarkMode);
 
 		const themeDefaultValue = browser
-			? (document.body.getAttribute('data-theme') ?? DEFAULT_THEME_NAME)
+			? (document.documentElement.getAttribute('data-theme') ?? DEFAULT_THEME_NAME)
 			: DEFAULT_THEME_NAME;
 
 		this.selectedTheme = loadFromLocalStorage(THEME_LS_KEY, themeDefaultValue);
@@ -43,7 +42,7 @@ export class LayoutStore {
 	}
 
 	private setThemeOnHtml() {
-		document.body.setAttribute('data-theme', this.selectedTheme);
+		document.documentElement.setAttribute('data-theme', this.selectedTheme);
 	}
 
 	private setDarkModeClassesOnHtml() {

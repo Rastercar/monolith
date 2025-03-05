@@ -36,7 +36,7 @@
 				Deletar rastreador?
 			</Dialog.Title>
 
-			<Dialog.Description class="type-scale-2 px-4">
+			<Dialog.Description class="px-4">
 				Ao deletar o rastreador, seu histórico de posições também é deletado e qualquer nova posição
 				não será recebida pela plataforma.
 			</Dialog.Description>

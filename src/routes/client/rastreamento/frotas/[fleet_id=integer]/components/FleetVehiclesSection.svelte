@@ -23,7 +23,7 @@
 		({vehicles.length})
 
 		{#if filteredVehicles.length !== vehicles.length}
-			<span class="type-scale-2">
+			<span>
 				{vehicles.length - filteredVehicles.length} filtrados
 			</span>
 		{/if}

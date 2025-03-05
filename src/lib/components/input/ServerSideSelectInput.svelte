@@ -83,7 +83,7 @@
 			<Combobox.Viewport>
 				{#each queryData as item, i (i + item.value)}
 					<Combobox.Item
-						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 type-scale-2 data-[highlighted]:bg-surface-300-700"
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 data-[highlighted]:bg-surface-300-700"
 						value={item.value}
 						label={item.label}
 					>

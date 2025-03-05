@@ -84,13 +84,13 @@
 				<div
 					class={`h-2 w-2 mr-2 rounded-full ${user.emailVerified ? 'bg-success-500' : 'bg-error-500'}`}
 				></div>
-				<span class="type-scale-1">
+				<span class="text-sm">
 					{user.emailVerified ? 'email verificado' : 'email não verificado'}
 				</span>
 			</div>
 		</div>
 
-		<span class="type-scale-1 hidden sm:block mt-auto">
+		<span class="text-sm hidden sm:block mt-auto">
 			Cadastrado em: {toDateTime(user.createdAt)}
 		</span>
 	</div>

@@ -28,6 +28,7 @@
 		queryKey: ['tracker', trackerId, 'locations', { after: startFilter }],
 		queryFn: async ({ pageParam }: { pageParam: GetTrackerLocationsFilters }) =>
 			apiGetTrackerLocations(trackerId, pageParam),
+
 		placeholderData: keepPreviousData,
 		retry: false,
 		initialPageParam: {

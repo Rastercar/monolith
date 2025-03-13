@@ -2,7 +2,7 @@
 	import { apiGetTrackersLastPositionsQuery } from '$lib/api/tracking.queries';
 	import { getMapContext } from '$lib/store/context';
 	import Icon from '@iconify/svelte';
-	import type { TrackerAndPosition } from '../../map';
+	import type { TrackerAndPosition } from '../../../../map';
 	import SelectedTrackerOverlay from './SelectedTrackerOverlay.svelte';
 	import TrackerListItem from './TrackerListItem.svelte';
 
@@ -19,9 +19,9 @@
 	let trackerAndPositionToShow = $state<TrackerAndPosition | null>(null);
 
 	const getMapSelectedTrackerIds = () =>
-		Object.keys(ctx.mapSelectedTrackers).map((k) => parseInt(k));
+		Object.keys(ctx.realTimeMapViewState.selectedTrackers).map((k) => parseInt(k));
 
-	const mapSelectedTrackers = $derived(Object.values(ctx.mapSelectedTrackers));
+	const mapSelectedTrackers = $derived(Object.values(ctx.realTimeMapViewState.selectedTrackers));
 
 	const query = apiGetTrackersLastPositionsQuery(getMapSelectedTrackerIds());
 

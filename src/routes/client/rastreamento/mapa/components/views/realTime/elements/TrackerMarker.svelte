@@ -27,7 +27,7 @@
 			position
 		});
 
-		markerInstance.addListener('click', () => {
+		markerInstance.addListener('gmp-click', () => {
 			mapCtx.mapInstance?.panTo(position);
 
 			if (!markerInstance) return;

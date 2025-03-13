@@ -176,7 +176,7 @@
 		<span class="text-xl">DROP PHOTO HERE</span>
 	</div>
 
-	<div class="w-sm absolute top-3 right-3 rounded-lg">
+	<div class="absolute top-3 left-3">
 		<div class:hidden={newPhoto === null} class="flex flex-col space-y-4">
 			<button
 				disabled={uploadMutation.isPending}

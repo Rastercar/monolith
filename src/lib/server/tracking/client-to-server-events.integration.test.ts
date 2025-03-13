@@ -74,7 +74,9 @@ describe('configureSocketIoServer', async () => {
 		await waitFor(clientSocket, 'error');
 
 		expect(errors.length).toBe(1);
-		expect(errors[0]).toBe(`cannot listen to over ${TRACKER_SUBSCRIPTION_PER_USER_LIMIT} trackers`);
+		expect(errors[0]).toBe(
+			`não é possível escutar mais de ${TRACKER_SUBSCRIPTION_PER_USER_LIMIT} rastreadores`
+		);
 	});
 
 	test('emits and error if some informed tracker ids do not belonged to the organization on the session', async () => {
@@ -94,7 +96,7 @@ describe('configureSocketIoServer', async () => {
 		await waitFor(clientSocket, 'error');
 
 		expect(errors.length).toBe(1);
-		expect(errors[0]).toBe('not allowed to listen to ids: 4,5');
+		expect(errors[0]).toBe('não é permitido escutar os rastreadores: 4,5');
 	});
 
 	test('leaves every room (previous trackers) and joins rooms of the new trackers', async () => {

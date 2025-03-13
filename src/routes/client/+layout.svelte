@@ -9,6 +9,7 @@
 	let { children, data } = $props();
 
 	const layoutContext = getLayoutContext();
+
 	layoutContext.availableThemes = data.availableThemes;
 
 	const defaultLoggedInRouteMeta: LoggedInPageMeta = { requiredAuth: 'logged-in' };

@@ -18,8 +18,6 @@ export const loadMapLibraries = async () => {
 	if (!markerAlreadyLoaded) {
 		await window.google.maps.importLibrary('marker');
 	}
-
-	console.log({ googleMapsAlreadyLoaded, markerAlreadyLoaded });
 };
 
 // https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import

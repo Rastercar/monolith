@@ -5,7 +5,19 @@ import type {
 	GetTrackersFilters,
 	UpdateTrackerBody
 } from '$lib/api/tracker.schema';
-import { and, asc, eq, gt, ilike, inArray, isNotNull, isNull, lt, type SQL } from 'drizzle-orm';
+import {
+	and,
+	asc,
+	desc,
+	eq,
+	gt,
+	ilike,
+	inArray,
+	isNotNull,
+	isNull,
+	lt,
+	type SQL
+} from 'drizzle-orm';
 import { getDB } from '../db';
 import { getISOFormatDateQuery } from '../helpers';
 import { paginate } from '../pagination';
@@ -73,7 +85,7 @@ export async function findTrackerLocationList(id: number, options: GetTrackerLoc
 		.from(vehicleTrackerLocation)
 		.where(and(...sqlFilters))
 		.limit(options.limit)
-		.orderBy(asc(vehicleTrackerLocation.time));
+		.orderBy(desc(vehicleTrackerLocation.time));
 }
 
 export async function findTrackerLastLocation(id: number) {

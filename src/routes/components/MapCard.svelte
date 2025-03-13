@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { env } from '$lib/env/public-env';
 	import { route } from '$lib/ROUTES';
-	import { isOnMobileViewPort } from '$lib/store/viewport.svelte';
 	import { loadMapLibraries } from '$lib/utils/google-maps';
+	import { isOnMobileViewPort } from '$lib/utils/viewport';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 

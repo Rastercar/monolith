@@ -1,9 +1,10 @@
 import { flushSync } from 'svelte';
 import { describe, expect, test, vi } from 'vitest';
 import { createTrackerMock } from '../../test/mocking-utils';
-import { MAP_SELECTED_TRACKERS_LS_KEY, TRACKER_POSITION_CACHE_LS_KEY } from './keys';
+import { MAP_REALTIME_VIEW_LS_KEY, TRACKER_POSITION_CACHE_LS_KEY } from './keys';
 import { MapPageStore, type TrackerIdToLastPosition, type TrackerSelection } from './map.svelte';
 
+// TODO: fix broken tests
 describe('MapPageStore', () => {
 	const setLs = (k: string, v: unknown) => localStorage.setItem(k, JSON.stringify(v));
 
@@ -19,7 +20,7 @@ describe('MapPageStore', () => {
 			const mapSelectedTrackers = { fake: 'value' };
 			const trackerPositionCache = { fake: 'value' };
 
-			setLs(MAP_SELECTED_TRACKERS_LS_KEY, mapSelectedTrackers);
+			setLs(MAP_REALTIME_VIEW_LS_KEY, mapSelectedTrackers);
 			setLs(TRACKER_POSITION_CACHE_LS_KEY, trackerPositionCache);
 
 			store = new MapPageStore();
@@ -47,7 +48,7 @@ describe('MapPageStore', () => {
 
 			flushSync();
 
-			expect(loadLs(MAP_SELECTED_TRACKERS_LS_KEY)).toEqual(store.mapSelectedTrackers);
+			expect(loadLs(MAP_REALTIME_VIEW_LS_KEY)).toEqual(store.mapSelectedTrackers);
 			expect(loadLs(TRACKER_POSITION_CACHE_LS_KEY)).toEqual(store.trackerPositionCache);
 		});
 	});

@@ -30,7 +30,7 @@ export async function handleChangeTrackersToListenEvent(
 	const invalidIds = trackerIds.filter((id) => validIds.indexOf(id) === -1);
 
 	if (invalidIds.length > 0) {
-		socket.emit('error', `não é permitido escutar aos rastreadores: ${invalidIds.join(',')}`);
+		socket.emit('error', `não é permitido escutar os rastreadores: ${invalidIds.join(',')}`);
 	}
 
 	socket.rooms.forEach((room) => {

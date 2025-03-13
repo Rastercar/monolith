@@ -35,7 +35,7 @@
 	<div>
 		<h2 class="flex items-center text-2xl">
 			<Icon icon="mdi:cellphone-marker" class="mr-2" height={24} />
-			Informações do Rastreador
+			Rastreador
 
 			{@render title?.()}
 		</h2>

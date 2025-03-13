@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { route } from '$lib/ROUTES';
 	import { getMapContext } from '$lib/store/context';
-	import { isOnMobileViewPort } from '$lib/store/viewport.svelte';
+	import { isOnMobileViewPort } from '$lib/utils/viewport';
 	import Icon from '@iconify/svelte';
-	import MapControl from './MapControl.svelte';
+	import MapControl from '../../MapControl.svelte';
 
 	const mapContext = getMapContext();
 
@@ -13,13 +13,17 @@
 	};
 
 	const { isMobileViewport } = isOnMobileViewPort();
+
+	const selectedTrackerCnt = $derived(
+		Object.keys(mapContext.realTimeMapViewState.selectedTrackers).length
+	);
 </script>
 
 <MapControl position={window.google.maps.ControlPosition.TOP_RIGHT}>
 	<div class="flex flex-col">
 		<button
-			onclick={() => (mapContext.mapOverlay = 'select-tracker')}
-			class="m-[10px] h-[60px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
+			onclick={() => (mapContext.realTimeMapViewState.overlay = 'select-tracker')}
+			class="m-[10px] h-[70px] flex flex-col px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300"
 		>
 			<div class="my-auto">
 				<div class="flex items-center text-lg">
@@ -27,13 +31,14 @@
 				</div>
 
 				<div class="mt-[4px]">
-					{Object.keys(mapContext.mapSelectedTrackers).length} selecionados
+					{selectedTrackerCnt}
+					{selectedTrackerCnt > 1 ? 'selecionados' : 'selecionado'}
 				</div>
 			</div>
 		</button>
 
 		<button
-			onclick={() => (mapContext.mapOverlay = 'selected-tracker-list')}
+			onclick={() => (mapContext.realTimeMapViewState.overlay = 'selected-tracker-list')}
 			class="m-[10px] h-[40px] flex items-center px-4 shadow-lg text-black bg-white hover:bg-surface-50 rounded-sm border border-surface-300 text-lg ml-auto"
 		>
 			<Icon icon="mdi:info" />

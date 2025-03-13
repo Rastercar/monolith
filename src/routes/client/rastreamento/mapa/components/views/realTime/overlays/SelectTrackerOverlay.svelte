@@ -8,7 +8,7 @@
 	import { TRACKER_SUBSCRIPTION_PER_USER_LIMIT } from '$lib/constants/socket-io';
 	import { getMapContext } from '$lib/store/context';
 	import { createPaginationWithFilters } from '$lib/store/data-table.svelte';
-	import { isOnMobileViewPort } from '$lib/store/viewport.svelte';
+	import { isOnMobileViewPort } from '$lib/utils/viewport';
 	import Icon from '@iconify/svelte';
 	import {
 		createSvelteTable,
@@ -48,9 +48,9 @@
 						const tracker = row.original;
 
 						if (!isChecked) {
-							delete mapContext.mapSelectedTrackers[tracker.id];
+							delete mapContext.realTimeMapViewState.selectedTrackers[tracker.id];
 						} else {
-							mapContext.mapSelectedTrackers[tracker.id] = tracker;
+							mapContext.realTimeMapViewState.selectedTrackers[tracker.id] = tracker;
 						}
 					}
 				});
@@ -63,7 +63,7 @@
 	];
 
 	const getSelectionMap = (): RowSelectionState =>
-		Object.values(mapContext.mapSelectedTrackers).reduce(
+		Object.values(mapContext.realTimeMapViewState.selectedTrackers).reduce(
 			(acc, t) => ({ ...acc, [t.id]: true }),
 			{}
 		);
@@ -91,7 +91,9 @@
 
 	const { isMobileViewport } = isOnMobileViewPort();
 
-	let selectedTrackersCnt = $derived(Object.keys(mapContext.mapSelectedTrackers).length);
+	let selectedTrackersCnt = $derived(
+		Object.keys(mapContext.realTimeMapViewState.selectedTrackers).length
+	);
 	let reachedSelectionLimit = $derived(selectedTrackersCnt >= TRACKER_SUBSCRIPTION_PER_USER_LIMIT);
 </script>
 
@@ -134,7 +136,7 @@
 
 			<button
 				class="btn btn-sm preset-filled-primary-200-800"
-				onclick={() => (mapContext.mapSelectedTrackers = {})}
+				onclick={() => (mapContext.realTimeMapViewState.selectedTrackers = {})}
 			>
 				desselecionar
 				<Icon icon="mdi:trash" />

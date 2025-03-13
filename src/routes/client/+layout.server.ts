@@ -19,7 +19,7 @@ export async function load({ locals }) {
 
 	return {
 		user: locals.user,
-		availableThemes: [DEFAULT_THEME_NAME, availableThemes.map((t) => t.name)],
+		availableThemes: [DEFAULT_THEME_NAME, ...availableThemes.map((t) => t.name)],
 		orgThemeStyleTag: createStyleTagWithCssVarsOfThemes(availableThemes.map((t) => t.css))
 	};
 }

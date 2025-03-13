@@ -30,7 +30,7 @@
 </script>
 
 {#if auth.user}
-	<SettingsPageTitle>My Profile</SettingsPageTitle>
+	<SettingsPageTitle>Meu Perfil</SettingsPageTitle>
 
 	<ProfilePictureDropzone />
 
@@ -54,7 +54,7 @@
 		<TextAreaField
 			form={sForm}
 			name="description"
-			label="Description"
+			label="Descrição"
 			classes="col-span-1 md:col-span-2"
 			rows={6}
 		/>
